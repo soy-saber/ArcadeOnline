@@ -5,6 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>游戏房间 - ArcadeOnline</title>
 <link rel="stylesheet" href="/style.css">
+<script>
+(function () {
+  var origSet = Element.prototype.setPointerCapture;
+  var origRelease = Element.prototype.releasePointerCapture;
+  var origHas = Element.prototype.hasPointerCapture;
+  Element.prototype.setPointerCapture = function (id) {
+    try {
+      return origSet.call(this, id);
+    } catch (e) {
+      return undefined;
+    }
+  };
+  Element.prototype.releasePointerCapture = function (id) {
+    try {
+      return origRelease.call(this, id);
+    } catch (e) {
+      return undefined;
+    }
+  };
+  Element.prototype.hasPointerCapture = function (id) {
+    try {
+      return origHas.call(this, id);
+    } catch (e) {
+      return false;
+    }
+  };
+})();
+</script>
 <script src="/libs/ruffle/ruffle.js"></script>
 <script src="/arcade.js"></script>
 </head>

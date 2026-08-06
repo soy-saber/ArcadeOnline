@@ -150,7 +150,8 @@ function serveFile(filePath, res, onNotFound) {
         return;
       }
       res.writeHead(200, {
-        "Content-Type": MIME[path.extname(filePath).toLowerCase()] || "application/octet-stream"
+        "Content-Type": MIME[path.extname(filePath).toLowerCase()] || "application/octet-stream",
+        "Cache-Control": "no-cache"
       });
       res.end(data);
     });

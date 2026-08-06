@@ -30,7 +30,7 @@
       }
       document.title = gameMeta.title + " - ArcadeOnline";
       document.getElementById("game-title").textContent = gameMeta.title;
-      setupRuffle();
+      setupSw().then(setupRuffle);
       setupInput();
       ArcadeNet.connect(wsUrl());
       ArcadeNet.on("welcome", (m) => {
@@ -44,6 +44,21 @@
       ArcadeNet.on("err", (m) => log("!! " + m.msg, "leave"));
       ArcadeNet.on("conn", onConn);
     });
+
+  // Service Worker：拦截已死亡的 mochibot.com，用本地极简 SWF 冒充，
+  // 使 4399 老游戏通过内置的反盗链校验（域名校验要求 URL 原样保留）。
+  // 注意：SW 仅安全上下文可用（localhost / HTTPS），纯 HTTP 局域网不可用。
+  function setupSw() {
+    if (!("serviceWorker" in navigator)) return Promise.resolve();
+    return navigator.serviceWorker
+      .register("/sw.js", { scope: "/" })
+      .then(function () {
+        return navigator.serviceWorker.ready;
+      })
+      .catch(function () {
+        return undefined;
+      });
+  }
 
   function wsUrl() {
     const proto = location.protocol === "https:" ? "wss" : "ws";
@@ -155,22 +170,11 @@
       autoplay: "on",
       letterbox: "off"
     };
+    if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
+      playerEl.tabIndex = 0;
+    }
     stageEl.appendChild(playerEl);
     playerEl.load(gameMeta.swf);
-    applyScale();
-    window.addEventListener("resize", applyScale);
-  }
-
-  function applyScale() {
-    const wrap = document.getElementById("stage-wrap");
-    const aside = document.querySelector("aside");
-    const asideW = aside ? aside.offsetWidth : 300;
-    const avail = window.innerWidth - asideW - 90;
-    const scale = Math.min(1.6, Math.max(1, avail / gameMeta.width));
-    wrap.style.width = Math.round(gameMeta.width * scale) + "px";
-    wrap.style.height = Math.round(gameMeta.height * scale) + "px";
-    stageEl.style.transform = "scale(" + scale + ")";
-    stageEl.style.transformOrigin = "0 0";
   }
 
   function getCanvas() {
@@ -182,7 +186,7 @@
     return canvasEl;
   }
 
-  /* ---------------- 输入捕获（真实键盘/鼠标 → 本地注入 + 上报） ---------------- */
+  /* ---------------- 输入处理（本地真实事件直达 + 上报转发） ---------------- */
 
   function allGameCodes() {
     const set = new Set();
@@ -194,27 +198,31 @@
     return gameMeta.seats.find((s) => s.seat === seat);
   }
 
+  // 本地玩家的输入：真实事件直达 Ruffle（与本地版一致），同时上报给服务器转发；
+  // 游客/非本座位键：吞掉，保证本地副本只接收广播流。
   function onKey(ev) {
-    const codes = allGameCodes();
-    if (!codes.has(ev.code)) return;
+    if (!allGameCodes().has(ev.code)) return;
+    if (mySeat != null) {
+      const meta = seatMeta(mySeat);
+      if (meta.keys.includes(ev.code)) {
+        ev.preventDefault();
+        if (!ev.isTrusted) return;
+        if (ev.type === "keydown") heldKeys.add(ev.code);
+        else heldKeys.delete(ev.code);
+        ArcadeNet.send({
+          t: "in",
+          kind: "key",
+          type: ev.type,
+          code: ev.code,
+          key: ev.key,
+          keyCode: ev.keyCode,
+          repeat: ev.repeat
+        });
+        return;
+      }
+    }
     ev.preventDefault();
     ev.stopPropagation();
-    if (!ev.isTrusted) return;
-    if (mySeat == null) return;
-    const meta = seatMeta(mySeat);
-    if (!meta.keys.includes(ev.code)) return;
-    if (ev.type === "keydown") heldKeys.add(ev.code);
-    else heldKeys.delete(ev.code);
-    ArcadeNet.send({
-      t: "in",
-      kind: "key",
-      type: ev.type,
-      code: ev.code,
-      key: ev.key,
-      keyCode: ev.keyCode,
-      repeat: ev.repeat
-    });
-    injectKey(ev.type, ev.code, ev.key, ev.keyCode, ev.repeat);
   }
 
   function onPointer(ev) {
@@ -223,6 +231,7 @@
       ev.stopPropagation();
       return;
     }
+    if (!ev.isTrusted) return;
     const rect = stageEl.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const x = Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width));
@@ -231,11 +240,7 @@
       const now = performance.now();
       if (now - lastMoveSend < 30) return;
       lastMoveSend = now;
-    } else {
-      ev.preventDefault();
     }
-    ev.stopPropagation();
-    if (!ev.isTrusted) return;
     ArcadeNet.send({
       t: "in",
       kind: "mouse",
@@ -245,7 +250,6 @@
       button: ev.button,
       buttons: ev.buttons
     });
-    injectPointer(ev.type, x, y, ev.button, ev.buttons);
   }
 
   function setupInput() {
