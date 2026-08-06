@@ -51,6 +51,7 @@ function getRoom(gameId, roomName) {
       name: roomName,
       seats: { 1: null, 2: null },
       mouseOwner: null,
+      hostId: null,
       members: new Map()
     };
     rooms.set(key, room);
@@ -65,10 +66,22 @@ function sanitizeName(raw) {
   return n;
 }
 
+function sendTo(ws, msg) {
+  if (ws && ws.readyState === 1) {
+    ws.send(typeof msg === "string" ? msg : JSON.stringify(msg));
+  }
+}
+
 function broadcast(room, msg) {
   const data = JSON.stringify(msg);
   for (const m of room.members.values()) {
     if (m.ws.readyState === 1) m.ws.send(data);
+  }
+}
+
+function broadcastRaw(room, data, exceptId) {
+  for (const m of room.members.values()) {
+    if (m.id !== exceptId && m.ws.readyState === 1) m.ws.send(data);
   }
 }
 
@@ -87,7 +100,8 @@ function seatState(room) {
     members,
     seats: { ...room.seats },
     mouseOwner: room.mouseOwner,
-    mouseOwnerName
+    mouseOwnerName,
+    hostId: room.hostId
   };
 }
 
@@ -102,7 +116,8 @@ function releaseSeat(room, clientId, announce) {
   if (seat != null) {
     if (room.seats[seat] === clientId) room.seats[seat] = null;
     member.seat = null;
-    broadcast(room, { t: "clearKeys", seat });
+    const host = room.members.get(room.hostId);
+    if (host) sendTo(host.ws, { t: "clearKeys", seat });
   }
   if (room.mouseOwner === clientId) {
     room.mouseOwner = null;
@@ -164,7 +179,14 @@ wss.on("connection", (ws) => {
   const clientId = crypto.randomUUID();
   let member = null;
 
-  ws.on("message", (raw) => {
+  ws.on("message", (raw, isBinary) => {
+    if (isBinary) {
+      // 游戏画面帧：仅房主可发，转发给房间里其他所有成员
+      if (member && member.room.hostId === clientId) {
+        broadcastRaw(member.room, raw, clientId);
+      }
+      return;
+    }
     let msg;
     try {
       msg = JSON.parse(raw.toString());
@@ -182,7 +204,7 @@ wss.on("connection", (ws) => {
           member = null;
         }
         if (!gameMap.has(msg.gameId)) {
-          ws.send(JSON.stringify({ t: "err", msg: "未知游戏" }));
+          sendTo(ws, { t: "err", msg: "未知游戏" });
           return;
         }
         const room = getRoom(
@@ -191,10 +213,31 @@ wss.on("connection", (ws) => {
         );
         member = { id: clientId, name: sanitizeName(msg.name), seat: null, ws, room };
         room.members.set(clientId, member);
-        ws.send(
-          JSON.stringify({ t: "welcome", id: clientId, name: member.name, gameId: room.gameId })
-        );
+        if (room.hostId == null) {
+          room.hostId = clientId;
+          broadcast(room, { t: "sys", name: member.name, action: "host" });
+        }
+        sendTo(ws, {
+          t: "welcome",
+          id: clientId,
+          name: member.name,
+          gameId: room.gameId,
+          hostId: room.hostId
+        });
         broadcast(room, { t: "sys", name: member.name, action: "join" });
+        pushState(room);
+        break;
+      }
+
+      case "becomeHost": {
+        if (!member) return;
+        const room = member.room;
+        if (room.hostId != null) {
+          sendTo(ws, { t: "err", msg: "房间已有房主" });
+          return;
+        }
+        room.hostId = clientId;
+        broadcast(room, { t: "sys", name: member.name, action: "host" });
         pushState(room);
         break;
       }
@@ -206,7 +249,7 @@ wss.on("connection", (ws) => {
         const room = member.room;
         if (member.seat === seat) return;
         if (room.seats[seat] != null) {
-          ws.send(JSON.stringify({ t: "err", msg: "该座位已被占" }));
+          sendTo(ws, { t: "err", msg: "该座位已被占" });
           return;
         }
         if (member.seat != null) releaseSeat(room, clientId, false);
@@ -226,20 +269,24 @@ wss.on("connection", (ws) => {
       case "in": {
         if (!member || member.seat == null) return;
         const room = member.room;
+        if (room.hostId == null) return;
         if (msg.kind === "key") {
           const allowed = gameMap.get(room.gameId) ? gameMap.get(room.gameId)[member.seat] : null;
           if (!allowed || typeof msg.code !== "string" || !allowed.has(msg.code)) return;
           if (msg.type !== "keydown" && msg.type !== "keyup") return;
-          broadcast(room, {
-            t: "in",
-            from: clientId,
-            kind: "key",
-            type: msg.type,
-            code: msg.code,
-            key: msg.key,
-            keyCode: msg.keyCode,
-            repeat: !!msg.repeat
-          });
+          const host = room.members.get(room.hostId);
+          if (host) {
+            sendTo(host.ws, {
+              t: "in",
+              from: clientId,
+              kind: "key",
+              type: msg.type,
+              code: msg.code,
+              key: msg.key,
+              keyCode: msg.keyCode,
+              repeat: !!msg.repeat
+            });
+          }
         } else if (msg.kind === "mouse") {
           if (
             msg.type !== "pointermove" &&
@@ -253,16 +300,19 @@ wss.on("connection", (ws) => {
             room.mouseOwner = clientId;
             broadcast(room, { t: "mouseOwner", id: clientId, name: member.name });
           }
-          broadcast(room, {
-            t: "in",
-            from: clientId,
-            kind: "mouse",
-            type: msg.type,
-            x,
-            y,
-            button: msg.button,
-            buttons: msg.buttons
-          });
+          const host = room.members.get(room.hostId);
+          if (host) {
+            sendTo(host.ws, {
+              t: "in",
+              from: clientId,
+              kind: "mouse",
+              type: msg.type,
+              x,
+              y,
+              button: msg.button,
+              buttons: msg.buttons
+            });
+          }
         }
         break;
       }
@@ -271,9 +321,14 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     if (member) {
-      releaseSeat(member.room, clientId, false);
-      member.room.members.delete(clientId);
-      pushState(member.room);
+      const room = member.room;
+      releaseSeat(room, clientId, false);
+      room.members.delete(clientId);
+      if (room.hostId === clientId) {
+        room.hostId = null;
+        broadcast(room, { t: "sys", name: member.name, action: "hostLeft" });
+      }
+      pushState(room);
     }
   });
 

@@ -252,6 +252,28 @@ section.panel h4 {
   color: #ffd166;
 }
 
+.host-line {
+  font-size: 13px;
+  color: #7ec8ff;
+  background: #16213e;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+#become-host {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.resync-hint {
+  font-size: 11px;
+  color: #7a86a8;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
 .spec-notice {
   font-size: 12px;
   color: #ffd166;

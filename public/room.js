@@ -10,12 +10,19 @@
   let gameMeta = null;
   let myId = null;
   let mySeat = null;
-  let state = { members: [], seats: { 1: null, 2: null }, mouseOwner: null };
+  let state = { members: [], seats: { 1: null, 2: null }, mouseOwner: null, hostId: null };
+  let mode = "idle"; // "host" | "viewer"
   let playerEl = null;
   let canvasEl = null;
-  let stageEl = document.getElementById("stage");
-  const heldKeys = new Set();
+  let ruffleApi = null;
+  let viewerCanvas = null;
+  let viewerCtx = null;
+  let tmpCanvas = null;
+  let tmpCtx = null;
+  let frameTimer = null;
+  let currentMouse = null;
   let lastMoveSend = 0;
+  const stageEl = document.getElementById("stage");
 
   document.getElementById("room-name").textContent = roomName;
   document.getElementById("my-name").textContent = arcadeName();
@@ -30,7 +37,6 @@
       }
       document.title = gameMeta.title + " - ArcadeOnline";
       document.getElementById("game-title").textContent = gameMeta.title;
-      setupSw().then(setupRuffle);
       setupInput();
       ArcadeNet.connect(wsUrl());
       ArcadeNet.on("welcome", (m) => {
@@ -41,24 +47,10 @@
       ArcadeNet.on("clearKeys", onClearKeys);
       ArcadeNet.on("mouseOwner", onMouseOwner);
       ArcadeNet.on("sys", onSys);
+      ArcadeNet.on("frame", onFrame);
       ArcadeNet.on("err", (m) => log("!! " + m.msg, "leave"));
       ArcadeNet.on("conn", onConn);
     });
-
-  // Service Worker：拦截已死亡的 mochibot.com，用本地极简 SWF 冒充，
-  // 使 4399 老游戏通过内置的反盗链校验（域名校验要求 URL 原样保留）。
-  // 注意：SW 仅安全上下文可用（localhost / HTTPS），纯 HTTP 局域网不可用。
-  function setupSw() {
-    if (!("serviceWorker" in navigator)) return Promise.resolve();
-    return navigator.serviceWorker
-      .register("/sw.js", { scope: "/" })
-      .then(function () {
-        return navigator.serviceWorker.ready;
-      })
-      .catch(function () {
-        return undefined;
-      });
-  }
 
   function wsUrl() {
     const proto = location.protocol === "https:" ? "wss" : "ws";
@@ -77,32 +69,316 @@
     }
   }
 
+  /* ---------------- 模式切换：房主(唯一播放器) / 观战(收帧) ---------------- */
+
   function onState(s) {
     state = s;
+    const me = state.members.find((m) => m.id === myId);
+    mySeat = me ? me.seat : null;
+    const shouldHost = state.hostId === myId;
+    if (shouldHost) {
+      if (mode !== "host") becomeHostMode();
+    } else {
+      if (mode !== "viewer") becomeViewerMode();
+    }
     render();
   }
 
-  function onMouseOwner(m) {
-    document.getElementById("mouse-owner").textContent = m.name || "无人";
+  function becomeHostMode() {
+    mode = "host";
+    log("你是房主：本机运行游戏，画面直播给全房间", "host");
+    setupSw().then(() => {
+      if (mode !== "host") return;
+      destroyPlayer();
+      setupRuffle();
+      startFrameCapture();
+    });
   }
 
-  function onSys(m) {
-    let text = "";
-    if (m.action === "join") text = m.name + " 进入房间（观战）";
-    else if (m.action === "leave") text = m.name + " 离开了房间";
-    else if (m.action === "sit") text = m.name + " 坐上了 P" + m.seat;
-    log(text, m.action);
+  function becomeViewerMode() {
+    mode = "viewer";
+    stopFrameCapture();
+    destroyPlayer();
+    if (!viewerCanvas) {
+      viewerCanvas = document.createElement("canvas");
+      viewerCanvas.width = gameMeta.width;
+      viewerCanvas.height = gameMeta.height;
+      viewerCtx = viewerCanvas.getContext("2d");
+      viewerCtx.fillStyle = "#000";
+      viewerCtx.fillRect(0, 0, gameMeta.width, gameMeta.height);
+    }
+    stageEl.appendChild(viewerCanvas);
   }
 
-  function log(text, cls) {
-    const box = document.getElementById("log");
-    const d = document.createElement("div");
-    d.className = cls || "";
-    d.textContent = new Date().toLocaleTimeString() + " " + text;
-    box.appendChild(d);
-    while (box.children.length > 40) box.removeChild(box.firstChild);
-    box.scrollTop = box.scrollHeight;
+  function destroyPlayer() {
+    stopFrameCapture();
+    try {
+      if (playerEl && playerEl.destroy) playerEl.destroy();
+    } catch (e) {}
+    if (playerEl && playerEl.parentNode) playerEl.parentNode.removeChild(playerEl);
+    playerEl = null;
+    canvasEl = null;
   }
+
+  // Service Worker：拦截已死亡的 mochibot.com，用本地极简 SWF 冒充，
+  // 使 4399 老游戏通过内置的反盗链校验（域名校验要求 URL 原样保留）。
+  // 注意：SW 仅安全上下文可用（localhost / HTTPS），纯 HTTP 局域网不可用。
+  function setupSw() {
+    if (!("serviceWorker" in navigator)) return Promise.resolve();
+    return navigator.serviceWorker
+      .register("/sw.js", { scope: "/" })
+      .then(function () {
+        return navigator.serviceWorker.ready;
+      })
+      .catch(function () {
+        return undefined;
+      });
+  }
+
+  /* ---------------- 房主：Ruffle + 帧捕获直播 ---------------- */
+
+  function setupRuffle() {
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      autoplay: "on",
+      letterbox: "off",
+      preferredRenderer: "webgl"
+    };
+    const ruffle = window.RufflePlayer.newest();
+    ruffleApi = ruffle;
+    playerEl = ruffle.createPlayer();
+    playerEl.config = {
+      width: gameMeta.width,
+      height: gameMeta.height,
+      autoplay: "on",
+      letterbox: "off"
+    };
+    if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
+      playerEl.tabIndex = 0;
+    }
+    stageEl.appendChild(playerEl);
+    playerEl.load(gameMeta.swf);
+  }
+
+  function getCanvas() {
+    if (!canvasEl) {
+      canvasEl =
+        (playerEl.shadowRoot && playerEl.shadowRoot.querySelector("canvas")) ||
+        playerEl.querySelector("canvas");
+    }
+    return canvasEl;
+  }
+
+  function startFrameCapture() {
+    stopFrameCapture();
+    frameTimer = setInterval(captureFrame, 100);
+  }
+
+  function stopFrameCapture() {
+    if (frameTimer) {
+      clearInterval(frameTimer);
+      frameTimer = null;
+    }
+  }
+
+  function captureFrame() {
+    const src = getCanvas();
+    if (!src) return;
+    if (!tmpCanvas) {
+      tmpCanvas = document.createElement("canvas");
+      tmpCanvas.width = gameMeta.width;
+      tmpCanvas.height = gameMeta.height;
+      tmpCtx = tmpCanvas.getContext("2d");
+    }
+    tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
+    if (currentMouse) {
+      const x = currentMouse.x * gameMeta.width;
+      const y = currentMouse.y * gameMeta.height;
+      tmpCtx.fillStyle = "#ffe100";
+      tmpCtx.fillRect(x - 7, y - 1, 14, 2);
+      tmpCtx.fillRect(x - 1, y - 7, 2, 14);
+    }
+    tmpCanvas.toBlob(function (blob) {
+      if (blob) ArcadeNet.sendBlob(blob);
+    }, "image/jpeg", 0.6);
+  }
+
+  /* ---------------- 观战：渲染房主流帧 ---------------- */
+
+  function onFrame(blob) {
+    if (mode !== "viewer") return;
+    if (!viewerCtx) return;
+    createImageBitmap(blob)
+      .then(function (bmp) {
+        if (mode !== "viewer" || !viewerCtx) {
+          bmp.close();
+          return;
+        }
+        viewerCtx.drawImage(bmp, 0, 0, gameMeta.width, gameMeta.height);
+        bmp.close();
+      })
+      .catch(function () {});
+  }
+
+  /* ---------------- 输入：本地捕获 + 房主注入 ---------------- */
+
+  function allGameCodes() {
+    const set = new Set();
+    for (const s of gameMeta.seats) for (const k of s.keys) set.add(k);
+    return set;
+  }
+
+  function seatMeta(seat) {
+    return gameMeta.seats.find((s) => s.seat === seat);
+  }
+
+  function onKey(ev) {
+    if (!allGameCodes().has(ev.code)) return;
+    if (mySeat == null) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      return;
+    }
+    const meta = seatMeta(mySeat);
+    if (!meta.keys.includes(ev.code)) return;
+    ev.preventDefault();
+    if (!ev.isTrusted) return;
+    if (mode === "host") {
+      return; // 房主本地直通，真实事件已到达游戏
+    }
+    ArcadeNet.send({
+      t: "in",
+      kind: "key",
+      type: ev.type,
+      code: ev.code,
+      key: ev.key,
+      keyCode: ev.keyCode,
+      repeat: ev.repeat
+    });
+  }
+
+  function onPointer(ev) {
+    if (mySeat == null) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      return;
+    }
+    if (!ev.isTrusted) return;
+    const rect = stageEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const x = Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width));
+    const y = Math.min(1, Math.max(0, (ev.clientY - rect.top) / rect.height));
+    if (ev.type === "pointermove") {
+      const now = performance.now();
+      if (now - lastMoveSend < 30) return;
+      lastMoveSend = now;
+    }
+    if (mode === "host") {
+      currentMouse = { x, y };
+      return; // 房主本地直通
+    }
+    ArcadeNet.send({
+      t: "in",
+      kind: "mouse",
+      type: ev.type,
+      x,
+      y,
+      button: ev.button,
+      buttons: ev.buttons
+    });
+  }
+
+  function setupInput() {
+    window.addEventListener("keydown", onKey, true);
+    window.addEventListener("keyup", onKey, true);
+    stageEl.addEventListener("pointerdown", onPointer, true);
+    stageEl.addEventListener("pointermove", onPointer, true);
+    stageEl.addEventListener("pointerup", onPointer, true);
+  }
+
+  /* ---------------- 房主：注入远端输入（模拟按键/鼠标） ---------------- */
+
+  function onRemoteInput(m) {
+    if (mode !== "host") return;
+    if (m.kind === "key") {
+      injectKey(m.type, m.code, m.key, m.keyCode, m.repeat);
+    } else if (m.kind === "mouse") {
+      currentMouse = { x: m.x, y: m.y };
+      injectPointer(m.type, m.x, m.y, m.button, m.buttons);
+    }
+  }
+
+  function injectKey(type, code, key, keyCode, repeat) {
+    if (!playerEl) return;
+    try {
+      playerEl.dispatchEvent(
+        new KeyboardEvent(type, {
+          key: key || "",
+          code: code || "",
+          keyCode: keyCode || 0,
+          which: keyCode || 0,
+          repeat: !!repeat,
+          bubbles: true,
+          cancelable: true
+        })
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  let injectPointerId = null;
+  let injectSeq = 0;
+
+  function injectPointer(type, x, y, button, buttons) {
+    const canvas = getCanvas();
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    // 手势内（hover/down/up）使用同一个非 1 的稳定 pointerId：
+    // 1. Ruffle 对 id=1 的指针状态会卡死（历史注入遗留问题）
+    // 2. hover 与按下若用不同 id，Ruffle 按指针追踪按钮状态会错配
+    if (injectPointerId == null) {
+      injectPointerId = 1000 + ++injectSeq;
+    }
+    const pid = injectPointerId;
+    if (type === "pointerup" || type === "pointercancel") {
+      injectPointerId = null;
+    }
+    const clientX = rect.left + x * rect.width;
+    const clientY = rect.top + y * rect.height;
+    try {
+      const ev = new PointerEvent(type, {
+        clientX,
+        clientY,
+        button: button || 0,
+        buttons: buttons || 0,
+        pointerId: pid,
+        pointerType: "mouse",
+        isPrimary: true,
+        bubbles: true,
+        cancelable: true
+      });
+      Object.defineProperty(ev, "offsetX", { value: x * gameMeta.width });
+      Object.defineProperty(ev, "offsetY", { value: y * gameMeta.height });
+      canvas.dispatchEvent(ev);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  /* ---------------- 座位边界 ---------------- */
+
+  function onClearKeys(m) {
+    if (mode !== "host") return;
+    const meta = seatMeta(m.seat);
+    if (!meta) return;
+    for (const code of meta.keys) {
+      injectKey("keyup", code, "", 0, false);
+    }
+  }
+
+  /* ---------------- UI ---------------- */
 
   function render() {
     const me = state.members.find((m) => m.id === myId);
@@ -110,6 +386,19 @@
 
     document.getElementById("spec-notice").style.display =
       mySeat != null ? "none" : "block";
+
+    const hostMember = state.members.find((m) => m.id === state.hostId);
+    const hostEl = document.getElementById("host-line");
+    if (state.hostId === myId) {
+      hostEl.textContent = "你是房主：本机运行游戏，画面直播中";
+      document.getElementById("become-host").style.display = "none";
+    } else if (state.hostId == null) {
+      hostEl.textContent = "房间暂无房主（游戏未运行）";
+      document.getElementById("become-host").style.display = "block";
+    } else {
+      hostEl.textContent = "房主：" + (hostMember ? hostMember.name : "?") + "（画面由房主直播）";
+      document.getElementById("become-host").style.display = "none";
+    }
 
     for (const seat of [1, 2]) {
       const meta = gameMeta.seats.find((s) => s.seat === seat);
@@ -153,184 +442,31 @@
     }
   }
 
-  /* ---------------- Ruffle ---------------- */
-
-  function setupRuffle() {
-    window.RufflePlayer = window.RufflePlayer || {};
-    window.RufflePlayer.config = {
-      autoplay: "on",
-      letterbox: "off",
-      preferredRenderer: "webgl"
-    };
-    const ruffle = window.RufflePlayer.newest();
-    playerEl = ruffle.createPlayer();
-    playerEl.config = {
-      width: gameMeta.width,
-      height: gameMeta.height,
-      autoplay: "on",
-      letterbox: "off"
-    };
-    if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
-      playerEl.tabIndex = 0;
-    }
-    stageEl.appendChild(playerEl);
-    playerEl.load(gameMeta.swf);
+  function onMouseOwner(m) {
+    document.getElementById("mouse-owner").textContent = m.name || "无人";
   }
 
-  function getCanvas() {
-    if (!canvasEl) {
-      canvasEl =
-        (playerEl.shadowRoot && playerEl.shadowRoot.querySelector("canvas")) ||
-        playerEl.querySelector("canvas");
-    }
-    return canvasEl;
+  function onSys(m) {
+    let text = "";
+    if (m.action === "join") text = m.name + " 进入房间（观战）";
+    else if (m.action === "leave") text = m.name + " 离开了房间";
+    else if (m.action === "sit") text = m.name + " 坐上了 P" + m.seat;
+    else if (m.action === "host") text = m.name + " 成为房主（唯一播放器）";
+    else if (m.action === "hostLeft") text = m.name + "（房主）离开了，游戏已停止，可点击「成为房主」重启";
+    log(text, m.action);
   }
 
-  /* ---------------- 输入处理（本地真实事件直达 + 上报转发） ---------------- */
-
-  function allGameCodes() {
-    const set = new Set();
-    for (const s of gameMeta.seats) for (const k of s.keys) set.add(k);
-    return set;
+  function log(text, cls) {
+    const box = document.getElementById("log");
+    const d = document.createElement("div");
+    d.className = cls || "";
+    d.textContent = new Date().toLocaleTimeString() + " " + text;
+    box.appendChild(d);
+    while (box.children.length > 40) box.removeChild(box.firstChild);
+    box.scrollTop = box.scrollHeight;
   }
 
-  function seatMeta(seat) {
-    return gameMeta.seats.find((s) => s.seat === seat);
-  }
-
-  // 本地玩家的输入：真实事件直达 Ruffle（与本地版一致），同时上报给服务器转发；
-  // 游客/非本座位键：吞掉，保证本地副本只接收广播流。
-  function onKey(ev) {
-    if (!allGameCodes().has(ev.code)) return;
-    if (mySeat != null) {
-      const meta = seatMeta(mySeat);
-      if (meta.keys.includes(ev.code)) {
-        ev.preventDefault();
-        if (!ev.isTrusted) return;
-        if (ev.type === "keydown") heldKeys.add(ev.code);
-        else heldKeys.delete(ev.code);
-        ArcadeNet.send({
-          t: "in",
-          kind: "key",
-          type: ev.type,
-          code: ev.code,
-          key: ev.key,
-          keyCode: ev.keyCode,
-          repeat: ev.repeat
-        });
-        return;
-      }
-    }
-    ev.preventDefault();
-    ev.stopPropagation();
-  }
-
-  function onPointer(ev) {
-    if (mySeat == null) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      return;
-    }
-    if (!ev.isTrusted) return;
-    const rect = stageEl.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-    const x = Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width));
-    const y = Math.min(1, Math.max(0, (ev.clientY - rect.top) / rect.height));
-    if (ev.type === "pointermove") {
-      const now = performance.now();
-      if (now - lastMoveSend < 30) return;
-      lastMoveSend = now;
-    }
-    ArcadeNet.send({
-      t: "in",
-      kind: "mouse",
-      type: ev.type,
-      x,
-      y,
-      button: ev.button,
-      buttons: ev.buttons
-    });
-  }
-
-  function setupInput() {
-    window.addEventListener("keydown", onKey, true);
-    window.addEventListener("keyup", onKey, true);
-    stageEl.addEventListener("pointerdown", onPointer, true);
-    stageEl.addEventListener("pointermove", onPointer, true);
-    stageEl.addEventListener("pointerup", onPointer, true);
-  }
-
-  /* ---------------- 远程输入注入（模拟按键/鼠标进入 Ruffle） ---------------- */
-
-  function onRemoteInput(m) {
-    if (m.from === myId) return;
-    if (m.kind === "key") {
-      injectKey(m.type, m.code, m.key, m.keyCode, m.repeat);
-    } else if (m.kind === "mouse") {
-      injectPointer(m.type, m.x, m.y, m.button, m.buttons);
-    }
-  }
-
-  function injectKey(type, code, key, keyCode, repeat) {
-    if (!playerEl) return;
-    try {
-      playerEl.dispatchEvent(
-        new KeyboardEvent(type, {
-          key: key || "",
-          code: code || "",
-          keyCode: keyCode || 0,
-          which: keyCode || 0,
-          repeat: !!repeat,
-          bubbles: true,
-          cancelable: true
-        })
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  function injectPointer(type, x, y, button, buttons) {
-    const canvas = getCanvas();
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-    const clientX = rect.left + x * rect.width;
-    const clientY = rect.top + y * rect.height;
-    try {
-      const ev = new PointerEvent(type, {
-        clientX,
-        clientY,
-        button: button || 0,
-        buttons: buttons || 0,
-        pointerId: 1,
-        pointerType: "mouse",
-        isPrimary: true,
-        bubbles: true,
-        cancelable: true
-      });
-      Object.defineProperty(ev, "offsetX", { value: x * gameMeta.width });
-      Object.defineProperty(ev, "offsetY", { value: y * gameMeta.height });
-      canvas.dispatchEvent(ev);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  /* ---------------- 座位边界：clearKeys 时松开该座位全部按键 ---------------- */
-
-  function onClearKeys(m) {
-    const meta = seatMeta(m.seat);
-    if (!meta) return;
-    for (const code of meta.keys) {
-      injectKey("keyup", code, "", 0, false);
-    }
-    if (mySeat === m.seat) {
-      heldKeys.clear();
-    }
-  }
-
-  /* ---------------- 座位按钮 ---------------- */
+  /* ---------------- 按钮 ---------------- */
 
   document.querySelectorAll(".seat-row .btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -342,5 +478,9 @@
         ArcadeNet.send({ t: "sit", seat });
       }
     });
+  });
+
+  document.getElementById("become-host").addEventListener("click", () => {
+    ArcadeNet.send({ t: "becomeHost" });
   });
 })();

@@ -5,8 +5,8 @@ const fs = require("fs");
 const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const URL = "http://localhost:8000/room.html?game=46923&room=final";
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\final";
+const ROOM = "http://localhost:8000/room.html?game=46923&room=final2";
+const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\final2";
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
 function logline(s) {
@@ -40,6 +40,20 @@ function diffBuf(bufA, bufB) {
   return changed / (w * h);
 }
 
+async function capA(pageA) {
+  return pageA.evaluate(() => {
+    const el = document.querySelector("ruffle-player");
+    const c = el && el.shadowRoot ? el.shadowRoot.querySelector("canvas") : null;
+    return c ? c.toDataURL("image/png") : null;
+  });
+}
+async function capB(pageB) {
+  return pageB.evaluate(() => {
+    const c = document.querySelector("#stage canvas");
+    return c ? c.toDataURL("image/png") : null;
+  });
+}
+
 const clickSlow = async (page, x, y) => {
   await page.mouse.move(x, y);
   await new Promise((r) => setTimeout(r, 500));
@@ -55,100 +69,78 @@ const clickSlow = async (page, x, y) => {
     headless: "new",
     args: ["--no-sandbox", "--window-size=1400,1000"]
   });
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1400, height: 1000 });
-  page.on("console", (m) => {
-    if (m.type() !== "log") logline("[c] " + m.text().slice(0, 160));
+  const pageA = await browser.newPage();
+  await pageA.setViewport({ width: 1400, height: 1000 });
+  pageA.on("console", (m) => {
+    if (m.type() !== "log") logline("[A] " + m.text().slice(0, 140));
   });
+  const pageB = await browser.newPage();
+  await pageB.setViewport({ width: 1400, height: 1000 });
 
-  await page.goto(URL, { waitUntil: "domcontentloaded" });
-  await page.evaluate(() => localStorage.setItem("arcade_name", "小明"));
-  await page.goto(URL, { waitUntil: "domcontentloaded" });
+  const load = async (page, name) => {
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
+    await page.evaluate((n) => localStorage.setItem("arcade_name", n), name);
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
+  };
+  await load(pageA, "小明");
+  await load(pageB, "小红");
 
   for (let i = 0; i < 80; i++) {
-    const has = await page.evaluate(() => {
+    const ok = await pageA.evaluate(() => {
       const el = document.querySelector("ruffle-player");
       return !!(el && el.shadowRoot && el.shadowRoot.querySelector("canvas"));
     });
-    if (has) break;
+    if (ok) break;
     await new Promise((r) => setTimeout(r, 500));
   }
-  logline("game loaded");
+  logline("A 游戏已加载（房主）");
   await new Promise((r) => setTimeout(r, 12000));
-  logline("title ready");
 
-  await page.evaluate(() => document.querySelector("#seat-1 .btn").click());
-  await new Promise((r) => setTimeout(r, 800));
+  await pageA.evaluate(() => document.querySelector("#seat-1 .btn").click());
+  await pageB.evaluate(() => document.querySelector("#seat-2 .btn").click());
+  await new Promise((r) => setTimeout(r, 600));
 
-  const box = await page.evaluate(() => {
+  const box = await pageA.evaluate(() => {
     const r = document.getElementById("stage").getBoundingClientRect();
     return { x: r.x, y: r.y, w: r.width, h: r.height };
   });
-  logline("stage: " + JSON.stringify(box));
 
-  const shot = async (name) => {
-    const b = await page.screenshot({ encoding: "binary" });
-    fs.writeFileSync(path.join(OUT, name), b);
-    return b;
-  };
+  // 1) A 点 play → 双端画面同步
+  await clickSlow(pageA, box.x + box.w * 0.49, box.y + box.h * 0.85);
+  await new Promise((r) => setTimeout(r, 1500));
+  let a1 = await capA(pageA);
+  let b1 = await capB(pageB);
+  logline("步骤1 play 后双端差异: " + (diffBuf(Buffer.from(a1.split(",")[1], "base64"), Buffer.from(b1.split(",")[1], "base64")) * 100).toFixed(2) + "%");
 
-  // 1) 标题 -> play
-  const t0 = await shot("0_title.png");
-  await clickSlow(page, box.x + box.w * 0.49, box.y + box.h * 0.85);
-  const t1 = await shot("1_after_play.png");
-  logline("STEP play click: " + (diffBuf(t0, t1) * 100).toFixed(2) + "%");
+  // 2) A 点开始（选人界面）
+  await clickSlow(pageA, box.x + box.w * 0.5, box.y + box.h * 0.75);
+  await new Promise((r) => setTimeout(r, 4000));
+  a1 = await capA(pageA);
+  b1 = await capB(pageB);
+  logline("步骤2 开始后双端差异: " + (diffBuf(Buffer.from(a1.split(",")[1], "base64"), Buffer.from(b1.split(",")[1], "base64")) * 100).toFixed(2) + "%");
 
-  // 2) 选人界面扫描
-  let activated = false;
-  for (const [fx, fy] of [
-    [0.3, 0.5], [0.5, 0.5], [0.7, 0.5],
-    [0.3, 0.6], [0.5, 0.6], [0.7, 0.6],
-    [0.2, 0.75], [0.5, 0.75], [0.8, 0.75],
-    [0.5, 0.35], [0.5, 0.9]
-  ]) {
-    const before = await shot("s_b.png");
-    await clickSlow(page, box.x + box.w * fx, box.y + box.h * fy);
-    const after = await shot("s_a.png");
-    const d = diffBuf(before, after);
-    logline("select click (" + fx + "," + fy + "): " + (d * 100).toFixed(2) + "%");
-    if (d > 0.05) {
-      activated = true;
-      logline("SELECT ACTIVATED at (" + fx + "," + fy + ")");
-      break;
-    }
-  }
-  if (!activated) {
-    logline("select did not activate - trying more points");
-    for (const [fx, fy] of [[0.15, 0.8], [0.85, 0.8], [0.5, 0.15], [0.15, 0.3], [0.85, 0.3]]) {
-      const before = await shot("s_b.png");
-      await clickSlow(page, box.x + box.w * fx, box.y + box.h * fy);
-      const after = await shot("s_a.png");
-      const d = diffBuf(before, after);
-      logline("select click2 (" + fx + "," + fy + "): " + (d * 100).toFixed(2) + "%");
-      if (d > 0.05) {
-        activated = true;
-        logline("SELECT ACTIVATED at (" + fx + "," + fy + ")");
-        break;
-      }
-    }
+  // 3) B 按 P2 移动键 → A 的游戏应变化（B 驱动）
+  const before = await capA(pageA);
+  await pageB.keyboard.down("ArrowRight");
+  await new Promise((r) => setTimeout(r, 1500));
+  await pageB.keyboard.up("ArrowRight");
+  await new Promise((r) => setTimeout(r, 500));
+  const after = await capA(pageA);
+  if (before && after) {
+    const d = diffBuf(Buffer.from(before.split(",")[1], "base64"), Buffer.from(after.split(",")[1], "base64"));
+    logline("步骤3 B按→ 驱动 A 画面变化: " + (d * 100).toFixed(2) + "%");
+  } else {
+    logline("步骤3 截屏失败");
   }
 
-  // 3) 键盘测试
-  if (activated) {
-    await new Promise((r) => setTimeout(r, 2000));
-    const k1 = await shot("k_before.png");
-    await page.keyboard.down("d");
-    await new Promise((r) => setTimeout(r, 1200));
-    const k2 = await shot("k_holding.png");
-    await page.keyboard.up("d");
-    logline("KEY D: " + (diffBuf(k1, k2) * 100).toFixed(2) + "%");
-    await new Promise((r) => setTimeout(r, 500));
-    const k3 = await shot("k_after.png");
-    logline("KEY D after-release: " + (diffBuf(k1, k3) * 100).toFixed(2) + "%");
-  }
+  // 4) B 的画面应跟随 A
+  await new Promise((r) => setTimeout(r, 1500));
+  a1 = await capA(pageA);
+  b1 = await capB(pageB);
+  logline("步骤4 最终双端差异: " + (diffBuf(Buffer.from(a1.split(",")[1], "base64"), Buffer.from(b1.split(",")[1], "base64")) * 100).toFixed(2) + "%");
 
   await browser.close();
-  logline("E2E DONE");
+  logline("FINAL E2E DONE");
   process.exit(0);
 })().catch((e) => {
   logline("FAIL: " + e.message);

@@ -17,6 +17,10 @@ const ArcadeNet = (() => {
     };
     ws.onerror = () => {};
     ws.onmessage = (ev) => {
+      if (ev.data instanceof Blob || ev.data instanceof ArrayBuffer) {
+        fire("frame", ev.data);
+        return;
+      }
       let msg;
       try {
         msg = JSON.parse(ev.data);
@@ -45,6 +49,9 @@ const ArcadeNet = (() => {
     },
     send(msg) {
       if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg));
+    },
+    sendBlob(blob) {
+      if (ws && ws.readyState === 1) ws.send(blob);
     },
     get connected() {
       return connected;
