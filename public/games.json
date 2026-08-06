@@ -1,0 +1,25 @@
+[
+  {
+    "id": "46923",
+    "title": "火柴人打羽毛球",
+    "source": "4399",
+    "swf": "/games/46923/game.swf",
+    "width": 550,
+    "height": 400,
+    "room": "lobby",
+    "seats": [
+      {
+        "seat": 1,
+        "label": "玩家1 (P1)",
+        "hint": "A/D 移动 · W 跳 · S 蹲",
+        "keys": ["KeyA", "KeyD", "KeyW", "KeyS"]
+      },
+      {
+        "seat": 2,
+        "label": "玩家2 (P2)",
+        "hint": "←/→ 移动 · ↑ 跳 · ↓ 蹲",
+        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
+      }
+    ]
+  }
+]

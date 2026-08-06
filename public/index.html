@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArcadeOnline - 童年游戏联机平台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>ArcadeOnline</h1>
+  <span class="crumb">童年游戏联机平台</span>
+</header>
+
+<div class="login-card" id="login-card">
+  <h2>进入平台</h2>
+  <input id="name-input" maxlength="12" placeholder="输入你的昵称">
+  <button class="btn" id="name-btn">开始游玩</button>
+</div>
+
+<div class="container" id="lobby" style="display:none">
+  <p>你好，<b id="hello-name"></b> <a href="#" id="rename">(改名)</a> · 选择游戏进入房间，占座后即可操作，未占座时自动进入观战。</p>
+  <div class="game-grid" id="game-grid"></div>
+</div>
+
+<script src="/arcade.js"></script>
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const next = params.get("next");
+
+  const card = document.getElementById("login-card");
+  const lobby = document.getElementById("lobby");
+  const input = document.getElementById("name-input");
+  const btn = document.getElementById("name-btn");
+
+  if (arcadeName()) {
+    showLobby();
+  } else {
+    input.value = "";
+    input.focus();
+  }
+
+  function showLobby() {
+    card.style.display = "none";
+    lobby.style.display = "block";
+    document.getElementById("hello-name").textContent = arcadeName();
+    fetch("/games.json")
+      .then((r) => r.json())
+      .then(renderGames)
+      .catch((e) => console.error(e));
+  }
+
+  function renderGames(games) {
+    const grid = document.getElementById("game-grid");
+    grid.innerHTML = "";
+    for (const g of games) {
+      const d = document.createElement("div");
+      d.className = "game-card";
+      const seatText = g.seats
+        .map((s) => s.label + "：「" + s.hint + "」")
+        .join("；");
+      d.innerHTML =
+        "<h3>" + g.title + "</h3>" +
+        "<div class='meta'>来源 " + g.source + " · 常驻房间 " + g.room + "</div>" +
+        "<div class='hint'>" + seatText + "</div>" +
+        "<a class='btn' href='/room.html?game=" + encodeURIComponent(g.id) + "&room=" + encodeURIComponent(g.room) + "'>进入房间</a>";
+      grid.appendChild(d);
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    const n = input.value.trim().slice(0, 12);
+    if (!n) {
+      input.focus();
+      return;
+    }
+    localStorage.setItem("arcade_name", n);
+    showLobby();
+    if (next) location.href = next;
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") btn.click();
+  });
+
+  document.getElementById("rename").addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("arcade_name");
+    location.href = "/";
+  });
+})();
+</script>
+</body>
+</html>

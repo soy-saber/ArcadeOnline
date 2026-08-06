@@ -1,0 +1,298 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #141a2e;
+  color: #e8eaf2;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  min-height: 100vh;
+}
+
+a {
+  color: #7ec8ff;
+  text-decoration: none;
+}
+
+header.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #1b2440;
+  border-bottom: 2px solid #e94560;
+  flex-wrap: wrap;
+}
+
+header.topbar h1 {
+  font-size: 20px;
+  color: #fff;
+}
+
+header.topbar .crumb {
+  color: #9aa5c4;
+  font-size: 13px;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: #2a3557;
+}
+
+.badge.ok {
+  background: #1f6f43;
+  color: #b8f5c9;
+}
+
+.badge.bad {
+  background: #8a3b3b;
+  color: #ffd6d6;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* ---------- lobby ---------- */
+.login-card {
+  max-width: 460px;
+  margin: 60px auto;
+  background: #1b2440;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #3a4a75;
+  background: #10162a;
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  background: #e94560;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #ff5b77;
+}
+
+.btn:disabled {
+  background: #4a5470;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  background: #2a3557;
+}
+
+.btn.ghost:hover {
+  background: #3a4a75;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.game-card {
+  background: #1b2440;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #263158;
+  transition: border-color .2s;
+}
+
+.game-card:hover {
+  border-color: #e94560;
+}
+
+.game-card h3 {
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
+.game-card .meta {
+  color: #9aa5c4;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.game-card .hint {
+  font-size: 12px;
+  color: #7ec8ff;
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+/* ---------- room ---------- */
+#layout {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#stage-wrap {
+  position: relative;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .5);
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+#stage canvas {
+  display: block;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 28, .55);
+  font-size: 15px;
+  color: #fff;
+  text-align: center;
+  line-height: 1.8;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+#overlay.show {
+  opacity: 1;
+}
+
+aside {
+  flex: 1;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+section.panel {
+  background: #1b2440;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #263158;
+}
+
+section.panel h4 {
+  font-size: 14px;
+  color: #9aa5c4;
+  margin-bottom: 12px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #10162a;
+  margin-bottom: 8px;
+}
+
+.seat-row .seat-name {
+  font-size: 15px;
+  font-weight: bold;
+  min-width: 96px;
+}
+
+.seat-row.p1 .seat-name {
+  color: #7ec8ff;
+}
+
+.seat-row.p2 .seat-name {
+  color: #ffb07e;
+}
+
+.seat-row .who {
+  flex: 1;
+  font-size: 14px;
+  color: #e8eaf2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seat-row .who.mine {
+  color: #7cffb2;
+}
+
+.seat-row .btn {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+.mouse-line {
+  font-size: 13px;
+  color: #9aa5c4;
+  padding: 8px 2px 0;
+}
+
+.mouse-line b {
+  color: #ffd166;
+}
+
+#spec-list {
+  list-style: none;
+}
+
+#spec-list li {
+  font-size: 13px;
+  padding: 4px 2px;
+  color: #b9c2dd;
+  border-bottom: 1px dashed #263158;
+}
+
+#log {
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: #9aa5c4;
+  line-height: 1.8;
+}
+
+#log div.sys {
+  color: #7ec8ff;
+}
+
+#log div.sit {
+  color: #ffd166;
+}
+
+#log div.leave {
+  color: #ff9f9f;
+}
