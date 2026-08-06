@@ -1,5 +1,5 @@
 @echo off
-rem ArcadeOnline 服务器看门狗：崩溃后自动重启
+rem ArcadeOnline server watchdog: auto-restart on crash
 title ArcadeOnline Server
 cd /d "%~dp0"
 :loop
