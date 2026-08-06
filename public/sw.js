@@ -32,6 +32,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+let botCount = 0;
 self.addEventListener("fetch", (event) => {
   let url;
   try {
@@ -40,6 +41,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (url.hostname === "mochibot.com") {
+    botCount++;
     event.respondWith(botSwfResponse());
+  }
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data === "stats") {
+    event.ports[0].postMessage({ bots: botCount });
   }
 });

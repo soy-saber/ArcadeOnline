@@ -11,14 +11,20 @@
       {
         "seat": 1,
         "label": "玩家1 (P1)",
-        "hint": "A/D 移动 · W 跳 · S 蹲",
+        "hint": "W/A/S/D",
         "keys": ["KeyA", "KeyD", "KeyW", "KeyS"]
       },
       {
         "seat": 2,
         "label": "玩家2 (P2)",
-        "hint": "←/→ 移动 · ↑ 跳 · ↓ 蹲",
-        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
+        "hint": "W/A/S/D（自动映射为方向键）",
+        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"],
+        "map": {
+          "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },
+          "KeyA": { "code": "ArrowLeft", "key": "ArrowLeft", "keyCode": 37 },
+          "KeyS": { "code": "ArrowDown", "key": "ArrowDown", "keyCode": 40 },
+          "KeyD": { "code": "ArrowRight", "key": "ArrowRight", "keyCode": 39 }
+        }
       }
     ]
   }

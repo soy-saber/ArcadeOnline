@@ -4,16 +4,23 @@ const ArcadeNet = (() => {
   let ws = null;
   let handlers = {};
   let connected = false;
+  let retryDelay = 1500;
 
   function connect(url) {
     ws = new WebSocket(url);
+    ws.binaryType = "blob";
     ws.onopen = () => {
       connected = true;
+      retryDelay = 1500;
       fire("conn", true);
     };
     ws.onclose = () => {
       connected = false;
       fire("conn", false);
+      setTimeout(() => {
+        if (!connected) connect(url);
+      }, retryDelay);
+      retryDelay = Math.min(retryDelay * 2, 6000);
     };
     ws.onerror = () => {};
     ws.onmessage = (ev) => {

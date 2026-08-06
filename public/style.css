@@ -179,6 +179,26 @@ header.topbar .crumb {
   display: block;
 }
 
+#stage-status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: #ffd166;
+  font-size: 15px;
+  line-height: 1.8;
+  padding: 12px;
+  background: rgba(10, 14, 28, .72);
+  pointer-events: none;
+  display: none;
+}
+
+#stage-status.show {
+  display: block;
+}
+
 aside {
   flex: 1;
   min-width: 260px;

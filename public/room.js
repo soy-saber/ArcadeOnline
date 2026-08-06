@@ -1,6 +1,17 @@
 "use strict";
 
 (function () {
+  // WebGL 上下文劫持：强制 preserveDrawingBuffer，保证能读回画面帧（否则捕获全黑）
+  (function patchWebGL() {
+    const orig = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, attrs) {
+      if (typeof type === "string" && type.indexOf("webgl") === 0) {
+        attrs = Object.assign({ preserveDrawingBuffer: true }, attrs || {});
+      }
+      return orig.call(this, type, attrs);
+    };
+  })();
+
   const params = new URLSearchParams(location.search);
   const gameId = params.get("game") || "46923";
   const roomName = params.get("room") || "lobby";
@@ -81,6 +92,7 @@
     } else {
       if (mode !== "viewer") becomeViewerMode();
     }
+    startStatusWatch();
     render();
   }
 
@@ -108,6 +120,50 @@
       viewerCtx.fillRect(0, 0, gameMeta.width, gameMeta.height);
     }
     stageEl.appendChild(viewerCanvas);
+    lastFrameAt = 0;
+  }
+
+  let lastFrameAt = 0;
+  let statusTimer = null;
+
+  function startStatusWatch() {
+    stopStatusWatch();
+    statusTimer = setInterval(updateStageStatus, 1000);
+    updateStageStatus();
+  }
+
+  function stopStatusWatch() {
+    if (statusTimer) {
+      clearInterval(statusTimer);
+      statusTimer = null;
+    }
+  }
+
+  function updateStageStatus() {
+    const el = document.getElementById("stage-status");
+    if (!el) return;
+    if (state.hostId == null) {
+      el.textContent = "房间暂无房主，游戏未运行——点击右侧「成为房主」开始直播";
+      el.classList.add("show");
+      return;
+    }
+    if (mode === "viewer") {
+      const hostMember = state.members.find((m) => m.id === state.hostId);
+      const hostName = hostMember ? hostMember.name : "房主";
+      if (Date.now() - lastFrameAt < 2500) {
+        el.classList.remove("show");
+      } else if (lastFrameAt > 0) {
+        el.textContent = "画面中断：已停止收到 " + hostName + " 的直播，正在等待…";
+        el.classList.add("show");
+      } else {
+        el.textContent = "正在等待 " + hostName + " 的直播画面…";
+        el.classList.add("show");
+      }
+      return;
+    }
+    if (mode === "host") {
+      el.classList.remove("show");
+    }
   }
 
   function destroyPlayer() {
@@ -123,6 +179,8 @@
   // Service Worker：拦截已死亡的 mochibot.com，用本地极简 SWF 冒充，
   // 使 4399 老游戏通过内置的反盗链校验（域名校验要求 URL 原样保留）。
   // 注意：SW 仅安全上下文可用（localhost / HTTPS），纯 HTTP 局域网不可用。
+  // 关键：必须等页面被 SW 接管（controllerchange）后再加载游戏，
+  // 否则首次访问时 mochibot 请求会逃逸到真实网络（域名已死 → 游戏永久卡死）。
   function setupSw() {
     if (!("serviceWorker" in navigator)) return Promise.resolve();
     return navigator.serviceWorker
@@ -142,7 +200,8 @@
     window.RufflePlayer.config = {
       autoplay: "on",
       letterbox: "off",
-      preferredRenderer: "webgl"
+      preferredRenderer: "webgl",
+      preserveDrawingBuffer: true
     };
     const ruffle = window.RufflePlayer.newest();
     ruffleApi = ruffle;
@@ -151,7 +210,8 @@
       width: gameMeta.width,
       height: gameMeta.height,
       autoplay: "on",
-      letterbox: "off"
+      letterbox: "off",
+      preserveDrawingBuffer: true
     };
     if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
       playerEl.tabIndex = 0;
@@ -208,6 +268,7 @@
   function onFrame(blob) {
     if (mode !== "viewer") return;
     if (!viewerCtx) return;
+    lastFrameAt = Date.now();
     createImageBitmap(blob)
       .then(function (bmp) {
         if (mode !== "viewer" || !viewerCtx) {
@@ -232,27 +293,55 @@
     return gameMeta.seats.find((s) => s.seat === seat);
   }
 
+  // 座位物理键集合 + 映射表：
+  // 有 map 时（如 P2 也按 WASD）：物理键不在 map 里的游戏键一律挡掉，
+  // 物理键被映射成该座位真正对应的游戏键（如 KeyD -> ArrowRight）。
+  function seatKeys(seat) {
+    const meta = seatMeta(seat);
+    if (!meta) return null;
+    if (meta.map) return { physical: new Set(Object.keys(meta.map)), map: meta.map };
+    return { physical: new Set(meta.keys), map: null };
+  }
+
   function onKey(ev) {
-    if (!allGameCodes().has(ev.code)) return;
+    if (!ev.isTrusted) return; // 合成注入事件直接放行（注入键已通过座位白名单+映射校验）
     if (mySeat == null) {
-      ev.preventDefault();
-      ev.stopPropagation();
+      // 观战：游戏键全部挡掉，不能污染游戏
+      if (allGameCodes().has(ev.code)) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+      }
       return;
     }
-    const meta = seatMeta(mySeat);
-    if (!meta.keys.includes(ev.code)) return;
+    const m = seatKeys(mySeat);
+    if (!m || !m.physical.has(ev.code)) {
+      // 属于其他座位的键：彻底挡掉（房主的原生按键也不会漏给游戏）
+      if (allGameCodes().has(ev.code)) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+      }
+      return;
+    }
     ev.preventDefault();
-    if (!ev.isTrusted) return;
+    const mapped = m.map ? m.map[ev.code] : null;
+    const code = mapped ? mapped.code : ev.code;
+    const key = mapped ? mapped.key : ev.key;
+    const keyCode = mapped ? mapped.keyCode : ev.keyCode;
     if (mode === "host") {
-      return; // 房主本地直通，真实事件已到达游戏
+      if (mapped) {
+        // 映射键：挡掉原生事件，注入映射后的游戏键
+        ev.stopImmediatePropagation();
+        injectKey(ev.type, code, key, keyCode, ev.repeat);
+      }
+      return; // 自己的原生游戏键直通
     }
     ArcadeNet.send({
       t: "in",
       kind: "key",
       type: ev.type,
-      code: ev.code,
-      key: ev.key,
-      keyCode: ev.keyCode,
+      code,
+      key,
+      keyCode,
       repeat: ev.repeat
     });
   }
@@ -311,7 +400,9 @@
   function injectKey(type, code, key, keyCode, repeat) {
     if (!playerEl) return;
     try {
-      playerEl.dispatchEvent(
+      // dispatch 到 window：Ruffle 的键盘监听可能挂在 window 捕获阶段，
+      // 若只 dispatch 到 playerEl 则捕获阶段不会触发（注入会被静默忽略）
+      window.dispatchEvent(
         new KeyboardEvent(type, {
           key: key || "",
           code: code || "",
@@ -414,7 +505,7 @@
         btn.textContent = "占座";
         btn.disabled = false;
       } else if (occupantId === myId) {
-        who.textContent = "你";
+        who.textContent = occupant ? occupant.name + "（你）" : "你";
         who.classList.add("mine");
         btn.textContent = "离座";
         btn.disabled = false;
