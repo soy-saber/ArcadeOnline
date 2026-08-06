@@ -68,20 +68,36 @@ function sanitizeName(raw) {
 
 function sendTo(ws, msg) {
   if (ws && ws.readyState === 1) {
-    ws.send(typeof msg === "string" ? msg : JSON.stringify(msg));
+    try {
+      ws.send(typeof msg === "string" ? msg : JSON.stringify(msg));
+    } catch (e) {
+      console.error("[send] " + e.message);
+    }
   }
 }
 
 function broadcast(room, msg) {
   const data = JSON.stringify(msg);
   for (const m of room.members.values()) {
-    if (m.ws.readyState === 1) m.ws.send(data);
+    if (m.ws.readyState === 1) {
+      try {
+        m.ws.send(data);
+      } catch (e) {
+        console.error("[broadcast] " + e.message);
+      }
+    }
   }
 }
 
 function broadcastRaw(room, data, exceptId) {
   for (const m of room.members.values()) {
-    if (m.id !== exceptId && m.ws.readyState === 1) m.ws.send(data);
+    if (m.id !== exceptId && m.ws.readyState === 1) {
+      try {
+        m.ws.send(data);
+      } catch (e) {
+        console.error("[broadcastRaw] " + e.message);
+      }
+    }
   }
 }
 
@@ -345,4 +361,11 @@ setInterval(() => {
 
 server.listen(PORT, () => {
   console.log("ArcadeOnline server: http://localhost:" + PORT);
+});
+
+process.on("uncaughtException", (e) => {
+  console.error("[uncaughtException] " + (e && e.stack ? e.stack : e));
+});
+process.on("unhandledRejection", (e) => {
+  console.error("[unhandledRejection] " + (e && e.stack ? e.stack : e));
 });
