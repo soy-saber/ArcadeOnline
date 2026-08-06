@@ -93,14 +93,8 @@
     const me = state.members.find((m) => m.id === myId);
     mySeat = me ? me.seat : null;
 
-    const overlay = document.getElementById("overlay");
-    if (mySeat != null) {
-      overlay.classList.remove("show");
-    } else {
-      overlay.textContent =
-        "观战中 · 点击右侧座位占座即可操作\n（游客输入不会进入游戏）";
-      overlay.classList.add("show");
-    }
+    document.getElementById("spec-notice").style.display =
+      mySeat != null ? "none" : "block";
 
     for (const seat of [1, 2]) {
       const meta = gameMeta.seats.find((s) => s.seat === seat);
@@ -163,10 +157,28 @@
     };
     stageEl.appendChild(playerEl);
     playerEl.load(gameMeta.swf);
+    applyScale();
+    window.addEventListener("resize", applyScale);
+  }
+
+  function applyScale() {
+    const wrap = document.getElementById("stage-wrap");
+    const aside = document.querySelector("aside");
+    const asideW = aside ? aside.offsetWidth : 300;
+    const avail = window.innerWidth - asideW - 90;
+    const scale = Math.min(1.6, Math.max(1, avail / gameMeta.width));
+    wrap.style.width = Math.round(gameMeta.width * scale) + "px";
+    wrap.style.height = Math.round(gameMeta.height * scale) + "px";
+    stageEl.style.transform = "scale(" + scale + ")";
+    stageEl.style.transformOrigin = "0 0";
   }
 
   function getCanvas() {
-    if (!canvasEl) canvasEl = playerEl.querySelector("canvas");
+    if (!canvasEl) {
+      canvasEl =
+        (playerEl.shadowRoot && playerEl.shadowRoot.querySelector("canvas")) ||
+        playerEl.querySelector("canvas");
+    }
     return canvasEl;
   }
 
@@ -293,8 +305,8 @@
         bubbles: true,
         cancelable: true
       });
-      Object.defineProperty(ev, "offsetX", { value: x * rect.width });
-      Object.defineProperty(ev, "offsetY", { value: y * rect.height });
+      Object.defineProperty(ev, "offsetX", { value: x * gameMeta.width });
+      Object.defineProperty(ev, "offsetY", { value: y * gameMeta.height });
       canvas.dispatchEvent(ev);
     } catch (e) {
       console.error(e);
