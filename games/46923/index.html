@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火柴人打羽毛球 - ArcadeOnline</title>
+<script src="../../libs/ruffle/ruffle.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    width: 100%;
+    padding: 12px 0;
+    text-align: center;
+    background: #16213e;
+    border-bottom: 2px solid #e94560;
+  }
+  header h1 { font-size: 20px; }
+  header .meta { font-size: 12px; color: #888; margin-top: 4px; }
+  #stage {
+    margin: 24px auto;
+    background: #0f3460;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    overflow: hidden;
+    line-height: 0;
+  }
+  #stage canvas { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>火柴人打羽毛球</h1>
+  <div class="meta">ArcadeOnline · Flash 游戏 · 46923</div>
+</header>
+<div id="stage"></div>
+<script>
+  window.RufflePlayer = window.RufflePlayer || {};
+  window.RufflePlayer.config = {
+    autoplay: "on",
+    letterbox: "on",
+    preferredRenderer: "webgl"
+  };
+  const stage = document.getElementById("stage");
+  const ruffle = window.RufflePlayer.newest();
+  const player = ruffle.createPlayer();
+  player.config = {
+    width: 550,
+    height: 400,
+    autoplay: "on",
+    letterbox: "on"
+  };
+  stage.appendChild(player);
+  player.load("game.swf");
+</script>
+</body>
+</html>
