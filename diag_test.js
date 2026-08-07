@@ -7,7 +7,8 @@ const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
-const ROOM = BASE_URL + "/room.html?game=46923&room=pipe" + Date.now();
+const GAME_ID = process.env.GAME_ID || "46923";
+const ROOM = BASE_URL + "/room.html?game=" + GAME_ID + "&room=pipe" + Date.now();
 const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "diag");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "diag.log");
@@ -86,6 +87,20 @@ function logline(s) {
   await new Promise((r) => setTimeout(r, 800));
   got = await pageA.evaluate(() => window.__inKeys.slice());
   logline("6) A(房主)按WASD-D → A收到: [" + got.join(", ") + "]" + (got.length === 0 ? " ✓ 原生直通" : " ✗ 意外回环"));
+
+  if (GAME_ID === "3881") {
+    await pageA.evaluate(() => (window.__inKeys = []));
+    await pageB.keyboard.down("Space");
+    await pageB.keyboard.up("Space");
+    await new Promise((r) => setTimeout(r, 800));
+    got = await pageA.evaluate(() => window.__inKeys.slice());
+    logline(
+      "6b) B按空格放炸弹 → A收到: [" +
+        got.join(", ") +
+        "]" +
+        (got.includes("keydown:Enter") && got.includes("keyup:Enter") ? " ✓ 映射生效" : " ✗")
+    );
+  }
 
   // 7. 空游客不能注入（观战无座位按键被挡）
   await pageA.evaluate(() => (window.__inKeys = []));

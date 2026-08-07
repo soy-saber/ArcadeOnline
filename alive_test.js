@@ -6,7 +6,8 @@ const os = require("os");
 const path = require("path");
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
-const ROOM = BASE_URL + "/room.html?game=46923&room=alive" + Date.now();
+const GAME_ID = process.env.GAME_ID || "46923";
+const ROOM = BASE_URL + "/room.html?game=" + GAME_ID + "&room=alive" + Date.now();
 const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "alive");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");

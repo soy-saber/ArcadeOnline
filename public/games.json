@@ -27,5 +27,35 @@
         }
       }
     ]
+  },
+  {
+    "id": "3881",
+    "title": "Q版泡泡堂",
+    "source": "4399",
+    "swf": "/games/3881/game.swf",
+    "width": 550,
+    "height": 400,
+    "room": "lobby",
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "W/A/S/D + 空格",
+        "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "W/A/S/D + 空格",
+        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"],
+        "map": {
+          "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },
+          "KeyA": { "code": "ArrowLeft", "key": "ArrowLeft", "keyCode": 37 },
+          "KeyS": { "code": "ArrowDown", "key": "ArrowDown", "keyCode": 40 },
+          "KeyD": { "code": "ArrowRight", "key": "ArrowRight", "keyCode": 39 },
+          "Space": { "code": "Enter", "key": "Enter", "keyCode": 13 }
+        }
+      }
+    ]
   }
 ]

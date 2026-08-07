@@ -58,7 +58,7 @@ async function startServer() {
   });
 }
 
-async function createClient(name, session) {
+async function createClient(name, session, gameId = "46923", roomName = room) {
   const ws = new WebSocket(url);
   const client = { ws, name, session, id: null, states: [], sys: [], errors: [], inputs: [] };
   clients.add(client);
@@ -75,7 +75,7 @@ async function createClient(name, session) {
     ws.once("open", resolve);
     ws.once("error", reject);
   });
-  ws.send(JSON.stringify({ t: "join", name, session, gameId: "46923", room }));
+  ws.send(JSON.stringify({ t: "join", name, session, gameId, room: roomName }));
   await waitUntil(() => client.id && client.states.length, name + " 加入房间");
   return client;
 }
@@ -164,7 +164,26 @@ function assertHostInvariant(state) {
   assert.equal(shim.length, 26, "Mochibot 替代 SWF 长度应正确");
   assert.equal(shim.readUInt16LE(22), 0x0040, "Mochibot 替代 SWF 应包含合法 ShowFrame 标签");
 
-  console.log("SMOKE PASS: 状态机、会话恢复、输入转发和 Mochibot 替代资源均通过");
+  const bombRoom = "bomb-" + Date.now();
+  const bombHost = await createClient("BombHost", "session_bomb_host_123", "3881", bombRoom);
+  const bombP2 = await createClient("BombP2", "session_bomb_p2_12345", "3881", bombRoom);
+  send(bombP2, { t: "sit", seat: 2 });
+  await waitForState(bombP2, (state) => state.seats[2] === bombP2.id, "炸弹人 P2 入座");
+  send(bombP2, {
+    t: "in",
+    kind: "key",
+    type: "keydown",
+    code: "Enter",
+    key: "Enter",
+    keyCode: 13
+  });
+  const bombInput = await waitUntil(
+    () => bombHost.inputs.find((input) => input.from === bombP2.id),
+    "炸弹人 P2 放炸弹输入转发"
+  );
+  assert.equal(bombInput.code, "Enter", "炸弹人 P2 放炸弹必须映射为回车键");
+
+  console.log("SMOKE PASS: 状态机、会话恢复、两款游戏输入转发和替代资源均通过");
 })()
   .catch((error) => {
     console.error(error.stack || error);
