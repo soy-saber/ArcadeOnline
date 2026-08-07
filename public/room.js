@@ -400,9 +400,11 @@
   function injectKey(type, code, key, keyCode, repeat) {
     if (!playerEl) return;
     try {
-      // dispatch 到 window：Ruffle 的键盘监听可能挂在 window 捕获阶段，
-      // 若只 dispatch 到 playerEl 则捕获阶段不会触发（注入会被静默忽略）
-      window.dispatchEvent(
+      // 关键：必须 dispatch 到 playerEl（RufflePlayer 元素）而不是 window。
+      // Ruffle 的键盘监听挂在 RufflePlayer 元素上（见 ruffle.js virtualKeyboardInput：
+      // Ruffle 自身注入键盘就是 this.element.dispatchEvent(new KeyboardEvent(...))）。
+      // dispatch 到 window 时事件路径不经过该元素，Ruffle 收不到，远端按键全部失效。
+      playerEl.dispatchEvent(
         new KeyboardEvent(type, {
           key: key || "",
           code: code || "",
@@ -475,6 +477,9 @@
     const me = state.members.find((m) => m.id === myId);
     mySeat = me ? me.seat : null;
 
+    document.getElementById("mouse-owner").textContent =
+      state.mouseOwnerName || "无人";
+
     document.getElementById("spec-notice").style.display =
       mySeat != null ? "none" : "block";
 
@@ -494,7 +499,7 @@
     for (const seat of [1, 2]) {
       const meta = gameMeta.seats.find((s) => s.seat === seat);
       const row = document.getElementById("seat-" + seat);
-      row.querySelector(".seat-name").textContent = meta.label + " " + meta.hint;
+      row.querySelector(".seat-name").textContent = meta.label + " · " + meta.hint;
       const occupantId = state.seats[seat];
       const occupant = state.members.find((m) => m.id === occupantId);
       const who = row.querySelector(".who");
@@ -564,7 +569,7 @@
       const seat = Number(btn.dataset.seat);
       const me = state.members.find((x) => x.id === myId);
       if (me && me.seat === seat) {
-        ArcadeNet.send({ t: "leave" });
+        ArcadeNet.send({ t: "leaveSeat" });
       } else if (!state.seats[seat]) {
         ArcadeNet.send({ t: "sit", seat });
       }
@@ -573,5 +578,11 @@
 
   document.getElementById("become-host").addEventListener("click", () => {
     ArcadeNet.send({ t: "becomeHost" });
+  });
+
+  document.getElementById("leave-room").addEventListener("click", (e) => {
+    e.preventDefault();
+    ArcadeNet.send({ t: "leave" });
+    location.href = "/";
   });
 })();

@@ -10,14 +10,14 @@
     "seats": [
       {
         "seat": 1,
-        "label": "玩家1 (P1)",
+        "label": "P1",
         "hint": "W/A/S/D",
         "keys": ["KeyA", "KeyD", "KeyW", "KeyS"]
       },
       {
         "seat": 2,
-        "label": "玩家2 (P2)",
-        "hint": "W/A/S/D（自动映射为方向键）",
+        "label": "P2",
+        "hint": "W/A/S/D",
         "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"],
         "map": {
           "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },

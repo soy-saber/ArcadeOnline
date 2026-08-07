@@ -55,8 +55,47 @@ function getRoom(gameId, roomName) {
       members: new Map()
     };
     rooms.set(key, room);
+  } else if (room._cleanup) {
+    clearTimeout(room._cleanup);
+    room._cleanup = null;
   }
   return room;
+}
+
+// 房间无人后定时清理，防止 rooms Map 无限增长
+function scheduleRoomCleanup(room) {
+  if (room._cleanup) clearTimeout(room._cleanup);
+  room._cleanup = setTimeout(() => {
+    if (room.members.size === 0) rooms.delete(room.key);
+  }, 30 * 60 * 1000);
+  room._cleanup.unref();
+}
+
+// 房主离开后自动转移：优先座位玩家，否则最早加入的成员
+function transferHost(room) {
+  let next = null;
+  for (const s of [1, 2]) {
+    if (room.seats[s] != null) {
+      next = room.seats[s];
+      break;
+    }
+  }
+  if (next == null) {
+    const it = room.members.values();
+    const first = it.next();
+    if (!first.done) next = first.value.id;
+  }
+  if (next == null) return;
+  room.hostId = next;
+  const nm = room.members.get(next);
+  if (nm) broadcast(room, { t: "sys", name: nm.name, action: "host" });
+  // 兜底：重置所有座位按键状态，防止旧房主遗留的按下状态导致新游戏卡键
+  const host = room.members.get(room.hostId);
+  if (host) {
+    for (const s of [1, 2]) {
+      if (room.seats[s] != null) sendTo(host.ws, { t: "clearKeys", seat: s });
+    }
+  }
 }
 
 function sanitizeName(raw) {
@@ -106,8 +145,8 @@ function seatState(room) {
   for (const m of room.members.values()) {
     members.push({ id: m.id, name: m.name, seat: m.seat });
   }
-  const mouseOwnerName = room.mouseOwner
-    ? (room.members.get(room.mouseOwner) || {}).name || null
+  const mouseOwnerName = room.hostId
+    ? (room.members.get(room.hostId) || {}).name || null
     : null;
   return {
     t: "state",
@@ -115,7 +154,7 @@ function seatState(room) {
     room: room.name,
     members,
     seats: { ...room.seats },
-    mouseOwner: room.mouseOwner,
+    mouseOwner: room.hostId,
     mouseOwnerName,
     hostId: room.hostId
   };
@@ -254,6 +293,9 @@ wss.on("connection", (ws) => {
         }
         room.hostId = clientId;
         broadcast(room, { t: "sys", name: member.name, action: "host" });
+        for (const s of [1, 2]) {
+          if (room.seats[s] != null) sendTo(ws, { t: "clearKeys", seat: s });
+        }
         pushState(room);
         break;
       }
@@ -277,8 +319,21 @@ wss.on("connection", (ws) => {
       }
 
       case "leave": {
+        // 真正离开房间：释放座位 + 移除成员
         if (!member) return;
-        releaseSeat(member.room, clientId, true);
+        const room = member.room;
+        releaseSeat(room, clientId, true);
+        room.members.delete(clientId);
+        pushState(room);
+        scheduleRoomCleanup(room);
+        member = null;
+        break;
+      }
+
+      case "leaveSeat": {
+        // 仅离座（回到观战），不离开房间
+        if (!member) return;
+        releaseSeat(member.room, clientId, false);
         break;
       }
 
@@ -304,6 +359,8 @@ wss.on("connection", (ws) => {
             });
           }
         } else if (msg.kind === "mouse") {
+          // 鼠标控制权固定为房主：远端玩家不能竞争鼠标
+          if (clientId !== room.hostId) return;
           if (
             msg.type !== "pointermove" &&
             msg.type !== "pointerdown" &&
@@ -312,10 +369,6 @@ wss.on("connection", (ws) => {
             return;
           const x = Math.min(1, Math.max(0, Number(msg.x) || 0));
           const y = Math.min(1, Math.max(0, Number(msg.y) || 0));
-          if (room.mouseOwner !== clientId) {
-            room.mouseOwner = clientId;
-            broadcast(room, { t: "mouseOwner", id: clientId, name: member.name });
-          }
           const host = room.members.get(room.hostId);
           if (host) {
             sendTo(host.ws, {
@@ -343,8 +396,10 @@ wss.on("connection", (ws) => {
       if (room.hostId === clientId) {
         room.hostId = null;
         broadcast(room, { t: "sys", name: member.name, action: "hostLeft" });
+        transferHost(room);
       }
       pushState(room);
+      scheduleRoomCleanup(room);
     }
   });
 

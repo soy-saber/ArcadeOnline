@@ -6,7 +6,7 @@ const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const ROOM = "http://localhost:8000/room.html?game=46923&room=e2e_nomock";
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\e2e3";
+const OUT = "C:\\Users\\Zhu_k\\AppData\\Local\\Temp\\opencode\\4399\\e2e3";
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
 function logline(s) {
