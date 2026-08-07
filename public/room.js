@@ -6,7 +6,7 @@
     const orig = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, attrs) {
       if (typeof type === "string" && type.indexOf("webgl") === 0) {
-        attrs = Object.assign({ preserveDrawingBuffer: true }, attrs || {});
+        attrs = Object.assign({}, attrs || {}, { preserveDrawingBuffer: true });
       }
       return orig.call(this, type, attrs);
     };
@@ -31,6 +31,9 @@
   let tmpCanvas = null;
   let tmpCtx = null;
   let frameTimer = null;
+  let capturePending = false;
+  let pendingViewerFrame = null;
+  let viewerDecodePending = false;
   let currentMouse = null;
   let lastMoveSend = 0;
   const stageEl = document.getElementById("stage");
@@ -73,7 +76,13 @@
     badge.textContent = ok ? "已连接" : "已断开";
     badge.className = "badge " + (ok ? "ok" : "bad");
     if (ok) {
-      ArcadeNet.send({ t: "join", name: arcadeName(), gameId, room: roomName });
+      ArcadeNet.send({
+        t: "join",
+        name: arcadeName(),
+        session: arcadeSession(),
+        gameId,
+        room: roomName
+      });
     } else {
       myId = null;
       mySeat = null;
@@ -98,13 +107,12 @@
 
   function becomeHostMode() {
     mode = "host";
+    pendingViewerFrame = null;
     log("你是房主：本机运行游戏，画面直播给全房间", "host");
-    setupSw().then(() => {
-      if (mode !== "host") return;
-      destroyPlayer();
-      setupRuffle();
-      startFrameCapture();
-    });
+    setupSw();
+    destroyPlayer();
+    setupRuffle();
+    startFrameCapture();
   }
 
   function becomeViewerMode() {
@@ -176,48 +184,48 @@
     canvasEl = null;
   }
 
-  // Service Worker：拦截已死亡的 mochibot.com，用本地极简 SWF 冒充，
-  // 使 4399 老游戏通过内置的反盗链校验（域名校验要求 URL 原样保留）。
-  // 注意：SW 仅安全上下文可用（localhost / HTTPS），纯 HTTP 局域网不可用。
-  // 关键：必须等页面被 SW 接管（controllerchange）后再加载游戏，
-  // 否则首次访问时 mochibot 请求会逃逸到真实网络（域名已死 → 游戏永久卡死）。
+  // URL 重写是主路径；Service Worker 仅作为 HTTPS/localhost 下的旧版兜底。
+  // 因此通过局域网 HTTP 访问的客户端也可以成为房主。
   function setupSw() {
-    if (!("serviceWorker" in navigator)) return Promise.resolve();
-    return navigator.serviceWorker
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
-      .then(function () {
-        return navigator.serviceWorker.ready;
-      })
-      .catch(function () {
-        return undefined;
-      });
+      .catch(function () {});
   }
 
   /* ---------------- 房主：Ruffle + 帧捕获直播 ---------------- */
 
   function setupRuffle() {
+    const urlRewriteRules = [
+      [/^https?:\/\/(?:www\.)?mochibot\.com(?:\/.*)?$/i, location.origin + "/mochibot.swf"]
+    ];
     window.RufflePlayer = window.RufflePlayer || {};
     window.RufflePlayer.config = {
       autoplay: "on",
       letterbox: "off",
       preferredRenderer: "webgl",
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: true,
+      urlRewriteRules
     };
     const ruffle = window.RufflePlayer.newest();
     ruffleApi = ruffle;
     playerEl = ruffle.createPlayer();
+    playerEl.setAttribute("width", String(gameMeta.width));
+    playerEl.setAttribute("height", String(gameMeta.height));
     playerEl.config = {
-      width: gameMeta.width,
-      height: gameMeta.height,
       autoplay: "on",
       letterbox: "off",
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: true,
+      urlRewriteRules
     };
     if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
       playerEl.tabIndex = 0;
     }
     stageEl.appendChild(playerEl);
     playerEl.load(gameMeta.swf);
+    requestAnimationFrame(function () {
+      window.dispatchEvent(new Event("resize"));
+    });
   }
 
   function getCanvas() {
@@ -239,9 +247,11 @@
       clearInterval(frameTimer);
       frameTimer = null;
     }
+    capturePending = false;
   }
 
   function captureFrame() {
+    if (capturePending || mode !== "host") return;
     const src = getCanvas();
     if (!src) return;
     if (!tmpCanvas) {
@@ -249,6 +259,7 @@
       tmpCanvas.width = gameMeta.width;
       tmpCanvas.height = gameMeta.height;
       tmpCtx = tmpCanvas.getContext("2d");
+      tmpCtx.imageSmoothingEnabled = false;
     }
     tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
     if (currentMouse) {
@@ -258,9 +269,11 @@
       tmpCtx.fillRect(x - 7, y - 1, 14, 2);
       tmpCtx.fillRect(x - 1, y - 7, 2, 14);
     }
+    capturePending = true;
     tmpCanvas.toBlob(function (blob) {
-      if (blob) ArcadeNet.sendBlob(blob);
-    }, "image/jpeg", 0.6);
+      capturePending = false;
+      if (blob && mode === "host") ArcadeNet.sendBlob(blob);
+    }, "image/webp", 0.9);
   }
 
   /* ---------------- 观战：渲染房主流帧 ---------------- */
@@ -269,6 +282,15 @@
     if (mode !== "viewer") return;
     if (!viewerCtx) return;
     lastFrameAt = Date.now();
+    pendingViewerFrame = blob;
+    decodeLatestViewerFrame();
+  }
+
+  function decodeLatestViewerFrame() {
+    if (viewerDecodePending || !pendingViewerFrame || mode !== "viewer" || !viewerCtx) return;
+    const blob = pendingViewerFrame;
+    pendingViewerFrame = null;
+    viewerDecodePending = true;
     createImageBitmap(blob)
       .then(function (bmp) {
         if (mode !== "viewer" || !viewerCtx) {
@@ -278,7 +300,11 @@
         viewerCtx.drawImage(bmp, 0, 0, gameMeta.width, gameMeta.height);
         bmp.close();
       })
-      .catch(function () {});
+      .catch(function () {})
+      .finally(function () {
+        viewerDecodePending = false;
+        decodeLatestViewerFrame();
+      });
   }
 
   /* ---------------- 输入：本地捕获 + 房主注入 ---------------- */
@@ -545,6 +571,7 @@
   function onSys(m) {
     let text = "";
     if (m.action === "join") text = m.name + " 进入房间（观战）";
+    else if (m.action === "reconnect") text = m.name + " 已重新连接";
     else if (m.action === "leave") text = m.name + " 离开了房间";
     else if (m.action === "sit") text = m.name + " 坐上了 P" + m.seat;
     else if (m.action === "host") text = m.name + " 成为房主（唯一播放器）";

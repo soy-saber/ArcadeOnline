@@ -2,11 +2,13 @@
 // diag_test.js: 纯管道验证（不依赖游戏画面）——座位/姓名/按键映射/隔离
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const ROOM = "http://localhost:8000/room.html?game=46923&room=pipe" + Date.now();
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\diag";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+const ROOM = BASE_URL + "/room.html?game=46923&room=pipe" + Date.now();
+const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "diag");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "diag.log");
 fs.writeFileSync(LOG, "");

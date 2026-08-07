@@ -2,11 +2,13 @@
 const puppeteer = require("puppeteer-core");
 const { PNG } = require("pngjs");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const ROOM = "http://localhost:8000/room.html?game=46923&room=final2";
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\final2";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+const ROOM = BASE_URL + "/room.html?game=46923&room=final2";
+const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "final");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
 function logline(s) {
@@ -121,9 +123,9 @@ const clickSlow = async (page, x, y) => {
 
   // 3) B 按 P2 移动键 → A 的游戏应变化（B 驱动）
   const before = await capA(pageA);
-  await pageB.keyboard.down("ArrowRight");
+  await pageB.keyboard.down("d");
   await new Promise((r) => setTimeout(r, 1500));
-  await pageB.keyboard.up("ArrowRight");
+  await pageB.keyboard.up("d");
   await new Promise((r) => setTimeout(r, 500));
   const after = await capA(pageA);
   if (before && after) {

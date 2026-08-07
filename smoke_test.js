@@ -1,72 +1,179 @@
 "use strict";
-const WebSocket = require("ws");
-const URL = "ws://localhost:8000";
-const room = "smoke" + Date.now();
 
-function client(name) {
-  const ws = new WebSocket(URL);
-  const c = { ws, id: null, states: [], sys: [] };
-  ws.on("message", (raw) => {
-    const msg = JSON.parse(raw.toString());
-    if (msg.t === "welcome") c.id = msg.id;
-    if (msg.t === "state") c.states.push(msg);
-    if (msg.t === "sys") c.sys.push(msg);
-  });
-  c.join = () => ws.send(JSON.stringify({ t: "join", name, gameId: "46923", room }));
-  c.sit = (seat) => ws.send(JSON.stringify({ t: "sit", seat }));
-  c.leaveSeat = () => ws.send(JSON.stringify({ t: "leaveSeat" }));
-  c.leave = () => ws.send(JSON.stringify({ t: "leave" }));
-  return c;
+const assert = require("assert/strict");
+const http = require("http");
+const { spawn } = require("child_process");
+const WebSocket = require("ws");
+
+const managedServer = !process.env.WS_URL;
+const port = managedServer ? 18000 + Math.floor(Math.random() * 1000) : null;
+const url = process.env.WS_URL || "ws://127.0.0.1:" + port;
+const room = "smoke-" + Date.now();
+const clients = new Set();
+let serverProcess = null;
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function waitUntil(check, label, timeout = 7000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const value = await check();
+    if (value) return value;
+    await wait(25);
+  }
+  throw new Error("等待超时: " + label);
 }
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function startServer() {
+  if (!managedServer) return;
+  serverProcess = spawn(process.execPath, ["server.js"], {
+    cwd: __dirname,
+    env: {
+      ...process.env,
+      PORT: String(port),
+      DISCONNECT_GRACE_MS: "250"
+    },
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+  let errorOutput = "";
+  serverProcess.stderr.on("data", (chunk) => {
+    errorOutput += chunk.toString();
+  });
+  await waitUntil(
+    () =>
+      new Promise((resolve) => {
+        const req = http.get("http://127.0.0.1:" + port + "/games.json", (res) => {
+          res.resume();
+          resolve(res.statusCode === 200);
+        });
+        req.on("error", () => resolve(false));
+        req.setTimeout(200, () => {
+          req.destroy();
+          resolve(false);
+        });
+      }),
+    "测试服务器启动"
+  ).catch((error) => {
+    throw new Error(error.message + (errorOutput ? "\n" + errorOutput : ""));
+  });
+}
+
+async function createClient(name, session) {
+  const ws = new WebSocket(url);
+  const client = { ws, name, session, id: null, states: [], sys: [], errors: [], inputs: [] };
+  clients.add(client);
+  ws.on("message", (raw, isBinary) => {
+    if (isBinary) return;
+    const msg = JSON.parse(raw.toString());
+    if (msg.t === "welcome") client.id = msg.id;
+    if (msg.t === "state") client.states.push(msg);
+    if (msg.t === "sys") client.sys.push(msg);
+    if (msg.t === "err") client.errors.push(msg.msg);
+    if (msg.t === "in") client.inputs.push(msg);
+  });
+  await new Promise((resolve, reject) => {
+    ws.once("open", resolve);
+    ws.once("error", reject);
+  });
+  ws.send(JSON.stringify({ t: "join", name, session, gameId: "46923", room }));
+  await waitUntil(() => client.id && client.states.length, name + " 加入房间");
+  return client;
+}
+
+function latest(client) {
+  return client.states[client.states.length - 1];
+}
+
+async function waitForState(client, predicate, label) {
+  return waitUntil(() => {
+    const state = latest(client);
+    return state && predicate(state) ? state : null;
+  }, label);
+}
+
+function send(client, message) {
+  client.ws.send(JSON.stringify(message));
+}
+
+function assertHostInvariant(state) {
+  assert.ok(
+    state.hostId == null || state.members.some((member) => member.id === state.hostId),
+    "hostId 必须为空或指向现存成员"
+  );
+}
 
 (async () => {
-  const a = client("A");
-  await new Promise((r) => a.ws.on("open", r));
-  a.join();
-  await wait(400);
-  console.log("A 是房主: " + (a.states[0] && a.states[0].hostId === a.id));
+  await startServer();
 
-  const b = client("B");
-  await new Promise((r) => b.ws.on("open", r));
-  b.join();
-  await wait(400);
-  b.sit(2);
-  await wait(400);
-  let s = b.states[b.states.length - 1];
-  console.log("B 坐座2: " + (s.seats[2] === b.id));
+  const a = await createClient("A", "session_A_1234567890");
+  const b = await createClient("B", "session_B_1234567890");
+  const observer = await createClient("Observer", "session_O_1234567890");
+  assert.equal(latest(observer).hostId, a.id, "首位成员应成为房主");
 
-  // 离座：成员保留、座位释放、无"离开"广播
-  const sysBefore = b.sys.length;
-  b.leaveSeat();
-  await wait(400);
-  s = b.states[b.states.length - 1];
-  const inMembers = s.members.some((m) => m.id === b.id);
-  const leftSys = b.sys.filter((x) => x.action === "leave").length;
-  console.log("离座后: 成员仍在=" + inMembers + " 座位空=" + (s.seats[2] === null) + " 离开广播=" + leftSys);
+  send(b, { t: "sit", seat: 2 });
+  await waitForState(b, (state) => state.seats[2] === b.id, "B 坐入 P2");
 
-  // B 重新坐座
-  b.sit(2);
-  await wait(400);
+  send(b, {
+    t: "in",
+    kind: "key",
+    type: "keydown",
+    code: "ArrowRight",
+    key: "ArrowRight",
+    keyCode: 39
+  });
+  const relayed = await waitUntil(() => a.inputs.find((input) => input.from === b.id), "P2 输入转发");
+  assert.equal(relayed.code, "ArrowRight");
 
-  // A 断开 → B 应自动成为房主
-  a.ws.close();
-  await wait(800);
-  s = b.states[b.states.length - 1];
-  const autoTransfer = s.hostId === b.id;
-  const hostSys = b.sys.some((x) => x.action === "host" && x.name === "B");
-  console.log("A断开后 B 自动成为房主: " + autoTransfer + " 广播=" + hostSys);
+  send(b, { t: "leaveSeat" });
+  const leftSeat = await waitForState(
+    b,
+    (state) => state.seats[2] == null && state.members.some((member) => member.id === b.id),
+    "B 离座"
+  );
+  assertHostInvariant(leftSeat);
 
-  // B 真正离开：成员删除
-  b.leave();
-  await wait(400);
-  s = b.states[b.states.length - 1];
-  const removed = !s.members.some((m) => m.id === b.id);
-  console.log("B 离开后成员移除: " + removed);
-  b.ws.close();
-  console.log("SMOKE DONE");
-  process.exit(0);
-})().catch((e) => {
-  console.log("FAIL: " + e.message);
-  process.exit(1);
-});
+  send(b, { t: "sit", seat: 2 });
+  await waitForState(b, (state) => state.seats[2] === b.id, "B 重新坐入 P2");
+
+  a.ws.terminate();
+  const resumedA = await createClient("A", "session_A_1234567890");
+  const resumedState = await waitForState(resumedA, (state) => state.hostId === a.id, "A 恢复房主会话");
+  assert.equal(resumedA.id, a.id, "重连必须复用原成员身份");
+  assertHostInvariant(resumedState);
+
+  resumedA.ws.terminate();
+  const transferred = await waitForState(observer, (state) => state.hostId === b.id, "断线超时后转移房主");
+  assertHostInvariant(transferred);
+
+  send(b, { t: "leave" });
+  const afterHostLeave = await waitForState(
+    observer,
+    (state) => !state.members.some((member) => member.id === b.id),
+    "房主主动离房"
+  );
+  assert.equal(afterHostLeave.hostId, observer.id, "房主主动离房后应立即转移");
+  assertHostInvariant(afterHostLeave);
+
+  const shim = await new Promise((resolve, reject) => {
+    http.get("http://127.0.0.1:" + port + "/mochibot.swf", (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve(Buffer.concat(chunks)));
+    }).on("error", reject);
+  });
+  assert.equal(shim.length, 26, "Mochibot 替代 SWF 长度应正确");
+  assert.equal(shim.readUInt16LE(22), 0x0040, "Mochibot 替代 SWF 应包含合法 ShowFrame 标签");
+
+  console.log("SMOKE PASS: 状态机、会话恢复、输入转发和 Mochibot 替代资源均通过");
+})()
+  .catch((error) => {
+    console.error(error.stack || error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    for (const client of clients) {
+      if (client.ws.readyState < 2) client.ws.terminate();
+    }
+    if (serverProcess && serverProcess.exitCode == null) serverProcess.kill();
+    await wait(50);
+  });

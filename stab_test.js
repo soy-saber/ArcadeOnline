@@ -2,9 +2,12 @@
 const puppeteer = require("puppeteer-core");
 const { PNG } = require("pngjs");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\stab2";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+const ROOM = BASE_URL + "/room.html?game=46923&room=stab2";
+const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "stability");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
 function logline(s) {
@@ -42,9 +45,9 @@ const diffB = (a, b) => {
   });
 
   const load = async (page, name) => {
-    await page.goto("http://localhost:8000/room.html?game=46923&room=stab2", { waitUntil: "domcontentloaded" });
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
     await page.evaluate((n) => localStorage.setItem("arcade_name", n), name);
-    await page.goto("http://localhost:8000/room.html?game=46923&room=stab2", { waitUntil: "domcontentloaded" });
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
   };
   await load(pageA, "小明");
   await load(pageB, "小红");

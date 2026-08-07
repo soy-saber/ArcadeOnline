@@ -2,11 +2,13 @@
 const puppeteer = require("puppeteer-core");
 const { PNG } = require("pngjs");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const ROOM = "http://localhost:8000/room.html?game=46923&room=e2e_nomock";
-const OUT = "C:\\Users\\Zhu_k\\AppData\\Local\\Temp\\opencode\\4399\\e2e3";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+const ROOM = BASE_URL + "/room.html?game=46923&room=e2e_nomock";
+const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "e2e");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
 function logline(s) {
@@ -16,7 +18,7 @@ function logline(s) {
 
 function emptySwf() {
   const rect = Buffer.from([0x78, 0x00, 0x05, 0x5f, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00]);
-  const rest = Buffer.from([0x00, 0x11, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00]);
+  const rest = Buffer.from([0x00, 0x11, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00]);
   const body = Buffer.concat([rect, rest]);
   const head = Buffer.concat([Buffer.from("FWS\x09"), Buffer.from([0, 0, 0, 0])]);
   head.writeUInt32LE(8 + body.length, 4);

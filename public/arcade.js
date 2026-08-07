@@ -70,6 +70,22 @@ function arcadeName() {
   return localStorage.getItem("arcade_name") || "";
 }
 
+function arcadeSession() {
+  let id = sessionStorage.getItem("arcade_session");
+  if (!id) {
+    if (crypto.randomUUID) {
+      id = crypto.randomUUID();
+    } else {
+      const bytes = new Uint8Array(16);
+      if (crypto.getRandomValues) crypto.getRandomValues(bytes);
+      else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+      id = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+    }
+    sessionStorage.setItem("arcade_session", id);
+  }
+  return id;
+}
+
 function ensureName(nextUrl) {
   const n = arcadeName();
   if (!n) {

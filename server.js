@@ -8,6 +8,22 @@ const { WebSocketServer } = require("ws");
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 8000;
+const DISCONNECT_GRACE_MS = Math.max(0, Number(process.env.DISCONNECT_GRACE_MS) || 4000);
+const MAX_FRAME_BUFFER_BYTES = Math.max(
+  64 * 1024,
+  Number(process.env.MAX_FRAME_BUFFER_BYTES) || 1024 * 1024
+);
+
+// Valid one-frame SWF used in place of the retired mochibot.com dependency.
+const MOCHIBOT_SWF = Buffer.from([
+  0x46, 0x57, 0x53, 0x08,
+  0x1a, 0x00, 0x00, 0x00,
+  0x78, 0x00, 0x05, 0x5f, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00,
+  0x00, 0x11,
+  0x01, 0x00,
+  0x40, 0x00,
+  0x00, 0x00
+]);
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -105,6 +121,11 @@ function sanitizeName(raw) {
   return n;
 }
 
+function sanitizeSessionId(raw) {
+  if (typeof raw !== "string" || !/^[A-Za-z0-9_-]{16,64}$/.test(raw)) return null;
+  return raw;
+}
+
 function sendTo(ws, msg) {
   if (ws && ws.readyState === 1) {
     try {
@@ -118,7 +139,7 @@ function sendTo(ws, msg) {
 function broadcast(room, msg) {
   const data = JSON.stringify(msg);
   for (const m of room.members.values()) {
-    if (m.ws.readyState === 1) {
+    if (m.ws && m.ws.readyState === 1) {
       try {
         m.ws.send(data);
       } catch (e) {
@@ -130,7 +151,12 @@ function broadcast(room, msg) {
 
 function broadcastRaw(room, data, exceptId) {
   for (const m of room.members.values()) {
-    if (m.id !== exceptId && m.ws.readyState === 1) {
+    if (
+      m.id !== exceptId &&
+      m.ws &&
+      m.ws.readyState === 1 &&
+      m.ws.bufferedAmount <= MAX_FRAME_BUFFER_BYTES
+    ) {
       try {
         m.ws.send(data);
       } catch (e) {
@@ -164,22 +190,48 @@ function pushState(room) {
   broadcast(room, seatState(room));
 }
 
-function releaseSeat(room, clientId, announce) {
-  const member = room.members.get(clientId);
+function releaseSeat(room, memberId, announce) {
+  const member = room.members.get(memberId);
   if (!member) return;
   const seat = member.seat;
   if (seat != null) {
-    if (room.seats[seat] === clientId) room.seats[seat] = null;
+    if (room.seats[seat] === memberId) room.seats[seat] = null;
     member.seat = null;
     const host = room.members.get(room.hostId);
     if (host) sendTo(host.ws, { t: "clearKeys", seat });
   }
-  if (room.mouseOwner === clientId) {
+  if (room.mouseOwner === memberId) {
     room.mouseOwner = null;
     broadcast(room, { t: "mouseOwner", id: null, name: null });
   }
   if (announce) broadcast(room, { t: "sys", name: member.name, action: "leave" });
+}
+
+function removeMember(room, memberId, announce) {
+  const member = room.members.get(memberId);
+  if (!member) return;
+  const wasHost = room.hostId === memberId;
+  if (member._disconnectTimer) clearTimeout(member._disconnectTimer);
+  releaseSeat(room, memberId, announce);
+  room.members.delete(memberId);
+  if (wasHost) {
+    room.hostId = null;
+    broadcast(room, { t: "sys", name: member.name, action: "hostLeft" });
+    transferHost(room);
+  }
   pushState(room);
+  scheduleRoomCleanup(room);
+}
+
+function scheduleDisconnect(member, ws) {
+  if (!member || member.ws !== ws) return;
+  member.ws = null;
+  if (member._disconnectTimer) clearTimeout(member._disconnectTimer);
+  member._disconnectTimer = setTimeout(() => {
+    member._disconnectTimer = null;
+    if (!member.ws) removeMember(member.room, member.id, false);
+  }, DISCONNECT_GRACE_MS);
+  member._disconnectTimer.unref();
 }
 
 const server = http.createServer((req, res) => {
@@ -188,6 +240,16 @@ const server = http.createServer((req, res) => {
     urlPath = decodeURIComponent(new URL(req.url, "http://local").pathname);
   } catch (e) {
     urlPath = "/";
+  }
+  if (urlPath === "/mochibot.swf") {
+    res.writeHead(200, {
+      "Content-Type": "application/x-shockwave-flash",
+      "Content-Length": MOCHIBOT_SWF.length,
+      "Cache-Control": "no-store",
+      "Access-Control-Allow-Origin": "*"
+    });
+    res.end(MOCHIBOT_SWF);
+    return;
   }
   if (urlPath === "/") urlPath = "/public/index.html";
   if (urlPath === "/games.json") urlPath = "/public/games.json";
@@ -231,14 +293,14 @@ function serveFile(filePath, res, onNotFound) {
 const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws) => {
-  const clientId = crypto.randomUUID();
+  const connectionId = crypto.randomUUID();
   let member = null;
 
   ws.on("message", (raw, isBinary) => {
     if (isBinary) {
       // 游戏画面帧：仅房主可发，转发给房间里其他所有成员
-      if (member && member.room.hostId === clientId) {
-        broadcastRaw(member.room, raw, clientId);
+      if (member && member.ws === ws && member.room.hostId === member.id) {
+        broadcastRaw(member.room, raw, member.id);
       }
       return;
     }
@@ -249,13 +311,27 @@ wss.on("connection", (ws) => {
       return;
     }
     if (!msg || typeof msg !== "object") return;
+    if (member && member.ws !== ws) return;
 
     switch (msg.t) {
       case "join": {
         if (member) {
-          releaseSeat(member.room, clientId, true);
-          member.room.members.delete(clientId);
-          pushState(member.room);
+          if (
+            member.room.gameId === msg.gameId &&
+            member.room.name === (typeof msg.room === "string" && msg.room ? msg.room.slice(0, 20) : "lobby")
+          ) {
+            member.name = sanitizeName(msg.name);
+            sendTo(ws, {
+              t: "welcome",
+              id: member.id,
+              name: member.name,
+              gameId: member.room.gameId,
+              hostId: member.room.hostId
+            });
+            pushState(member.room);
+            break;
+          }
+          removeMember(member.room, member.id, true);
           member = null;
         }
         if (!gameMap.has(msg.gameId)) {
@@ -266,20 +342,32 @@ wss.on("connection", (ws) => {
           msg.gameId,
           typeof msg.room === "string" && msg.room ? msg.room.slice(0, 20) : "lobby"
         );
-        member = { id: clientId, name: sanitizeName(msg.name), seat: null, ws, room };
-        room.members.set(clientId, member);
+        const memberId = sanitizeSessionId(msg.session) || connectionId;
+        const resumed = room.members.get(memberId);
+        if (resumed) {
+          const oldWs = resumed.ws;
+          if (resumed._disconnectTimer) clearTimeout(resumed._disconnectTimer);
+          resumed._disconnectTimer = null;
+          resumed.name = sanitizeName(msg.name);
+          resumed.ws = ws;
+          member = resumed;
+          if (oldWs && oldWs !== ws && oldWs.readyState < 2) oldWs.close(4001, "session resumed");
+        } else {
+          member = { id: memberId, name: sanitizeName(msg.name), seat: null, ws, room };
+          room.members.set(memberId, member);
+        }
         if (room.hostId == null) {
-          room.hostId = clientId;
+          room.hostId = member.id;
           broadcast(room, { t: "sys", name: member.name, action: "host" });
         }
         sendTo(ws, {
           t: "welcome",
-          id: clientId,
+          id: member.id,
           name: member.name,
           gameId: room.gameId,
           hostId: room.hostId
         });
-        broadcast(room, { t: "sys", name: member.name, action: "join" });
+        broadcast(room, { t: "sys", name: member.name, action: resumed ? "reconnect" : "join" });
         pushState(room);
         break;
       }
@@ -291,7 +379,7 @@ wss.on("connection", (ws) => {
           sendTo(ws, { t: "err", msg: "房间已有房主" });
           return;
         }
-        room.hostId = clientId;
+        room.hostId = member.id;
         broadcast(room, { t: "sys", name: member.name, action: "host" });
         for (const s of [1, 2]) {
           if (room.seats[s] != null) sendTo(ws, { t: "clearKeys", seat: s });
@@ -310,8 +398,8 @@ wss.on("connection", (ws) => {
           sendTo(ws, { t: "err", msg: "该座位已被占" });
           return;
         }
-        if (member.seat != null) releaseSeat(room, clientId, false);
-        room.seats[seat] = clientId;
+        if (member.seat != null) releaseSeat(room, member.id, false);
+        room.seats[seat] = member.id;
         member.seat = seat;
         broadcast(room, { t: "sys", name: member.name, action: "sit", seat });
         pushState(room);
@@ -322,10 +410,7 @@ wss.on("connection", (ws) => {
         // 真正离开房间：释放座位 + 移除成员
         if (!member) return;
         const room = member.room;
-        releaseSeat(room, clientId, true);
-        room.members.delete(clientId);
-        pushState(room);
-        scheduleRoomCleanup(room);
+        removeMember(room, member.id, true);
         member = null;
         break;
       }
@@ -333,7 +418,8 @@ wss.on("connection", (ws) => {
       case "leaveSeat": {
         // 仅离座（回到观战），不离开房间
         if (!member) return;
-        releaseSeat(member.room, clientId, false);
+        releaseSeat(member.room, member.id, false);
+        pushState(member.room);
         break;
       }
 
@@ -349,7 +435,7 @@ wss.on("connection", (ws) => {
           if (host) {
             sendTo(host.ws, {
               t: "in",
-              from: clientId,
+              from: member.id,
               kind: "key",
               type: msg.type,
               code: msg.code,
@@ -360,7 +446,7 @@ wss.on("connection", (ws) => {
           }
         } else if (msg.kind === "mouse") {
           // 鼠标控制权固定为房主：远端玩家不能竞争鼠标
-          if (clientId !== room.hostId) return;
+          if (member.id !== room.hostId) return;
           if (
             msg.type !== "pointermove" &&
             msg.type !== "pointerdown" &&
@@ -373,7 +459,7 @@ wss.on("connection", (ws) => {
           if (host) {
             sendTo(host.ws, {
               t: "in",
-              from: clientId,
+              from: member.id,
               kind: "mouse",
               type: msg.type,
               x,
@@ -390,16 +476,8 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     if (member) {
-      const room = member.room;
-      releaseSeat(room, clientId, false);
-      room.members.delete(clientId);
-      if (room.hostId === clientId) {
-        room.hostId = null;
-        broadcast(room, { t: "sys", name: member.name, action: "hostLeft" });
-        transferHost(room);
-      }
-      pushState(room);
-      scheduleRoomCleanup(room);
+      scheduleDisconnect(member, ws);
+      member = null;
     }
   });
 
@@ -409,7 +487,7 @@ wss.on("connection", (ws) => {
 setInterval(() => {
   for (const room of rooms.values()) {
     for (const m of room.members.values()) {
-      if (m.ws.readyState === 1) m.ws.ping();
+      if (m.ws && m.ws.readyState === 1) m.ws.ping();
     }
   }
 }, 30000).unref();

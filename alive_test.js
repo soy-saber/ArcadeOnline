@@ -2,11 +2,15 @@
 const puppeteer = require("puppeteer-core");
 const { PNG } = require("pngjs");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
-const OUT = "C:\\Users\\walex\\AppData\\Local\\Temp\\opencode\\4399\\alive";
+const BASE_URL = process.env.BASE_URL || "http://localhost:8000";
+const ROOM = BASE_URL + "/room.html?game=46923&room=alive" + Date.now();
+const OUT = process.env.TEST_OUTPUT || path.join(os.tmpdir(), "arcade-online", "alive");
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, "progress.log");
+fs.writeFileSync(LOG, "");
 function logline(s) {
   fs.appendFileSync(LOG, s + "\n");
   console.log(s);
@@ -34,10 +38,24 @@ const diffData = (da, db) => {
   });
   const pageA = await browser.newPage();
   const pageB = await browser.newPage();
+  pageA.on("console", (message) => logline("[A] " + message.text().slice(0, 500)));
+  pageB.on("console", (message) => logline("[B] " + message.text().slice(0, 500)));
+  pageA.on("pageerror", (error) => logline("[A pageerror] " + error.message));
+  pageB.on("pageerror", (error) => logline("[B pageerror] " + error.message));
+  pageA.on("response", (response) => {
+    if (response.status() >= 400) logline("[A HTTP " + response.status() + "] " + response.url());
+  });
+  await pageA.evaluateOnNewDocument(() => {
+    const original = HTMLCanvasElement.prototype.toBlob;
+    HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
+      window.__arcadeCapture = { type, quality };
+      return original.call(this, callback, type, quality);
+    };
+  });
   const load = async (page, name) => {
-    await page.goto("http://localhost:8000/room.html?game=46923&room=alive", { waitUntil: "domcontentloaded" });
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
     await page.evaluate((n) => localStorage.setItem("arcade_name", n), name);
-    await page.goto("http://localhost:8000/room.html?game=46923&room=alive", { waitUntil: "domcontentloaded" });
+    await page.goto(ROOM, { waitUntil: "domcontentloaded" });
   };
   await load(pageA, "小明");
   await load(pageB, "小红");
@@ -50,6 +68,42 @@ const diffData = (da, db) => {
     await new Promise((r) => setTimeout(r, 500));
   }
   await new Promise((r) => setTimeout(r, 15000));
+  const canvasInfo = await pageA.evaluate(() => {
+    const player = document.querySelector("ruffle-player");
+    const rect = player ? player.getBoundingClientRect() : null;
+    return {
+      player: player && {
+        width: player.getAttribute("width"),
+        height: player.getAttribute("height"),
+        readyState: player.readyState,
+        metadata: player.metadata || null,
+        rect: rect && { width: rect.width, height: rect.height }
+      },
+      canvases:
+        player && player.shadowRoot
+          ? Array.from(player.shadowRoot.querySelectorAll("canvas"), (canvas) => ({
+              width: canvas.width,
+              height: canvas.height,
+              className: canvas.className,
+              webgl: (() => {
+                const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+                return gl
+                  ? {
+                      width: gl.drawingBufferWidth,
+                      height: gl.drawingBufferHeight,
+                      preserveDrawingBuffer: gl.getContextAttributes().preserveDrawingBuffer
+                    }
+                  : null;
+              })(),
+              rect: {
+                width: canvas.getBoundingClientRect().width,
+                height: canvas.getBoundingClientRect().height
+              }
+            }))
+          : []
+    };
+  });
+  logline("画布信息: " + JSON.stringify(canvasInfo));
 
   const capA = () =>
     pageA.evaluate(() => {
@@ -66,7 +120,15 @@ const diffData = (da, db) => {
   // 标题画面：A vs B 同步性
   let a1 = await capA();
   let b1 = await capB();
+  if (!a1 || !b1) throw new Error("房主或观众画面未生成");
+  fs.writeFileSync(path.join(OUT, "host-title.png"), Buffer.from(a1.split(",")[1], "base64"));
+  fs.writeFileSync(path.join(OUT, "viewer-title.png"), Buffer.from(b1.split(",")[1], "base64"));
   logline("标题画面 A vs B 差异: " + (a1 && b1 ? diffData(a1, b1).toFixed(2) + "%" : "null"));
+  const capture = await pageA.evaluate(() => window.__arcadeCapture || null);
+  if (!capture || capture.type !== "image/webp" || capture.quality !== 0.9) {
+    throw new Error("房主未使用 WebP 0.9 画质编码: " + JSON.stringify(capture));
+  }
+  logline("直播编码: " + capture.type + " quality=" + capture.quality);
 
   // A 点击 play
   await pageA.evaluate(() => document.querySelector("#seat-1 .btn").click());
