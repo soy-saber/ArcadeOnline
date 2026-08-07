@@ -46,10 +46,41 @@ const diffData = (da, db) => {
   pageA.on("response", (response) => {
     if (response.status() >= 400) logline("[A HTTP " + response.status() + "] " + response.url());
   });
+  const instrumentRtc = (page) => page.evaluateOnNewDocument(() => {
+    window.__rtcEvents = [];
+    window.__rtcPeers = [];
+    const NativePeerConnection = window.RTCPeerConnection;
+    if (!NativePeerConnection) return;
+    function InstrumentedPeerConnection(...args) {
+      const pc = new NativePeerConnection(...args);
+      window.__rtcPeers.push(pc);
+      window.__rtcEvents.push({ event: "created", at: Date.now() });
+      pc.addEventListener("connectionstatechange", () => {
+        window.__rtcEvents.push({ event: "connection", state: pc.connectionState, at: Date.now() });
+      });
+      pc.addEventListener("iceconnectionstatechange", () => {
+        window.__rtcEvents.push({ event: "ice", state: pc.iceConnectionState, at: Date.now() });
+      });
+      return pc;
+    }
+    InstrumentedPeerConnection.prototype = NativePeerConnection.prototype;
+    window.RTCPeerConnection = InstrumentedPeerConnection;
+  });
+  await instrumentRtc(pageA);
+  await instrumentRtc(pageB);
+  if (process.env.NO_RTC_VIEWER) {
+    await pageB.evaluateOnNewDocument(() => {
+      Object.defineProperty(window, "RTCPeerConnection", {
+        configurable: true,
+        value: undefined
+      });
+    });
+  }
   await pageA.evaluateOnNewDocument(() => {
     const original = HTMLCanvasElement.prototype.toBlob;
     HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
       window.__arcadeCapture = { type, quality };
+      window.__arcadeCaptureCount = (window.__arcadeCaptureCount || 0) + 1;
       return original.call(this, callback, type, quality);
     };
   });
@@ -69,6 +100,18 @@ const diffData = (da, db) => {
     await new Promise((r) => setTimeout(r, 500));
   }
   await new Promise((r) => setTimeout(r, 15000));
+  const rtcDebug = async (page) => page.evaluate(() => ({
+    rtcType: typeof RTCPeerConnection,
+    captureStreamType: typeof HTMLCanvasElement.prototype.captureStream,
+    hostLine: document.getElementById("host-line").textContent,
+    spectators: Array.from(document.querySelectorAll("#spec-list li"), (item) => item.textContent),
+    transport: document.getElementById("stage").dataset.streamTransport || null,
+    hostStream: document.getElementById("stage").dataset.hostStream || null,
+    fallbackNeeded: document.getElementById("stage").dataset.fallbackNeeded || null,
+    events: window.__rtcEvents || []
+  }));
+  logline("A WebRTC: " + JSON.stringify(await rtcDebug(pageA)));
+  logline("B WebRTC: " + JSON.stringify(await rtcDebug(pageB)));
   const canvasInfo = await pageA.evaluate(() => {
     const player = document.querySelector("ruffle-player");
     const rect = player ? player.getBoundingClientRect() : null;
@@ -114,6 +157,14 @@ const diffData = (da, db) => {
     });
   const capB = () =>
     pageB.evaluate(() => {
+      const video = document.querySelector("#stage video");
+      if (video && video.style.display !== "none" && video.readyState >= 2) {
+        const out = document.createElement("canvas");
+        out.width = video.videoWidth || video.width;
+        out.height = video.videoHeight || video.height;
+        out.getContext("2d").drawImage(video, 0, 0, out.width, out.height);
+        return out.toDataURL("image/png");
+      }
       const c = document.querySelector("#stage canvas");
       return c ? c.toDataURL("image/png") : null;
     });
@@ -125,11 +176,55 @@ const diffData = (da, db) => {
   fs.writeFileSync(path.join(OUT, "host-title.png"), Buffer.from(a1.split(",")[1], "base64"));
   fs.writeFileSync(path.join(OUT, "viewer-title.png"), Buffer.from(b1.split(",")[1], "base64"));
   logline("标题画面 A vs B 差异: " + (a1 && b1 ? diffData(a1, b1).toFixed(2) + "%" : "null"));
+  const streamInfo = await pageB.evaluate(async () => {
+    const stage = document.getElementById("stage");
+    const video = stage.querySelector("video");
+    const tracks = video && video.srcObject ? video.srcObject.getVideoTracks() : [];
+    let codec = null;
+    for (const pc of window.__rtcPeers || []) {
+      const stats = await pc.getStats();
+      for (const report of stats.values()) {
+        if (report.type === "inbound-rtp" && report.kind === "video" && report.codecId) {
+          const codecReport = stats.get(report.codecId);
+          if (codecReport) codec = codecReport.mimeType;
+        }
+      }
+    }
+    return {
+      transport: stage.dataset.streamTransport || "ws",
+      readyState: video ? video.readyState : 0,
+      currentTime: video ? video.currentTime : 0,
+      videoWidth: video ? video.videoWidth : 0,
+      videoHeight: video ? video.videoHeight : 0,
+      codec,
+      tracks: tracks.map((track) => ({ readyState: track.readyState, muted: track.muted }))
+    };
+  });
+  logline("观众传输: " + JSON.stringify(streamInfo));
   const capture = await pageA.evaluate(() => window.__arcadeCapture || null);
-  if (!capture || capture.type !== "image/webp" || capture.quality !== 0.9) {
-    throw new Error("房主未使用 WebP 0.9 画质编码: " + JSON.stringify(capture));
+  if (streamInfo.transport === "webrtc") {
+    if (
+      streamInfo.readyState < 2 ||
+      streamInfo.currentTime <= 0 ||
+      !streamInfo.videoWidth ||
+      streamInfo.codec !== "video/H264" ||
+      !streamInfo.tracks.some((track) => track.readyState === "live")
+    ) {
+      throw new Error("WebRTC 已连接但观众视频未出帧: " + JSON.stringify(streamInfo));
+    }
+    const captureCount = await pageA.evaluate(() => window.__arcadeCaptureCount || 0);
+    await new Promise((r) => setTimeout(r, 500));
+    const stableCaptureCount = await pageA.evaluate(() => window.__arcadeCaptureCount || 0);
+    if (stableCaptureCount !== captureCount) {
+      throw new Error("WebRTC 建立后仍在重复编码 WS 降级帧");
+    }
+    logline("直播编码: WebRTC 60fps 主路径");
+  } else {
+    if (!capture || capture.type !== "image/webp" || capture.quality !== 0.9) {
+      throw new Error("WebRTC 降级后未使用 WebP 0.9 编码: " + JSON.stringify(capture));
+    }
+    logline("直播编码: " + capture.type + " quality=" + capture.quality + "（降级）");
   }
-  logline("直播编码: " + capture.type + " quality=" + capture.quality);
 
   // A 点击 play
   await pageA.evaluate(() => document.querySelector("#seat-1 .btn").click());

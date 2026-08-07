@@ -60,22 +60,37 @@ async function startServer() {
 
 async function createClient(name, session, gameId = "46923", roomName = room) {
   const ws = new WebSocket(url);
-  const client = { ws, name, session, id: null, states: [], sys: [], errors: [], inputs: [] };
+  const client = {
+    ws,
+    name,
+    session,
+    id: null,
+    states: [],
+    sys: [],
+    errors: [],
+    inputs: [],
+    signals: [],
+    frames: []
+  };
   clients.add(client);
   ws.on("message", (raw, isBinary) => {
-    if (isBinary) return;
+    if (isBinary) {
+      client.frames.push(Buffer.from(raw));
+      return;
+    }
     const msg = JSON.parse(raw.toString());
     if (msg.t === "welcome") client.id = msg.id;
     if (msg.t === "state") client.states.push(msg);
     if (msg.t === "sys") client.sys.push(msg);
     if (msg.t === "err") client.errors.push(msg.msg);
     if (msg.t === "in") client.inputs.push(msg);
+    if (msg.t === "signal") client.signals.push(msg);
   });
   await new Promise((resolve, reject) => {
     ws.once("open", resolve);
     ws.once("error", reject);
   });
-  ws.send(JSON.stringify({ t: "join", name, session, gameId, room: roomName }));
+  ws.send(JSON.stringify({ t: "join", name, session, gameId, room: roomName, rtcCapable: true }));
   await waitUntil(() => client.id && client.states.length, name + " 加入房间");
   return client;
 }
@@ -109,6 +124,35 @@ function assertHostInvariant(state) {
   const b = await createClient("B", "session_B_1234567890");
   const observer = await createClient("Observer", "session_O_1234567890");
   assert.equal(latest(observer).hostId, a.id, "首位成员应成为房主");
+
+  send(a, { t: "signal", to: b.id, kind: "offer", data: { type: "offer", sdp: "test-offer" } });
+  const offer = await waitUntil(() => b.signals[0], "WebRTC offer 转发");
+  assert.equal(offer.from, a.id, "信令发送方必须由服务端填写");
+  assert.equal(offer.data.sdp, "test-offer");
+
+  send(b, { t: "signal", to: a.id, kind: "answer", data: { type: "answer", sdp: "test-answer" } });
+  const answer = await waitUntil(() => a.signals[0], "WebRTC answer 转发");
+  assert.equal(answer.from, b.id);
+
+  const observerSignalCount = observer.signals.length;
+  send(b, { t: "signal", to: observer.id, kind: "ice", data: { candidate: "forbidden" } });
+  await wait(100);
+  assert.equal(observer.signals.length, observerSignalCount, "观众之间不得互发 WebRTC 信令");
+
+  send(b, { t: "streamTransport", transport: "webrtc" });
+  await waitForState(
+    a,
+    (roomState) => roomState.members.some(
+      (member) => member.id === b.id && member.streamTransport === "webrtc"
+    ),
+    "记录 B 的 WebRTC 传输状态"
+  );
+  const bFrameCount = b.frames.length;
+  const observerFrameCount = observer.frames.length;
+  a.ws.send(Buffer.from("fallback-frame"));
+  await waitUntil(() => observer.frames.length > observerFrameCount, "WS 降级帧转发");
+  await wait(100);
+  assert.equal(b.frames.length, bFrameCount, "WebRTC 观众不得继续接收 WS 降级帧");
 
   send(b, { t: "sit", seat: 2 });
   await waitForState(b, (state) => state.seats[2] === b.id, "B 坐入 P2");
@@ -163,6 +207,16 @@ function assertHostInvariant(state) {
   });
   assert.equal(shim.length, 26, "Mochibot 替代 SWF 长度应正确");
   assert.equal(shim.readUInt16LE(22), 0x0040, "Mochibot 替代 SWF 应包含合法 ShowFrame 标签");
+
+  const health = await new Promise((resolve, reject) => {
+    http.get("http://127.0.0.1:" + port + "/healthz", (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString("utf8") }));
+    }).on("error", reject);
+  });
+  assert.equal(health.status, 200, "健康检查应返回 200");
+  assert.equal(JSON.parse(health.body).status, "ok", "健康检查状态应为 ok");
 
   const bombRoom = "bomb-" + Date.now();
   const bombHost = await createClient("BombHost", "session_bomb_host_123", "3881", bombRoom);

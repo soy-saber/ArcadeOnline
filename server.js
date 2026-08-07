@@ -126,6 +126,25 @@ function sanitizeSessionId(raw) {
   return raw;
 }
 
+function validSignalData(kind, data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+  if (kind === "offer" || kind === "answer") {
+    return (
+      data.type === kind &&
+      typeof data.sdp === "string" &&
+      data.sdp.length > 0 &&
+      data.sdp.length <= 256 * 1024
+    );
+  }
+  return (
+    kind === "ice" &&
+    typeof data.candidate === "string" &&
+    data.candidate.length <= 4096 &&
+    (data.sdpMid == null || (typeof data.sdpMid === "string" && data.sdpMid.length <= 64)) &&
+    (data.sdpMLineIndex == null || Number.isInteger(data.sdpMLineIndex))
+  );
+}
+
 function sendTo(ws, msg) {
   if (ws && ws.readyState === 1) {
     try {
@@ -153,6 +172,7 @@ function broadcastRaw(room, data, exceptId) {
   for (const m of room.members.values()) {
     if (
       m.id !== exceptId &&
+      m.streamTransport !== "webrtc" &&
       m.ws &&
       m.ws.readyState === 1 &&
       m.ws.bufferedAmount <= MAX_FRAME_BUFFER_BYTES
@@ -169,7 +189,13 @@ function broadcastRaw(room, data, exceptId) {
 function seatState(room) {
   const members = [];
   for (const m of room.members.values()) {
-    members.push({ id: m.id, name: m.name, seat: m.seat });
+    members.push({
+      id: m.id,
+      name: m.name,
+      seat: m.seat,
+      rtcCapable: !!m.rtcCapable,
+      streamTransport: m.streamTransport || "ws"
+    });
   }
   const mouseOwnerName = room.hostId
     ? (room.members.get(room.hostId) || {}).name || null
@@ -184,6 +210,10 @@ function seatState(room) {
     mouseOwnerName,
     hostId: room.hostId
   };
+}
+
+function resetStreamTransports(room) {
+  for (const member of room.members.values()) member.streamTransport = "ws";
 }
 
 function pushState(room) {
@@ -216,6 +246,7 @@ function removeMember(room, memberId, announce) {
   room.members.delete(memberId);
   if (wasHost) {
     room.hostId = null;
+    resetStreamTransports(room);
     broadcast(room, { t: "sys", name: member.name, action: "hostLeft" });
     transferHost(room);
   }
@@ -240,6 +271,14 @@ const server = http.createServer((req, res) => {
     urlPath = decodeURIComponent(new URL(req.url, "http://local").pathname);
   } catch (e) {
     urlPath = "/";
+  }
+  if (urlPath === "/healthz") {
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    });
+    res.end(JSON.stringify({ status: "ok", rooms: rooms.size }));
+    return;
   }
   if (urlPath === "/mochibot.swf") {
     res.writeHead(200, {
@@ -321,6 +360,7 @@ wss.on("connection", (ws) => {
             member.room.name === (typeof msg.room === "string" && msg.room ? msg.room.slice(0, 20) : "lobby")
           ) {
             member.name = sanitizeName(msg.name);
+            member.rtcCapable = msg.rtcCapable === true;
             sendTo(ws, {
               t: "welcome",
               id: member.id,
@@ -349,11 +389,21 @@ wss.on("connection", (ws) => {
           if (resumed._disconnectTimer) clearTimeout(resumed._disconnectTimer);
           resumed._disconnectTimer = null;
           resumed.name = sanitizeName(msg.name);
+          resumed.rtcCapable = msg.rtcCapable === true;
           resumed.ws = ws;
+          resumed.streamTransport = "ws";
           member = resumed;
           if (oldWs && oldWs !== ws && oldWs.readyState < 2) oldWs.close(4001, "session resumed");
         } else {
-          member = { id: memberId, name: sanitizeName(msg.name), seat: null, ws, room };
+          member = {
+            id: memberId,
+            name: sanitizeName(msg.name),
+            seat: null,
+            rtcCapable: msg.rtcCapable === true,
+            streamTransport: "ws",
+            ws,
+            room
+          };
           room.members.set(memberId, member);
         }
         if (room.hostId == null) {
@@ -380,6 +430,7 @@ wss.on("connection", (ws) => {
           return;
         }
         room.hostId = member.id;
+        resetStreamTransports(room);
         broadcast(room, { t: "sys", name: member.name, action: "host" });
         for (const s of [1, 2]) {
           if (room.seats[s] != null) sendTo(ws, { t: "clearKeys", seat: s });
@@ -420,6 +471,36 @@ wss.on("connection", (ws) => {
         if (!member) return;
         releaseSeat(member.room, member.id, false);
         pushState(member.room);
+        break;
+      }
+
+      case "streamTransport": {
+        if (!member || member.id === member.room.hostId) return;
+        const transport = msg.transport === "webrtc" ? "webrtc" : "ws";
+        if (member.streamTransport !== transport) {
+          member.streamTransport = transport;
+          pushState(member.room);
+        }
+        break;
+      }
+
+      case "signal": {
+        if (!member || typeof msg.to !== "string") return;
+        const room = member.room;
+        const target = room.members.get(msg.to);
+        if (!target || target.id === member.id) return;
+        if (member.id !== room.hostId && target.id !== room.hostId) return;
+        const hostSending = member.id === room.hostId;
+        const allowedKind = hostSending
+          ? msg.kind === "offer" || msg.kind === "ice"
+          : msg.kind === "answer" || msg.kind === "ice";
+        if (!allowedKind || !validSignalData(msg.kind, msg.data)) return;
+        sendTo(target.ws, {
+          t: "signal",
+          from: member.id,
+          kind: msg.kind,
+          data: msg.data
+        });
         break;
       }
 
@@ -495,6 +576,19 @@ setInterval(() => {
 server.listen(PORT, () => {
   console.log("ArcadeOnline server: http://localhost:" + PORT);
 });
+
+let shuttingDown = false;
+function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log("[shutdown] " + signal);
+  for (const client of wss.clients) client.close(1001, "server shutdown");
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 10000).unref();
+}
+
+process.once("SIGTERM", () => shutdown("SIGTERM"));
+process.once("SIGINT", () => shutdown("SIGINT"));
 
 process.on("uncaughtException", (e) => {
   console.error("[uncaughtException] " + (e && e.stack ? e.stack : e));

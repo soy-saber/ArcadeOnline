@@ -28,14 +28,54 @@
   let ruffleApi = null;
   let viewerCanvas = null;
   let viewerCtx = null;
+  let viewerVideo = null;
+  let viewerTransport = "ws";
+  let viewerPeer = null;
+  let viewerPeerHostId = null;
+  let pendingViewerCandidates = [];
   let tmpCanvas = null;
   let tmpCtx = null;
+  let broadcastStream = null;
+  let broadcastRenderTimer = null;
   let frameTimer = null;
   let capturePending = false;
   let pendingViewerFrame = null;
   let viewerDecodePending = false;
+  const hostPeers = new Map();
+  const hostPeerRetryTimers = new Map();
   let currentMouse = null;
   let lastMoveSend = 0;
+  const VIRTUAL_GAMEPAD_ID = "ArcadeOnline Remote Input";
+  const VIRTUAL_GAMEPAD_MIN_PRESS_MS = 40;
+  const virtualGamepadButtonByCode = Object.freeze({
+    KeyS: 0,
+    KeyD: 1,
+    KeyA: 2,
+    KeyW: 3,
+    Space: 6,
+    Enter: 7,
+    ArrowUp: 12,
+    ArrowDown: 13,
+    ArrowLeft: 14,
+    ArrowRight: 15
+  });
+  const ruffleGamepadButtonMapping = Object.freeze({
+    south: 83,
+    east: 68,
+    west: 65,
+    north: 87,
+    "left-trigger-2": 32,
+    "right-trigger-2": 13,
+    "dpad-up": 38,
+    "dpad-down": 40,
+    "dpad-left": 37,
+    "dpad-right": 39
+  });
+  const virtualKeyPressedAt = new Map();
+  const virtualKeyReleaseTimers = new Map();
+  let virtualGamepad = null;
+  let nativeGetGamepads = null;
+  let virtualGamepadInstalled = false;
   const stageEl = document.getElementById("stage");
 
   document.getElementById("room-name").textContent = roomName;
@@ -55,6 +95,7 @@
       ArcadeNet.connect(wsUrl());
       ArcadeNet.on("welcome", (m) => {
         myId = m.id;
+        reportViewerTransport();
       });
       ArcadeNet.on("state", onState);
       ArcadeNet.on("in", onRemoteInput);
@@ -62,6 +103,7 @@
       ArcadeNet.on("mouseOwner", onMouseOwner);
       ArcadeNet.on("sys", onSys);
       ArcadeNet.on("frame", onFrame);
+      ArcadeNet.on("signal", onSignal);
       ArcadeNet.on("err", (m) => log("!! " + m.msg, "leave"));
       ArcadeNet.on("conn", onConn);
     });
@@ -81,7 +123,8 @@
         name: arcadeName(),
         session: arcadeSession(),
         gameId,
-        room: roomName
+        room: roomName,
+        rtcCapable: supportsWebRtc()
       });
     } else {
       myId = null;
@@ -101,23 +144,33 @@
     } else {
       if (mode !== "viewer") becomeViewerMode();
     }
+    if (mode === "host") {
+      syncHostStreamingDemand();
+      syncHostPeers();
+      syncFallbackCapture();
+    } else {
+      syncViewerHost();
+      reportViewerTransport();
+    }
     startStatusWatch();
     render();
   }
 
   function becomeHostMode() {
+    stopViewerPeer(false);
+    stopHostStreaming();
     mode = "host";
     pendingViewerFrame = null;
     log("你是房主：本机运行游戏，画面直播给全房间", "host");
     setupSw();
     destroyPlayer();
     setupRuffle();
-    startFrameCapture();
+    startHostStreaming();
   }
 
   function becomeViewerMode() {
+    stopHostStreaming();
     mode = "viewer";
-    stopFrameCapture();
     destroyPlayer();
     if (!viewerCanvas) {
       viewerCanvas = document.createElement("canvas");
@@ -127,7 +180,19 @@
       viewerCtx.fillStyle = "#000";
       viewerCtx.fillRect(0, 0, gameMeta.width, gameMeta.height);
     }
+    if (!viewerVideo) {
+      viewerVideo = document.createElement("video");
+      viewerVideo.width = gameMeta.width;
+      viewerVideo.height = gameMeta.height;
+      viewerVideo.autoplay = true;
+      viewerVideo.muted = true;
+      viewerVideo.playsInline = true;
+      viewerVideo.addEventListener("playing", markViewerFrame);
+      viewerVideo.addEventListener("timeupdate", markViewerFrame);
+    }
     stageEl.appendChild(viewerCanvas);
+    stageEl.appendChild(viewerVideo);
+    setViewerTransport("ws");
     lastFrameAt = 0;
   }
 
@@ -158,6 +223,9 @@
     if (mode === "viewer") {
       const hostMember = state.members.find((m) => m.id === state.hostId);
       const hostName = hostMember ? hostMember.name : "房主";
+      if (viewerTransport === "webrtc" && lastFrameAt > 0 && Date.now() - lastFrameAt >= 2500) {
+        setViewerTransport("ws");
+      }
       if (Date.now() - lastFrameAt < 2500) {
         el.classList.remove("show");
       } else if (lastFrameAt > 0) {
@@ -175,7 +243,7 @@
   }
 
   function destroyPlayer() {
-    stopFrameCapture();
+    releaseAllVirtualKeys();
     try {
       if (playerEl && playerEl.destroy) playerEl.destroy();
     } catch (e) {}
@@ -193,9 +261,129 @@
       .catch(function () {});
   }
 
-  /* ---------------- 房主：Ruffle + 帧捕获直播 ---------------- */
+  /* ---------------- 房主：Ruffle + WebRTC/截帧直播 ---------------- */
+
+  function createVirtualGamepadButton() {
+    const button = Object.create(GamepadButton.prototype);
+    Object.defineProperties(button, {
+      pressed: { value: false, writable: true, configurable: true },
+      touched: { value: false, writable: true, configurable: true },
+      value: { value: 0, writable: true, configurable: true }
+    });
+    return button;
+  }
+
+  function setupVirtualGamepad() {
+    if (virtualGamepadInstalled) return true;
+    if (
+      typeof Gamepad !== "function" ||
+      typeof GamepadButton !== "function" ||
+      typeof navigator.getGamepads !== "function"
+    ) {
+      return false;
+    }
+
+    try {
+      const buttons = Array.from({ length: 17 }, createVirtualGamepadButton);
+      virtualGamepad = Object.create(Gamepad.prototype);
+      Object.defineProperties(virtualGamepad, {
+        id: { value: VIRTUAL_GAMEPAD_ID, configurable: true },
+        index: { value: 0, writable: true, configurable: true },
+        connected: { value: true, configurable: true },
+        timestamp: { value: performance.now(), writable: true, configurable: true },
+        mapping: { value: "standard", configurable: true },
+        axes: { value: [0, 0, 0, 0], configurable: true },
+        buttons: { value: buttons, configurable: true }
+      });
+
+      nativeGetGamepads = navigator.getGamepads.bind(navigator);
+      Object.defineProperty(navigator, "getGamepads", {
+        configurable: true,
+        value: function () {
+          let gamepads = [];
+          try {
+            gamepads = Array.from(nativeGetGamepads() || []);
+          } catch (e) {}
+          let index = gamepads.findIndex((gamepad) => gamepad == null);
+          if (index < 0) index = gamepads.length;
+          virtualGamepad.index = index;
+          gamepads[index] = virtualGamepad;
+          return gamepads;
+        }
+      });
+      virtualGamepadInstalled = true;
+      return true;
+    } catch (e) {
+      virtualGamepad = null;
+      return false;
+    }
+  }
+
+  function releaseVirtualKey(code) {
+    if (!virtualGamepad) return;
+    const index = virtualGamepadButtonByCode[code];
+    if (index == null) return;
+    const button = virtualGamepad.buttons[index];
+    button.pressed = false;
+    button.touched = false;
+    button.value = 0;
+    virtualGamepad.timestamp = performance.now();
+    virtualKeyPressedAt.delete(code);
+    virtualKeyReleaseTimers.delete(code);
+  }
+
+  function setVirtualKey(code, pressed, immediate) {
+    if (!virtualGamepadInstalled || !virtualGamepad) return false;
+    const index = virtualGamepadButtonByCode[code];
+    if (index == null) return false;
+    const pendingRelease = virtualKeyReleaseTimers.get(code);
+    if (pendingRelease) {
+      clearTimeout(pendingRelease);
+      virtualKeyReleaseTimers.delete(code);
+    }
+
+    const button = virtualGamepad.buttons[index];
+    if (pressed) {
+      if (!button.pressed) virtualKeyPressedAt.set(code, performance.now());
+      button.pressed = true;
+      button.touched = true;
+      button.value = 1;
+      virtualGamepad.timestamp = performance.now();
+      return true;
+    }
+
+    const pressedAt = virtualKeyPressedAt.get(code);
+    const remaining =
+      immediate || pressedAt == null
+        ? 0
+        : VIRTUAL_GAMEPAD_MIN_PRESS_MS - (performance.now() - pressedAt);
+    if (remaining <= 0) {
+      releaseVirtualKey(code);
+    } else {
+      virtualKeyReleaseTimers.set(
+        code,
+        setTimeout(function () {
+          releaseVirtualKey(code);
+        }, remaining)
+      );
+    }
+    return true;
+  }
+
+  function releaseAllVirtualKeys() {
+    for (const timer of virtualKeyReleaseTimers.values()) clearTimeout(timer);
+    virtualKeyReleaseTimers.clear();
+    if (!virtualGamepad) {
+      virtualKeyPressedAt.clear();
+      return;
+    }
+    for (const code of Object.keys(virtualGamepadButtonByCode)) {
+      releaseVirtualKey(code);
+    }
+  }
 
   function setupRuffle() {
+    setupVirtualGamepad();
     const urlRewriteRules = [
       [/^https?:\/\/(?:www\.)?mochibot\.com(?:\/.*)?$/i, location.origin + "/mochibot.swf"]
     ];
@@ -205,6 +393,7 @@
       letterbox: "off",
       preferredRenderer: "webgl",
       preserveDrawingBuffer: true,
+      gamepadButtonMapping: ruffleGamepadButtonMapping,
       urlRewriteRules
     };
     const ruffle = window.RufflePlayer.newest();
@@ -216,6 +405,7 @@
       autoplay: "on",
       letterbox: "off",
       preserveDrawingBuffer: true,
+      gamepadButtonMapping: ruffleGamepadButtonMapping,
       urlRewriteRules
     };
     if (playerEl.tabIndex === -1 || playerEl.tabIndex === undefined) {
@@ -237,9 +427,111 @@
     return canvasEl;
   }
 
-  function startFrameCapture() {
+  function supportsWebRtc() {
+    return typeof RTCPeerConnection === "function";
+  }
+
+  function supportsHostCapture() {
+    return (
+      supportsWebRtc() &&
+      typeof HTMLCanvasElement.prototype.captureStream === "function"
+    );
+  }
+
+  function startHostStreaming() {
+    stopHostStreaming();
+    syncHostStreamingDemand();
+  }
+
+  function stopHostStreaming() {
     stopFrameCapture();
-    frameTimer = setInterval(captureFrame, 100);
+    stopWebRtcStreaming();
+    tmpCanvas = null;
+    tmpCtx = null;
+  }
+
+  function stopWebRtcStreaming() {
+    if (broadcastRenderTimer) {
+      clearInterval(broadcastRenderTimer);
+      broadcastRenderTimer = null;
+    }
+    if (broadcastStream) {
+      for (const track of broadcastStream.getTracks()) track.stop();
+      broadcastStream = null;
+    }
+    closeAllHostPeers();
+  }
+
+  function syncHostStreamingDemand() {
+    if (mode !== "host") return;
+    const webRtcNeeded = state.members.some(
+      (member) => member.id !== myId && member.rtcCapable
+    );
+    if (!webRtcNeeded || !supportsHostCapture()) {
+      stopWebRtcStreaming();
+      stageEl.dataset.hostStream = webRtcNeeded ? "fallback" : "idle";
+      return;
+    }
+    if (broadcastRenderTimer) return;
+    stageEl.dataset.hostStream = "starting";
+    broadcastRenderTimer = setInterval(renderBroadcastFrame, 1000 / 60);
+    renderBroadcastFrame();
+  }
+
+  function renderBroadcastFrame() {
+    if (mode !== "host") return;
+    const src = getCanvas();
+    if (!src) return;
+    if (!tmpCanvas) {
+      tmpCanvas = document.createElement("canvas");
+      tmpCanvas.width = gameMeta.width;
+      tmpCanvas.height = gameMeta.height;
+      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
+      tmpCtx.imageSmoothingEnabled = false;
+    }
+    tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
+    drawMouseCursor(tmpCtx);
+    if (broadcastStream || !supportsHostCapture()) return;
+    try {
+      broadcastStream = tmpCanvas.captureStream(60);
+      const videoTrack = broadcastStream.getVideoTracks()[0];
+      if (videoTrack) videoTrack.contentHint = "motion";
+      stageEl.dataset.hostStream = "webrtc-ready";
+      syncHostPeers();
+    } catch (e) {
+      stageEl.dataset.hostStream = "fallback";
+      if (broadcastRenderTimer) {
+        clearInterval(broadcastRenderTimer);
+        broadcastRenderTimer = null;
+      }
+      console.warn("WebRTC 画面捕获不可用，继续使用截帧直播", e);
+    }
+  }
+
+  function drawMouseCursor(ctx) {
+    if (!currentMouse) return;
+    const x = currentMouse.x * gameMeta.width;
+    const y = currentMouse.y * gameMeta.height;
+    ctx.fillStyle = "#ffe100";
+    ctx.fillRect(x - 7, y - 1, 14, 2);
+    ctx.fillRect(x - 1, y - 7, 2, 14);
+  }
+
+  function syncFallbackCapture() {
+    if (mode !== "host") {
+      stopFrameCapture();
+      return;
+    }
+    const fallbackNeeded = state.members.some(
+      (member) => member.id !== myId && member.streamTransport !== "webrtc"
+    );
+    stageEl.dataset.fallbackNeeded = String(fallbackNeeded);
+    if (fallbackNeeded && !frameTimer) {
+      frameTimer = setInterval(captureFrame, 100);
+      captureFrame();
+    } else if (!fallbackNeeded) {
+      stopFrameCapture();
+    }
   }
 
   function stopFrameCapture() {
@@ -258,17 +550,11 @@
       tmpCanvas = document.createElement("canvas");
       tmpCanvas.width = gameMeta.width;
       tmpCanvas.height = gameMeta.height;
-      tmpCtx = tmpCanvas.getContext("2d");
+      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
       tmpCtx.imageSmoothingEnabled = false;
     }
     tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
-    if (currentMouse) {
-      const x = currentMouse.x * gameMeta.width;
-      const y = currentMouse.y * gameMeta.height;
-      tmpCtx.fillStyle = "#ffe100";
-      tmpCtx.fillRect(x - 7, y - 1, 14, 2);
-      tmpCtx.fillRect(x - 1, y - 7, 2, 14);
-    }
+    drawMouseCursor(tmpCtx);
     capturePending = true;
     tmpCanvas.toBlob(function (blob) {
       capturePending = false;
@@ -276,10 +562,293 @@
     }, "image/webp", 0.9);
   }
 
+  function createPeerConnection() {
+    return new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.cloudflare.com:3478" }]
+    });
+  }
+
+  function sendSignal(to, kind, data) {
+    ArcadeNet.send({ t: "signal", to, kind, data });
+  }
+
+  function serializeCandidate(candidate) {
+    return candidate.toJSON
+      ? candidate.toJSON()
+      : {
+          candidate: candidate.candidate,
+          sdpMid: candidate.sdpMid,
+          sdpMLineIndex: candidate.sdpMLineIndex,
+          usernameFragment: candidate.usernameFragment
+        };
+  }
+
+  function serializeDescription(description) {
+    return { type: description.type, sdp: description.sdp };
+  }
+
+  function syncHostPeers() {
+    if (mode !== "host" || !broadcastStream || !supportsWebRtc()) return;
+    const viewers = new Set(
+      state.members
+        .filter((member) => member.id !== myId && member.rtcCapable)
+        .map((member) => member.id)
+    );
+    for (const id of hostPeers.keys()) {
+      if (!viewers.has(id)) closeHostPeer(id);
+    }
+    for (const id of hostPeerRetryTimers.keys()) {
+      if (!viewers.has(id)) clearHostPeerRetry(id);
+    }
+    for (const id of viewers) {
+      if (!hostPeers.has(id) && !hostPeerRetryTimers.has(id)) createHostPeer(id);
+    }
+  }
+
+  function createHostPeer(viewerId) {
+    if (mode !== "host" || !broadcastStream || hostPeers.has(viewerId)) return;
+    let pc;
+    try {
+      pc = createPeerConnection();
+    } catch (e) {
+      return;
+    }
+    const peer = { pc, pendingCandidates: [], disconnectTimer: null };
+    hostPeers.set(viewerId, peer);
+    pc.onicecandidate = (event) => {
+      if (event.candidate) sendSignal(viewerId, "ice", serializeCandidate(event.candidate));
+    };
+    pc.onconnectionstatechange = () => {
+      if (pc.connectionState === "connected") {
+        if (peer.disconnectTimer) clearTimeout(peer.disconnectTimer);
+        peer.disconnectTimer = null;
+      } else if (pc.connectionState === "failed") {
+        scheduleHostPeerRetry(viewerId);
+      } else if (pc.connectionState === "disconnected" && !peer.disconnectTimer) {
+        peer.disconnectTimer = setTimeout(() => {
+          if (pc.connectionState === "disconnected") scheduleHostPeerRetry(viewerId);
+        }, 3000);
+      }
+    };
+    for (const track of broadcastStream.getTracks()) {
+      const sender = pc.addTrack(track, broadcastStream);
+      preferH264(pc, sender);
+      const parameters = sender.getParameters();
+      if (!parameters.encodings || !parameters.encodings.length) parameters.encodings = [{}];
+      parameters.encodings[0].maxBitrate = 4000000;
+      parameters.encodings[0].maxFramerate = 60;
+      sender.setParameters(parameters).catch(function () {});
+    }
+    pc.createOffer()
+      .then((offer) => pc.setLocalDescription(offer))
+      .then(() => sendSignal(viewerId, "offer", serializeDescription(pc.localDescription)))
+      .catch(() => scheduleHostPeerRetry(viewerId));
+  }
+
+  function preferH264(pc, sender) {
+    if (
+      typeof RTCRtpSender === "undefined" ||
+      !RTCRtpSender.getCapabilities ||
+      typeof RTCRtpTransceiver === "undefined" ||
+      !RTCRtpTransceiver.prototype.setCodecPreferences
+    ) return;
+    const capabilities = RTCRtpSender.getCapabilities("video");
+    if (!capabilities) return;
+    const h264 = capabilities.codecs.filter(
+      (codec) => codec.mimeType.toLowerCase() === "video/h264"
+    );
+    if (!h264.length) return;
+    const others = capabilities.codecs.filter(
+      (codec) => codec.mimeType.toLowerCase() !== "video/h264"
+    );
+    const transceiver = pc.getTransceivers().find((item) => item.sender === sender);
+    if (transceiver) {
+      try {
+        transceiver.setCodecPreferences(h264.concat(others));
+      } catch (e) {}
+    }
+  }
+
+  function scheduleHostPeerRetry(viewerId) {
+    closeHostPeer(viewerId);
+    if (hostPeerRetryTimers.has(viewerId)) return;
+    const timer = setTimeout(() => {
+      hostPeerRetryTimers.delete(viewerId);
+      if (
+        mode === "host" &&
+        state.members.some((member) => member.id === viewerId && member.rtcCapable)
+      ) {
+        createHostPeer(viewerId);
+      }
+    }, 1500);
+    hostPeerRetryTimers.set(viewerId, timer);
+  }
+
+  function clearHostPeerRetry(viewerId) {
+    const timer = hostPeerRetryTimers.get(viewerId);
+    if (timer) clearTimeout(timer);
+    hostPeerRetryTimers.delete(viewerId);
+  }
+
+  function closeHostPeer(viewerId) {
+    const peer = hostPeers.get(viewerId);
+    if (!peer) return;
+    if (peer.disconnectTimer) clearTimeout(peer.disconnectTimer);
+    peer.pc.onconnectionstatechange = null;
+    peer.pc.onicecandidate = null;
+    peer.pc.close();
+    hostPeers.delete(viewerId);
+  }
+
+  function closeAllHostPeers() {
+    for (const id of Array.from(hostPeers.keys())) closeHostPeer(id);
+    for (const id of Array.from(hostPeerRetryTimers.keys())) clearHostPeerRetry(id);
+  }
+
+  function createViewerPeer(hostId) {
+    const earlyCandidates = pendingViewerCandidates.splice(0);
+    stopViewerPeer();
+    let pc;
+    try {
+      pc = createPeerConnection();
+    } catch (e) {
+      return null;
+    }
+    const peer = { pc, pendingCandidates: earlyCandidates };
+    viewerPeer = peer;
+    viewerPeerHostId = hostId;
+    pc.onicecandidate = (event) => {
+      if (event.candidate) sendSignal(hostId, "ice", serializeCandidate(event.candidate));
+    };
+    pc.ontrack = (event) => {
+      if (viewerPeer !== peer || !viewerVideo) return;
+      viewerVideo.srcObject = event.streams[0] || new MediaStream([event.track]);
+      viewerVideo.play().catch(function () {});
+    };
+    pc.onconnectionstatechange = () => {
+      if (viewerPeer !== peer) return;
+      if (pc.connectionState === "connected") {
+        if (viewerVideo && viewerVideo.readyState >= 2) setViewerTransport("webrtc");
+      } else if (
+        pc.connectionState === "failed" ||
+        pc.connectionState === "disconnected" ||
+        pc.connectionState === "closed"
+      ) {
+        setViewerTransport("ws");
+      }
+    };
+    return peer;
+  }
+
+  function stopViewerPeer(reportFallback = true) {
+    if (viewerPeer) {
+      viewerPeer.pc.onconnectionstatechange = null;
+      viewerPeer.pc.onicecandidate = null;
+      viewerPeer.pc.ontrack = null;
+      viewerPeer.pc.close();
+    }
+    viewerPeer = null;
+    viewerPeerHostId = null;
+    pendingViewerCandidates = [];
+    if (viewerVideo) viewerVideo.srcObject = null;
+    if (reportFallback && mode === "viewer") setViewerTransport("ws");
+  }
+
+  function syncViewerHost() {
+    if (mode !== "viewer") return;
+    if (viewerPeerHostId && viewerPeerHostId !== state.hostId) stopViewerPeer();
+  }
+
+  function setViewerTransport(transport) {
+    const nextTransport = transport === "webrtc" ? "webrtc" : "ws";
+    const changed = viewerTransport !== nextTransport;
+    viewerTransport = nextTransport;
+    stageEl.dataset.streamTransport = viewerTransport;
+    if (viewerCanvas) viewerCanvas.style.display = viewerTransport === "ws" ? "block" : "none";
+    if (viewerVideo) viewerVideo.style.display = viewerTransport === "webrtc" ? "block" : "none";
+    if (viewerTransport === "webrtc") lastFrameAt = Date.now();
+    if (changed) reportViewerTransport();
+  }
+
+  function reportViewerTransport() {
+    if (mode !== "viewer" || !myId || !ArcadeNet.connected) return;
+    ArcadeNet.send({ t: "streamTransport", transport: viewerTransport });
+  }
+
+  function markViewerFrame() {
+    lastFrameAt = Date.now();
+    if (
+      mode === "viewer" &&
+      viewerTransport !== "webrtc" &&
+      viewerPeer &&
+      viewerPeer.pc.connectionState === "connected" &&
+      viewerVideo &&
+      viewerVideo.readyState >= 2
+    ) {
+      setViewerTransport("webrtc");
+    }
+  }
+
+  async function addPeerCandidate(peer, data) {
+    if (!peer.pc.remoteDescription) {
+      peer.pendingCandidates.push(data);
+      return;
+    }
+    try {
+      await peer.pc.addIceCandidate(data);
+    } catch (e) {}
+  }
+
+  async function flushPeerCandidates(peer) {
+    const candidates = peer.pendingCandidates.splice(0);
+    for (const candidate of candidates) await addPeerCandidate(peer, candidate);
+  }
+
+  async function onSignal(message) {
+    if (!supportsWebRtc() || !message || !message.from) return;
+    if (mode === "host") {
+      const peer = hostPeers.get(message.from);
+      if (!peer) return;
+      try {
+        if (message.kind === "answer") {
+          await peer.pc.setRemoteDescription(message.data);
+          await flushPeerCandidates(peer);
+        } else if (message.kind === "ice") {
+          await addPeerCandidate(peer, message.data);
+        }
+      } catch (e) {
+        scheduleHostPeerRetry(message.from);
+      }
+      return;
+    }
+    if (mode !== "viewer" || message.from !== state.hostId) return;
+    try {
+      if (message.kind === "offer") {
+        const peer = createViewerPeer(message.from);
+        if (!peer) return;
+        await peer.pc.setRemoteDescription(message.data);
+        await flushPeerCandidates(peer);
+        const answer = await peer.pc.createAnswer();
+        await peer.pc.setLocalDescription(answer);
+        sendSignal(message.from, "answer", serializeDescription(peer.pc.localDescription));
+      } else if (
+        message.kind === "ice" &&
+        viewerPeer &&
+        viewerPeerHostId === message.from
+      ) {
+        await addPeerCandidate(viewerPeer, message.data);
+      } else if (message.kind === "ice" && !viewerPeer) {
+        pendingViewerCandidates.push(message.data);
+      }
+    } catch (e) {
+      stopViewerPeer();
+    }
+  }
+
   /* ---------------- 观战：渲染房主流帧 ---------------- */
 
   function onFrame(blob) {
-    if (mode !== "viewer") return;
+    if (mode !== "viewer" || viewerTransport === "webrtc") return;
     if (!viewerCtx) return;
     lastFrameAt = Date.now();
     pendingViewerFrame = blob;
@@ -425,11 +994,16 @@
 
   function injectKey(type, code, key, keyCode, repeat) {
     if (!playerEl) return;
+    if (setVirtualKey(code, type === "keydown", false)) return;
     try {
-      // 关键：必须 dispatch 到 playerEl（RufflePlayer 元素）而不是 window。
-      // Ruffle 的键盘监听挂在 RufflePlayer 元素上（见 ruffle.js virtualKeyboardInput：
-      // Ruffle 自身注入键盘就是 this.element.dispatchEvent(new KeyboardEvent(...))）。
-      // dispatch 到 window 时事件路径不经过该元素，Ruffle 收不到，远端按键全部失效。
+      if (document.activeElement !== playerEl) {
+        try {
+          playerEl.focus({ preventScroll: true });
+        } catch (e) {
+          playerEl.focus();
+        }
+      }
+      // Older browsers without Gamepad support retain the DOM event fallback.
       playerEl.dispatchEvent(
         new KeyboardEvent(type, {
           key: key || "",
@@ -438,7 +1012,9 @@
           which: keyCode || 0,
           repeat: !!repeat,
           bubbles: true,
-          cancelable: true
+          cancelable: true,
+          composed: true,
+          view: window
         })
       );
     } catch (e) {
@@ -493,7 +1069,9 @@
     const meta = seatMeta(m.seat);
     if (!meta) return;
     for (const code of meta.keys) {
-      injectKey("keyup", code, "", 0, false);
+      if (!setVirtualKey(code, false, true)) {
+        injectKey("keyup", code, "", 0, false);
+      }
     }
   }
 

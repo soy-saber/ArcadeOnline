@@ -51,6 +51,14 @@ async function capA(pageA) {
 }
 async function capB(pageB) {
   return pageB.evaluate(() => {
+    const video = document.querySelector("#stage video");
+    if (video && video.style.display !== "none" && video.readyState >= 2) {
+      const out = document.createElement("canvas");
+      out.width = video.videoWidth || video.width;
+      out.height = video.videoHeight || video.height;
+      out.getContext("2d").drawImage(video, 0, 0, out.width, out.height);
+      return out.toDataURL("image/png");
+    }
     const c = document.querySelector("#stage canvas");
     return c ? c.toDataURL("image/png") : null;
   });
@@ -122,12 +130,36 @@ const clickSlow = async (page, x, y) => {
   logline("步骤2 开始后双端差异: " + (diffBuf(Buffer.from(a1.split(",")[1], "base64"), Buffer.from(b1.split(",")[1], "base64")) * 100).toFixed(2) + "%");
 
   // 3) B 按 P2 移动键 → A 的游戏应变化（B 驱动）
+  const viewerBox = await pageB.evaluate(() => {
+    const rect = document.getElementById("stage").getBoundingClientRect();
+    return { x: rect.x, y: rect.y, w: rect.width, h: rect.height };
+  });
+  await pageB.mouse.click(viewerBox.x + viewerBox.w / 2, viewerBox.y + viewerBox.h / 2);
   const before = await capA(pageA);
+  fs.writeFileSync(path.join(OUT, "remote-key-before.png"), Buffer.from(before.split(",")[1], "base64"));
   await pageB.keyboard.down("d");
-  await new Promise((r) => setTimeout(r, 1500));
+  await new Promise((r) => setTimeout(r, 200));
+  const virtualPressed = await pageA.evaluate(() => {
+    const gamepad = Array.from(navigator.getGamepads()).find(
+      (item) => item && item.id === "ArcadeOnline Remote Input"
+    );
+    return gamepad ? gamepad.buttons[15].pressed : null;
+  });
+  await new Promise((r) => setTimeout(r, 1300));
   await pageB.keyboard.up("d");
   await new Promise((r) => setTimeout(r, 500));
+  const virtualReleased = await pageA.evaluate(() => {
+    const gamepad = Array.from(navigator.getGamepads()).find(
+      (item) => item && item.id === "ArcadeOnline Remote Input"
+    );
+    return gamepad ? gamepad.buttons[15].pressed : null;
+  });
   const after = await capA(pageA);
+  fs.writeFileSync(path.join(OUT, "remote-key-after.png"), Buffer.from(after.split(",")[1], "base64"));
+  logline("步骤3 Ruffle 虚拟 D-pad 按下/释放: " + virtualPressed + "/" + virtualReleased);
+  if (virtualPressed !== true || virtualReleased !== false) {
+    throw new Error("P2 输入未正确驱动 Ruffle 虚拟手柄");
+  }
   if (before && after) {
     const d = diffBuf(Buffer.from(before.split(",")[1], "base64"), Buffer.from(after.split(",")[1], "base64"));
     logline("步骤3 B按→ 驱动 A 画面变化: " + (d * 100).toFixed(2) + "%");

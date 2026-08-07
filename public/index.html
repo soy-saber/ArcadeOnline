@@ -6,22 +6,35 @@
 <title>ArcadeOnline - 童年游戏联机平台</title>
 <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="lobby-page">
 <header class="topbar">
-  <h1>ArcadeOnline</h1>
-  <span class="crumb">童年游戏联机平台</span>
+  <a class="brand" href="/" aria-label="ArcadeOnline 首页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <h1>ArcadeOnline</h1>
+  </a>
+  <span class="topbar-tagline">旧梦重启 · 远方同席</span>
 </header>
 
-<div class="login-card" id="login-card">
-  <h2>进入平台</h2>
-  <input id="name-input" maxlength="12" placeholder="输入你的昵称">
-  <button class="btn" id="name-btn">开始游玩</button>
-</div>
+<main class="lobby-shell">
+  <div class="login-card" id="login-card">
+    <span class="login-kicker">漫游者名册</span>
+    <h2>留下你的名字</h2>
+    <label class="field-label" for="name-input">昵称</label>
+    <input id="name-input" maxlength="12" placeholder="输入昵称" autocomplete="nickname">
+    <button class="btn" id="name-btn">进入大厅 <span aria-hidden="true">→</span></button>
+  </div>
 
-<div class="container" id="lobby" style="display:none">
-  <p>你好，<b id="hello-name"></b> <a href="#" id="rename">(改名)</a> · 选择游戏进入房间，占座后即可操作，未占座时自动进入观战。</p>
-  <div class="game-grid" id="game-grid"></div>
-</div>
+  <div class="container" id="lobby" style="display:none">
+    <div class="lobby-heading">
+      <div>
+        <span class="section-kicker">游戏藏馆</span>
+        <h2>选择游戏</h2>
+      </div>
+      <p>欢迎回来，<b id="hello-name"></b><a href="#" id="rename">更换昵称</a></p>
+    </div>
+    <div class="game-grid" id="game-grid"></div>
+  </div>
+</main>
 
 <script src="/arcade.js"></script>
 <script>
@@ -58,13 +71,16 @@
       const d = document.createElement("div");
       d.className = "game-card";
       const seatText = g.seats
-        .map((s) => s.label + "：「" + s.hint + "」")
-        .join("；");
+        .map((s) => "<div><b>" + s.label + "</b><span>" + s.hint + "</span></div>")
+        .join("");
+      const href = "/room.html?game=" + encodeURIComponent(g.id) + "&room=" + encodeURIComponent(g.room);
       d.innerHTML =
-        "<h3>" + g.title + "</h3>" +
-        "<div class='meta'>来源 " + g.source + " · 常驻房间 " + g.room + "</div>" +
-        "<div class='hint'>" + seatText + "</div>" +
-        "<a class='btn' href='/room.html?game=" + encodeURIComponent(g.id) + "&room=" + encodeURIComponent(g.room) + "'>进入房间</a>";
+        "<div class='game-cover'><img src='/assets/game-" + encodeURIComponent(g.id) + ".png' alt='' loading='lazy'><span>典藏自 " + g.source + "</span></div>" +
+        "<div class='game-card-body'>" +
+          "<div class='game-title-row'><h3>" + g.title + "</h3><span class='room-state'><i></i>常驻</span></div>" +
+          "<div class='seat-hints'>" + seatText + "</div>" +
+          "<a class='btn game-enter' href='" + href + "'>进入房间 <span aria-hidden='true'>→</span></a>" +
+        "</div>";
       grid.appendChild(d);
     }
   }

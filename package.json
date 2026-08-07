@@ -7,8 +7,10 @@
     "test": "node smoke_test.js"
   },
   "dependencies": {
-    "pngjs": "^7.0.0",
-    "puppeteer-core": "^25.5.0",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "pngjs": "^7.0.0",
+    "puppeteer-core": "^25.5.0"
   }
 }
