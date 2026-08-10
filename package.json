@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node smoke_test.js"
+    "test": "node smoke_test.js",
+    "test:bomb-p2": "node bomb_p2_e2e.js",
+    "test:stream": "node stream_stability_test.js"
   },
   "dependencies": {
     "ws": "^8.18.0"

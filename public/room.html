@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0f10">
 <title>游戏房间 - ArcadeOnline</title>
 <link rel="stylesheet" href="/style.css">
 <script>
@@ -11,25 +12,13 @@
   var origRelease = Element.prototype.releasePointerCapture;
   var origHas = Element.prototype.hasPointerCapture;
   Element.prototype.setPointerCapture = function (id) {
-    try {
-      return origSet.call(this, id);
-    } catch (e) {
-      return undefined;
-    }
+    try { return origSet.call(this, id); } catch (e) { return undefined; }
   };
   Element.prototype.releasePointerCapture = function (id) {
-    try {
-      return origRelease.call(this, id);
-    } catch (e) {
-      return undefined;
-    }
+    try { return origRelease.call(this, id); } catch (e) { return undefined; }
   };
   Element.prototype.hasPointerCapture = function (id) {
-    try {
-      return origHas.call(this, id);
-    } catch (e) {
-      return false;
-    }
+    try { return origHas.call(this, id); } catch (e) { return false; }
   };
 })();
 </script>
@@ -37,59 +26,89 @@
 <script src="/arcade.js"></script>
 </head>
 <body class="room-page">
-<header class="topbar">
+<header class="topbar room-topbar">
   <div class="room-title-group">
-    <a class="back-link" href="/" aria-label="返回大厅">←</a>
+    <a class="back-link" href="/" aria-label="返回大厅" title="返回大厅">←</a>
     <div>
       <span class="section-kicker">游戏房间</span>
       <h1 id="game-title">加载中…</h1>
     </div>
   </div>
   <div class="room-meta">
-    <span class="crumb"><small>房间</small><b id="room-name"></b></span>
-    <span class="crumb"><small>昵称</small><b id="my-name"></b></span>
+    <span class="room-code"><small>房间</small><b id="room-name"></b></span>
     <span class="badge" id="conn-badge">连接中…</span>
-    <a href="#" id="leave-room" class="leave-link">退出</a>
+    <button type="button" class="topbar-action" id="copy-invite">邀请好友</button>
+    <a href="#" id="leave-room" class="topbar-action danger">退出</a>
   </div>
 </header>
 
-<div id="layout">
-  <div id="stage-wrap">
-    <div id="stage"></div>
-    <div id="stage-status">连接中…</div>
+<main class="room-shell">
+  <div class="room-statusbar">
+    <div class="status-cluster">
+      <span class="status-item"><small>我的身份</small><b id="role-status">连接中</b></span>
+      <span class="status-item"><small>画面传输</small><b id="transport-status">等待中</b></span>
+      <span class="status-item"><small>房间人数</small><b id="member-count">0 人</b></span>
+    </div>
+    <div class="status-actions">
+      <span class="current-user" id="my-name"></span>
+      <button type="button" class="btn ghost compact" id="fullscreen-stage">全屏游戏</button>
+    </div>
   </div>
 
-  <aside>
-    <section class="panel">
-      <h4>座位（占座后才能操作）</h4>
-      <div class="host-line" id="host-line">连接中…</div>
-      <button class="btn ghost" id="become-host" style="display:none">成为房主（运行游戏并直播）</button>
-      <div class="seat-row p1" id="seat-1">
-        <div class="seat-name"></div>
-        <div class="who">空闲</div>
-        <button class="btn" data-seat="1">占座</button>
+  <div id="layout">
+    <section class="stage-column" aria-label="游戏画面">
+      <div id="stage-wrap">
+        <div class="stage-live"><i></i><span id="live-label">等待直播</span></div>
+        <div id="stage"></div>
+        <div id="stage-status">连接中…</div>
       </div>
-      <div class="seat-row p2" id="seat-2">
-        <div class="seat-name"></div>
-        <div class="who">空闲</div>
-        <button class="btn" data-seat="2">占座</button>
+      <div class="stage-caption">
+        <span id="seat-caption">当前正在观战</span>
+        <span id="stream-caption">画面会自动选择最佳传输方式</span>
       </div>
-      <div class="mouse-line">鼠标控制：<b id="mouse-owner">无人</b>（仅房主可操作鼠标）</div>
     </section>
 
-    <section class="panel">
-      <h4>游客 · 观战 <span id="spec-count"></span></h4>
-      <div class="spec-notice" id="spec-notice">你当前是观战状态，点击上方座位占座后即可操作游戏。</div>
-      <ul id="spec-list"></ul>
-    </section>
+    <aside>
+      <section class="panel seats-panel">
+        <header class="panel-heading">
+          <div><span class="panel-kicker">PLAYERS</span><h2>玩家席位</h2></div>
+          <span class="panel-count" id="seat-count">0 / 2</span>
+        </header>
+        <div class="host-line" id="host-line">连接中…</div>
+        <button class="btn ghost" id="become-host" style="display:none">成为房主</button>
+        <div class="seat-row p1" id="seat-1">
+          <span class="seat-index">01</span>
+          <div class="seat-copy"><div class="seat-name"></div><div class="who">空闲</div></div>
+          <button class="btn" data-seat="1">占座</button>
+        </div>
+        <div class="seat-row p2" id="seat-2">
+          <span class="seat-index">02</span>
+          <div class="seat-copy"><div class="seat-name"></div><div class="who">空闲</div></div>
+          <button class="btn" data-seat="2">占座</button>
+        </div>
+        <div class="mouse-line">鼠标控制 <b id="mouse-owner">无人</b></div>
+      </section>
 
-    <section class="panel">
-      <h4>房间动态</h4>
-      <div id="log"></div>
-    </section>
-  </aside>
-</div>
+      <section class="panel spectators-panel">
+        <header class="panel-heading">
+          <div><span class="panel-kicker">ROOM</span><h2>房间成员</h2></div>
+          <span class="panel-count" id="spec-count">0</span>
+        </header>
+        <div class="spec-notice" id="spec-notice">你当前处于观战席。</div>
+        <ul id="spec-list"></ul>
+      </section>
 
+      <section class="panel activity-panel">
+        <header class="panel-heading">
+          <div><span class="panel-kicker">ACTIVITY</span><h2>房间动态</h2></div>
+        </header>
+        <div id="log"></div>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="room-toast" role="status" aria-live="polite"></div>
 <script src="/room.js"></script>
 </body>
 </html>

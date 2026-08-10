@@ -153,6 +153,21 @@ function assertHostInvariant(state) {
   await waitUntil(() => observer.frames.length > observerFrameCount, "WS 降级帧转发");
   await wait(100);
   assert.equal(b.frames.length, bFrameCount, "WebRTC 观众不得继续接收 WS 降级帧");
+  const firstFallbackCount = observer.frames.length;
+  a.ws.send(Buffer.from("fallback-frame-dropped"));
+  await wait(100);
+  assert.equal(
+    observer.frames.length,
+    firstFallbackCount,
+    "观众未确认解码时不得继续堆积 WS 降级帧"
+  );
+  send(observer, { t: "frameAck" });
+  await wait(50);
+  a.ws.send(Buffer.from("fallback-frame-after-ack"));
+  await waitUntil(
+    () => observer.frames.length > firstFallbackCount,
+    "WS 降级帧确认后继续转发"
+  );
 
   send(b, { t: "sit", seat: 2 });
   await waitForState(b, (state) => state.seats[2] === b.id, "B 坐入 P2");

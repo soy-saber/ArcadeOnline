@@ -206,7 +206,8 @@ const diffData = (da, db) => {
     if (
       streamInfo.readyState < 2 ||
       streamInfo.currentTime <= 0 ||
-      !streamInfo.videoWidth ||
+      streamInfo.videoWidth < 1100 ||
+      streamInfo.videoHeight < 800 ||
       streamInfo.codec !== "video/H264" ||
       !streamInfo.tracks.some((track) => track.readyState === "live")
     ) {

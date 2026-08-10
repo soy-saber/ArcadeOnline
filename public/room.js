@@ -47,13 +47,15 @@
   let lastMoveSend = 0;
   const VIRTUAL_GAMEPAD_ID = "ArcadeOnline Remote Input";
   const VIRTUAL_GAMEPAD_MIN_PRESS_MS = 40;
+  const STREAM_FPS = 30;
+  const STREAM_BITRATE = 5000000;
   const virtualGamepadButtonByCode = Object.freeze({
     KeyS: 0,
     KeyD: 1,
     KeyA: 2,
     KeyW: 3,
     Space: 6,
-    Enter: 7,
+    Enter: 5,
     ArrowUp: 12,
     ArrowDown: 13,
     ArrowLeft: 14,
@@ -65,7 +67,7 @@
     west: 65,
     north: 87,
     "left-trigger-2": 32,
-    "right-trigger-2": 13,
+    "right-trigger": 13,
     "dpad-up": 38,
     "dpad-down": 40,
     "dpad-left": 37,
@@ -130,6 +132,7 @@
       myId = null;
       mySeat = null;
     }
+    updateRoomIndicators();
   }
 
   /* ---------------- 模式切换：房主(唯一播放器) / 观战(收帧) ---------------- */
@@ -240,6 +243,46 @@
     if (mode === "host") {
       el.classList.remove("show");
     }
+    updateRoomIndicators();
+  }
+
+  function updateRoomIndicators() {
+    const role = document.getElementById("role-status");
+    const transport = document.getElementById("transport-status");
+    const members = document.getElementById("member-count");
+    const seatCaption = document.getElementById("seat-caption");
+    const streamCaption = document.getElementById("stream-caption");
+    const live = document.querySelector(".stage-live");
+    const liveLabel = document.getElementById("live-label");
+    if (!role || !transport || !members) return;
+
+    const connected = ArcadeNet.connected;
+    role.className = connected ? (mySeat != null ? "good" : "") : "warn";
+    role.textContent = !connected ? "重新连接中" : mySeat != null ? "P" + mySeat + " 玩家" : "观战席";
+    members.textContent = state.members.length + " 人";
+
+    if (!connected || state.hostId == null) {
+      transport.className = "warn";
+      transport.textContent = state.hostId == null ? "等待房主" : "连接中断";
+      streamCaption.textContent = "等待房间恢复直播";
+    } else if (mode === "host") {
+      transport.className = "good";
+      transport.textContent = "本机画面";
+      streamCaption.textContent = "你正在向房间成员直播";
+    } else if (viewerTransport === "webrtc") {
+      transport.className = "good";
+      transport.textContent = "WebRTC 低延迟";
+      streamCaption.textContent = "低延迟直播已连接";
+    } else {
+      transport.className = "warn";
+      transport.textContent = "WebSocket 兼容";
+      streamCaption.textContent = "当前使用兼容传输模式";
+    }
+
+    seatCaption.textContent = mySeat != null ? "你正在 P" + mySeat + " 席游玩" : "当前正在观战";
+    const isLive = connected && state.hostId != null;
+    live.classList.toggle("active", isLive);
+    liveLabel.textContent = !connected ? "连接中断" : isLive ? (mode === "host" ? "正在直播" : "直播画面") : "等待直播";
   }
 
   function destroyPlayer() {
@@ -392,6 +435,7 @@
       autoplay: "on",
       letterbox: "off",
       preferredRenderer: "webgl",
+      quality: "high",
       preserveDrawingBuffer: true,
       gamepadButtonMapping: ruffleGamepadButtonMapping,
       urlRewriteRules
@@ -404,6 +448,7 @@
     playerEl.config = {
       autoplay: "on",
       letterbox: "off",
+      quality: "high",
       preserveDrawingBuffer: true,
       gamepadButtonMapping: ruffleGamepadButtonMapping,
       urlRewriteRules
@@ -443,6 +488,35 @@
     syncHostStreamingDemand();
   }
 
+  function createReliableTicker(fps, callback) {
+    const intervalMs = 1000 / fps;
+    if (typeof Worker === "function") {
+      try {
+        const source =
+          "const delay=" + intervalMs + ";" +
+          "self.onmessage=()=>setTimeout(()=>self.postMessage(0),delay);" +
+          "setTimeout(()=>self.postMessage(0),delay);";
+        const url = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+        const worker = new Worker(url);
+        URL.revokeObjectURL(url);
+        let active = true;
+        worker.onmessage = function () {
+          if (!active) return;
+          callback();
+          worker.postMessage(0);
+        };
+        return {
+          stop: function () {
+            active = false;
+            worker.terminate();
+          }
+        };
+      } catch (e) {}
+    }
+    const timer = setInterval(callback, intervalMs);
+    return { stop: function () { clearInterval(timer); } };
+  }
+
   function stopHostStreaming() {
     stopFrameCapture();
     stopWebRtcStreaming();
@@ -452,7 +526,7 @@
 
   function stopWebRtcStreaming() {
     if (broadcastRenderTimer) {
-      clearInterval(broadcastRenderTimer);
+      broadcastRenderTimer.stop();
       broadcastRenderTimer = null;
     }
     if (broadcastStream) {
@@ -474,26 +548,44 @@
     }
     if (broadcastRenderTimer) return;
     stageEl.dataset.hostStream = "starting";
-    broadcastRenderTimer = setInterval(renderBroadcastFrame, 1000 / 60);
+    broadcastRenderTimer = createReliableTicker(STREAM_FPS, renderBroadcastFrame);
     renderBroadcastFrame();
+  }
+
+  function ensureCaptureCanvas(src) {
+    // Allocate the stream at HiDPI resolution from the start. Ruffle may expose
+    // a temporary 300x150 canvas while loading, then upgrade it asynchronously.
+    const captureScale = 2;
+    const width = Math.round(gameMeta.width * captureScale);
+    const height = Math.round(gameMeta.height * captureScale);
+    if (!tmpCanvas) {
+      tmpCanvas = document.createElement("canvas");
+      tmpCanvas.width = width;
+      tmpCanvas.height = height;
+      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
+      tmpCtx.imageSmoothingEnabled = true;
+      tmpCtx.imageSmoothingQuality = "medium";
+    } else if (tmpCanvas.width < width || tmpCanvas.height < height) {
+      // Keep the same canvas so an active captureStream track follows the
+      // resolution upgrade when Ruffle finishes creating its HiDPI buffer.
+      tmpCanvas.width = width;
+      tmpCanvas.height = height;
+      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
+      tmpCtx.imageSmoothingEnabled = true;
+      tmpCtx.imageSmoothingQuality = "medium";
+    }
   }
 
   function renderBroadcastFrame() {
     if (mode !== "host") return;
     const src = getCanvas();
     if (!src) return;
-    if (!tmpCanvas) {
-      tmpCanvas = document.createElement("canvas");
-      tmpCanvas.width = gameMeta.width;
-      tmpCanvas.height = gameMeta.height;
-      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
-      tmpCtx.imageSmoothingEnabled = false;
-    }
-    tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
-    drawMouseCursor(tmpCtx);
+    ensureCaptureCanvas(src);
+    tmpCtx.drawImage(src, 0, 0, tmpCanvas.width, tmpCanvas.height);
+    drawMouseCursor(tmpCtx, tmpCanvas.width, tmpCanvas.height);
     if (broadcastStream || !supportsHostCapture()) return;
     try {
-      broadcastStream = tmpCanvas.captureStream(60);
+      broadcastStream = tmpCanvas.captureStream(STREAM_FPS);
       const videoTrack = broadcastStream.getVideoTracks()[0];
       if (videoTrack) videoTrack.contentHint = "motion";
       stageEl.dataset.hostStream = "webrtc-ready";
@@ -501,20 +593,21 @@
     } catch (e) {
       stageEl.dataset.hostStream = "fallback";
       if (broadcastRenderTimer) {
-        clearInterval(broadcastRenderTimer);
+        broadcastRenderTimer.stop();
         broadcastRenderTimer = null;
       }
       console.warn("WebRTC 画面捕获不可用，继续使用截帧直播", e);
     }
   }
 
-  function drawMouseCursor(ctx) {
+  function drawMouseCursor(ctx, width = gameMeta.width, height = gameMeta.height) {
     if (!currentMouse) return;
-    const x = currentMouse.x * gameMeta.width;
-    const y = currentMouse.y * gameMeta.height;
+    const scale = width / gameMeta.width;
+    const x = currentMouse.x * width;
+    const y = currentMouse.y * height;
     ctx.fillStyle = "#ffe100";
-    ctx.fillRect(x - 7, y - 1, 14, 2);
-    ctx.fillRect(x - 1, y - 7, 2, 14);
+    ctx.fillRect(x - 7 * scale, y - scale, 14 * scale, 2 * scale);
+    ctx.fillRect(x - scale, y - 7 * scale, 2 * scale, 14 * scale);
   }
 
   function syncFallbackCapture() {
@@ -527,7 +620,7 @@
     );
     stageEl.dataset.fallbackNeeded = String(fallbackNeeded);
     if (fallbackNeeded && !frameTimer) {
-      frameTimer = setInterval(captureFrame, 100);
+      frameTimer = createReliableTicker(15, captureFrame);
       captureFrame();
     } else if (!fallbackNeeded) {
       stopFrameCapture();
@@ -536,7 +629,7 @@
 
   function stopFrameCapture() {
     if (frameTimer) {
-      clearInterval(frameTimer);
+      frameTimer.stop();
       frameTimer = null;
     }
     capturePending = false;
@@ -546,15 +639,9 @@
     if (capturePending || mode !== "host") return;
     const src = getCanvas();
     if (!src) return;
-    if (!tmpCanvas) {
-      tmpCanvas = document.createElement("canvas");
-      tmpCanvas.width = gameMeta.width;
-      tmpCanvas.height = gameMeta.height;
-      tmpCtx = tmpCanvas.getContext("2d", { alpha: false });
-      tmpCtx.imageSmoothingEnabled = false;
-    }
-    tmpCtx.drawImage(src, 0, 0, gameMeta.width, gameMeta.height);
-    drawMouseCursor(tmpCtx);
+    ensureCaptureCanvas(src);
+    tmpCtx.drawImage(src, 0, 0, tmpCanvas.width, tmpCanvas.height);
+    drawMouseCursor(tmpCtx, tmpCanvas.width, tmpCanvas.height);
     capturePending = true;
     tmpCanvas.toBlob(function (blob) {
       capturePending = false;
@@ -635,8 +722,9 @@
       preferH264(pc, sender);
       const parameters = sender.getParameters();
       if (!parameters.encodings || !parameters.encodings.length) parameters.encodings = [{}];
-      parameters.encodings[0].maxBitrate = 4000000;
-      parameters.encodings[0].maxFramerate = 60;
+      parameters.encodings[0].maxBitrate = STREAM_BITRATE;
+      parameters.encodings[0].maxFramerate = STREAM_FPS;
+      parameters.degradationPreference = "maintain-framerate";
       sender.setParameters(parameters).catch(function () {});
     }
     pc.createOffer()
@@ -722,6 +810,10 @@
     };
     pc.ontrack = (event) => {
       if (viewerPeer !== peer || !viewerVideo) return;
+      try {
+        if ("playoutDelayHint" in event.receiver) event.receiver.playoutDelayHint = 0;
+        if ("jitterBufferTarget" in event.receiver) event.receiver.jitterBufferTarget = 0;
+      } catch (e) {}
       viewerVideo.srcObject = event.streams[0] || new MediaStream([event.track]);
       viewerVideo.play().catch(function () {});
     };
@@ -768,6 +860,7 @@
     if (viewerVideo) viewerVideo.style.display = viewerTransport === "webrtc" ? "block" : "none";
     if (viewerTransport === "webrtc") lastFrameAt = Date.now();
     if (changed) reportViewerTransport();
+    updateRoomIndicators();
   }
 
   function reportViewerTransport() {
@@ -848,8 +941,11 @@
   /* ---------------- 观战：渲染房主流帧 ---------------- */
 
   function onFrame(blob) {
-    if (mode !== "viewer" || viewerTransport === "webrtc") return;
-    if (!viewerCtx) return;
+    if (mode !== "viewer") return;
+    if (viewerTransport === "webrtc" || !viewerCtx) {
+      ArcadeNet.send({ t: "frameAck" });
+      return;
+    }
     lastFrameAt = Date.now();
     pendingViewerFrame = blob;
     decodeLatestViewerFrame();
@@ -872,6 +968,7 @@
       .catch(function () {})
       .finally(function () {
         viewerDecodePending = false;
+        ArcadeNet.send({ t: "frameAck" });
         decodeLatestViewerFrame();
       });
   }
@@ -1109,16 +1206,19 @@
       const who = row.querySelector(".who");
       const btn = row.querySelector(".btn");
       if (occupantId == null) {
+        row.classList.remove("occupied");
         who.textContent = "空闲";
         who.classList.remove("mine");
         btn.textContent = "占座";
         btn.disabled = false;
       } else if (occupantId === myId) {
+        row.classList.add("occupied");
         who.textContent = occupant ? occupant.name + "（你）" : "你";
         who.classList.add("mine");
         btn.textContent = "离座";
         btn.disabled = false;
       } else {
+        row.classList.add("occupied");
         who.textContent = occupant ? occupant.name : "?";
         who.classList.remove("mine");
         btn.textContent = "已占用";
@@ -1127,7 +1227,9 @@
     }
 
     const specs = state.members.filter((m) => m.seat == null);
-    document.getElementById("spec-count").textContent = "(" + specs.length + ")";
+    document.getElementById("spec-count").textContent = specs.length + " 观战";
+    document.getElementById("seat-count").textContent =
+      [state.seats[1], state.seats[2]].filter(Boolean).length + " / 2";
     const list = document.getElementById("spec-list");
     list.innerHTML = "";
     if (!specs.length) {
@@ -1140,6 +1242,7 @@
       li.textContent = s.name + (s.id === myId ? "（你）" : "");
       list.appendChild(li);
     }
+    updateRoomIndicators();
   }
 
   function onMouseOwner(m) {
@@ -1167,6 +1270,41 @@
     box.scrollTop = box.scrollHeight;
   }
 
+  function showRoomToast(text) {
+    const toast = document.getElementById("room-toast");
+    toast.textContent = text;
+    toast.classList.add("show");
+    clearTimeout(showRoomToast.timer);
+    showRoomToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  function copyInviteLink() {
+    const url = location.href;
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url)
+        .then(() => showRoomToast("邀请链接已复制"))
+        .catch(() => fallbackCopy(url));
+      return;
+    }
+    fallbackCopy(url);
+  }
+
+  function fallbackCopy(text) {
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "");
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.appendChild(input);
+    input.select();
+    let copied = false;
+    try {
+      copied = document.execCommand("copy");
+    } catch (e) {}
+    input.remove();
+    showRoomToast(copied ? "邀请链接已复制" : "无法复制，请从地址栏复制链接");
+  }
+
   /* ---------------- 按钮 ---------------- */
 
   document.querySelectorAll(".seat-row .btn").forEach((btn) => {
@@ -1183,6 +1321,22 @@
 
   document.getElementById("become-host").addEventListener("click", () => {
     ArcadeNet.send({ t: "becomeHost" });
+  });
+
+  document.getElementById("copy-invite").addEventListener("click", copyInviteLink);
+
+  document.getElementById("fullscreen-stage").addEventListener("click", () => {
+    const wrap = document.getElementById("stage-wrap");
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else if (wrap.requestFullscreen) {
+      wrap.requestFullscreen().catch(() => showRoomToast("浏览器未允许进入全屏"));
+    }
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    document.getElementById("fullscreen-stage").textContent =
+      document.fullscreenElement ? "退出全屏" : "全屏游戏";
   });
 
   document.getElementById("leave-room").addEventListener("click", (e) => {

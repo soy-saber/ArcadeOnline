@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0f10">
 <title>ArcadeOnline - 童年游戏联机平台</title>
 <link rel="stylesheet" href="/style.css">
 </head>
@@ -10,100 +11,244 @@
 <header class="topbar">
   <a class="brand" href="/" aria-label="ArcadeOnline 首页">
     <span class="brand-mark" aria-hidden="true"></span>
-    <h1>ArcadeOnline</h1>
+    <span class="brand-copy"><strong>ArcadeOnline</strong><small>童年游戏联机厅</small></span>
   </a>
   <span class="topbar-tagline">旧梦重启 · 远方同席</span>
 </header>
 
 <main class="lobby-shell">
-  <div class="login-card" id="login-card">
-    <span class="login-kicker">漫游者名册</span>
-    <h2>留下你的名字</h2>
-    <label class="field-label" for="name-input">昵称</label>
-    <input id="name-input" maxlength="12" placeholder="输入昵称" autocomplete="nickname">
-    <button class="btn" id="name-btn">进入大厅 <span aria-hidden="true">→</span></button>
-  </div>
+  <section class="login-stage" id="login-card">
+    <div class="login-backdrop" aria-hidden="true">
+      <img src="/assets/game-46923.png" alt="">
+      <img src="/assets/game-3881.png" alt="">
+    </div>
+    <div class="login-card">
+      <span class="login-kicker">漫游者名册</span>
+      <h1>留下你的名字</h1>
+      <p>今晚的街机厅，等你入场。</p>
+      <label class="field-label" for="name-input">昵称</label>
+      <input id="name-input" maxlength="12" placeholder="输入昵称" autocomplete="nickname">
+      <button class="btn" id="name-btn">进入大厅 <span aria-hidden="true">→</span></button>
+    </div>
+  </section>
 
-  <div class="container" id="lobby" style="display:none">
-    <div class="lobby-heading">
+  <section class="container lobby-library" id="lobby" hidden>
+    <header class="lobby-heading">
       <div>
         <span class="section-kicker">游戏藏馆</span>
-        <h2>选择游戏</h2>
+        <h1>今晚玩什么？</h1>
+        <p class="library-summary"><span id="game-total">0</span> 款典藏 · 双人实时联机</p>
       </div>
-      <p>欢迎回来，<b id="hello-name"></b><a href="#" id="rename">更换昵称</a></p>
+      <div class="profile-line">
+        <span class="profile-avatar" id="profile-avatar" aria-hidden="true"></span>
+        <span>欢迎回来，<b id="hello-name"></b></span>
+        <button type="button" class="text-btn" id="rename">更换昵称</button>
+      </div>
+    </header>
+
+    <div class="library-tools" aria-label="游戏筛选">
+      <div class="segmented" id="game-filters" role="group" aria-label="游戏类型">
+        <button type="button" class="active" data-filter="all">全部</button>
+        <button type="button" data-filter="sports">体育竞技</button>
+        <button type="button" data-filter="party">休闲对战</button>
+      </div>
+      <label class="compact-field search-field">
+        <span>搜索</span>
+        <input id="game-search" type="search" placeholder="游戏名称" autocomplete="off">
+      </label>
+      <label class="compact-field room-field">
+        <span>房间口令</span>
+        <input id="room-code" maxlength="20" placeholder="公共大厅" autocomplete="off" spellcheck="false">
+      </label>
+      <button type="button" class="btn ghost room-random" id="random-room">随机口令</button>
     </div>
-    <div class="game-grid" id="game-grid"></div>
-  </div>
+
+    <div class="recent-strip" id="recent-strip" hidden>
+      <span>最近游玩</span>
+      <button type="button" id="recent-game"></button>
+    </div>
+
+    <div class="game-grid" id="game-grid" aria-live="polite"></div>
+    <div class="empty-library" id="empty-library" hidden>
+      <strong>没有找到游戏</strong>
+      <span>换个名称或分类再看看。</span>
+    </div>
+  </section>
 </main>
+
+<div class="toast" id="lobby-toast" role="status" aria-live="polite"></div>
 
 <script src="/arcade.js"></script>
 <script>
 (function () {
   const params = new URLSearchParams(location.search);
   const next = params.get("next");
-
-  const card = document.getElementById("login-card");
+  const loginStage = document.getElementById("login-card");
   const lobby = document.getElementById("lobby");
-  const input = document.getElementById("name-input");
-  const btn = document.getElementById("name-btn");
+  const nameInput = document.getElementById("name-input");
+  const nameButton = document.getElementById("name-btn");
+  const searchInput = document.getElementById("game-search");
+  const roomInput = document.getElementById("room-code");
+  const filterButtons = Array.from(document.querySelectorAll("#game-filters button"));
+  let allGames = [];
+  let activeFilter = "all";
 
-  if (arcadeName()) {
-    showLobby();
-  } else {
-    input.value = "";
-    input.focus();
-  }
+  if (arcadeName()) showLobby();
+  else nameInput.focus();
 
   function showLobby() {
-    card.style.display = "none";
-    lobby.style.display = "block";
-    document.getElementById("hello-name").textContent = arcadeName();
+    loginStage.hidden = true;
+    lobby.hidden = false;
+    const name = arcadeName();
+    document.getElementById("hello-name").textContent = name;
+    document.getElementById("profile-avatar").textContent = name.slice(0, 1).toUpperCase();
     fetch("/games.json")
-      .then((r) => r.json())
-      .then(renderGames)
-      .catch((e) => console.error(e));
+      .then((response) => {
+        if (!response.ok) throw new Error("游戏目录加载失败");
+        return response.json();
+      })
+      .then((games) => {
+        allGames = games;
+        document.getElementById("game-total").textContent = String(games.length);
+        renderRecent();
+        renderGames();
+      })
+      .catch(() => showToast("游戏目录暂时无法加载"));
   }
 
-  function renderGames(games) {
+  function normalizedRoom(game) {
+    const value = roomInput.value.trim().replace(/\s+/g, "-").slice(0, 20);
+    return value || game.room || "lobby";
+  }
+
+  function gameHref(game) {
+    return "/room.html?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
+  }
+
+  function make(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text != null) element.textContent = text;
+    return element;
+  }
+
+  function renderGames() {
+    const query = searchInput.value.trim().toLowerCase();
+    const games = allGames.filter((game) => {
+      const categoryMatches = activeFilter === "all" || game.category === activeFilter;
+      const haystack = [game.title, game.genre, game.description].filter(Boolean).join(" ").toLowerCase();
+      return categoryMatches && (!query || haystack.includes(query));
+    });
     const grid = document.getElementById("game-grid");
-    grid.innerHTML = "";
-    for (const g of games) {
-      const d = document.createElement("div");
-      d.className = "game-card";
-      const seatText = g.seats
-        .map((s) => "<div><b>" + s.label + "</b><span>" + s.hint + "</span></div>")
-        .join("");
-      const href = "/room.html?game=" + encodeURIComponent(g.id) + "&room=" + encodeURIComponent(g.room);
-      d.innerHTML =
-        "<div class='game-cover'><img src='/assets/game-" + encodeURIComponent(g.id) + ".png' alt='' loading='lazy'><span>典藏自 " + g.source + "</span></div>" +
-        "<div class='game-card-body'>" +
-          "<div class='game-title-row'><h3>" + g.title + "</h3><span class='room-state'><i></i>常驻</span></div>" +
-          "<div class='seat-hints'>" + seatText + "</div>" +
-          "<a class='btn game-enter' href='" + href + "'>进入房间 <span aria-hidden='true'>→</span></a>" +
-        "</div>";
-      grid.appendChild(d);
+    grid.replaceChildren();
+
+    for (const game of games) {
+      const article = make("article", "game-card");
+      article.dataset.gameId = game.id;
+
+      const coverLink = make("a", "game-cover");
+      coverLink.href = gameHref(game);
+      coverLink.setAttribute("aria-label", "进入" + game.title);
+      const image = make("img");
+      image.src = "/assets/game-" + encodeURIComponent(game.id) + ".png";
+      image.alt = game.title + "游戏画面";
+      image.loading = "lazy";
+      coverLink.appendChild(image);
+      const coverMeta = make("div", "cover-meta");
+      coverMeta.append(make("span", "source-tag", "典藏自 " + game.source));
+      coverMeta.append(make("span", "players-tag", game.seats.length + " 人联机"));
+      coverLink.appendChild(coverMeta);
+
+      const body = make("div", "game-card-body");
+      const eyebrow = make("div", "game-eyebrow");
+      eyebrow.append(make("span", "genre", game.genre || "经典游戏"));
+      eyebrow.append(make("span", "room-state", "可开局"));
+      const title = make("h2", "game-title", game.title);
+      const description = make("p", "game-description", game.description || "童年经典双人游戏");
+
+      const seatHints = make("div", "seat-hints");
+      for (const seat of game.seats) {
+        const row = make("div");
+        row.append(make("b", "", seat.label));
+        row.append(make("span", "", seat.hint));
+        seatHints.appendChild(row);
+      }
+
+      const footer = make("div", "game-card-footer");
+      const roomLabel = make("span", "selected-room", "房间：" + normalizedRoom(game));
+      const enter = make("a", "btn game-enter", "进入房间");
+      enter.href = gameHref(game);
+      enter.addEventListener("click", () => {
+        enter.href = gameHref(game);
+        localStorage.setItem("arcade_recent_game", game.id);
+      });
+      footer.append(roomLabel, enter);
+      body.append(eyebrow, title, description, seatHints, footer);
+      article.append(coverLink, body);
+      grid.appendChild(article);
     }
+
+    document.getElementById("empty-library").hidden = games.length > 0;
   }
 
-  btn.addEventListener("click", () => {
-    const n = input.value.trim().slice(0, 12);
-    if (!n) {
-      input.focus();
+  function renderRecent() {
+    const recentId = localStorage.getItem("arcade_recent_game");
+    const game = allGames.find((item) => item.id === recentId);
+    const strip = document.getElementById("recent-strip");
+    if (!game) {
+      strip.hidden = true;
       return;
     }
-    localStorage.setItem("arcade_name", n);
-    showLobby();
+    strip.hidden = false;
+    const button = document.getElementById("recent-game");
+    button.textContent = game.title + " 继续游玩 →";
+    button.onclick = () => {
+      location.href = gameHref(game);
+    };
+  }
+
+  function showToast(text) {
+    const toast = document.getElementById("lobby-toast");
+    toast.textContent = text;
+    toast.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  nameButton.addEventListener("click", () => {
+    const name = nameInput.value.trim().slice(0, 12);
+    if (!name) {
+      nameInput.focus();
+      return;
+    }
+    localStorage.setItem("arcade_name", name);
     if (next) location.href = next;
+    else showLobby();
   });
 
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") btn.click();
+  nameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") nameButton.click();
   });
 
-  document.getElementById("rename").addEventListener("click", (e) => {
-    e.preventDefault();
+  document.getElementById("rename").addEventListener("click", () => {
     localStorage.removeItem("arcade_name");
-    location.href = "/";
+    location.reload();
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+      filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+      renderGames();
+    });
+  });
+
+  searchInput.addEventListener("input", renderGames);
+  roomInput.addEventListener("input", renderGames);
+  document.getElementById("random-room").addEventListener("click", () => {
+    roomInput.value = "room-" + Math.random().toString(36).slice(2, 7);
+    renderGames();
+    showToast("已生成房间口令");
   });
 })();
 </script>

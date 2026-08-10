@@ -173,12 +173,14 @@ function broadcastRaw(room, data, exceptId) {
     if (
       m.id !== exceptId &&
       m.streamTransport !== "webrtc" &&
+      !m.framePending &&
       m.ws &&
       m.ws.readyState === 1 &&
       m.ws.bufferedAmount <= MAX_FRAME_BUFFER_BYTES
     ) {
       try {
         m.ws.send(data);
+        m.framePending = true;
       } catch (e) {
         console.error("[broadcastRaw] " + e.message);
       }
@@ -392,6 +394,7 @@ wss.on("connection", (ws) => {
           resumed.rtcCapable = msg.rtcCapable === true;
           resumed.ws = ws;
           resumed.streamTransport = "ws";
+          resumed.framePending = false;
           member = resumed;
           if (oldWs && oldWs !== ws && oldWs.readyState < 2) oldWs.close(4001, "session resumed");
         } else {
@@ -401,6 +404,7 @@ wss.on("connection", (ws) => {
             seat: null,
             rtcCapable: msg.rtcCapable === true,
             streamTransport: "ws",
+            framePending: false,
             ws,
             room
           };
@@ -479,8 +483,15 @@ wss.on("connection", (ws) => {
         const transport = msg.transport === "webrtc" ? "webrtc" : "ws";
         if (member.streamTransport !== transport) {
           member.streamTransport = transport;
+          member.framePending = false;
           pushState(member.room);
         }
+        break;
+      }
+
+      case "frameAck": {
+        if (!member || member.id === member.room.hostId) return;
+        member.framePending = false;
         break;
       }
 

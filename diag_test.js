@@ -177,6 +177,40 @@ function logline(s) {
         "]" +
         (got.includes("keydown:Enter") && got.includes("keyup:Enter") ? " ✓ 映射生效" : " ✗")
     );
+    if (!got.includes("keydown:Enter") || !got.includes("keyup:Enter")) {
+      throw new Error("炸弹人 P2 空格未映射为 Enter");
+    }
+
+    await pageA.evaluate(() => (window.__inKeys = []));
+    await pageB.keyboard.down("Enter");
+    await new Promise((r) => setTimeout(r, 80));
+    const enterPressed = await pageA.evaluate(() => {
+      const gamepad = Array.from(navigator.getGamepads()).find(
+        (item) => item && item.id === "ArcadeOnline Remote Input"
+      );
+      return gamepad ? gamepad.buttons[5].pressed : null;
+    });
+    await pageB.keyboard.up("Enter");
+    await new Promise((r) => setTimeout(r, 100));
+    got = await pageA.evaluate(() => window.__inKeys.slice());
+    const enterReleased = await pageA.evaluate(() => {
+      const gamepad = Array.from(navigator.getGamepads()).find(
+        (item) => item && item.id === "ArcadeOnline Remote Input"
+      );
+      return gamepad ? !gamepad.buttons[5].pressed : null;
+    });
+    logline(
+      "6c) B直接按回车 → A收到: [" + got.join(", ") +
+      "]；虚拟回车按下/释放: " + enterPressed + "/" + enterReleased
+    );
+    if (
+      !got.includes("keydown:Enter") ||
+      !got.includes("keyup:Enter") ||
+      !enterPressed ||
+      !enterReleased
+    ) {
+      throw new Error("炸弹人 P2 直接回车未驱动 Ruffle 虚拟按键");
+    }
   }
 
   // 7. P2 按住移动键离座时，房主必须立即释放虚拟按键

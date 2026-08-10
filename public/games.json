@@ -2,6 +2,9 @@
   {
     "id": "46923",
     "title": "火柴人打羽毛球",
+    "genre": "体育竞技",
+    "category": "sports",
+    "description": "轻快直接的双人球场对决，把每一次起跳和扣杀都交给默契。",
     "source": "4399",
     "swf": "/games/46923/game.swf",
     "width": 550,
@@ -31,6 +34,9 @@
   {
     "id": "3881",
     "title": "Q版泡泡堂",
+    "genre": "休闲对战",
+    "category": "party",
+    "description": "在紧凑地图里布置泡泡、抢占路线，和朋友来一局经典攻防。",
     "source": "4399",
     "swf": "/games/3881/game.swf",
     "width": 550,
@@ -46,14 +52,15 @@
       {
         "seat": 2,
         "label": "P2",
-        "hint": "W/A/S/D + 空格",
+        "hint": "W/A/S/D 移动 + 回车（Enter）",
         "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"],
         "map": {
           "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },
           "KeyA": { "code": "ArrowLeft", "key": "ArrowLeft", "keyCode": 37 },
           "KeyS": { "code": "ArrowDown", "key": "ArrowDown", "keyCode": 40 },
           "KeyD": { "code": "ArrowRight", "key": "ArrowRight", "keyCode": 39 },
-          "Space": { "code": "Enter", "key": "Enter", "keyCode": 13 }
+          "Space": { "code": "Enter", "key": "Enter", "keyCode": 13 },
+          "Enter": { "code": "Enter", "key": "Enter", "keyCode": 13 }
         }
       }
     ]
