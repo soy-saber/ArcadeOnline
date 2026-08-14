@@ -1,0 +1,7 @@
+{
+  "name": "森林冰火人：森林神殿",
+  "short_name": "森林冰火人",
+  "start_url": "game.html",
+  "display": "standalone",
+  "icons": [{ "src": "icon-60x60.png", "sizes": "60x60", "type": "image/png" }]
+}
