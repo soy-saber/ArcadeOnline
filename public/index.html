@@ -122,7 +122,7 @@
   }
 
   function gameHref(game) {
-    return "/room.html?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
+    return (game.runtime === "native" ? "/native-room.html" : "/room.html") + "?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
   }
 
   function make(tag, className, text) {
@@ -150,7 +150,7 @@
       coverLink.href = gameHref(game);
       coverLink.setAttribute("aria-label", "进入" + game.title);
       const image = make("img");
-      image.src = "/assets/game-" + encodeURIComponent(game.id) + ".png";
+      image.src = game.cover || "/assets/game-" + encodeURIComponent(game.id) + ".png";
       image.alt = game.title + "游戏画面";
       image.loading = "lazy";
       coverLink.appendChild(image);

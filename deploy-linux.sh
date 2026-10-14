@@ -7,7 +7,7 @@ APP_NAME="arcade-online"
 BASE_DIR="/opt/arcade-online"
 SERVICE_NAME="arcade-online.service"
 SERVICE_USER="arcade-online"
-NODE_VERSION="${NODE_VERSION:-22.18.0}"
+NODE_VERSION="${NODE_VERSION:-22.23.3}"
 PORT_EXPLICIT=0
 if [[ -n "${ARCADE_PORT+x}" ]]; then PORT_EXPLICIT=1; fi
 ARCADE_PORT="${ARCADE_PORT:-8000}"
@@ -19,9 +19,10 @@ die() { printf '\n[arcade-online] ERROR: %s\n' "$*" >&2; exit 1; }
 
 usage() {
   cat <<'EOF'
-Usage: bash deploy-linux.sh [deploy|start|stop|restart|status|logs]
+Usage: bash deploy-linux.sh [deploy|rollback|start|stop|restart|status|logs]
 
 deploy (default)  Install/update Node.js, dependencies and the systemd service
+rollback          Switch back to the previous healthy application release
 start             Start the service
 stop              Stop the service
 restart           Restart the service
@@ -30,7 +31,7 @@ logs              Follow the last 200 service log lines
 
 Environment:
   ARCADE_PORT=8000       Host port (also written to /etc/arcade-online.env)
-  NODE_VERSION=22.18.0   Official Node.js runtime version
+  NODE_VERSION=22.23.3   Official Node.js runtime version
 EOF
 }
 
@@ -44,6 +45,7 @@ require_linux() {
   esac
   [[ "$ARCADE_PORT" =~ ^[0-9]+$ ]] && (( ARCADE_PORT >= 1 && ARCADE_PORT <= 65535 )) \
     || die "ARCADE_PORT 必须是 1-65535 之间的数字。"
+  [[ "$NODE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "NODE_VERSION 必须是完整版本号。"
 }
 
 reexec_as_root() {
@@ -116,10 +118,19 @@ publish_release() {
   log "发布应用文件到 $release。"
   cp -a "$ROOT_DIR/package.json" "$ROOT_DIR/package-lock.json" "$ROOT_DIR/server.js" "$release/"
   cp -a "$ROOT_DIR/public" "$ROOT_DIR/games" "$ROOT_DIR/libs" "$release/"
-  "$NPM_BIN" ci --omit=dev --ignore-scripts --prefix "$release"
+  "$NODE_BIN" "$ROOT_DIR/scripts/verify-native-build.cjs"
+  if [[ -f "$ROOT_DIR/release-manifest.json" ]]; then "$NODE_BIN" "$ROOT_DIR/scripts/verify-release.cjs" "$ROOT_DIR"; fi
+  env PATH="$BASE_DIR/node/bin:$PATH" "$NPM_BIN" ci --omit=dev --ignore-scripts --prefix "$release"
   chown -R root:root "$release"
   chmod -R a+rX,go-w "$release"
-  ln -sfn "$release" "$BASE_DIR/current.next"
+  PRIOR_RELEASE="$(readlink -f "$BASE_DIR/current" || true)"
+  switch_release "$release"
+}
+
+switch_release() {
+  local target="$1"
+  [[ "$target" == "$BASE_DIR/releases/"* && -f "$target/server.js" ]] || die "无效的应用版本目录。"
+  ln -sfn "$target" "$BASE_DIR/current.next"
   mv -Tf "$BASE_DIR/current.next" "$BASE_DIR/current"
 }
 
@@ -131,12 +142,14 @@ NODE_ENV=production
 DISCONNECT_GRACE_MS=4000
 MAX_FRAME_BUFFER_BYTES=1048576
 EOF
-    chmod 0644 "$ENV_FILE"
+    chmod 0600 "$ENV_FILE"
   elif (( PORT_EXPLICIT )); then
     sed -i "s/^PORT=.*/PORT=$ARCADE_PORT/" "$ENV_FILE"
   fi
   EFFECTIVE_PORT="$(sed -n 's/^PORT=//p' "$ENV_FILE" | tail -n 1 | tr -d '\r" ' )"
   EFFECTIVE_PORT="${EFFECTIVE_PORT:-8000}"
+  [[ "$EFFECTIVE_PORT" =~ ^[0-9]+$ ]] && (( EFFECTIVE_PORT >= 1 && EFFECTIVE_PORT <= 65535 )) || die "环境文件 PORT 无效。"
+  chmod 0600 "$ENV_FILE"
 }
 
 write_systemd_unit() {
@@ -188,7 +201,7 @@ wait_for_health() {
   local i
   log "等待服务健康检查 http://127.0.0.1:$EFFECTIVE_PORT/healthz。"
   for i in $(seq 1 30); do
-    if curl --fail --silent "http://127.0.0.1:$EFFECTIVE_PORT/healthz" >/dev/null; then
+    if systemctl is-active --quiet "$SERVICE_NAME" && curl --fail --silent --max-time 2 "http://127.0.0.1:$EFFECTIVE_PORT/healthz" >/dev/null; then
       log "服务已就绪。"
       return
     fi
@@ -196,7 +209,24 @@ wait_for_health() {
   done
   systemctl --no-pager --full status "$SERVICE_NAME" || true
   journalctl -u "$SERVICE_NAME" -n 80 --no-pager || true
-  die "服务启动失败，请查看上面的日志。"
+  return 1
+}
+
+rollback() {
+  local previous current
+  previous="$(readlink -f "$BASE_DIR/previous" || true)"
+  current="$(readlink -f "$BASE_DIR/current" || true)"
+  [[ -n "$previous" && -f "$previous/server.js" ]] || die "没有可回滚的版本。"
+  write_environment
+  switch_release "$previous"
+  if systemctl restart "$SERVICE_NAME" && wait_for_health; then
+    ln -sfn "$current" "$BASE_DIR/previous"
+    log "已恢复上一版应用。"
+  else
+    switch_release "$current"
+    systemctl restart "$SERVICE_NAME" || true
+    die "回滚版本未通过健康检查，已恢复原指向。"
+  fi
 }
 
 deploy() {
@@ -209,8 +239,17 @@ deploy() {
   write_environment
   write_systemd_unit
   systemctl enable "$SERVICE_NAME"
-  systemctl restart "$SERVICE_NAME"
-  wait_for_health
+  if ! { systemctl restart "$SERVICE_NAME" && wait_for_health; }; then
+    if [[ -n "$PRIOR_RELEASE" && -f "$PRIOR_RELEASE/server.js" ]]; then
+      switch_release "$PRIOR_RELEASE"
+      systemctl restart "$SERVICE_NAME" || true
+      log "新版本启动失败，已恢复旧版本；请检查服务日志。"
+    else
+      systemctl stop "$SERVICE_NAME" || true
+    fi
+    die "新版本未通过健康检查。"
+  fi
+  if [[ -n "$PRIOR_RELEASE" && -f "$PRIOR_RELEASE/server.js" ]]; then ln -sfn "$PRIOR_RELEASE" "$BASE_DIR/previous"; fi
   local host_ip
   host_ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
   log "部署完成。"
@@ -227,6 +266,8 @@ main() {
   reexec_as_root "$@"
   if [[ "$action" == "deploy" || "$action" == "update" || "$action" == "up" ]]; then
     deploy
+  elif [[ "$action" == "rollback" ]]; then
+    rollback
   else
     service_action "$action"
   fi

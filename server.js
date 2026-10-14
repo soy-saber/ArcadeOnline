@@ -8,6 +8,7 @@ const { WebSocketServer } = require("ws");
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 8000;
+const HOST = process.env.HOST || "0.0.0.0";
 const DISCONNECT_GRACE_MS = Math.max(0, Number(process.env.DISCONNECT_GRACE_MS) || 4000);
 const MAX_FRAME_BUFFER_BYTES = Math.max(
   64 * 1024,
@@ -39,6 +40,8 @@ const MIME = {
   ".jpeg": "image/jpeg",
   ".gif": "image/gif",
   ".svg": "image/svg+xml",
+  ".mp3": "audio/mpeg",
+  ".wav": "audio/wav",
   ".ico": "image/x-icon",
   ".map": "application/json",
   ".txt": "text/plain; charset=utf-8",
@@ -48,6 +51,7 @@ const MIME = {
 };
 
 const games = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "games.json"), "utf8"));
+const nativeGames = new Set(games.filter((game) => game.runtime === "native").map((game) => game.id));
 const gameMap = new Map();
 for (const g of games) {
   const keyMap = {};
@@ -268,6 +272,18 @@ function scheduleDisconnect(member, ws) {
 }
 
 const server = http.createServer((req, res) => {
+  if (req.url && req.url.split("?")[0] === "/rtc-config") {
+    const iceServers = [{ urls: "stun:stun.cloudflare.com:3478" }];
+    const turnUrls = (process.env.TURN_URLS || "").split(",").map((value) => value.trim()).filter(Boolean);
+    if (turnUrls.length && process.env.TURN_SECRET) {
+      const username = `${Math.floor(Date.now() / 1000) + 3600}:${crypto.randomBytes(8).toString("hex")}`;
+      const credential = crypto.createHmac("sha1", process.env.TURN_SECRET).update(username).digest("base64");
+      iceServers.push({ urls: turnUrls, username, credential });
+    }
+    res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+    res.end(JSON.stringify({ iceServers }));
+    return;
+  }
   let urlPath = "/";
   try {
     urlPath = decodeURIComponent(new URL(req.url, "http://local").pathname);
@@ -515,6 +531,25 @@ wss.on("connection", (ws) => {
         break;
       }
 
+      case "native": {
+        if (!member || !nativeGames.has(member.room.gameId) || typeof msg.to !== "string") return;
+        const room = member.room;
+        const target = room.members.get(msg.to);
+        if (!target || target.id === member.id) return;
+        const hostSending = room.hostId === member.id;
+        if (!hostSending && target.id !== room.hostId) return;
+        const data = msg.data;
+        if (!data || typeof data !== "object" || Array.isArray(data) || JSON.stringify(data).length > 64 * 1024) return;
+        if (data.type === "snapshot") {
+          if (!hostSending) return;
+        } else if (data.type === "input") {
+          if (hostSending || member.seat == null) return;
+        } else if (data.type !== "ping" && data.type !== "pong") return;
+        if (!target.ws || target.ws.bufferedAmount > 128 * 1024) return;
+        sendTo(target.ws, { t: "native", from: member.id, data });
+        break;
+      }
+
       case "in": {
         if (!member || member.seat == null) return;
         const room = member.room;
@@ -584,7 +619,7 @@ setInterval(() => {
   }
 }, 30000).unref();
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
   console.log("ArcadeOnline server: http://localhost:" + PORT);
 });
 

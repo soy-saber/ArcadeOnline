@@ -6,13 +6,22 @@
     "start": "node server.js",
     "test": "node smoke_test.js",
     "test:bomb-p2": "node bomb_p2_e2e.js",
-    "test:stream": "node stream_stability_test.js"
+    "test:stream": "node stream_stability_test.js",
+    "build:native": "node scripts/build-native.cjs",
+    "typecheck": "tsc --noEmit",
+    "test:native": "node --test tests/native-core.test.cjs tests/native-relay.test.cjs",
+    "test:native:e2e": "node tests/native-e2e.cjs",
+    "test:deploy": "node --test tests/deploy.test.cjs",
+    "package:linux": "node scripts/package-linux.cjs",
+    "check:public": "node scripts/check-public.cjs"
   },
   "dependencies": {
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "pngjs": "^7.0.0",
-    "puppeteer-core": "^25.5.0"
+    "puppeteer-core": "^25.5.0",
+    "typescript": "^7.0.2"
   }
 }

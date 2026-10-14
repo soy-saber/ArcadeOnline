@@ -1,15 +1,17 @@
 # 优化方案记录
 
+2026-10-14 核对：本文件说明旧 Flash 串流入口，参数按当前 `public/room.js` 更新。新增原生泡泡堂使用本地渲染与状态同步，见 [NATIVE_PLATFORM.md](NATIVE_PLATFORM.md)；项目总览见 [README.md](README.md)。
+
 ## 方案 1：WebRTC 视频流替换 WS 截帧直播
 
 **状态**：已实施（2026-08-07）
 
 **当前实现**：
-- 房主以 60fps 重绘游戏合成画布，通过 `canvas.captureStream(60)` 输出视频轨道
+- 房主以 30fps 重绘游戏合成画布，通过 `canvas.captureStream(30)` 输出视频轨道
 - 每位支持 WebRTC 的观众使用独立 `RTCPeerConnection`，通过 WebSocket 交换 offer、answer 和 ICE
-- 视频编码交由浏览器 WebRTC 媒体管线处理；双方支持时优先协商 H.264，并限制为 4Mbps / 60fps
+- 视频编码交由浏览器 WebRTC 媒体管线处理；双方支持时优先协商 H.264，并限制为每路 5Mbps / 30fps
 - 观众收到并实际播放首帧后，向服务器确认使用 WebRTC；服务器随后停止向该观众转发截帧
-- WebRTC 不可用、协商失败或视频中断时，自动回退 WebSocket + WebP（100ms、质量 0.9）
+- WebRTC 不可用、协商失败或视频中断时，自动回退 WebSocket + WebP（目标 15fps、质量 0.9）；实际帧率还受接收端确认及网络时延限制
 - 慢客户端仍受 WebSocket 缓冲上限保护，不会拖累其他降级观众
 - 房主转移、成员离开和 PeerConnection 失败时会清理旧连接并重新协商
 
@@ -18,8 +20,8 @@
 - Chromium 双页面测试覆盖 ICE 建连、H.264 协商、远端视频出帧、画面一致性，以及 WebRTC 建立后停止 WebP 编码
 
 **仍需部署/验收**：
-- 当前使用公共 STUN，未配置 TURN；对称 NAT 或严格防火墙环境可能回退到 WebSocket
-- 需要在目标局域网设备上实测端到端延迟，确认是否达到 `<50ms` 目标
+- 旧串流入口仍只使用公共 STUN，未接入原生版的 `/rtc-config` TURN 配置；对称 NAT 或严格防火墙环境可能回退到 WebSocket
+- 需要在目标设备实测端到端延迟；历史 `<50ms` 目标尚无实测证据，不作为当前性能承诺
 
 **依赖**：无新增 npm 依赖，浏览器侧使用原生 WebRTC API。
 

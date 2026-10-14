@@ -64,5 +64,22 @@
         }
       }
     ]
+  },
+  {
+    "id": "3881-native",
+    "title": "泡泡堂 · 对等联机版",
+    "genre": "双人对战",
+    "category": "party",
+    "description": "本机即时操作，和好友一起放炸弹、抢道具。双人核心玩法试验版。",
+    "source": "经典重建",
+    "runtime": "native",
+    "cover": "/assets/game-3881.png",
+    "width": 716,
+    "height": 666,
+    "room": "lobby",
+    "seats": [
+      { "seat": 1, "label": "P1", "hint": "WASD / 方向键 + 空格", "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"] },
+      { "seat": 2, "label": "P2", "hint": "WASD / 方向键 + 空格", "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"] }
+    ]
   }
 ]
