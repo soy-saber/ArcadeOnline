@@ -239,6 +239,32 @@ test("special action survives delayed input and replays exactly once after recon
   assert.deepEqual(result.state, expected); assert.equal(validState(expected), true);
 });
 
+test("online attack spends special ammo before a normal bomb and buffers mid-move", () => {
+  const online = createGame(42, 1, true, { mode: "online", activeSeats: [1, 2], loadout: "ice" });
+  online.board = online.board.map((cell) => cell === 2 ? 0 : cell);
+  step(online, [{ seq: 1, dir: 2, bomb: 1 }]);
+  assert.equal(online.players[0].ammo, 0);
+  assert.equal(online.specials.length, 1);
+  assert.equal(online.bombs.length, 0);
+  step(online, [{ seq: 2, dir: -1, bomb: 2 }]);
+  assert.equal(online.bombs.length, 1);
+
+  const buffered = createGame(43, 1, true, { mode: "online", activeSeats: [1, 2], loadout: "mine" });
+  buffered.board = buffered.board.map((cell) => cell === 2 ? 0 : cell);
+  step(buffered, [{ seq: 1, dir: 2, bomb: 0 }]);
+  step(buffered, [{ seq: 2, dir: 2, bomb: 1 }]);
+  assert.equal(buffered.players[0].ammo, 2);
+  advance(buffered, 6, { seq: 3, dir: -1, bomb: 1 });
+  assert.equal(buffered.players[0].ammo, 1);
+  assert.equal(buffered.bombs.length, 0);
+
+  const blocked = createGame(44, 1, true, { mode: "online", activeSeats: [1, 2], loadout: "grenade" });
+  blocked.players[0].dir = 0;
+  step(blocked, [{ seq: 1, dir: -1, bomb: 1 }]);
+  assert.equal(blocked.players[0].ammo, 2);
+  assert.equal(blocked.bombs.length, 0);
+});
+
 test("bots play deterministically on all layouts; restored four-player states stay valid", () => {
   for (const map of ["classic", "lanes", "open"]) {
     const a = createGame(42, 1, true, { mode: "coop", map, bots: [1, 2], loadout: "fire" });

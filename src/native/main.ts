@@ -14,8 +14,11 @@ function start(): void {
   const roomName = (params.get("room") || "lobby").slice(0, 20);
   const net = new Network(arcadeName(), arcadeSession(), roomName, "3881-native", params.get("debug") === "1" && params.get("turn") === "1");
   const view = new GameView(element<HTMLCanvasElement>("game-canvas"));
+  const savedVolume = localStorage.getItem("arcade_native_volume");
+  if (savedVolume !== null && Number.isFinite(Number(savedVolume))) view.setVolume(Number(savedVolume) / 100);
+  view.setSound(localStorage.getItem("arcade_native_sound") !== "off");
   let state: GameState | null = null, authority: GameState | null = null;
-  let pending: Input[] = [], sequence = 0, bombCounter = 0, specialCounter = 0;
+  let pending: Input[] = [], sequence = 0, bombCounter = 0;
   let options: GameOptions = { ...DEFAULT_OPTIONS, mode: "online", bots: [], activeSeats: [1, 2] };
   let hostId: string | null = null, seat: number | null = null, roster = "";
   let lastSnapshotAt = 0, counter = 0, corrections = 0;
@@ -31,7 +34,7 @@ function start(): void {
 
   function notice(text: string): void { element("connection-note").textContent = text; }
   function clearInput(): void { keys.clear(); }
-  function resetInput(): void { clearInput(); sequence = 0; bombCounter = 0; specialCounter = 0; pending = []; remote.clear(); }
+  function resetInput(): void { clearInput(); sequence = 0; bombCounter = 0; pending = []; remote.clear(); }
   function newRound(playing: boolean): void {
     const seed = crypto.getRandomValues(new Uint32Array(1))[0];
     // Wall time identifies a new round only; it never enters simulation steps.
@@ -88,7 +91,6 @@ function start(): void {
       if (seat) {
         sequence = Math.max(sequence, snapshot.ack[seat - 1]);
         bombCounter = Math.max(bombCounter, snapshot.players[seat - 1].lastBomb);
-        specialCounter = Math.max(specialCounter, snapshot.players[seat - 1].lastSpecial);
       }
       if (seat && !newGame) {
         const result = reconcile(snapshot, seat, pending);
@@ -109,7 +111,7 @@ function start(): void {
   function currentInput(): Input {
     let latest = -1, direction = -1;
     for (const [key, time] of keys) if (directions[key] !== undefined && time >= latest) { latest = time; direction = directions[key]; }
-    return { seq: ++sequence, dir: direction as Input["dir"], bomb: bombCounter, special: specialCounter };
+    return { seq: ++sequence, dir: direction as Input["dir"], bomb: bombCounter, special: 0 };
   }
 
   function tick(): void {
@@ -147,8 +149,7 @@ function start(): void {
     if (!seat || state?.phase !== "playing") return;
     if (pressed) {
       if (!keys.has(event.code)) {
-        if (event.code === "Space" || event.code === "Enter") bombCounter++;
-        if (["KeyE", "ShiftLeft", "ShiftRight"].includes(event.code)) specialCounter++;
+        if (["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"].includes(event.code)) bombCounter++;
         keys.set(event.code, performance.now()); inputAt = performance.now();
       }
     } else keys.delete(event.code);
@@ -163,7 +164,6 @@ function start(): void {
       if (!seat || state?.phase !== "playing") return;
       event.preventDefault(); button.setPointerCapture(event.pointerId);
       if (code === "Space" && !keys.has(code)) bombCounter++;
-      if (code === "KeyE" && !keys.has(code)) specialCounter++;
       keys.set(code, performance.now()); inputAt = performance.now();
     };
     const release = () => keys.delete(code);
@@ -195,7 +195,16 @@ function start(): void {
     try { await navigator.clipboard.writeText(invite.href); notice("邀请链接已复制"); }
     catch { const field = element<HTMLInputElement>("invite-link"); field.hidden = false; field.value = invite.href; field.select(); notice("复制下方链接即可邀请好友"); }
   };
-  element("sound-toggle").onclick = () => { view.sound = !view.sound; element("sound-toggle").textContent = view.sound ? "音效：开" : "音效：关"; };
+  const soundToggle = element<HTMLButtonElement>("sound-toggle"), soundVolume = element<HTMLInputElement>("sound-volume");
+  const updateSoundUi = () => {
+    soundToggle.textContent = view.sound ? "音效：开" : "音效：关";
+    soundToggle.setAttribute("aria-pressed", String(view.sound));
+    soundVolume.value = String(Math.round(view.volume * 100));
+    element("sound-volume-value").textContent = `${soundVolume.value}%`;
+  };
+  soundToggle.onclick = () => { view.setSound(!view.sound); localStorage.setItem("arcade_native_sound", view.sound ? "on" : "off"); updateSoundUi(); };
+  soundVolume.oninput = () => { view.setVolume(Number(soundVolume.value) / 100); localStorage.setItem("arcade_native_volume", soundVolume.value); updateSoundUi(); };
+  updateSoundUi();
   element("fullscreen-stage").onclick = () => { void element("native-stage").requestFullscreen().catch(() => {}); };
   element("leave-room").onclick = (event) => { event.preventDefault(); net.stop(); location.href = "/"; };
 
@@ -223,9 +232,9 @@ function start(): void {
     }
     const inventory = seat && state ? state.players[seat - 1] : null;
     const weapon = inventory?.weapon;
-    element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo} · E / Shift 使用` : "尚未拾取特殊武器";
-    element("special-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo}` : "特殊武器";
-    for (const id of ["weapon-icon", "special-button-icon"]) {
+    element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo} · 攻击键优先使用` : "尚未拾取特殊武器";
+    element("attack-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo}` : "放炸弹";
+    for (const id of ["weapon-icon", "attack-button-icon"]) {
       const icon = element<HTMLImageElement>(id);
       icon.hidden = !weapon;
       if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
@@ -234,7 +243,7 @@ function start(): void {
     const startButton = element<HTMLButtonElement>("start-game");
     startButton.disabled = !net.connected || !seat || authority?.phase === "playing";
     startButton.textContent = net.room.members.find((member) => member.id === net.id)?.ready ? "取消准备" : "准备";
-    element("seat-caption").textContent = seat ? "WASD / 方向键移动 · 空格放炸弹 · E / Shift 特殊武器" : "入座后即可操作，双方都使用自己的键盘";
+    element("seat-caption").textContent = seat ? "WASD / 方向键移动 · 空格 / 回车攻击，先用完特殊武器再放炸弹" : "入座后即可操作，每人使用自己的键盘";
     const other = net.isHost ? net.room.members.find((member) => member.id !== net.id && member.seat)?.id : net.room.hostId;
     const transport = other ? net.transport(other) : "waiting";
     element("transport-status").textContent = transport === "p2p" ? "对等连接" : transport === "relay" ? "中继连接" : "等待好友";

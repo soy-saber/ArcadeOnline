@@ -369,14 +369,24 @@
         player.lastSpecial = Math.max(player.lastSpecial, input.special || 0);
         continue;
       }
-      if ((input.special || 0) > player.lastSpecial && player.moveDir < 0) {
-        player.lastSpecial = input.special;
-        if (input.dir >= 0) player.dir = input.dir;
-        useSpecial(state, player);
-      }
-      if (input.bomb > player.lastBomb) {
-        player.lastBomb = input.bomb;
-        placeBomb(state, player);
+      if (state.options.mode === "online") {
+        if (input.bomb > player.lastBomb && (!player.weapon || player.ammo <= 0 || player.moveDir < 0)) {
+          player.lastBomb = input.bomb;
+          if (player.weapon && player.ammo > 0) {
+            if (input.dir >= 0) player.dir = input.dir;
+            useSpecial(state, player);
+          } else placeBomb(state, player);
+        }
+      } else {
+        if ((input.special || 0) > player.lastSpecial && player.moveDir < 0) {
+          player.lastSpecial = input.special;
+          if (input.dir >= 0) player.dir = input.dir;
+          useSpecial(state, player);
+        }
+        if (input.bomb > player.lastBomb) {
+          player.lastBomb = input.bomb;
+          placeBomb(state, player);
+        }
       }
       if (player.moveDir < 0 && input.dir >= 0) {
         player.dir = input.dir;
@@ -729,7 +739,9 @@
       this.observedSpecials = /* @__PURE__ */ new Set();
       this.observedItems = 0;
       this.audioReady = false;
+      this.playingSounds = /* @__PURE__ */ new Set();
       this.sound = true;
+      this.volume = 0.24;
       this.fps = 0;
       this.frameCount = 0;
       this.fpsAt = performance.now();
@@ -767,6 +779,23 @@
       const image = this.images.get(name);
       if (image?.complete && image.naturalWidth) this.ctx.drawImage(image, Math.max(0, Math.floor(frame)) % 8 * 64, 0, 64, 72, x - width / 2, bottom - height, width, height);
     }
+    walking(hero, direction, frame, x, bottom) {
+      const image = this.images.get(`walk-${hero}-${direction}`);
+      if (!image?.complete || !image.naturalWidth) return;
+      const width = 40 * CELL * 1.12 / 53;
+      const height = CELL * 1.12;
+      this.ctx.drawImage(
+        image,
+        Math.max(0, Math.floor(frame)) % 8 * 64 + 12,
+        23,
+        40,
+        49,
+        x - width / 2,
+        bottom - height,
+        width,
+        height
+      );
+    }
     sprite(name, x, bottom, width, height) {
       const image = this.images.get(name);
       if (!image?.complete || !image.naturalWidth) return;
@@ -774,11 +803,26 @@
       this.ctx.drawImage(image, x - image.width * scale / 2, bottom - image.height * scale, image.width * scale, image.height * scale);
     }
     play(name) {
-      if (!this.sound || !this.audioReady) return;
+      if (!this.sound || !this.audioReady || this.volume <= 0) return;
       const audio = new Audio(`/native/assets/${name}.mp3`);
-      audio.volume = 0.24;
-      void audio.play().catch(() => {
-      });
+      audio.volume = this.volume;
+      this.playingSounds.add(audio);
+      const done = () => this.playingSounds.delete(audio);
+      audio.addEventListener("ended", done, { once: true });
+      audio.addEventListener("error", done, { once: true });
+      void audio.play().catch(done);
+    }
+    setSound(enabled) {
+      this.sound = enabled;
+      if (!enabled) for (const audio of this.playingSounds) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+      if (!enabled) this.playingSounds.clear();
+    }
+    setVolume(volume) {
+      this.volume = Math.max(0, Math.min(1, volume));
+      for (const audio of this.playingSounds) audio.volume = this.volume;
     }
     // Only confirmed authority changes produce audio: prediction replay cannot
     // repeatedly play an explosion or an unconfirmed placement.
@@ -904,7 +948,7 @@
           ctx.stroke();
         }
         ctx.globalAlpha = player.invulnerable > 0 && state.tick % 4 < 2 ? 0.5 : 1;
-        if (player.moveDir >= 0 && !player.frozen) this.animation(`walk-${player.seat}-${Math.max(0, player.dir)}`, state.tick / 2, x, y, CELL, CELL * 1.12);
+        if (player.moveDir >= 0 && !player.frozen) this.walking(player.seat, Math.max(0, player.dir), state.tick / 2, x, y);
         else this.sprite(`hero-${player.seat}-${Math.max(0, player.dir)}`, x, y, CELL * 0.9, CELL * 1.12);
         ctx.globalAlpha = 1;
         if (player.frozen) {
@@ -944,8 +988,11 @@
     const roomName = (params.get("room") || "lobby").slice(0, 20);
     const net = new Network(arcadeName(), arcadeSession(), roomName, "3881-native", params.get("debug") === "1" && params.get("turn") === "1");
     const view = new GameView(element("game-canvas"));
+    const savedVolume = localStorage.getItem("arcade_native_volume");
+    if (savedVolume !== null && Number.isFinite(Number(savedVolume))) view.setVolume(Number(savedVolume) / 100);
+    view.setSound(localStorage.getItem("arcade_native_sound") !== "off");
     let state = null, authority = null;
-    let pending = [], sequence = 0, bombCounter = 0, specialCounter = 0;
+    let pending = [], sequence = 0, bombCounter = 0;
     let options = { ...DEFAULT_OPTIONS, mode: "online", bots: [], activeSeats: [1, 2] };
     let hostId = null, seat = null, roster = "";
     let lastSnapshotAt = 0, counter = 0, corrections = 0;
@@ -968,7 +1015,6 @@
       clearInput();
       sequence = 0;
       bombCounter = 0;
-      specialCounter = 0;
       pending = [];
       remote.clear();
     }
@@ -1029,7 +1075,6 @@
         if (seat) {
           sequence = Math.max(sequence, snapshot.ack[seat - 1]);
           bombCounter = Math.max(bombCounter, snapshot.players[seat - 1].lastBomb);
-          specialCounter = Math.max(specialCounter, snapshot.players[seat - 1].lastSpecial);
         }
         if (seat && !newGame) {
           const result = reconcile(snapshot, seat, pending);
@@ -1053,7 +1098,7 @@
         latest = time;
         direction = directions[key2];
       }
-      return { seq: ++sequence, dir: direction, bomb: bombCounter, special: specialCounter };
+      return { seq: ++sequence, dir: direction, bomb: bombCounter, special: 0 };
     }
     function tick() {
       counter++;
@@ -1089,8 +1134,7 @@
       if (!seat || state?.phase !== "playing") return;
       if (pressed) {
         if (!keys.has(event.code)) {
-          if (event.code === "Space" || event.code === "Enter") bombCounter++;
-          if (["KeyE", "ShiftLeft", "ShiftRight"].includes(event.code)) specialCounter++;
+          if (["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"].includes(event.code)) bombCounter++;
           keys.set(event.code, performance.now());
           inputAt = performance.now();
         }
@@ -1109,7 +1153,6 @@
         event.preventDefault();
         button.setPointerCapture(event.pointerId);
         if (code === "Space" && !keys.has(code)) bombCounter++;
-        if (code === "KeyE" && !keys.has(code)) specialCounter++;
         keys.set(code, performance.now());
         inputAt = performance.now();
       };
@@ -1155,10 +1198,24 @@
         notice("\u590D\u5236\u4E0B\u65B9\u94FE\u63A5\u5373\u53EF\u9080\u8BF7\u597D\u53CB");
       }
     };
-    element("sound-toggle").onclick = () => {
-      view.sound = !view.sound;
-      element("sound-toggle").textContent = view.sound ? "\u97F3\u6548\uFF1A\u5F00" : "\u97F3\u6548\uFF1A\u5173";
+    const soundToggle = element("sound-toggle"), soundVolume = element("sound-volume");
+    const updateSoundUi = () => {
+      soundToggle.textContent = view.sound ? "\u97F3\u6548\uFF1A\u5F00" : "\u97F3\u6548\uFF1A\u5173";
+      soundToggle.setAttribute("aria-pressed", String(view.sound));
+      soundVolume.value = String(Math.round(view.volume * 100));
+      element("sound-volume-value").textContent = `${soundVolume.value}%`;
     };
+    soundToggle.onclick = () => {
+      view.setSound(!view.sound);
+      localStorage.setItem("arcade_native_sound", view.sound ? "on" : "off");
+      updateSoundUi();
+    };
+    soundVolume.oninput = () => {
+      view.setVolume(Number(soundVolume.value) / 100);
+      localStorage.setItem("arcade_native_volume", soundVolume.value);
+      updateSoundUi();
+    };
+    updateSoundUi();
     element("fullscreen-stage").onclick = () => {
       void element("native-stage").requestFullscreen().catch(() => {
       });
@@ -1192,9 +1249,9 @@
       }
       const inventory = seat && state ? state.players[seat - 1] : null;
       const weapon = inventory?.weapon;
-      element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo} \xB7 E / Shift \u4F7F\u7528` : "\u5C1A\u672A\u62FE\u53D6\u7279\u6B8A\u6B66\u5668";
-      element("special-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo}` : "\u7279\u6B8A\u6B66\u5668";
-      for (const id of ["weapon-icon", "special-button-icon"]) {
+      element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo} \xB7 \u653B\u51FB\u952E\u4F18\u5148\u4F7F\u7528` : "\u5C1A\u672A\u62FE\u53D6\u7279\u6B8A\u6B66\u5668";
+      element("attack-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo}` : "\u653E\u70B8\u5F39";
+      for (const id of ["weapon-icon", "attack-button-icon"]) {
         const icon = element(id);
         icon.hidden = !weapon;
         if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
@@ -1203,7 +1260,7 @@
       const startButton = element("start-game");
       startButton.disabled = !net.connected || !seat || authority?.phase === "playing";
       startButton.textContent = net.room.members.find((member) => member.id === net.id)?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
-      element("seat-caption").textContent = seat ? "WASD / \u65B9\u5411\u952E\u79FB\u52A8 \xB7 \u7A7A\u683C\u653E\u70B8\u5F39 \xB7 E / Shift \u7279\u6B8A\u6B66\u5668" : "\u5165\u5EA7\u540E\u5373\u53EF\u64CD\u4F5C\uFF0C\u53CC\u65B9\u90FD\u4F7F\u7528\u81EA\u5DF1\u7684\u952E\u76D8";
+      element("seat-caption").textContent = seat ? "WASD / \u65B9\u5411\u952E\u79FB\u52A8 \xB7 \u7A7A\u683C / \u56DE\u8F66\u653B\u51FB\uFF0C\u5148\u7528\u5B8C\u7279\u6B8A\u6B66\u5668\u518D\u653E\u70B8\u5F39" : "\u5165\u5EA7\u540E\u5373\u53EF\u64CD\u4F5C\uFF0C\u6BCF\u4EBA\u4F7F\u7528\u81EA\u5DF1\u7684\u952E\u76D8";
       const other = net.isHost ? net.room.members.find((member) => member.id !== net.id && member.seat)?.id : net.room.hostId;
       const transport = other ? net.transport(other) : "waiting";
       element("transport-status").textContent = transport === "p2p" ? "\u5BF9\u7B49\u8FDE\u63A5" : transport === "relay" ? "\u4E2D\u7EE7\u8FDE\u63A5" : "\u7B49\u5F85\u597D\u53CB";

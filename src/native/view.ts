@@ -9,7 +9,9 @@ export class GameView {
   private observedSpecials = new Set<number>();
   private observedItems = 0;
   private audioReady = false;
+  private playingSounds = new Set<HTMLAudioElement>();
   sound = true;
+  volume = 0.24;
   fps = 0;
   private frameCount = 0;
   private fpsAt = performance.now();
@@ -30,6 +32,16 @@ export class GameView {
     const image = this.images.get(name);
     if (image?.complete && image.naturalWidth) this.ctx.drawImage(image, Math.max(0, Math.floor(frame)) % 8 * 64, 0, 64, 72, x - width / 2, bottom - height, width, height);
   }
+  private walking(hero: number, direction: number, frame: number, x: number, bottom: number): void {
+    const image = this.images.get(`walk-${hero}-${direction}`);
+    if (!image?.complete || !image.naturalWidth) return;
+    // Each 64×72 exported frame has transparent margins. Crop the shared
+    // 40×49 body area so switching from the 53px standing sprite keeps scale.
+    const width = 40 * CELL * 1.12 / 53;
+    const height = CELL * 1.12;
+    this.ctx.drawImage(image, Math.max(0, Math.floor(frame)) % 8 * 64 + 12, 23, 40, 49,
+      x - width / 2, bottom - height, width, height);
+  }
   private sprite(name: string, x: number, bottom: number, width: number, height: number): void {
     const image = this.images.get(name);
     if (!image?.complete || !image.naturalWidth) return;
@@ -37,9 +49,22 @@ export class GameView {
     this.ctx.drawImage(image, x - image.width * scale / 2, bottom - image.height * scale, image.width * scale, image.height * scale);
   }
   private play(name: string): void {
-    if (!this.sound || !this.audioReady) return;
-    const audio = new Audio(`/native/assets/${name}.mp3`); audio.volume = 0.24;
-    void audio.play().catch(() => {});
+    if (!this.sound || !this.audioReady || this.volume <= 0) return;
+    const audio = new Audio(`/native/assets/${name}.mp3`); audio.volume = this.volume;
+    this.playingSounds.add(audio);
+    const done = () => this.playingSounds.delete(audio);
+    audio.addEventListener("ended", done, { once: true });
+    audio.addEventListener("error", done, { once: true });
+    void audio.play().catch(done);
+  }
+  setSound(enabled: boolean): void {
+    this.sound = enabled;
+    if (!enabled) for (const audio of this.playingSounds) { audio.pause(); audio.currentTime = 0; }
+    if (!enabled) this.playingSounds.clear();
+  }
+  setVolume(volume: number): void {
+    this.volume = Math.max(0, Math.min(1, volume));
+    for (const audio of this.playingSounds) audio.volume = this.volume;
   }
   // Only confirmed authority changes produce audio: prediction replay cannot
   // repeatedly play an explosion or an unconfirmed placement.
@@ -132,7 +157,7 @@ export class GameView {
         ctx.beginPath(); ctx.ellipse(x, y - 3, 17, 7, 0, 0, Math.PI * 2); ctx.stroke();
       }
       ctx.globalAlpha = player.invulnerable > 0 && state.tick % 4 < 2 ? .5 : 1;
-      if (player.moveDir >= 0 && !player.frozen) this.animation(`walk-${player.seat}-${Math.max(0, player.dir)}`, state.tick / 2, x, y, CELL, CELL * 1.12);
+      if (player.moveDir >= 0 && !player.frozen) this.walking(player.seat, Math.max(0, player.dir), state.tick / 2, x, y);
       else this.sprite(`hero-${player.seat}-${Math.max(0, player.dir)}`, x, y, CELL * .9, CELL * 1.12);
       ctx.globalAlpha = 1;
       if (player.frozen) { ctx.fillStyle = "#92dcff99"; ctx.fillRect(x - 15, y - 38, 30, 38); }

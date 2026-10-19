@@ -327,15 +327,27 @@ export function step(state: GameState, inputs: readonly Input[]): void {
     if (player.invulnerable > 0) player.invulnerable--;
     if (player.slow > 0) player.slow--;
     if (player.frozen > 0) { player.frozen--; player.lastBomb = Math.max(player.lastBomb, input.bomb); player.lastSpecial = Math.max(player.lastSpecial, input.special || 0); continue; }
-    // An action during movement is buffered by its counter until the next cell.
-    if ((input.special || 0) > player.lastSpecial && player.moveDir < 0) {
-      player.lastSpecial = input.special!;
-      if (input.dir >= 0) player.dir = input.dir;
-      useSpecial(state, player);
-    }
-    if (input.bomb > player.lastBomb) {
-      player.lastBomb = input.bomb;
-      placeBomb(state, player);
+    if (state.options.mode === "online") {
+      // The original attack key must spend special ammo before it can place a
+      // normal bomb. Keep a special press buffered until the current move ends.
+      if (input.bomb > player.lastBomb && (!player.weapon || player.ammo <= 0 || player.moveDir < 0)) {
+        player.lastBomb = input.bomb;
+        if (player.weapon && player.ammo > 0) {
+          if (input.dir >= 0) player.dir = input.dir;
+          useSpecial(state, player);
+        } else placeBomb(state, player);
+      }
+    } else {
+      // Legacy modes retain their separate special input for historical tests.
+      if ((input.special || 0) > player.lastSpecial && player.moveDir < 0) {
+        player.lastSpecial = input.special!;
+        if (input.dir >= 0) player.dir = input.dir;
+        useSpecial(state, player);
+      }
+      if (input.bomb > player.lastBomb) {
+        player.lastBomb = input.bomb;
+        placeBomb(state, player);
+      }
     }
     if (player.moveDir < 0 && input.dir >= 0) {
       player.dir = input.dir;

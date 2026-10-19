@@ -44,6 +44,12 @@ let browser;
   };
   const p1 = await load("P1"), p2 = await load("P2"), p3 = await load("P3"), p4 = await load("P4");
   const pages = [p1, p2, p3, p4];
+  await p4.click("#sound-toggle");
+  await p4.$eval("#sound-volume", (slider) => { slider.value = "57"; slider.dispatchEvent(new Event("input", { bubbles: true })); });
+  await p4.reload();
+  await p4.waitForFunction(() => window.__nativeTest?.state);
+  assert.equal(await p4.$eval("#sound-toggle", (button) => button.textContent), "音效：关");
+  assert.equal(await p4.$eval("#sound-volume", (slider) => slider.value), "57");
   for (let i = 0; i < pages.length; i++) await pages[i].click(`[data-seat="${i + 1}"]`);
   await p1.waitForFunction(() => window.__nativeTest.network.room.members.filter((m) => m.seat).length === 4);
   await wait(250);
@@ -61,14 +67,17 @@ let browser;
   await p4.keyboard.press("Space");
   await p1.waitForFunction(() => window.__nativeTest.authority.bombs.some((b) => b.owner === 3) &&
     window.__nativeTest.authority.bombs.some((b) => b.owner === 4));
+  await (await p3.$("#game-canvas")).screenshot({ path: path.join(output, "native-idle.png") });
   await p3.keyboard.down("KeyA");
   await p3.waitForFunction(() => window.__nativeTest.state.players[2].moveDir === 0 || window.__nativeTest.state.players[2].x < 13);
+  await (await p3.$("#game-canvas")).screenshot({ path: path.join(output, "native-walking.png") });
   await p3.keyboard.up("KeyA");
   console.log("PASS: four human seats, unanimous ready and independent P3/P4 input");
 
   await p4.click('[data-seat="4"]');
   await p1.waitForFunction(() => window.__nativeTest.authority.phase === "waiting");
   await p1.waitForFunction(() => window.__nativeTest.network.room.members.every((m) => !m.ready));
+  await p1.select("#game-loadout", "mine");
   await p1.click("#start-game");
   await p2.click("#start-game");
   await p3.click("#start-game");
@@ -76,7 +85,16 @@ let browser;
     window.__nativeTest.state.phase === "playing" &&
     JSON.stringify(window.__nativeTest.state.options.activeSeats) === "[1,2,3]")));
   assert.equal(await p1.evaluate(() => window.__nativeTest.authority.players[3].alive), false);
-  console.log("PASS: leaving a seat resets readiness and three humans can start without CPU");
+  await p3.keyboard.press("Space");
+  await p1.waitForFunction(() => window.__nativeTest.authority.players[2].ammo === 1);
+  assert.equal(await p1.evaluate(() => window.__nativeTest.authority.bombs.filter((b) => b.owner === 3).length), 0);
+  await p3.keyboard.down("KeyA"); await wait(260); await p3.keyboard.up("KeyA");
+  await p1.waitForFunction(() => window.__nativeTest.authority.players[2].x === 12);
+  await p3.keyboard.press("Space");
+  await p1.waitForFunction(() => window.__nativeTest.authority.players[2].ammo === 0);
+  await p3.keyboard.press("Space");
+  await p1.waitForFunction(() => window.__nativeTest.authority.bombs.some((b) => b.owner === 3));
+  console.log("PASS: three humans start without CPU; attack consumes both mines before placing a bomb");
 
   await p4.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
   await p4.waitForFunction(() => document.getElementById("render-status").textContent !== "0 FPS");
