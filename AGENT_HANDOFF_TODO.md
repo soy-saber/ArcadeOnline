@@ -42,9 +42,9 @@
 
 - `npm run typecheck`：通过。
 - `node scripts/verify-native-build.cjs`：通过，现有浏览器包与记录的源码哈希一致。
-- `npm run test:native`：2026-10-20 本地 20/20 通过，包含三四号席位及准备状态；相应版本已发布公网。
+- `npm run test:native`：2026-10-20 本地 21/21 通过，包含三四号席位、准备状态和特殊武器优先于炸弹的攻击规则；相应版本已发布公网。
 - `npm run test:deploy`：修复后 **5/5** 通过，包括无 SNI 的 IP 证书配置处理及真实 Caddy 解析。TURN 单测使用协议夹具，不是公网 TURN 验收。
-- `npm run test:native:e2e`：2026-10-20 四浏览器本地测试通过，覆盖四人入座、全员准备、P3/P4 输入、离座重置和三人无电脑开局。早期双人延迟样本约 218.6ms RTT、84.7ms 本地反馈，仅属于旧版历史证据；四人版未复测延迟。
+- `npm run test:native:e2e`：2026-10-20 四浏览器本地测试通过，覆盖四人入座、全员准备、P3/P4 输入、离座重置、三人无电脑开局、特殊武器优先级及音效设置保留。早期双人延迟样本约 218.6ms RTT、84.7ms 本地反馈，仅属于旧版历史证据；四人版未复测延迟。
 - `node scripts/check-public.cjs https://223.109.141.251`：外网可信 TLS、资源、游戏目录、临时凭据、WSS 入房通过。
 - `node artifacts/public-browser-check.cjs --wss`：外网同机双浏览器实际开局、移动并同步到房主权威状态通过；`artifacts/public-browser-results.json` 为 wssGameplay=true、turnGameplay=false、errors=[]。
 - `node scripts/check-turn.cjs https://223.109.141.251`：外网 UDP 超时；TCP 3478 连接也超时。不带 `--wss` 的强制 TURN 浏览器测试等待连接超时。
