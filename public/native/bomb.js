@@ -23,9 +23,10 @@
     return state.rng / 4294967296;
   }
   function createGame(seed, round = 1, playing = true, options = {}) {
-    const config = { ...DEFAULT_OPTIONS, ...options, bots: [...options.bots || []] };
+    const config = { ...DEFAULT_OPTIONS, ...options, bots: [...options.bots || []], activeSeats: [...options.activeSeats || [1, 2]] };
     if (config.mode === "coop") config.bots = [.../* @__PURE__ */ new Set([...config.bots, 3, 4])];
-    const count = config.mode === "coop" ? 4 : 2;
+    if (config.mode === "online") config.bots = [];
+    const count = config.mode === "coop" || config.mode === "online" ? 4 : 2;
     const state = {
       version: 2,
       round,
@@ -56,6 +57,7 @@
           state.board[index(x + dx, y + dy)] = 0;
         }
       }
+      const active = config.mode !== "online" || config.activeSeats.includes(seat);
       state.players.push({
         seat,
         x,
@@ -64,13 +66,13 @@
         moveDir: -1,
         progress: 0,
         speed: 6,
-        alive: true,
+        alive: active,
         capacity: 1,
         range: 1,
         shield: false,
         invulnerable: 0,
         lastBomb: 0,
-        life: 1,
+        life: active ? 1 : 0,
         push: false,
         weapon: config.loadout === "none" ? null : config.loadout,
         ammo: config.loadout === "none" ? 0 : config.loadout === "ice" ? 1 : 2,
@@ -443,9 +445,10 @@
     const s = value;
     const integer = (v, low, high) => Number.isInteger(v) && v >= low && v <= high;
     const o = s.options;
-    if (!o || !["duel", "practice", "coop"].includes(o.mode) || !["classic", "lanes", "open"].includes(o.map) || !["none", ...WEAPONS].includes(o.loadout)) return false;
-    const count = o.mode === "coop" ? 4 : 2;
-    if (!Array.isArray(o.bots) || o.bots.length > count || new Set(o.bots).size !== o.bots.length || !o.bots.every((v) => integer(v, 1, count)) || o.mode === "duel" && o.bots.length > 0 || o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4))) return false;
+    if (!o || !["duel", "practice", "coop", "online"].includes(o.mode) || !["classic", "lanes", "open"].includes(o.map) || !["none", ...WEAPONS].includes(o.loadout)) return false;
+    const count = o.mode === "coop" || o.mode === "online" ? 4 : 2;
+    if (!Array.isArray(o.bots) || o.bots.length > count || new Set(o.bots).size !== o.bots.length || !o.bots.every((v) => integer(v, 1, count)) || o.mode === "duel" && o.bots.length > 0 || o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4)) || o.mode === "online" && o.bots.length > 0) return false;
+    if (o.mode === "online" && (!Array.isArray(o.activeSeats) || o.activeSeats.length > 4 || s.phase !== "waiting" && o.activeSeats.length < 2 || new Set(o.activeSeats).size !== o.activeSeats.length || !o.activeSeats.every((v) => integer(v, 1, 4)))) return false;
     if (s.version !== 2 || !integer(s.round, 1, Number.MAX_SAFE_INTEGER) || !integer(s.tick, 0, ROUND_TICKS + 1) || !integer(s.rng, 0, 4294967295) || !integer(s.nextBomb, 1, 1e6) || !["waiting", "playing", "finished"].includes(s.phase) || !(s.winner === null || integer(s.winner, 0, count))) return false;
     if (!Array.isArray(s.board) || s.board.length !== WIDTH * HEIGHT || !s.board.every((v) => integer(v, 0, 2)) || !Array.isArray(s.flames) || s.flames.length !== WIDTH * HEIGHT || !s.flames.every((v) => integer(v, 0, ROUND_TICKS + 100)) || !Array.isArray(s.ice) || s.ice.length !== WIDTH * HEIGHT || !s.ice.every((v) => integer(v, 0, ROUND_TICKS + 100)) || !Array.isArray(s.items) || s.items.length !== WIDTH * HEIGHT || !s.items.every((v) => v === null || typeof v === "string" && Object.prototype.hasOwnProperty.call(ITEM_LABELS, v))) return false;
     if (!Array.isArray(s.players) || s.players.length !== count || !s.players.every((p, i) => p && p.seat === i + 1 && integer(p.x, 0, WIDTH - 1) && integer(p.y, 0, HEIGHT - 1) && integer(p.dir, -1, 3) && integer(p.moveDir, -1, 3) && integer(p.speed, 3, 6) && integer(p.moveTicks, 3, 20) && integer(p.progress, 0, p.moveTicks - 1) && integer(p.capacity, 1, 8) && integer(p.range, 1, 10) && integer(p.invulnerable, 0, 60) && integer(p.life, 0, 5) && typeof p.push === "boolean" && (p.weapon === null || WEAPONS.includes(p.weapon)) && integer(p.ammo, 0, 2) && integer(p.lastSpecial, 0, 1e9) && integer(p.slow, 0, 600) && integer(p.frozen, 0, 300) && integer(p.diedAt, 0, ROUND_TICKS) && integer(p.lastBomb, 0, 1e9) && typeof p.alive === "boolean" && typeof p.shield === "boolean")) return false;
@@ -472,7 +475,7 @@
       this.turnOnly = turnOnly;
       this.id = "";
       this.connected = false;
-      this.room = { t: "state", gameId: "3881-native", room: "", hostId: null, seats: { 1: null, 2: null }, members: [] };
+      this.room = { t: "state", gameId: "3881-native", room: "", hostId: null, seats: { 1: null, 2: null, 3: null, 4: null }, members: [] };
       this.rtt = /* @__PURE__ */ new Map();
       this.lastTransport = /* @__PURE__ */ new Map();
       this.sentBytes = 0;
@@ -808,7 +811,7 @@
       ctx.font = "bold 21px system-ui";
       ctx.fillStyle = "#f5f2db";
       ctx.textAlign = "left";
-      ctx.fillText(`\u6CE1\u6CE1\u5802 \xB7 ${state?.options.mode === "coop" ? "\u5408\u4F5C\u5BF9\u6297" : state?.options.mode === "practice" ? "\u4EBA\u673A\u7EC3\u4E60" : "\u53CC\u4EBA\u5BF9\u6218"}`, LEFT, 39);
+      ctx.fillText(`\u6CE1\u6CE1\u5802 \xB7 ${state?.options.mode === "online" ? "\u591A\u4EBA\u8054\u673A" : state?.options.mode === "coop" ? "\u5408\u4F5C\u5BF9\u6297" : state?.options.mode === "practice" ? "\u4EBA\u673A\u7EC3\u4E60" : "\u53CC\u4EBA\u5BF9\u6218"}`, LEFT, 39);
       if (!state) return;
       ctx.textAlign = "right";
       ctx.font = "600 18px system-ui";
@@ -883,6 +886,7 @@
         ctx.fill();
       }
       for (const player of [...state.players].sort((a, b) => position(a).y - position(b).y)) {
+        if (state.options.mode === "online" && !state.options.activeSeats?.includes(player.seat)) continue;
         const pos = position(player), x = LEFT + (pos.x + 0.5) * CELL, y = TOP + (pos.y + 1) * CELL;
         if (!player.alive) {
           if (state.tick - player.diedAt < 28) this.animation("fx-death", (state.tick - player.diedAt) / 4, x, y, CELL, CELL * 1.2);
@@ -915,7 +919,7 @@
         ctx.font = "bold 11px system-ui";
         ctx.textAlign = "center";
         ctx.fillStyle = "#173534";
-        ctx.fillText(`${state.options.bots.includes(player.seat) ? "CPU" : "P"}${player.seat}${player.life > 1 ? ` \u2665${player.life}` : ""}`, x, y - CELL - 8);
+        ctx.fillText(`P${player.seat}${player.life > 1 ? ` \u2665${player.life}` : ""}`, x, y - CELL - 8);
       }
       if (state.phase !== "playing") {
         ctx.fillStyle = "#10272bd9";
@@ -923,11 +927,11 @@
         ctx.textAlign = "center";
         ctx.fillStyle = "#fff5dc";
         ctx.font = "bold 32px system-ui";
-        const winner = !state.winner ? "\u5E73\u5C40" : state.options.mode === "coop" ? state.winner === 1 ? "\u5408\u4F5C\u961F\u4F0D\u83B7\u80DC" : "\u7535\u8111\u961F\u4F0D\u83B7\u80DC" : `${state.options.bots.includes(state.winner) ? "CPU" : "P"}${state.winner} \u83B7\u80DC`;
+        const winner = !state.winner ? "\u5E73\u5C40" : state.options.mode === "coop" ? state.winner === 1 ? "\u5408\u4F5C\u961F\u4F0D\u83B7\u80DC" : "\u7535\u8111\u961F\u4F0D\u83B7\u80DC" : `P${state.winner} \u83B7\u80DC`;
         ctx.fillText(state.phase === "waiting" ? "\u51C6\u5907\u5F00\u5C40" : winner, this.canvas.width / 2, this.canvas.height / 2 - 12);
         ctx.font = "17px system-ui";
         ctx.fillStyle = "#c3d5ca";
-        ctx.fillText(state.phase === "waiting" ? state.options.mode === "duel" ? "\u4E24\u4EBA\u5165\u5EA7\u540E\uFF0C\u7531\u623F\u4E3B\u5F00\u59CB\u6E38\u620F" : "\u81F3\u5C11\u4E00\u4EBA\u5165\u5EA7\uFF0C\u7531\u623F\u4E3B\u5F00\u59CB\u6E38\u620F" : "\u623F\u4E3B\u70B9\u51FB\u300C\u518D\u6765\u4E00\u5C40\u300D\u5373\u53EF\u5F00\u59CB", this.canvas.width / 2, this.canvas.height / 2 + 24);
+        ctx.fillText(state.phase === "waiting" ? "\u81F3\u5C11\u4E24\u4EBA\u5165\u5EA7\uFF0C\u5168\u5458\u51C6\u5907\u540E\u5F00\u5C40" : "\u5168\u5458\u518D\u6B21\u51C6\u5907\u5373\u53EF\u5F00\u5C40", this.canvas.width / 2, this.canvas.height / 2 + 24);
       }
     }
   };
@@ -942,7 +946,7 @@
     const view = new GameView(element("game-canvas"));
     let state = null, authority = null;
     let pending = [], sequence = 0, bombCounter = 0, specialCounter = 0;
-    let options = { ...DEFAULT_OPTIONS, bots: [] };
+    let options = { ...DEFAULT_OPTIONS, mode: "online", bots: [], activeSeats: [1, 2] };
     let hostId = null, seat = null, roster = "";
     let lastSnapshotAt = 0, counter = 0, corrections = 0;
     let inputAt = 0, awaitingPaint = false;
@@ -970,11 +974,12 @@
     }
     function newRound(playing) {
       const seed = crypto.getRandomValues(new Uint32Array(1))[0];
-      options.bots = options.mode === "duel" ? [] : [1, 2].filter((number) => !net.room.seats[number]);
+      options.activeSeats = [1, 2, 3, 4].filter((number) => !!net.room.seats[number]);
       authority = createGame(seed, Math.max(Date.now(), (authority?.round || 0) + 1, (state?.round || 0) + 1), playing, options);
       state = authority;
       resetInput();
       broadcast();
+      if (playing) net.control({ t: "resetReady" });
       if (playing) notice("\u6E38\u620F\u8FDB\u884C\u4E2D");
     }
     function broadcast() {
@@ -996,19 +1001,20 @@
       seat = net.seat;
       if (net.isHost && (changedHost || changedRoster || !authority)) {
         newRound(false);
-        notice(changedHost ? "\u623F\u4E3B\u5DF2\u5C31\u7EEA\uFF0C\u8BF7\u4E24\u4F4D\u73A9\u5BB6\u5165\u5EA7" : "\u5E2D\u4F4D\u5DF2\u66F4\u65B0\uFF0C\u7B49\u5F85\u5F00\u59CB");
+        notice(changedHost ? "\u623F\u4E3B\u5DF2\u5C31\u7EEA\uFF0C\u8BF7\u73A9\u5BB6\u5165\u5EA7\u5E76\u51C6\u5907" : "\u5E2D\u4F4D\u5DF2\u66F4\u65B0\uFF0C\u7B49\u5F85\u51C6\u5907");
       } else if (!net.isHost && changedHost) {
         state = null;
         authority = null;
         lastSnapshotAt = 0;
         notice("\u6B63\u5728\u540C\u6B65\u623F\u95F4");
       }
+      if (net.isHost && !changedRoster && authority?.phase !== "playing" && room.members.filter((member) => member.seat != null).length >= 2 && room.members.filter((member) => member.seat != null).every((member) => member.ready)) newRound(true);
       updateUi();
     };
     net.onPacket = (from, packet) => {
       if (packet.type === "input" && net.isHost && authority && packet.round === authority.round && validInput(packet.input)) {
         const member = net.room.members.find((member2) => member2.id === from);
-        if (member?.seat !== 1 && member?.seat !== 2) return;
+        if (!member?.seat || member.seat < 1 || member.seat > 4) return;
         const previous = remote.get(from);
         if (packet.input.seq > (previous?.input.seq || 0)) remote.set(from, { input: packet.input, at: performance.now() });
       }
@@ -1054,7 +1060,7 @@
       if (!net.connected || !state || !authority) return;
       const input = seat && state.phase === "playing" ? currentInput() : { ...EMPTY_INPUT };
       if (net.isHost) {
-        const inputs = [1, 2].map((number) => {
+        const inputs = [1, 2, 3, 4].map((number) => {
           const id = net.room.seats[number];
           if (id === net.id) return input;
           const item = id ? remote.get(id) : null;
@@ -1117,19 +1123,20 @@
       net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested });
       button.blur();
     };
-    function enoughPlayers() {
-      return options.mode === "duel" ? !!net.room.seats[1] && !!net.room.seats[2] : !!net.room.seats[1] || !!net.room.seats[2];
-    }
-    for (const key2 of ["mode", "map", "loadout"]) {
+    for (const key2 of ["map", "loadout"]) {
       element(`game-${key2}`).onchange = (event) => {
         if (!net.isHost || authority?.phase === "playing") return;
         options = { ...options, [key2]: event.target.value };
         newRound(false);
+        net.control({ t: "resetReady" });
         updateUi();
       };
     }
     element("start-game").onclick = () => {
-      if (net.isHost && enoughPlayers() && authority?.phase !== "playing") newRound(true);
+      if (seat && authority?.phase !== "playing") {
+        const mine = net.room.members.find((member) => member.id === net.id);
+        net.control({ t: "ready", ready: !mine?.ready });
+      }
       element("start-game").blur();
       updateUi();
     };
@@ -1168,17 +1175,17 @@
       element("conn-badge").className = `badge ${net.connected ? "ok" : "bad"}`;
       const host = net.room.members.find((member) => member.id === net.room.hostId);
       element("host-line").textContent = net.isHost ? "\u4F60\u662F\u623F\u4E3B" : `\u623F\u4E3B\uFF1A${host?.name || "\u7B49\u5F85\u4E2D"}`;
-      for (const number of [1, 2]) {
+      for (const number of [1, 2, 3, 4]) {
         const row = element(`seat-${number}`), member = net.room.members.find((value) => value.id === net.room.seats[number]);
-        row.querySelector(".who").textContent = member?.name || (state?.options.bots.includes(number) ? "\u7535\u8111\uFF08\u5165\u5EA7\u53EF\u66FF\u6362\uFF09" : "\u7A7A\u95F2");
+        row.querySelector(".who").textContent = member ? `${member.name} \xB7 ${member.ready ? "\u5DF2\u51C6\u5907" : "\u672A\u51C6\u5907"}` : "\u7A7A\u95F2";
         const button = row.querySelector("button");
         button.textContent = seat === number ? "\u79BB\u5EA7" : "\u5165\u5EA7";
         button.disabled = !!member && member.id !== net.id;
         row.classList.toggle("occupied", !!member);
         const player = state?.players[number - 1];
-        row.querySelector(".player-stats").textContent = player ? `\u751F\u547D ${player.life} \xB7 \u70B8\u5F39 ${player.capacity} \xB7 \u706B\u529B ${player.range} \xB7 \u901F\u5EA6 ${7 - player.speed}${player.shield ? " \xB7 \u62A4\u76FE" : ""}${player.push ? " \xB7 \u63A8\u5F39" : ""}${player.weapon ? ` \xB7 ${ITEM_LABELS[player.weapon]} \xD7${player.ammo}` : ""}${player.frozen ? " \xB7 \u51BB\u7ED3" : player.slow ? " \xB7 \u51CF\u901F" : ""}` : "";
+        row.querySelector(".player-stats").textContent = player && member ? `\u751F\u547D ${player.life} \xB7 \u70B8\u5F39 ${player.capacity} \xB7 \u706B\u529B ${player.range} \xB7 \u901F\u5EA6 ${7 - player.speed}${player.shield ? " \xB7 \u62A4\u76FE" : ""}${player.push ? " \xB7 \u63A8\u5F39" : ""}${player.weapon ? ` \xB7 ${ITEM_LABELS[player.weapon]} \xD7${player.ammo}` : ""}${player.frozen ? " \xB7 \u51BB\u7ED3" : player.slow ? " \xB7 \u51CF\u901F" : ""}` : "";
       }
-      for (const key2 of ["mode", "map", "loadout"]) {
+      for (const key2 of ["map", "loadout"]) {
         const select = element(`game-${key2}`);
         select.disabled = !net.isHost || authority?.phase === "playing";
         if (state) select.value = state.options[key2];
@@ -1192,10 +1199,10 @@
         icon.hidden = !weapon;
         if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
       }
-      element("mode-note").textContent = state?.options.mode === "coop" ? "\u4E24\u4F4D\u73A9\u5BB6\u540C\u961F\u5BF9\u6297\u4E24\u53F0\u7535\u8111\uFF1B\u7A7A\u4F4D\u7531\u7535\u8111\u8865\u9F50\u3002\u7206\u70B8\u4ECD\u4F1A\u4F24\u53CA\u961F\u53CB\u3002" : state?.options.mode === "practice" ? "\u4E00\u4EBA\u5373\u53EF\u5F00\u59CB\uFF0C\u7A7A\u4F4D\u7531\u7535\u8111\u8865\u9F50\u3002" : "\u4E24\u4EBA\u5165\u5EA7\u540E\u5F00\u59CB\uFF0C\u6700\u540E\u5B58\u6D3B\u8005\u83B7\u80DC\u3002";
+      element("mode-note").textContent = `\u5DF2\u5165\u5EA7 ${net.room.members.filter((member) => member.seat != null).length}/4 \u4EBA\uFF1B\u81F3\u5C11 2 \u4EBA\u4E14\u6240\u6709\u5DF2\u5165\u5EA7\u73A9\u5BB6\u51C6\u5907\u540E\u81EA\u52A8\u5F00\u5C40\uFF0C\u6700\u540E\u5B58\u6D3B\u8005\u83B7\u80DC\u3002`;
       const startButton = element("start-game");
-      startButton.disabled = !net.connected || !net.isHost || !enoughPlayers() || authority?.phase === "playing";
-      startButton.textContent = authority?.phase === "finished" ? "\u518D\u6765\u4E00\u5C40" : "\u5F00\u59CB\u6E38\u620F";
+      startButton.disabled = !net.connected || !seat || authority?.phase === "playing";
+      startButton.textContent = net.room.members.find((member) => member.id === net.id)?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
       element("seat-caption").textContent = seat ? "WASD / \u65B9\u5411\u952E\u79FB\u52A8 \xB7 \u7A7A\u683C\u653E\u70B8\u5F39 \xB7 E / Shift \u7279\u6B8A\u6B66\u5668" : "\u5165\u5EA7\u540E\u5373\u53EF\u64CD\u4F5C\uFF0C\u53CC\u65B9\u90FD\u4F7F\u7528\u81EA\u5DF1\u7684\u952E\u76D8";
       const other = net.isHost ? net.room.members.find((member) => member.id !== net.id && member.seat)?.id : net.room.hostId;
       const transport = other ? net.transport(other) : "waiting";

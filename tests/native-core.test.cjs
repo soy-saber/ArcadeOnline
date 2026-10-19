@@ -87,6 +87,29 @@ test("simultaneous deaths draw; one death awards the opponent", () => {
   assert.equal(win.winner, 2);
 });
 
+test("online rounds accept two to four humans with no CPU and ignore empty seats", () => {
+  for (const seats of [[], [4]]) {
+    const waiting = createGame(123, 1, false, { mode: "online", activeSeats: seats });
+    assert(validState(waiting));
+    assert.deepEqual(waiting.players.filter((player) => player.alive).map((player) => player.seat), seats);
+  }
+  for (const seats of [[1, 4], [1, 2, 4], [1, 2, 3, 4]]) {
+    const state = createGame(123, 1, true, { mode: "online", bots: [3, 4], activeSeats: seats });
+    assert.deepEqual(state.options.bots, []);
+    assert.equal(state.players.length, 4);
+    assert(validState(state));
+    for (const player of state.players) assert.equal(player.alive, seats.includes(player.seat));
+    step(state, [EMPTY_INPUT, EMPTY_INPUT, EMPTY_INPUT, { seq: 1, dir: -1, bomb: 1 }]);
+    assert.equal(state.bombs.length, seats.includes(4) ? 1 : 0);
+    const winner = seats.at(-1);
+    for (const player of state.players) if (player.alive && player.seat !== winner) {
+      player.alive = false; player.life = 0;
+    }
+    step(state, Array(4).fill(EMPTY_INPUT));
+    assert.equal(state.winner, winner);
+  }
+});
+
 test("seed, snapshots, RNG and action history replay identically", () => {
   const first = arena(49282), second = arena(49282);
   assert.deepEqual(createGame(99), createGame(99));

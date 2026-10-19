@@ -63,7 +63,7 @@ export class GameView {
     const ctx = this.ctx;
     ctx.fillStyle = "#10272b"; ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     ctx.font = "bold 21px system-ui"; ctx.fillStyle = "#f5f2db"; ctx.textAlign = "left";
-    ctx.fillText(`泡泡堂 · ${state?.options.mode === "coop" ? "合作对抗" : state?.options.mode === "practice" ? "人机练习" : "双人对战"}`, LEFT, 39);
+    ctx.fillText(`泡泡堂 · ${state?.options.mode === "online" ? "多人联机" : state?.options.mode === "coop" ? "合作对抗" : state?.options.mode === "practice" ? "人机练习" : "双人对战"}`, LEFT, 39);
     if (!state) return;
     ctx.textAlign = "right"; ctx.font = "600 18px system-ui";
     const seconds = Math.max(0, Math.ceil((ROUND_TICKS - state.tick) / HZ));
@@ -120,6 +120,7 @@ export class GameView {
       ctx.beginPath(); ctx.arc(x + 5, y - CELL + 5, 3 + Math.sin(now / 55), 0, Math.PI * 2); ctx.fill();
     }
     for (const player of [...state.players].sort((a, b) => position(a).y - position(b).y)) {
+      if (state.options.mode === "online" && !state.options.activeSeats?.includes(player.seat)) continue;
       const pos = position(player), x = LEFT + (pos.x + .5) * CELL, y = TOP + (pos.y + 1) * CELL;
       if (!player.alive) {
         if (state.tick - player.diedAt < 28) this.animation("fx-death", (state.tick - player.diedAt) / 4, x, y, CELL, CELL * 1.2);
@@ -137,15 +138,15 @@ export class GameView {
       if (player.frozen) { ctx.fillStyle = "#92dcff99"; ctx.fillRect(x - 15, y - 38, 30, 38); }
       if (player.slow) { ctx.strokeStyle = "#a97be3"; ctx.lineWidth = 3; ctx.strokeRect(x - 17, y - 5, 34, 5); }
       ctx.font = "bold 11px system-ui"; ctx.textAlign = "center"; ctx.fillStyle = "#173534";
-      ctx.fillText(`${state.options.bots.includes(player.seat) ? "CPU" : "P"}${player.seat}${player.life > 1 ? ` ♥${player.life}` : ""}`, x, y - CELL - 8);
+      ctx.fillText(`P${player.seat}${player.life > 1 ? ` ♥${player.life}` : ""}`, x, y - CELL - 8);
     }
     if (state.phase !== "playing") {
       ctx.fillStyle = "#10272bd9"; ctx.fillRect(LEFT, TOP, WIDTH * CELL, HEIGHT * CELL);
       ctx.textAlign = "center"; ctx.fillStyle = "#fff5dc"; ctx.font = "bold 32px system-ui";
-      const winner = !state.winner ? "平局" : state.options.mode === "coop" ? state.winner === 1 ? "合作队伍获胜" : "电脑队伍获胜" : `${state.options.bots.includes(state.winner) ? "CPU" : "P"}${state.winner} 获胜`;
+      const winner = !state.winner ? "平局" : state.options.mode === "coop" ? state.winner === 1 ? "合作队伍获胜" : "电脑队伍获胜" : `P${state.winner} 获胜`;
       ctx.fillText(state.phase === "waiting" ? "准备开局" : winner, this.canvas.width / 2, this.canvas.height / 2 - 12);
       ctx.font = "17px system-ui"; ctx.fillStyle = "#c3d5ca";
-      ctx.fillText(state.phase === "waiting" ? state.options.mode === "duel" ? "两人入座后，由房主开始游戏" : "至少一人入座，由房主开始游戏" : "房主点击「再来一局」即可开始", this.canvas.width / 2, this.canvas.height / 2 + 24);
+      ctx.fillText(state.phase === "waiting" ? "至少两人入座，全员准备后开局" : "全员再次准备即可开局", this.canvas.width / 2, this.canvas.height / 2 + 24);
     }
   }
 }

@@ -1,4 +1,4 @@
-export interface Member { id: string; name: string; seat: number | null }
+export interface Member { id: string; name: string; seat: number | null; ready: boolean }
 export interface RoomState { t: "state"; gameId: string; room: string; hostId: string | null; seats: Record<number, string | null>; members: Member[] }
 export type Packet = Record<string, unknown> & { type: string };
 interface Peer { pc: RTCPeerConnection; channel: RTCDataChannel | null; candidates: RTCIceCandidateInit[] }
@@ -8,7 +8,7 @@ interface Peer { pc: RTCPeerConnection; channel: RTCDataChannel | null; candidat
 export class Network {
   id = "";
   connected = false;
-  room: RoomState = { t: "state", gameId: "3881-native", room: "", hostId: null, seats: { 1: null, 2: null }, members: [] };
+  room: RoomState = { t: "state", gameId: "3881-native", room: "", hostId: null, seats: { 1: null, 2: null, 3: null, 4: null }, members: [] };
   rtt = new Map<string, number>();
   lastTransport = new Map<string, string>();
   sentBytes = 0;

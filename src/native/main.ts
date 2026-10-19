@@ -16,7 +16,7 @@ function start(): void {
   const view = new GameView(element<HTMLCanvasElement>("game-canvas"));
   let state: GameState | null = null, authority: GameState | null = null;
   let pending: Input[] = [], sequence = 0, bombCounter = 0, specialCounter = 0;
-  let options: GameOptions = { ...DEFAULT_OPTIONS, bots: [] };
+  let options: GameOptions = { ...DEFAULT_OPTIONS, mode: "online", bots: [], activeSeats: [1, 2] };
   let hostId: string | null = null, seat: number | null = null, roster = "";
   let lastSnapshotAt = 0, counter = 0, corrections = 0;
   let inputAt = 0, awaitingPaint = false;
@@ -36,9 +36,10 @@ function start(): void {
     const seed = crypto.getRandomValues(new Uint32Array(1))[0];
     // Wall time identifies a new round only; it never enters simulation steps.
     // A host page reload must not restart IDs at 1 and strand existing peers.
-    options.bots = options.mode === "duel" ? [] : [1, 2].filter((number) => !net.room.seats[number]);
+    options.activeSeats = [1, 2, 3, 4].filter((number) => !!net.room.seats[number]);
     authority = createGame(seed, Math.max(Date.now(), (authority?.round || 0) + 1, (state?.round || 0) + 1), playing, options);
     state = authority; resetInput(); broadcast();
+    if (playing) net.control({ t: "resetReady" });
     if (playing) notice("游戏进行中");
   }
   function broadcast(): void {
@@ -60,17 +61,20 @@ function start(): void {
     seat = net.seat;
     if (net.isHost && (changedHost || changedRoster || !authority)) {
       newRound(false);
-      notice(changedHost ? "房主已就绪，请两位玩家入座" : "席位已更新，等待开始");
+      notice(changedHost ? "房主已就绪，请玩家入座并准备" : "席位已更新，等待准备");
     } else if (!net.isHost && changedHost) {
       state = null; authority = null; lastSnapshotAt = 0;
       notice("正在同步房间");
     }
+    if (net.isHost && !changedRoster && authority?.phase !== "playing" &&
+        room.members.filter((member) => member.seat != null).length >= 2 &&
+        room.members.filter((member) => member.seat != null).every((member) => member.ready)) newRound(true);
     updateUi();
   };
   net.onPacket = (from: string, packet: Packet) => {
     if (packet.type === "input" && net.isHost && authority && packet.round === authority.round && validInput(packet.input)) {
       const member = net.room.members.find((member) => member.id === from);
-      if (member?.seat !== 1 && member?.seat !== 2) return;
+      if (!member?.seat || member.seat < 1 || member.seat > 4) return;
       const previous = remote.get(from);
       if (packet.input.seq > (previous?.input.seq || 0)) remote.set(from, { input: packet.input, at: performance.now() });
     }
@@ -113,7 +117,7 @@ function start(): void {
     if (!net.connected || !state || !authority) return;
     const input = seat && state.phase === "playing" ? currentInput() : { ...EMPTY_INPUT };
     if (net.isHost) {
-      const inputs = [1, 2].map((number) => {
+      const inputs = [1, 2, 3, 4].map((number) => {
         const id = net.room.seats[number];
         if (id === net.id) return input;
         const item = id ? remote.get(id) : null;
@@ -170,18 +174,18 @@ function start(): void {
     net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested });
     button.blur();
   };
-  function enoughPlayers(): boolean {
-    return options.mode === "duel" ? !!net.room.seats[1] && !!net.room.seats[2] : !!net.room.seats[1] || !!net.room.seats[2];
-  }
-  for (const key of ["mode", "map", "loadout"] as const) {
+  for (const key of ["map", "loadout"] as const) {
     element<HTMLSelectElement>(`game-${key}`).onchange = (event) => {
       if (!net.isHost || authority?.phase === "playing") return;
       options = { ...options, [key]: (event.target as HTMLSelectElement).value };
-      newRound(false); updateUi();
+      newRound(false); net.control({ t: "resetReady" }); updateUi();
     };
   }
   element<HTMLButtonElement>("start-game").onclick = () => {
-    if (net.isHost && enoughPlayers() && authority?.phase !== "playing") newRound(true);
+    if (seat && authority?.phase !== "playing") {
+      const mine = net.room.members.find((member) => member.id === net.id);
+      net.control({ t: "ready", ready: !mine?.ready });
+    }
     element("start-game").blur();
     updateUi();
   };
@@ -202,17 +206,17 @@ function start(): void {
     element("conn-badge").className = `badge ${net.connected ? "ok" : "bad"}`;
     const host = net.room.members.find((member) => member.id === net.room.hostId);
     element("host-line").textContent = net.isHost ? "你是房主" : `房主：${host?.name || "等待中"}`;
-    for (const number of [1, 2]) {
+    for (const number of [1, 2, 3, 4]) {
       const row = element(`seat-${number}`), member = net.room.members.find((value) => value.id === net.room.seats[number]);
-      row.querySelector(".who")!.textContent = member?.name || (state?.options.bots.includes(number) ? "电脑（入座可替换）" : "空闲");
+      row.querySelector(".who")!.textContent = member ? `${member.name} · ${member.ready ? "已准备" : "未准备"}` : "空闲";
       const button = row.querySelector("button")!;
       button.textContent = seat === number ? "离座" : "入座";
       button.disabled = !!member && member.id !== net.id;
       row.classList.toggle("occupied", !!member);
       const player = state?.players[number - 1];
-      row.querySelector(".player-stats")!.textContent = player ? `生命 ${player.life} · 炸弹 ${player.capacity} · 火力 ${player.range} · 速度 ${7 - player.speed}${player.shield ? " · 护盾" : ""}${player.push ? " · 推弹" : ""}${player.weapon ? ` · ${ITEM_LABELS[player.weapon]} ×${player.ammo}` : ""}${player.frozen ? " · 冻结" : player.slow ? " · 减速" : ""}` : "";
+      row.querySelector(".player-stats")!.textContent = player && member ? `生命 ${player.life} · 炸弹 ${player.capacity} · 火力 ${player.range} · 速度 ${7 - player.speed}${player.shield ? " · 护盾" : ""}${player.push ? " · 推弹" : ""}${player.weapon ? ` · ${ITEM_LABELS[player.weapon]} ×${player.ammo}` : ""}${player.frozen ? " · 冻结" : player.slow ? " · 减速" : ""}` : "";
     }
-    for (const key of ["mode", "map", "loadout"] as const) {
+    for (const key of ["map", "loadout"] as const) {
       const select = element<HTMLSelectElement>(`game-${key}`);
       select.disabled = !net.isHost || authority?.phase === "playing";
       if (state) select.value = state.options[key];
@@ -226,10 +230,10 @@ function start(): void {
       icon.hidden = !weapon;
       if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
     }
-    element("mode-note").textContent = state?.options.mode === "coop" ? "两位玩家同队对抗两台电脑；空位由电脑补齐。爆炸仍会伤及队友。" : state?.options.mode === "practice" ? "一人即可开始，空位由电脑补齐。" : "两人入座后开始，最后存活者获胜。";
+    element("mode-note").textContent = `已入座 ${net.room.members.filter((member) => member.seat != null).length}/4 人；至少 2 人且所有已入座玩家准备后自动开局，最后存活者获胜。`;
     const startButton = element<HTMLButtonElement>("start-game");
-    startButton.disabled = !net.connected || !net.isHost || !enoughPlayers() || authority?.phase === "playing";
-    startButton.textContent = authority?.phase === "finished" ? "再来一局" : "开始游戏";
+    startButton.disabled = !net.connected || !seat || authority?.phase === "playing";
+    startButton.textContent = net.room.members.find((member) => member.id === net.id)?.ready ? "取消准备" : "准备";
     element("seat-caption").textContent = seat ? "WASD / 方向键移动 · 空格放炸弹 · E / Shift 特殊武器" : "入座后即可操作，双方都使用自己的键盘";
     const other = net.isHost ? net.room.members.find((member) => member.id !== net.id && member.seat)?.id : net.room.hostId;
     const transport = other ? net.transport(other) : "waiting";

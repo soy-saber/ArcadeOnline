@@ -69,7 +69,7 @@ function getRoom(gameId, roomName) {
       key,
       gameId,
       name: roomName,
-      seats: { 1: null, 2: null },
+      seats: { 1: null, 2: null, ...(gameId === "3881-native" ? { 3: null, 4: null } : {}) },
       mouseOwner: null,
       hostId: null,
       members: new Map()
@@ -199,6 +199,7 @@ function seatState(room) {
       id: m.id,
       name: m.name,
       seat: m.seat,
+      ready: !!m.ready,
       rtcCapable: !!m.rtcCapable,
       streamTransport: m.streamTransport || "ws"
     });
@@ -226,6 +227,10 @@ function pushState(room) {
   broadcast(room, seatState(room));
 }
 
+function clearNativeReady(room) {
+  if (room.gameId === "3881-native") for (const player of room.members.values()) player.ready = false;
+}
+
 function releaseSeat(room, memberId, announce) {
   const member = room.members.get(memberId);
   if (!member) return;
@@ -233,6 +238,8 @@ function releaseSeat(room, memberId, announce) {
   if (seat != null) {
     if (room.seats[seat] === memberId) room.seats[seat] = null;
     member.seat = null;
+    member.ready = false;
+    clearNativeReady(room);
     const host = room.members.get(room.hostId);
     if (host) sendTo(host.ws, { t: "clearKeys", seat });
   }
@@ -263,6 +270,10 @@ function removeMember(room, memberId, announce) {
 function scheduleDisconnect(member, ws) {
   if (!member || member.ws !== ws) return;
   member.ws = null;
+  if (member.room.gameId === "3881-native" && member.ready) {
+    member.ready = false;
+    pushState(member.room);
+  }
   if (member._disconnectTimer) clearTimeout(member._disconnectTimer);
   member._disconnectTimer = setTimeout(() => {
     member._disconnectTimer = null;
@@ -418,6 +429,7 @@ wss.on("connection", (ws) => {
             id: memberId,
             name: sanitizeName(msg.name),
             seat: null,
+            ready: false,
             rtcCapable: msg.rtcCapable === true,
             streamTransport: "ws",
             framePending: false,
@@ -462,8 +474,8 @@ wss.on("connection", (ws) => {
       case "sit": {
         if (!member) return;
         const seat = msg.seat;
-        if (seat !== 1 && seat !== 2) return;
         const room = member.room;
+        if (![1, 2].includes(seat) && !(room.gameId === "3881-native" && [3, 4].includes(seat))) return;
         if (member.seat === seat) return;
         if (room.seats[seat] != null) {
           sendTo(ws, { t: "err", msg: "该座位已被占" });
@@ -472,6 +484,7 @@ wss.on("connection", (ws) => {
         if (member.seat != null) releaseSeat(room, member.id, false);
         room.seats[seat] = member.id;
         member.seat = seat;
+        clearNativeReady(room);
         broadcast(room, { t: "sys", name: member.name, action: "sit", seat });
         pushState(room);
         break;
@@ -490,6 +503,20 @@ wss.on("connection", (ws) => {
         // 仅离座（回到观战），不离开房间
         if (!member) return;
         releaseSeat(member.room, member.id, false);
+        pushState(member.room);
+        break;
+      }
+
+      case "ready": {
+        if (!member || member.room.gameId !== "3881-native" || member.seat == null || typeof msg.ready !== "boolean") return;
+        member.ready = msg.ready;
+        pushState(member.room);
+        break;
+      }
+
+      case "resetReady": {
+        if (!member || member.room.gameId !== "3881-native" || member.room.hostId !== member.id) return;
+        clearNativeReady(member.room);
         pushState(member.room);
         break;
       }

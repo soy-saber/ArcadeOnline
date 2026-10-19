@@ -31,7 +31,7 @@ test("native relay enforces room, host, seat and game boundaries", async () => {
     assert.equal(turn.credential, crypto.createHmac("sha1", testSecret).update(turn.username).digest("base64"));
     assert(!JSON.stringify(config).includes(testSecret));
     const host = await join("3881-native", "relay"), player = await join("3881-native", "relay"), spectator = await join("3881-native", "relay");
-    const outsider = await join("3881-native", "outside"), legacy = await join("3881", "relay");
+    const fourth = await join("3881-native", "relay"), outsider = await join("3881-native", "outside"), legacy = await join("3881", "relay");
     player.ws.send(JSON.stringify({ t: "sit", seat: 2 }));
     await until(() => player.messages.some((m) => m.t === "state" && m.seats[2] === player.id));
     send(player, host, "input"); send(host, player, "snapshot");
@@ -42,5 +42,15 @@ test("native relay enforces room, host, seat and game boundaries", async () => {
     await wait(180);
     assert.equal(host.messages.filter((m) => m.t === "native").length, 1);
     assert.equal(outsider.messages.filter((m) => m.t === "native").length, 0);
+    host.ws.send(JSON.stringify({ t: "sit", seat: 1 }));
+    spectator.ws.send(JSON.stringify({ t: "sit", seat: 3 }));
+    fourth.ws.send(JSON.stringify({ t: "sit", seat: 4 }));
+    await until(() => host.messages.some((m) => m.t === "state" && m.seats[3] === spectator.id && m.seats[4] === fourth.id));
+    fourth.ws.send(JSON.stringify({ t: "ready", ready: true }));
+    await until(() => host.messages.some((m) => m.t === "state" && m.members.some((p) => p.id === fourth.id && p.ready)));
+    send(fourth, host, "input");
+    await until(() => host.messages.filter((m) => m.t === "native").length === 2);
+    host.ws.send(JSON.stringify({ t: "resetReady" }));
+    await until(() => host.messages.some((m) => m.t === "state" && m.members.some((p) => p.id === fourth.id && !p.ready)));
   } finally { for (const client of clients) client.ws.close(); server.kill(); }
 });

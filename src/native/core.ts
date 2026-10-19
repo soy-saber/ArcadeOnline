@@ -13,10 +13,11 @@ export type Item = "bomb" | "range" | "speed" | "shield" | "life" | "push" | Wea
 export const ITEM_LABELS: Record<Item, string> = { bomb: "炸弹糖", range: "威力药", speed: "飞鞋", shield: "盾牌", life: "生命", push: "推弹手套", rocket: "火箭", mine: "地雷", grenade: "手榴弹", gas: "汽弹", ice: "冰箭", fire: "火焰箭" };
 export interface Input { seq: number; dir: Direction; bomb: number; special?: number }
 export interface GameOptions {
-  mode: "duel" | "practice" | "coop";
+  mode: "duel" | "practice" | "coop" | "online";
   map: "classic" | "lanes" | "open";
   loadout: Weapon | "none";
   bots: number[];
+  activeSeats?: number[];
 }
 export const DEFAULT_OPTIONS: GameOptions = { mode: "duel", map: "classic", loadout: "none", bots: [] };
 export interface Player {
@@ -50,9 +51,10 @@ function random(state: GameState): number {
 }
 
 export function createGame(seed: number, round = 1, playing = true, options: Partial<GameOptions> = {}): GameState {
-  const config = { ...DEFAULT_OPTIONS, ...options, bots: [...(options.bots || [])] };
+  const config = { ...DEFAULT_OPTIONS, ...options, bots: [...(options.bots || [])], activeSeats: [...(options.activeSeats || [1, 2])] };
   if (config.mode === "coop") config.bots = [...new Set([...config.bots, 3, 4])];
-  const count = config.mode === "coop" ? 4 : 2;
+  if (config.mode === "online") config.bots = [];
+  const count = config.mode === "coop" || config.mode === "online" ? 4 : 2;
   const state: GameState = {
     version: 2, round, tick: 0, rng: (seed >>> 0) || 1, nextBomb: 1, options: config,
     phase: playing ? "playing" : "waiting", winner: null,
@@ -73,9 +75,10 @@ export function createGame(seed: number, round = 1, playing = true, options: Par
         state.board[index(x + dx, y + dy)] = 0;
       }
     }
+    const active = config.mode !== "online" || config.activeSeats.includes(seat);
     state.players.push({ seat, x, y, dir: 3, moveDir: -1, progress: 0, speed: 6,
-      alive: true, capacity: 1, range: 1, shield: false, invulnerable: 0, lastBomb: 0,
-      life: 1, push: false, weapon: config.loadout === "none" ? null : config.loadout,
+      alive: active, capacity: 1, range: 1, shield: false, invulnerable: 0, lastBomb: 0,
+      life: active ? 1 : 0, push: false, weapon: config.loadout === "none" ? null : config.loadout,
       ammo: config.loadout === "none" ? 0 : config.loadout === "ice" ? 1 : 2,
       lastSpecial: 0, slow: 0, frozen: 0, moveTicks: 6, diedAt: 0 });
   }
@@ -396,12 +399,15 @@ export function validState(value: unknown): value is GameState {
   const s = value as GameState;
   const integer = (v: number, low: number, high: number) => Number.isInteger(v) && v >= low && v <= high;
   const o = s.options;
-  if (!o || !["duel", "practice", "coop"].includes(o.mode) || !["classic", "lanes", "open"].includes(o.map) ||
+  if (!o || !["duel", "practice", "coop", "online"].includes(o.mode) || !["classic", "lanes", "open"].includes(o.map) ||
       !["none", ...WEAPONS].includes(o.loadout)) return false;
-  const count = o.mode === "coop" ? 4 : 2;
+  const count = o.mode === "coop" || o.mode === "online" ? 4 : 2;
   if (!Array.isArray(o.bots) || o.bots.length > count || new Set(o.bots).size !== o.bots.length ||
       !o.bots.every((v) => integer(v, 1, count)) || (o.mode === "duel" && o.bots.length > 0) ||
-      (o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4)))) return false;
+      (o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4))) || (o.mode === "online" && o.bots.length > 0)) return false;
+  if (o.mode === "online" && (!Array.isArray(o.activeSeats) || o.activeSeats.length > 4 ||
+      (s.phase !== "waiting" && o.activeSeats.length < 2) ||
+      new Set(o.activeSeats).size !== o.activeSeats.length || !o.activeSeats.every((v) => integer(v, 1, 4)))) return false;
   if (s.version !== 2 || !integer(s.round, 1, Number.MAX_SAFE_INTEGER) || !integer(s.tick, 0, ROUND_TICKS + 1) ||
       !integer(s.rng, 0, 0xffffffff) || !integer(s.nextBomb, 1, 1e6) ||
       !["waiting", "playing", "finished"].includes(s.phase) || !(s.winner === null || integer(s.winner, 0, count))) return false;
