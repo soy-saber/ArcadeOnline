@@ -49,4 +49,10 @@ for sprite, symbol, name in [(307, "mine", "mine"), (316, "gasBomb", "gas"), (31
     image(source / f"effects-preview/DefineSprite_{sprite}_{symbol}/1.png", name + ".png")
 for direction in range(4):
     image(source / f"effects-preview/DefineSprite_306_rocket/{direction + 1}.png", f"rocket-{direction}.png")
+
+# DefineSprite_327 has 12 named tool frames. The later frames repeat their
+# animation, so use the first cycle for a stable inventory and board icon.
+for frame, name in enumerate(["life", "push", "bomb", "shield", "range", "speed",
+                              "rocket", "mine", "grenade", "gas", "ice", "fire"], start=1):
+    image(source / f"item-preview/DefineSprite_327_tool/{frame}.png", f"item-{name}.png")
 print(f"Prepared {len(list(target.iterdir()))} runtime assets")

@@ -1,10 +1,10 @@
 {
   "version": 1,
   "hashes": {
-    "public/native/bomb.js": "f3a9aedd4d371cd7c2c326ded3de13c3ca9fa4a63d1ca11f01bb44bfa91d1efd",
+    "public/native/bomb.js": "e9d64f6bbf7ba5cd4694aa5dc5a44bbb64a2d662da0b227acb9133dfe6ab74c4",
     "src/native/core.ts": "16afd6d000eb53ffea29a8c3472e057eda1a7fd0eb5328b43d7cff7ac297aeca",
-    "src/native/main.ts": "fb97ba8a245942cf10f9c51e1800bb504d2e4a0116c282c338cbc9cd8b8c34a7",
+    "src/native/main.ts": "e27d65ebf2e94727faeab3c0af624234395ec6626ebe9e3ef22c5af976c240a4",
     "src/native/network.ts": "d7d1270037fbf3bd84645e99c2edb291dd8f75f8f7f863fe10b39aae8429e8e8",
-    "src/native/view.ts": "19f2bb310ce586d6d2a39e79f48b163f21ab5ebf362bf2851ba97d34d12eb6fd"
+    "src/native/view.ts": "af535cb8ffda1ea36a863d972c97626faeff22e8fff4e1cea104004bc2e3c247"
   }
 }

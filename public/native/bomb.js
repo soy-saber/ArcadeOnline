@@ -745,6 +745,7 @@
         "fx-ice",
         "fx-blast",
         "fx-death",
+        ...["life", "push", "bomb", "shield", "range", "speed", ...WEAPONS].map((item) => `item-${item}`),
         ...[0, 1, 2, 3].map((d) => `rocket-${d}`),
         ...[1, 2, 3, 4].flatMap((hero) => [0, 1, 2, 3].flatMap((direction) => [`hero-${hero}-${direction}`, `walk-${hero}-${direction}`]))
       ]) {
@@ -844,18 +845,7 @@
           this.animation("fx-ice", state.tick / 4, px + CELL / 2, py + CELL, CELL, CELL);
         } else if (state.items[cell]) {
           const type = state.items[cell];
-          ctx.fillStyle = "#fff5d8";
-          ctx.beginPath();
-          ctx.arc(px + CELL / 2, py + CELL / 2, 15, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = "#174e50";
-          ctx.textAlign = "center";
-          ctx.font = "bold 18px system-ui";
-          const label = { bomb: "+", range: "\u706B", speed: "\u901F", shield: "\u76FE", life: "\u5FC3", push: "\u63A8", rocket: "\u7BAD", mine: "\u96F7", grenade: "\u69B4", gas: "\u6C7D", ice: "\u51B0", fire: "\u7130" };
-          if (WEAPONS.includes(type)) {
-            ctx.fillStyle = "#6b3484";
-          }
-          ctx.fillText(label[type], px + CELL / 2, py + CELL / 2 + 6);
+          this.sprite(`item-${type}`, px + CELL / 2, py + CELL - 2, CELL * 0.86, CELL * 0.9);
         }
       }
       for (const s of state.specials) {
@@ -1194,8 +1184,14 @@
         if (state) select.value = state.options[key2];
       }
       const inventory = seat && state ? state.players[seat - 1] : null;
-      element("weapon-status").textContent = inventory?.weapon ? `${ITEM_LABELS[inventory.weapon]} \xD7${inventory.ammo} \xB7 E / Shift \u4F7F\u7528` : "\u5C1A\u672A\u62FE\u53D6\u7279\u6B8A\u6B66\u5668";
-      element("special-button").textContent = inventory?.weapon ? `${ITEM_LABELS[inventory.weapon]} \xD7${inventory.ammo}` : "\u7279\u6B8A\u6B66\u5668";
+      const weapon = inventory?.weapon;
+      element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo} \xB7 E / Shift \u4F7F\u7528` : "\u5C1A\u672A\u62FE\u53D6\u7279\u6B8A\u6B66\u5668";
+      element("special-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} \xD7${inventory.ammo}` : "\u7279\u6B8A\u6B66\u5668";
+      for (const id of ["weapon-icon", "special-button-icon"]) {
+        const icon = element(id);
+        icon.hidden = !weapon;
+        if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
+      }
       element("mode-note").textContent = state?.options.mode === "coop" ? "\u4E24\u4F4D\u73A9\u5BB6\u540C\u961F\u5BF9\u6297\u4E24\u53F0\u7535\u8111\uFF1B\u7A7A\u4F4D\u7531\u7535\u8111\u8865\u9F50\u3002\u7206\u70B8\u4ECD\u4F1A\u4F24\u53CA\u961F\u53CB\u3002" : state?.options.mode === "practice" ? "\u4E00\u4EBA\u5373\u53EF\u5F00\u59CB\uFF0C\u7A7A\u4F4D\u7531\u7535\u8111\u8865\u9F50\u3002" : "\u4E24\u4EBA\u5165\u5EA7\u540E\u5F00\u59CB\uFF0C\u6700\u540E\u5B58\u6D3B\u8005\u83B7\u80DC\u3002";
       const startButton = element("start-game");
       startButton.disabled = !net.connected || !net.isHost || !enoughPlayers() || authority?.phase === "playing";

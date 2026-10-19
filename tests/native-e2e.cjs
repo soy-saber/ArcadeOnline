@@ -152,6 +152,12 @@ let browser;
   await guest.waitForFunction(() => window.__nativeTest.state.players[1].ammo === 1);
   await spectator.waitForFunction(() => window.__nativeTest.authority.specials.some((s) => s.kind === "mine" && s.owner === 2));
   assert((await guest.$eval("#weapon-status", (e) => e.textContent)).includes("地雷"));
+  await guest.waitForFunction(() => {
+    const equipped = document.getElementById("weapon-icon");
+    return equipped && !equipped.hidden && equipped.src.endsWith("/item-mine.png") && equipped.complete && equipped.naturalWidth > 0;
+  });
+  assert(await guest.evaluate(() => [...document.querySelectorAll(".item-guide img, .weapon-guide img")]
+    .every((icon) => icon.complete && icon.naturalWidth > 0)));
   console.log("PASS: one-player practice, CPU fill, map/loadout selection, special key and spectator snapshot");
 
   // Seat change ends the practice round, then two people can start co-op.

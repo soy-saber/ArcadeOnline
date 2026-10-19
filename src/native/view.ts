@@ -1,4 +1,4 @@
-import { GameState, HZ, WIDTH, HEIGHT, ROUND_TICKS, position, index, WEAPONS, Item } from "./core";
+import { GameState, HZ, WIDTH, HEIGHT, ROUND_TICKS, position, index, WEAPONS } from "./core";
 
 const CELL = 44, LEFT = 28, TOP = 66;
 export class GameView {
@@ -18,6 +18,7 @@ export class GameView {
     canvas.height = TOP + HEIGHT * CELL + 28;
     this.ctx = canvas.getContext("2d", { alpha: false })!;
     for (const name of ["floor", "crate", "wall", "bomb", "mine", "gas", "grenade", "fx-fire", "fx-ice", "fx-blast", "fx-death",
+      ...["life", "push", "bomb", "shield", "range", "speed", ...WEAPONS].map((item) => `item-${item}`),
       ...[0, 1, 2, 3].map((d) => `rocket-${d}`),
       ...[1, 2, 3, 4].flatMap((hero) => [0, 1, 2, 3].flatMap((direction) => [`hero-${hero}-${direction}`, `walk-${hero}-${direction}`]))]) {
       const image = new Image(); image.src = `/native/assets/${name}.png`; this.images.set(name, image);
@@ -87,11 +88,7 @@ export class GameView {
         this.animation("fx-ice", state.tick / 4, px + CELL / 2, py + CELL, CELL, CELL);
       } else if (state.items[cell]) {
         const type = state.items[cell]!;
-        ctx.fillStyle = "#fff5d8"; ctx.beginPath(); ctx.arc(px + CELL / 2, py + CELL / 2, 15, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#174e50"; ctx.textAlign = "center"; ctx.font = "bold 18px system-ui";
-        const label: Record<Item, string> = { bomb: "+", range: "火", speed: "速", shield: "盾", life: "心", push: "推", rocket: "箭", mine: "雷", grenade: "榴", gas: "汽", ice: "冰", fire: "焰" };
-        if (WEAPONS.includes(type as typeof WEAPONS[number])) { ctx.fillStyle = "#6b3484"; }
-        ctx.fillText(label[type], px + CELL / 2, py + CELL / 2 + 6);
+        this.sprite(`item-${type}`, px + CELL / 2, py + CELL - 2, CELL * .86, CELL * .9);
       }
     }
     for (const s of state.specials) {

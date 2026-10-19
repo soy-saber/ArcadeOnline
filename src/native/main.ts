@@ -218,8 +218,14 @@ function start(): void {
       if (state) select.value = state.options[key];
     }
     const inventory = seat && state ? state.players[seat - 1] : null;
-    element("weapon-status").textContent = inventory?.weapon ? `${ITEM_LABELS[inventory.weapon]} ×${inventory.ammo} · E / Shift 使用` : "尚未拾取特殊武器";
-    element("special-button").textContent = inventory?.weapon ? `${ITEM_LABELS[inventory.weapon]} ×${inventory.ammo}` : "特殊武器";
+    const weapon = inventory?.weapon;
+    element("weapon-status-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo} · E / Shift 使用` : "尚未拾取特殊武器";
+    element("special-button-text").textContent = weapon ? `${ITEM_LABELS[weapon]} ×${inventory.ammo}` : "特殊武器";
+    for (const id of ["weapon-icon", "special-button-icon"]) {
+      const icon = element<HTMLImageElement>(id);
+      icon.hidden = !weapon;
+      if (weapon) icon.src = `/native/assets/item-${weapon}.png`;
+    }
     element("mode-note").textContent = state?.options.mode === "coop" ? "两位玩家同队对抗两台电脑；空位由电脑补齐。爆炸仍会伤及队友。" : state?.options.mode === "practice" ? "一人即可开始，空位由电脑补齐。" : "两人入座后开始，最后存活者获胜。";
     const startButton = element<HTMLButtonElement>("start-game");
     startButton.disabled = !net.connected || !net.isHost || !enoughPlayers() || authority?.phase === "playing";
