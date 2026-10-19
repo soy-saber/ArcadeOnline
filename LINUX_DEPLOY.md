@@ -82,7 +82,7 @@ sudo systemctl --no-pager status arcade-online caddy coturn
 
 `check-public` 检查可信 TLS 连接、健康接口、页面／脚本、游戏目录、临时 TURN 凭据以及真实 WSS 加入房间。`check-turn` 使用 UDP 完成认证分配、检查服务器公布的中继 IP／端口，再释放分配。**还需从服务器之外的网络执行 TURN 检查**；成功分配不能替代两台设备真正通过中继传输数据。
 
-再用不同网络的两台设备进入同一房间：检查移动、普通炸弹、特殊武器、合作模式、观战、刷新、重连；测试时记录 RTT、校正次数与是否回退中继。真实 TURN 路径可在 Chromium 的 `chrome://webrtc-internals` 中检查选中的候选对（relay）。验收时两端打开 `/native-room.html?game=3881-native&room=turncheck&debug=1&turn=1`，会用 `iceTransportPolicy: relay` 强制 WebRTC 仅使用 TURN。如果依旧显示「中继连接」则是 WSS 回退，不能证明 TURN 数据路径通过；显示「对等连接」且选中 relay 候选对才是成功。普通邀请链接会移除测试参数。
+再用不同网络的两台设备进入同一房间：分别入座和准备，检查自动开始 1 对 1、移动、普通炸弹、特殊武器、观战、刷新与重连；有条件时用四台设备复测四人全员准备开局。测试时记录 RTT、校正次数与是否回退中继。真实 TURN 路径可在 Chromium 的 `chrome://webrtc-internals` 中检查选中的候选对（relay）。验收时两端打开 `/native-room.html?game=3881-native&room=turncheck&debug=1&turn=1`，会用 `iceTransportPolicy: relay` 强制 WebRTC 仅使用 TURN。如果依旧显示「中继连接」则是 WSS 回退，不能证明 TURN 数据路径通过；显示「对等连接」且选中 relay 候选对才是成功。普通邀请链接会移除测试参数。
 
 本地验证命令：`npm run test:deploy`。覆盖配置校验、真实 Node/WS 探测，以及 TURN 认证协议夹具；检测到 `CADDY` 环境变量指向的可执行文件时，还测试真实 Caddy 配置解析。这些检查没有假装在 Windows 上启动 Ubuntu/systemd。
 
