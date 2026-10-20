@@ -79,6 +79,6 @@ npm run package:linux
 
 ## 火柴人打羽毛球联机版
 
-大厅新增 `46923-native`：两名玩家进入同一房间，分别占据 P1/P2 席位并准备后自动开局。A/D 或方向键左右移动，W/↑ 跳跃，S/↓ 发球及挥拍；球落在己方半场时对方得分，先得 7 分获胜，赛后双方再次准备即可重开。页面提供触屏按钮、音效开关与音量。游戏在双方浏览器内本地绘制，房主负责规则判定与状态同步；WebRTC DataChannel 优先，连接不通时自动使用 WebSocket 中继。旧 Flash 羽毛球入口仍可使用。
+大厅新增 `46923-native`：两名玩家进入同一房间，分别占据 P1/P2 席位并准备后自动开局。A/D 或方向键左右移动，W/↑ 跳跃，S/↓ 发球及挥拍；按原作规则，本分发球方不能跳跃，且不能进入网前区域，接发球方可以跳跃。球落在己方半场时对方得分，先得 7 分获胜，赛后双方再次准备即可重开。页面提供触屏按钮、音效开关与音量。游戏在双方浏览器内本地绘制，房主负责规则判定与状态同步；WebRTC DataChannel 优先，连接不通时自动使用 WebSocket 中继。旧 Flash 羽毛球入口仍可使用。
 
 本地验证：`npm run typecheck`、`npm run test:native`、`npm run test:badminton:e2e`。新游戏核心位于 `src/badminton/`，页面为 `public/badminton-room.html`；`npm run build:native` 会同时生成泡泡堂与羽毛球浏览器包。

@@ -5,11 +5,17 @@ export const WIDTH = 550;
 export const HEIGHT = 400;
 export const GROUND = 376.25;
 export const NET_X = 275;
-export const NET_TOP = 310;
+export const NET_TOP = 7093 / 20 - 10.5 * 4.212677;
 export const TARGET = 7;
 export const LEFT_WALL = 36.5;
 export const RIGHT_WALL = 513.5;
-const NET_HALF_WIDTH = 7;
+// DefineSprite_119 is a 21px square. The stage scales it for the visible net
+// and the wider invisible netLimit used by both players' movement checks.
+const NET_HALF_WIDTH = 10.5 * 1.5431671;
+const NET_LIMIT_X = 5499 / 20;
+const NET_LIMIT_HALF_WIDTH = 10.5 * 6.177414;
+const NET_LIMIT_TOP = 7032 / 20 - 10.5 * 3.4748993;
+const NET_LIMIT_BOTTOM = 7032 / 20 + 10.5 * 3.4748993;
 const SWING_ROTATION = [0, 0, 18.6, 37.4, 74.9, 93.3, 112.1, 130.9, 149.5, 124.6, 99.6, 74.9, 49.9, 24.8, 0, 0];
 const UNDERHAND_ROTATION = [0, 32.8, 65.7, 98.3, 131.4, 164.2, 196.8, 229.8];
 // Racket head positions measured from the original gun sprite frames, relative to its handle.
@@ -65,10 +71,13 @@ export function validState(value: unknown): value is GameState {
 }
 
 function beginServe(state: GameState): void {
+  if (state.lastPoint) state.serve = state.lastPoint;
   state.rally = "serve";
   // The original reset moves the server away from the net before the next serve.
   const server = state.players[state.serve - 1];
-  server.x = state.serve === 1 ? Math.min(server.x, NET_X - 70) : Math.max(server.x, NET_X + 70);
+  server.x = state.serve === 1
+    ? Math.min(server.x, NET_LIMIT_X - NET_LIMIT_HALF_WIDTH - 65)
+    : Math.max(server.x, NET_LIMIT_X + NET_LIMIT_HALF_WIDTH + 65);
   state.birdie = { x: server.x + (state.serve === 1 ? 25 : -25),
     y: server.y - 75, vx: 0, vy: 0, lastHitter: 0 };
   state.players.forEach((p) => { p.swing = 0; p.servePose = 0; p.underhand = 0; });
@@ -78,10 +87,23 @@ function award(state: GameState, player: 1 | 2): void {
   if (state.rally !== "flight") return;
   state.score[player - 1]++;
   state.lastPoint = player;
-  state.serve = player;
   state.rally = "point";
   state.pointTicks = Math.round(HZ * 1.5);
   if (state.score[player - 1] >= TARGET) { state.winner = player; state.phase = "finished"; }
+}
+
+export function movePlayer(state: GameState, seat: 1 | 2, direction: number): void {
+  if (!direction) return;
+  const player = state.players[seat - 1];
+  const towardNet = seat === 1 ? direction > 0 : direction < 0;
+  if (towardNet) {
+    const reach = state.serve === seat ? (seat === 1 ? 65 : -60) : 0;
+    const testX = player.x + reach;
+    if (player.y >= NET_LIMIT_TOP && player.y <= NET_LIMIT_BOTTOM &&
+      testX >= NET_LIMIT_X - NET_LIMIT_HALF_WIDTH && testX <= NET_LIMIT_X + NET_LIMIT_HALF_WIDTH) return;
+  }
+  player.x = clamp(player.x + Math.sign(direction) * 5.9,
+    seat === 1 ? LEFT_WALL : NET_X, seat === 1 ? NET_X : RIGHT_WALL);
 }
 
 export function step(state: GameState, incoming: readonly Input[]): void {
@@ -100,11 +122,11 @@ export function step(state: GameState, incoming: readonly Input[]): void {
     if (player.swing > 0 && --player.swing === 0) player.servePose = 0;
     const speed = (Number(held.right) - Number(held.left)) * 5.9;
     if (speed) player.facing = speed > 0 ? 1 : -1;
-    player.x = clamp(player.x + speed, i === 0 ? 50 : NET_X + 23, i === 0 ? NET_X - 23 : 500);
+    movePlayer(state, (i + 1) as 1 | 2, speed);
     const serving = state.rally === "serve" && state.serve === i + 1;
     if (held.jump > player.lastJump) {
       player.lastJump = held.jump;
-      if (!serving && player.y >= GROUND) player.vy = -12;
+      if (state.serve !== i + 1 && player.y >= GROUND) player.vy = -12;
     }
     if (held.hit > player.lastHit) {
       player.lastHit = held.hit;
@@ -187,8 +209,7 @@ export function reconcile(snapshot: GameState, seat: number, pending: Input[]): 
   // Prediction replays local movement only; scoring and ball physics stay authoritative.
   for (const input of remaining) {
     const player = next.players[seat - 1];
-    player.x = clamp(player.x + (Number(input.right) - Number(input.left)) * 5.9,
-      seat === 1 ? 50 : NET_X + 23, seat === 1 ? NET_X - 23 : 500);
+    movePlayer(next, seat as 1 | 2, Number(input.right) - Number(input.left));
   }
   return { state: next, pending: remaining };
 }

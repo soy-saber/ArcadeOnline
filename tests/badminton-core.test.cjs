@@ -6,7 +6,7 @@ const path = require("node:path");
 const output = path.join(__dirname, "../artifacts/native-tests/badminton-core.cjs");
 fs.mkdirSync(path.dirname(output), { recursive: true });
 require("esbuild").buildSync({ entryPoints: [path.join(__dirname, "../src/badminton/core.ts")], outfile: output, bundle: true, platform: "node", format: "cjs" });
-const { createGame, step, EMPTY_INPUT, validInput, validState, reconcile, GROUND, NET_X, TARGET } = require(output);
+const { createGame, step, movePlayer, EMPTY_INPUT, validInput, validState, reconcile, GROUND, NET_X, TARGET } = require(output);
 const input = (seq, fields = {}) => ({ ...EMPTY_INPUT, seq, ...fields });
 
 test("serve starts the rally; a landing on the right awards P1 and the scorer serves next", () => {
@@ -30,12 +30,55 @@ test("serve starts the rally; a landing on the right awards P1 and the scorer se
 test("movement stays on each side; jump and hit counters act once while held", () => {
   const state = createGame(2, true);
   for (let i = 1; i < 90; i++) step(state, [input(i, { right: true, jump: 1 }), input(i, { left: true })]);
-  assert.equal(state.players[0].x, NET_X - 23);
-  assert.equal(state.players[1].x, NET_X + 23);
+  assert.equal(state.players[0].x, 150.55);
+  assert(Math.abs(state.players[1].x - 334.25) < 1e-9);
   assert.equal(state.players[0].y, GROUND); // Serving player cannot jump.
   step(state, [input(90, { hit: 1 }), EMPTY_INPUT]);
   for (let i = 91; i < 100; i++) step(state, [input(i, { hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.players[0].lastHit, 1);
+});
+
+test("original service area checks the scaled netLimit and keeps the server behind it", () => {
+  const p1Serve = createGame(6, true);
+  for (let tick = 0; tick < 40; tick++) {
+    movePlayer(p1Serve, 1, 1);
+    movePlayer(p1Serve, 2, -1);
+  }
+  assert.equal(p1Serve.players[0].x, 150.55);
+  assert(Math.abs(p1Serve.players[1].x - 334.25) < 1e-9);
+
+  const p2Serve = createGame(7, true);
+  p2Serve.serve = 2;
+  for (let tick = 0; tick < 40; tick++) {
+    movePlayer(p2Serve, 1, 1);
+    movePlayer(p2Serve, 2, -1);
+  }
+  assert(Math.abs(p2Serve.players[0].x - 215.45) < 1e-9);
+  assert(Math.abs(p2Serve.players[1].x - 399.15) < 1e-9);
+
+  p1Serve.players[0].x = 210;
+  p1Serve.rally = "point";
+  p1Serve.pointTicks = 1;
+  step(p1Serve, [EMPTY_INPUT, EMPTY_INPUT]);
+  assert(Math.abs(p1Serve.players[0].x - (5499 / 20 - 10.5 * 6.177414 - 65)) < 1e-9);
+  p2Serve.players[1].x = 340;
+  p2Serve.rally = "point";
+  p2Serve.pointTicks = 1;
+  step(p2Serve, [EMPTY_INPUT, EMPTY_INPUT]);
+  assert(Math.abs(p2Serve.players[1].x - (5499 / 20 + 10.5 * 6.177414 + 65)) < 1e-9);
+});
+
+test("the original serving side cannot jump until service changes; the receiver can", () => {
+  const state = createGame(8, true);
+  state.rally = "flight";
+  state.birdie = { x: 275, y: 200, vx: 0, vy: 0, lastHitter: 1 };
+  step(state, [input(1, { jump: 1 }), input(1, { jump: 1 })]);
+  assert.equal(state.players[0].vy, 0);
+  assert.equal(state.players[1].vy, -12);
+  state.serve = 2;
+  step(state, [input(2, { jump: 2 }), input(2, { jump: 2 })]);
+  assert.equal(state.players[0].vy, -12);
+  assert.notEqual(state.players[1].vy, -12);
 });
 
 test("timed racket contact sends the shuttle back; own side landing awards opponent", () => {
@@ -51,6 +94,10 @@ test("timed racket contact sends the shuttle back; own side landing awards oppon
   state.birdie = { x: 170, y: GROUND - 4, vx: 0, vy: 4, lastHitter: 2 };
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.deepEqual(state.score, [0, 1]);
+  assert.equal(state.serve, 1); // The original changes service when reset runs after 1.5 seconds.
+  for (let tick = 0; tick < 45; tick++) step(state, [EMPTY_INPUT, EMPTY_INPUT]);
+  assert.equal(state.serve, 2);
+  assert.equal(state.rally, "serve");
 });
 
 test("original overhand hit window closes at frame nine; P1 underhand hits low shuttles", () => {

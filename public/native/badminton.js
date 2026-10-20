@@ -7,11 +7,15 @@
   var HEIGHT = 400;
   var GROUND = 376.25;
   var NET_X = 275;
-  var NET_TOP = 310;
+  var NET_TOP = 7093 / 20 - 10.5 * 4.212677;
   var TARGET = 7;
   var LEFT_WALL = 36.5;
   var RIGHT_WALL = 513.5;
-  var NET_HALF_WIDTH = 7;
+  var NET_HALF_WIDTH = 10.5 * 1.5431671;
+  var NET_LIMIT_X = 5499 / 20;
+  var NET_LIMIT_HALF_WIDTH = 10.5 * 6.177414;
+  var NET_LIMIT_TOP = 7032 / 20 - 10.5 * 3.4748993;
+  var NET_LIMIT_BOTTOM = 7032 / 20 + 10.5 * 3.4748993;
   var SWING_ROTATION = [0, 0, 18.6, 37.4, 74.9, 93.3, 112.1, 130.9, 149.5, 124.6, 99.6, 74.9, 49.9, 24.8, 0, 0];
   var UNDERHAND_ROTATION = [0, 32.8, 65.7, 98.3, 131.4, 164.2, 196.8, 229.8];
   var P1_TIP = [[-59, -43], [-59, -43], [-43, -57], [-24, -65], [18, -60], [35, -49], [47, -32], [54, -11], [54, 9], [52, -19], [39, -43], [18, -60], [-10, -66], [-37, -60], [-59, -43]];
@@ -55,9 +59,10 @@
     return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput);
   }
   function beginServe(state) {
+    if (state.lastPoint) state.serve = state.lastPoint;
     state.rally = "serve";
     const server = state.players[state.serve - 1];
-    server.x = state.serve === 1 ? Math.min(server.x, NET_X - 70) : Math.max(server.x, NET_X + 70);
+    server.x = state.serve === 1 ? Math.min(server.x, NET_LIMIT_X - NET_LIMIT_HALF_WIDTH - 65) : Math.max(server.x, NET_LIMIT_X + NET_LIMIT_HALF_WIDTH + 65);
     state.birdie = {
       x: server.x + (state.serve === 1 ? 25 : -25),
       y: server.y - 75,
@@ -75,13 +80,27 @@
     if (state.rally !== "flight") return;
     state.score[player - 1]++;
     state.lastPoint = player;
-    state.serve = player;
     state.rally = "point";
     state.pointTicks = Math.round(HZ * 1.5);
     if (state.score[player - 1] >= TARGET) {
       state.winner = player;
       state.phase = "finished";
     }
+  }
+  function movePlayer(state, seat, direction) {
+    if (!direction) return;
+    const player = state.players[seat - 1];
+    const towardNet = seat === 1 ? direction > 0 : direction < 0;
+    if (towardNet) {
+      const reach = state.serve === seat ? seat === 1 ? 65 : -60 : 0;
+      const testX = player.x + reach;
+      if (player.y >= NET_LIMIT_TOP && player.y <= NET_LIMIT_BOTTOM && testX >= NET_LIMIT_X - NET_LIMIT_HALF_WIDTH && testX <= NET_LIMIT_X + NET_LIMIT_HALF_WIDTH) return;
+    }
+    player.x = clamp(
+      player.x + Math.sign(direction) * 5.9,
+      seat === 1 ? LEFT_WALL : NET_X,
+      seat === 1 ? NET_X : RIGHT_WALL
+    );
   }
   function step(state, incoming) {
     if (state.phase !== "playing") return;
@@ -101,11 +120,11 @@
       if (player.swing > 0 && --player.swing === 0) player.servePose = 0;
       const speed = (Number(held.right) - Number(held.left)) * 5.9;
       if (speed) player.facing = speed > 0 ? 1 : -1;
-      player.x = clamp(player.x + speed, i === 0 ? 50 : NET_X + 23, i === 0 ? NET_X - 23 : 500);
+      movePlayer(state, i + 1, speed);
       const serving = state.rally === "serve" && state.serve === i + 1;
       if (held.jump > player.lastJump) {
         player.lastJump = held.jump;
-        if (!serving && player.y >= GROUND) player.vy = -12;
+        if (state.serve !== i + 1 && player.y >= GROUND) player.vy = -12;
       }
       if (held.hit > player.lastHit) {
         player.lastHit = held.hit;
@@ -197,11 +216,7 @@
     const remaining = pending.filter((input) => input.seq > snapshot.ack[seat - 1]).slice(-HZ * 2);
     for (const input of remaining) {
       const player = next.players[seat - 1];
-      player.x = clamp(
-        player.x + (Number(input.right) - Number(input.left)) * 5.9,
-        seat === 1 ? 50 : NET_X + 23,
-        seat === 1 ? NET_X - 23 : 500
-      );
+      movePlayer(next, seat, Number(input.right) - Number(input.left));
     }
     return { state: next, pending: remaining };
   }
@@ -720,11 +735,7 @@
         if (performance.now() - lastSnapshotAt < 1800) {
           pending.push(input);
           pending = pending.slice(-HZ * 2);
-          const player = state.players[seat - 1];
-          player.x = Math.max(seat === 1 ? 50 : 298, Math.min(
-            seat === 1 ? 252 : 500,
-            player.x + (Number(input.right) - Number(input.left)) * 5.9
-          ));
+          movePlayer(state, seat, Number(input.right) - Number(input.left));
         }
       }
     }

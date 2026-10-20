@@ -1,4 +1,4 @@
-import { cloneState, createGame, EMPTY_INPUT, GameState, HZ, Input, reconcile, STEP_MS, step, validInput, validState } from "./core";
+import { cloneState, createGame, EMPTY_INPUT, GameState, HZ, Input, movePlayer, reconcile, STEP_MS, step, validInput, validState } from "./core";
 import { Network, Packet } from "../native/network";
 import { BadmintonView } from "./view";
 
@@ -130,9 +130,7 @@ function start(): void {
       net.send(net.room.hostId!, { type: "input", round: authority.round, input });
       if (performance.now() - lastSnapshotAt < 1800) {
         pending.push(input); pending = pending.slice(-HZ * 2);
-        const player = state.players[seat - 1];
-        player.x = Math.max(seat === 1 ? 50 : 298, Math.min(seat === 1 ? 252 : 500,
-          player.x + (Number(input.right) - Number(input.left)) * 5.9));
+        movePlayer(state, seat as 1 | 2, Number(input.right) - Number(input.left));
       }
     }
   }
