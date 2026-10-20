@@ -12,8 +12,13 @@ const input = (seq, fields = {}) => ({ ...EMPTY_INPUT, seq, ...fields });
 test("serve starts the rally; a landing on the right awards P1 and the scorer serves next", () => {
   const state = createGame(1, true);
   step(state, [input(1, { hit: 1 }), EMPTY_INPUT]);
+  assert.equal(state.rally, "serve"); // Original serve clip releases the shuttle on frame 4.
+  step(state, [input(2, { hit: 1 }), EMPTY_INPUT]);
+  step(state, [input(3, { hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.rally, "flight");
-  for (let tick = 0; tick < 80 && state.rally === "flight"; tick++) step(state, [input(tick + 2, { hit: 1 }), EMPTY_INPUT]);
+  assert.equal(state.birdie.vx, 27.6);
+  assert(Math.abs(state.birdie.vy + 26.825) < 1e-9);
+  for (let tick = 0; tick < 80 && state.rally === "flight"; tick++) step(state, [input(tick + 4, { hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.rally, "point");
   assert.deepEqual(state.score, [1, 0]);
   for (let tick = 0; tick < 55; tick++) step(state, [EMPTY_INPUT, EMPTY_INPUT]);
@@ -25,8 +30,8 @@ test("serve starts the rally; a landing on the right awards P1 and the scorer se
 test("movement stays on each side; jump and hit counters act once while held", () => {
   const state = createGame(2, true);
   for (let i = 1; i < 90; i++) step(state, [input(i, { right: true, jump: 1 }), input(i, { left: true })]);
-  assert.equal(state.players[0].x, NET_X - 22);
-  assert.equal(state.players[1].x, NET_X + 22);
+  assert.equal(state.players[0].x, NET_X - 23);
+  assert.equal(state.players[1].x, NET_X + 23);
   assert.equal(state.players[0].y, GROUND); // Serving player cannot jump.
   step(state, [input(90, { hit: 1 }), EMPTY_INPUT]);
   for (let i = 91; i < 100; i++) step(state, [input(i, { hit: 1 }), EMPTY_INPUT]);
@@ -36,21 +41,41 @@ test("movement stays on each side; jump and hit counters act once while held", (
 test("timed racket contact sends the shuttle back; own side landing awards opponent", () => {
   const state = createGame(3, true);
   step(state, [input(1, { hit: 1 }), EMPTY_INPUT]);
-  state.birdie = { x: state.players[1].x - 29, y: GROUND - 63, vx: 3, vy: 1, lastHitter: 1 };
+  step(state, [input(2, { hit: 1 }), EMPTY_INPUT]);
+  step(state, [input(3, { hit: 1 }), EMPTY_INPUT]);
+  state.birdie = { x: state.players[1].x + 61, y: GROUND - 102, vx: 3, vy: 1, lastHitter: 1 };
   step(state, [EMPTY_INPUT, input(1, { hit: 1 })]);
   assert.equal(state.birdie.lastHitter, 2);
   assert(state.birdie.vx < 0);
   state.players[0].swing = 0;
-  state.birdie = { x: 170, y: GROUND - 8, vx: 0, vy: 4, lastHitter: 2 };
+  state.birdie = { x: 170, y: GROUND - 4, vx: 0, vy: 4, lastHitter: 2 };
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.deepEqual(state.score, [0, 1]);
+});
+
+test("original overhand hit window closes at frame nine; P1 underhand hits low shuttles", () => {
+  const state = createGame(5, true);
+  state.rally = "flight";
+  state.birdie = { x: state.players[0].x + 54, y: GROUND - 49, vx: 0, vy: 0, lastHitter: 2 };
+  state.players[0].swing = 8; // decrements to frame nine before collision checking
+  step(state, [EMPTY_INPUT, EMPTY_INPUT]);
+  assert.equal(state.birdie.lastHitter, 2);
+
+  const player = state.players[0];
+  player.y = GROUND - 80;
+  player.vy = 0;
+  player.swing = 12;
+  player.underhand = 1;
+  state.birdie = { x: player.x - 9, y: player.y + 17, vx: 0, vy: 0, lastHitter: 2 };
+  step(state, [EMPTY_INPUT, EMPTY_INPUT]);
+  assert.equal(state.birdie.lastHitter, 1);
 });
 
 test("first to seven finishes the match and ignores further input", () => {
   const state = createGame(4, true);
   state.score[1] = TARGET - 1;
   state.rally = "flight";
-  state.birdie = { x: 150, y: GROUND - 8, vx: 0, vy: 5, lastHitter: 2 };
+  state.birdie = { x: 150, y: GROUND - 4, vx: 0, vy: 5, lastHitter: 2 };
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.equal(state.winner, 2);
   assert.equal(state.phase, "finished");
@@ -67,6 +92,6 @@ test("snapshot validation and local reconciliation reject stale movement", () =>
   state.ack[0] = 2;
   const result = reconcile(state, 1, [input(1, { right: true }), input(3, { right: true })]);
   assert.deepEqual(result.pending.map((item) => item.seq), [3]);
-  assert.equal(result.state.players[0].x, 130.9);
-  assert.equal(state.players[0].x, 125);
+  assert.equal(result.state.players[0].x, 138.75);
+  assert.equal(state.players[0].x, 132.85);
 });

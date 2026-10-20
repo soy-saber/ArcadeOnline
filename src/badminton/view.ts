@@ -1,80 +1,97 @@
-import { GameState, GROUND, HEIGHT, NET_TOP, NET_X, WIDTH } from "./core";
+import { GameState, GROUND, HEIGHT, WIDTH } from "./core";
+
+const ASSET_ROOT = "/native/assets/badminton/";
+type ImageKey = "court" | "birdie" | "p1-body" | "p1-body-alt" | "p2-body" | "p2-head" | `${"p1" | "p2"}-${"swing" | "serve"}-${string}` | `p1-underhand-${string}`;
 
 export class BadmintonView {
   private ctx: CanvasRenderingContext2D;
-  private lastFrame = 0;
+  private images = new Map<ImageKey, HTMLImageElement>();
   private frames = 0;
   private fpsAt = performance.now();
   fps = 0;
+
   constructor(private canvas: HTMLCanvasElement) {
     canvas.width = WIDTH * 2; canvas.height = HEIGHT * 2;
     this.ctx = canvas.getContext("2d")!;
+    for (const name of ["court", "birdie", "p1-body", "p1-body-alt", "p2-body", "p2-head"] as const) this.load(name);
+    for (const side of ["p1", "p2"] as const) {
+      for (let frame = 1; frame <= 15; frame++) this.load(`${side}-swing-${String(frame).padStart(2, "0")}`);
+      for (let frame = 1; frame <= 13; frame++) this.load(`${side}-serve-${String(frame).padStart(2, "0")}`);
+    }
+    for (let frame = 1; frame <= 14; frame++) this.load(`p1-underhand-${String(frame).padStart(2, "0")}`);
   }
+
+  private load(name: ImageKey): void {
+    const image = new Image(); image.src = `${ASSET_ROOT}${name}.png`; this.images.set(name, image);
+  }
+
+  private draw(name: ImageKey, x: number, y: number): void {
+    const image = this.images.get(name);
+    if (image?.complete && image.naturalWidth) this.ctx.drawImage(image, x, y);
+  }
+
   render(state: GameState | null, seat: number | null): void {
     const ctx = this.ctx;
     ctx.setTransform(2, 0, 0, 2, 0, 0);
-    const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-    sky.addColorStop(0, "#9ccedb"); sky.addColorStop(.72, "#e8dfbf"); sky.addColorStop(1, "#d5ae78");
-    ctx.fillStyle = sky; ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.fillStyle = "#789b88"; ctx.fillRect(0, 255, WIDTH, 30);
-    for (let x = 0; x < WIDTH; x += 38) {
-      ctx.fillStyle = x % 76 ? "#77907f" : "#6d8878";
-      ctx.beginPath(); ctx.arc(x, 258, 18, Math.PI, 0); ctx.fill();
-    }
-    ctx.fillStyle = "#d8ad76"; ctx.fillRect(0, 282, WIDTH, HEIGHT - 282);
-    ctx.fillStyle = "#c89862"; ctx.fillRect(0, GROUND + 2, WIDTH, 65);
-    ctx.strokeStyle = "#fff1c9"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(12, GROUND + 1); ctx.lineTo(WIDTH - 12, GROUND + 1);
-    ctx.moveTo(27, GROUND + 17); ctx.lineTo(WIDTH - 27, GROUND + 17);
-    ctx.moveTo(NET_X, GROUND + 1); ctx.lineTo(NET_X, GROUND + 28); ctx.stroke();
-    ctx.fillStyle = "#344d48"; ctx.fillRect(NET_X - 3, NET_TOP, 6, GROUND - NET_TOP);
-    ctx.strokeStyle = "#e9e4d0"; ctx.lineWidth = 1;
-    for (let y = NET_TOP + 9; y < GROUND; y += 10) { ctx.beginPath(); ctx.moveTo(NET_X - 12, y); ctx.lineTo(NET_X + 12, y); ctx.stroke(); }
-    ctx.fillStyle = "#f6ebcf"; ctx.fillRect(NET_X - 13, NET_TOP - 3, 26, 4);
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = "#a5a29b"; ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    this.draw("court", 0, 0);
+    // The exported stage has its original title text; live score replaces it.
+    ctx.fillStyle = "#171717"; ctx.fillRect(211, 15, 129, 37);
+    ctx.fillStyle = "#f11920"; ctx.font = "bold 24px monospace"; ctx.textAlign = "center";
+    ctx.shadowColor = "#f11920"; ctx.shadowBlur = 4;
+    ctx.fillText(state ? `${String(state.score[0]).padStart(2, "0")} - ${String(state.score[1]).padStart(2, "0")}` : "00 - 00", 275, 42);
+    ctx.shadowBlur = 0;
     if (state) {
-      state.players.forEach((p, i) => this.player(p.x, p.y, i === 0 ? "#263a46" : "#8f4a39", p.swing, i === 0 ? 1 : -1, state.tick));
-      const b = state.birdie;
-      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(Math.atan2(b.vy, b.vx) + Math.PI / 2);
-      ctx.fillStyle = "#f9f5e6"; ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(-6, 3); ctx.lineTo(6, 3); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#e2b94f"; ctx.beginPath(); ctx.arc(0, 5, 3, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-      ctx.textAlign = "center"; ctx.font = "bold 18px system-ui"; ctx.fillStyle = "#263b3c";
-      ctx.fillText(`${state.score[0]}  :  ${state.score[1]}`, NET_X, 38);
-      ctx.font = "12px system-ui";
-      ctx.fillText(`P1${seat === 1 ? " · 你" : ""}`, 105, 40);
-      ctx.fillText(`P2${seat === 2 ? " · 你" : ""}`, 445, 40);
+      state.players.forEach((player, i) => this.player(state, i));
+      if (state.rally !== "serve") {
+        const bird = state.birdie;
+        ctx.save(); ctx.translate(bird.x, bird.y);
+        ctx.rotate(Math.atan2(bird.vy, bird.vx) + Math.PI / 2);
+        this.draw("birdie", -20.5, -22);
+        ctx.restore();
+      }
       if (state.phase === "waiting") this.banner("双方入座并准备后开始");
-      else if (state.phase === "finished") this.banner(`P${state.winner} 获胜 · 点击准备再来一局`);
+      else if (state.phase === "finished") this.banner(`P${state.winner} 获胜 · 再次准备可重开`);
       else if (state.rally === "serve") this.banner(`P${state.serve} 发球 · 按 S / ↓`);
       else if (state.rally === "point") this.banner(`P${state.lastPoint} 得分`);
     } else this.banner("正在连接房间…");
+    if (seat) {
+      ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "#191919";
+      const player = state?.players[seat - 1];
+      if (player) ctx.fillText("你", player.x, Math.max(115, player.y - 96));
+    }
     this.frames++;
     const now = performance.now();
     if (now - this.fpsAt >= 1000) { this.fps = Math.round(this.frames * 1000 / (now - this.fpsAt)); this.frames = 0; this.fpsAt = now; }
-    this.lastFrame = now;
   }
-  private player(x: number, y: number, color: string, swing: number, dir: number, tick: number): void {
+
+  private player(state: GameState, index: number): void {
+    const p = state.players[index];
+    const side = index === 0 ? "p1" : "p2";
+    const moving = state.inputs[index].left !== state.inputs[index].right;
     const ctx = this.ctx;
-    const moving = Math.sin(tick * .5) * 3;
-    ctx.strokeStyle = "#382d27"; ctx.lineWidth = 5; ctx.lineCap = "round";
-    ctx.beginPath(); ctx.moveTo(x, y - 32); ctx.lineTo(x - 8, y - 15); ctx.lineTo(x - 11 + moving, y);
-    ctx.moveTo(x - 8, y - 15); ctx.lineTo(x + 8, y - 15); ctx.lineTo(x + 13 - moving, y); ctx.stroke();
-    ctx.strokeStyle = color; ctx.lineWidth = 8;
-    ctx.beginPath(); ctx.moveTo(x, y - 55); ctx.lineTo(x - 8, y - 15); ctx.stroke();
-    ctx.fillStyle = "#efc9a1"; ctx.beginPath(); ctx.arc(x, y - 67, 10, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#382d27"; ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.moveTo(x - 2, y - 46); ctx.lineTo(x + dir * 15, y - 42); ctx.lineTo(x + dir * 23, swing ? y - 66 : y - 36); ctx.stroke();
-    ctx.strokeStyle = "#6a503a"; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(x + dir * 23, swing ? y - 66 : y - 36); ctx.lineTo(x + dir * 31, swing ? y - 87 : y - 69); ctx.stroke();
-    ctx.save(); ctx.translate(x + dir * 34, swing ? y - 92 : y - 77); ctx.rotate(dir * .35);
-    ctx.strokeStyle = "#eee2c6"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.ellipse(0, 0, 10, 17, 0, 0, Math.PI * 2); ctx.stroke();
-    ctx.lineWidth = .7; for (let k = -5; k <= 5; k += 5) { ctx.beginPath(); ctx.moveTo(k, -14); ctx.lineTo(k, 14); ctx.stroke(); }
+    ctx.save(); ctx.translate(p.x, p.y);
+    if (index === 0) this.draw(moving && p.y >= GROUND && state.tick % 2 === 0 ? "p1-body-alt" : "p1-body", -14, -78);
+    else { this.draw("p2-body", -12, -62); this.draw("p2-head", -8, -81); }
+    ctx.restore();
+
+    const serving = p.servePose > 0 || (state.rally === "serve" && state.serve === index + 1);
+    const kind = serving ? "serve" : p.underhand && p.swing > 0 ? "underhand" : "swing";
+    const frame = p.swing > 0 ? (serving ? 15 - p.swing : 16 - p.swing) : 1;
+    const bounded = Math.max(1, Math.min(serving ? 13 : kind === "underhand" ? 14 : 15, kind === "underhand" ? frame - 1 : frame));
+    const key = `${side}-${kind}-${String(bounded).padStart(2, "0")}` as ImageKey;
+    ctx.save(); ctx.translate(p.x, p.y - 58);
+    if (index === 1) ctx.scale(-1, 1);
+    if (serving) ctx.scale(1, -1);
+    this.draw(key, serving ? (index === 0 ? -77 : -101) : (index === 0 ? -67 : -69), -(serving ? 108 : 95));
     ctx.restore();
   }
+
   private banner(message: string): void {
     const ctx = this.ctx;
-    ctx.fillStyle = "#213b3bdc"; ctx.fillRect(90, 70, 370, 44);
-    ctx.fillStyle = "#fff4d8"; ctx.textAlign = "center"; ctx.font = "bold 17px system-ui";
-    ctx.fillText(message, NET_X, 98);
+    ctx.fillStyle = "#171717da"; ctx.fillRect(140, 67, 270, 33);
+    ctx.fillStyle = "#f4eee8"; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(message, 275, 88);
   }
 }

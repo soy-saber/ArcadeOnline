@@ -132,6 +132,6 @@ coturn 使用 `use-auth-secret`、匹配的 `static-auth-secret` 和 `realm`。�
 房主权威及其公平性边界不变；没有无缝中局房主迁移或竞技级反作弊。Linux 上的网页服务不代替房主运行游戏。反编译证据、素材来源及羽毛球的改造难点见 [SWF_RECONSTRUCTION.md](SWF_RECONSTRUCTION.md)。
 ## 羽毛球双人联机版（46923-native）
 
-羽毛球沿用 `src/native/network.ts` 的房间信令、WebRTC DataChannel、TURN 配置与 WebSocket 回退，独立实现在 `src/badminton/`。房间只开放 P1/P2 两席；两人入座并全部准备后自动开局，7 分结束，双方再次准备可重开。房主按 35Hz 判定球、碰网、击球和落点；客端只预测本地水平移动，球与比分始终由房主快照决定。页面提供键盘、触屏和音效控制，旧 Flash 入口保留。
+羽毛球沿用 `src/native/network.ts` 的房间信令、WebRTC DataChannel、TURN 配置与 WebSocket 回退，独立实现在 `src/badminton/`。房间只开放 P1/P2 两席；两人入座并全部准备后自动开局，7 分结束，双方再次准备可重开。房主按原作的 30Hz 判定球、碰网、击球和落点；客端只预测本地水平移动，球与比分始终由房主快照决定。页面提供键盘、触屏和音效控制，旧 Flash 入口保留。
 
-`npm run test:badminton:e2e` 使用双浏览器加观战页检查准备、输入、发球、得分与同步；`tests/badminton-core.test.cjs` 覆盖规则、7 分结算、输入边沿和快照校验。绘制为 Canvas 重建，原 Flash 角色动画与整套素材尚未移植；因此这里的“对等版”指每名玩家在自己的浏览器运行和绘制，并优先建立 WebRTC 对等数据通道，不表示视觉逐帧复刻。
+`npm run test:badminton:e2e` 使用双浏览器加观战页检查准备、输入、发球、得分与同步；`tests/badminton-core.test.cjs` 覆盖原版物理参数、挥拍有效窗口、下手挥拍、7 分结算、输入边沿和快照校验。Canvas 直接绘制原 SWF 导出的球场、角色、羽毛球和拍击帧；显示位置经过人工校准。这里的“对等版”指每名玩家在自己的浏览器运行和绘制，并优先建立 WebRTC 对等数据通道。原 Flash 的动画内部矢量碰撞形状和随机数仍属近似实现，不表示视觉或行为逐帧等价。

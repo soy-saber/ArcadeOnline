@@ -1,20 +1,28 @@
 "use strict";
 (() => {
   // src/badminton/core.ts
-  var HZ = 35;
+  var HZ = 30;
   var STEP_MS = 1e3 / HZ;
   var WIDTH = 550;
   var HEIGHT = 400;
-  var GROUND = 335;
+  var GROUND = 376.25;
   var NET_X = 275;
-  var NET_TOP = 235;
+  var NET_TOP = 310;
   var TARGET = 7;
+  var LEFT_WALL = 36.5;
+  var RIGHT_WALL = 513.5;
+  var NET_HALF_WIDTH = 7;
+  var SWING_ROTATION = [0, 0, 18.6, 37.4, 74.9, 93.3, 112.1, 130.9, 149.5, 124.6, 99.6, 74.9, 49.9, 24.8, 0, 0];
+  var UNDERHAND_ROTATION = [0, 32.8, 65.7, 98.3, 131.4, 164.2, 196.8, 229.8];
+  var P1_TIP = [[-59, -43], [-59, -43], [-43, -57], [-24, -65], [18, -60], [35, -49], [47, -32], [54, -11], [54, 9], [52, -19], [39, -43], [18, -60], [-10, -66], [-37, -60], [-59, -43]];
+  var P2_TIP = [[-61, -44], [-61, -44], [-45, -57], [-26, -65], [16, -61], [33, -49], [45, -32], [52, -12], [52, 9], [51, -16], [44, -35], [32, -49], [16, -61], [-8, -67], [-61, -44]];
+  var P1_UNDERHAND_TIP = [[-59, -43], [-73, -11], [-67, 30], [-44, 57], [-12, 66], [30, 56], [53, 29], [57, -12]];
   var EMPTY_INPUT = { seq: 0, left: false, right: false, jump: 0, hit: 0 };
   var clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
   function createGame(round, playing) {
     const players = [
-      { x: 125, y: GROUND, vy: 0, swing: 0, lastJump: 0, lastHit: 0, facing: 1 },
-      { x: 425, y: GROUND, vy: 0, swing: 0, lastJump: 0, lastHit: 0, facing: -1 }
+      { x: 132.85, y: GROUND, vy: 0, swing: 0, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: 1 },
+      { x: 416.85, y: GROUND, vy: 0, swing: 0, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: -1 }
     ];
     return {
       round,
@@ -25,7 +33,7 @@
       winner: 0,
       score: [0, 0],
       players,
-      birdie: { x: 155, y: GROUND - 69, vx: 0, vy: 0, lastHitter: 0 },
+      birdie: { x: 157.85, y: GROUND - 75, vx: 0, vy: 0, lastHitter: 0 },
       ack: [0, 0],
       inputs: [{ ...EMPTY_INPUT }, { ...EMPTY_INPUT }],
       pointTicks: 0,
@@ -44,19 +52,23 @@
     if (!value || typeof value !== "object") return false;
     const s = value;
     const finite = (n) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) < 1e15;
-    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput);
+    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput);
   }
   function beginServe(state) {
     state.rally = "serve";
+    const server = state.players[state.serve - 1];
+    server.x = state.serve === 1 ? Math.min(server.x, NET_X - 70) : Math.max(server.x, NET_X + 70);
     state.birdie = {
-      x: state.players[state.serve - 1].x + (state.serve === 1 ? 28 : -28),
-      y: state.players[state.serve - 1].y - 69,
+      x: server.x + (state.serve === 1 ? 25 : -25),
+      y: server.y - 75,
       vx: 0,
       vy: 0,
       lastHitter: 0
     };
     state.players.forEach((p) => {
       p.swing = 0;
+      p.servePose = 0;
+      p.underhand = 0;
     });
   }
   function award(state, player) {
@@ -83,74 +95,102 @@
         state.ack[i] = input.seq;
       }
       const held = state.inputs[i];
+      player.y = Math.min(GROUND, player.y + player.vy + 1);
+      if (player.y >= GROUND) player.vy = 0;
+      else player.vy += 1;
+      if (player.swing > 0 && --player.swing === 0) player.servePose = 0;
       const speed = (Number(held.right) - Number(held.left)) * 5.9;
       if (speed) player.facing = speed > 0 ? 1 : -1;
-      player.x = clamp(player.x + speed, i === 0 ? 22 : NET_X + 22, i === 0 ? NET_X - 22 : WIDTH - 22);
+      player.x = clamp(player.x + speed, i === 0 ? 50 : NET_X + 23, i === 0 ? NET_X - 23 : 500);
       const serving = state.rally === "serve" && state.serve === i + 1;
       if (held.jump > player.lastJump) {
         player.lastJump = held.jump;
         if (!serving && player.y >= GROUND) player.vy = -12;
       }
-      player.y = Math.min(GROUND, player.y + player.vy);
-      if (player.y >= GROUND) player.vy = 0;
-      else player.vy += 1;
-      if (player.swing > 0) player.swing--;
       if (held.hit > player.lastHit) {
         player.lastHit = held.hit;
-        if (serving) {
-          state.rally = "flight";
-          state.birdie = {
-            x: player.x + (i === 0 ? 28 : -28),
-            y: player.y - 69,
-            vx: i === 0 ? 10.5 : -10.5,
-            vy: -12.5,
-            lastHitter: i + 1
-          };
-          player.swing = 9;
-        } else if (state.rally === "flight" && player.swing === 0) player.swing = 9;
+        if (serving && player.swing === 0) {
+          player.swing = 13;
+          player.servePose = 1;
+        } else if (state.rally === "flight" && player.swing === 0) {
+          player.swing = 14;
+          player.servePose = 0;
+          player.underhand = i === 0 && state.birdie.y > player.y - 40 ? 1 : 0;
+        }
       }
     }
     const bird = state.birdie;
     if (state.rally === "serve") {
       const player = state.players[state.serve - 1];
-      bird.x = player.x + (state.serve === 1 ? 28 : -28);
-      bird.y = player.y - 69;
-    } else if (state.rally === "point") {
-      if (--state.pointTicks <= 0) beginServe(state);
-    } else if (state.rally === "flight") {
+      bird.x = player.x + (state.serve === 1 ? 25 : -25);
+      bird.y = player.y - 75;
+      if (player.servePose && player.swing === 11) {
+        state.rally = "flight";
+        bird.vx = state.serve === 1 ? 30 : -30;
+        bird.vy = -30;
+        bird.lastHitter = state.serve;
+      }
+    }
+    if (state.rally === "flight") {
       for (let i = 0; i < 2; i++) {
         const player = state.players[i];
-        if (player.swing <= 0 || bird.lastHitter === i + 1) continue;
-        const racketX = player.x + (i === 0 ? 29 : -29);
-        const racketY = player.y - 63;
-        if (Math.hypot(bird.x - racketX, bird.y - racketY) < 61) {
-          const dir = i === 0 ? 1 : -1;
-          const reach = clamp((racketY - bird.y) / 75, -1, 1);
-          bird.vx = dir * (11.5 + Math.abs(reach) * 2.5);
-          bird.vy = clamp(-11 - reach * 4, -17, -7);
+        if (player.swing <= 0 || player.servePose || bird.lastHitter === i + 1) continue;
+        const frame = clamp(16 - player.swing, 1, 15);
+        const activeFrame = player.underhand ? frame + 14 : frame;
+        if (activeFrame < (player.underhand ? 16 : 2) || activeFrame > (player.underhand ? 22 : 8)) continue;
+        const tip = player.underhand ? P1_UNDERHAND_TIP[frame - 2] : (i === 0 ? P1_TIP : P2_TIP)[frame - 1];
+        const racketX = player.x + (i === 0 ? 35 + tip[0] : -11 - tip[0]);
+        const racketY = player.y - 41 + tip[1];
+        if (Math.hypot(bird.x - racketX, bird.y - racketY) < 30) {
+          const jitter = (state.round + state.tick * 73 + i * 397) % 1e3 / 200 - 2.5;
+          const rotation = (player.underhand ? UNDERHAND_ROTATION[frame - 2] : SWING_ROTATION[frame - 1]) + jitter;
+          const degrees = i === 0 ? rotation + 122 : -rotation - 302;
+          const radians = degrees * Math.PI / 180;
+          bird.vx = -Math.cos(radians) * (i === 0 ? 52 : 50);
+          bird.vy = -Math.sin(radians) * 40;
           bird.lastHitter = i + 1;
           player.swing = 0;
           break;
         }
       }
-      const oldX = bird.x;
-      bird.x += bird.vx;
+    }
+    if (state.rally === "flight" || state.rally === "point") {
+      const oldX = bird.x, oldY = bird.y;
+      bird.vy = (bird.vy + (bird.vy === 0 ? 0 : 1)) * 0.925;
+      bird.vx *= 0.92;
       bird.y += bird.vy;
-      bird.vy = bird.vy * 0.925 + 0.925;
-      bird.vx *= 0.995;
-      if (bird.x < 8 || bird.x > WIDTH - 8) {
-        bird.x = clamp(bird.x, 8, WIDTH - 8);
-        bird.vx *= -0.65;
+      bird.x += bird.vx;
+      if (bird.x >= RIGHT_WALL || bird.x <= LEFT_WALL) {
+        bird.x = clamp(bird.x, LEFT_WALL, RIGHT_WALL);
+        bird.vx *= -0.8;
       }
-      if ((oldX - NET_X) * (bird.x - NET_X) <= 0 && bird.y > NET_TOP) {
-        bird.x = oldX < NET_X ? NET_X - 7 : NET_X + 7;
-        bird.vx *= -0.35;
+      if (oldY >= NET_TOP && oldX < NET_X && bird.x > NET_X - NET_HALF_WIDTH) {
+        bird.x = NET_X - NET_HALF_WIDTH;
+        bird.y = oldY;
+        bird.vx = Math.min(-2, bird.vx * -0.2);
+        bird.vy *= 0.1;
+      } else if (oldY >= NET_TOP && oldX > NET_X && bird.x < NET_X + NET_HALF_WIDTH) {
+        bird.x = NET_X + NET_HALF_WIDTH;
+        bird.y = oldY;
+        bird.vx = Math.max(2, bird.vx * -0.2);
+        bird.vy *= 0.1;
+      } else if (oldY < NET_TOP && bird.y > NET_TOP && Math.abs(bird.x - NET_X) < NET_HALF_WIDTH) {
+        bird.y = NET_TOP;
+        bird.vx *= 0.5;
+        bird.vy *= -1;
+        if (Math.abs(bird.vx) < 3) bird.vx = (state.tick * 73 + state.round) % 2 ? -3 : 3;
       }
-      if (bird.y >= GROUND - 7) {
-        bird.y = GROUND - 7;
-        award(state, bird.x < NET_X ? 2 : 1);
+      if (bird.y >= GROUND) {
+        bird.y = GROUND;
+        bird.vy *= -0.4;
+        if (Math.abs(bird.vx) > 1) bird.vx *= 0.9;
+        if (Math.abs(bird.vy) < 0.5) bird.vy = 0;
+        else if (Math.abs(bird.vx) < 2) bird.vx = bird.vx > 0 ? 0.7 : -0.7;
+        if (Math.abs(bird.vx) < 0.5) bird.vx *= 0.1;
+        if (state.rally === "flight") award(state, bird.x < NET_X ? 2 : 1);
       }
     }
+    if (state.rally === "point" && --state.pointTicks <= 0) beginServe(state);
   }
   function reconcile(snapshot, seat, pending) {
     const next = cloneState(snapshot);
@@ -159,8 +199,8 @@
       const player = next.players[seat - 1];
       player.x = clamp(
         player.x + (Number(input.right) - Number(input.left)) * 5.9,
-        seat === 1 ? 22 : NET_X + 22,
-        seat === 1 ? NET_X - 22 : WIDTH - 22
+        seat === 1 ? 50 : NET_X + 23,
+        seat === 1 ? NET_X - 23 : 500
       );
     }
     return { state: next, pending: remaining };
@@ -418,90 +458,71 @@
   };
 
   // src/badminton/view.ts
+  var ASSET_ROOT = "/native/assets/badminton/";
   var BadmintonView = class {
     constructor(canvas) {
       this.canvas = canvas;
-      this.lastFrame = 0;
+      this.images = /* @__PURE__ */ new Map();
       this.frames = 0;
       this.fpsAt = performance.now();
       this.fps = 0;
       canvas.width = WIDTH * 2;
       canvas.height = HEIGHT * 2;
       this.ctx = canvas.getContext("2d");
+      for (const name of ["court", "birdie", "p1-body", "p1-body-alt", "p2-body", "p2-head"]) this.load(name);
+      for (const side of ["p1", "p2"]) {
+        for (let frame = 1; frame <= 15; frame++) this.load(`${side}-swing-${String(frame).padStart(2, "0")}`);
+        for (let frame = 1; frame <= 13; frame++) this.load(`${side}-serve-${String(frame).padStart(2, "0")}`);
+      }
+      for (let frame = 1; frame <= 14; frame++) this.load(`p1-underhand-${String(frame).padStart(2, "0")}`);
+    }
+    load(name) {
+      const image = new Image();
+      image.src = `${ASSET_ROOT}${name}.png`;
+      this.images.set(name, image);
+    }
+    draw(name, x, y) {
+      const image = this.images.get(name);
+      if (image?.complete && image.naturalWidth) this.ctx.drawImage(image, x, y);
     }
     render(state, seat) {
       const ctx = this.ctx;
       ctx.setTransform(2, 0, 0, 2, 0, 0);
-      const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-      sky.addColorStop(0, "#9ccedb");
-      sky.addColorStop(0.72, "#e8dfbf");
-      sky.addColorStop(1, "#d5ae78");
-      ctx.fillStyle = sky;
+      ctx.imageSmoothingEnabled = true;
+      ctx.fillStyle = "#a5a29b";
       ctx.fillRect(0, 0, WIDTH, HEIGHT);
-      ctx.fillStyle = "#789b88";
-      ctx.fillRect(0, 255, WIDTH, 30);
-      for (let x = 0; x < WIDTH; x += 38) {
-        ctx.fillStyle = x % 76 ? "#77907f" : "#6d8878";
-        ctx.beginPath();
-        ctx.arc(x, 258, 18, Math.PI, 0);
-        ctx.fill();
-      }
-      ctx.fillStyle = "#d8ad76";
-      ctx.fillRect(0, 282, WIDTH, HEIGHT - 282);
-      ctx.fillStyle = "#c89862";
-      ctx.fillRect(0, GROUND + 2, WIDTH, 65);
-      ctx.strokeStyle = "#fff1c9";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(12, GROUND + 1);
-      ctx.lineTo(WIDTH - 12, GROUND + 1);
-      ctx.moveTo(27, GROUND + 17);
-      ctx.lineTo(WIDTH - 27, GROUND + 17);
-      ctx.moveTo(NET_X, GROUND + 1);
-      ctx.lineTo(NET_X, GROUND + 28);
-      ctx.stroke();
-      ctx.fillStyle = "#344d48";
-      ctx.fillRect(NET_X - 3, NET_TOP, 6, GROUND - NET_TOP);
-      ctx.strokeStyle = "#e9e4d0";
-      ctx.lineWidth = 1;
-      for (let y = NET_TOP + 9; y < GROUND; y += 10) {
-        ctx.beginPath();
-        ctx.moveTo(NET_X - 12, y);
-        ctx.lineTo(NET_X + 12, y);
-        ctx.stroke();
-      }
-      ctx.fillStyle = "#f6ebcf";
-      ctx.fillRect(NET_X - 13, NET_TOP - 3, 26, 4);
+      this.draw("court", 0, 0);
+      ctx.fillStyle = "#171717";
+      ctx.fillRect(211, 15, 129, 37);
+      ctx.fillStyle = "#f11920";
+      ctx.font = "bold 24px monospace";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#f11920";
+      ctx.shadowBlur = 4;
+      ctx.fillText(state ? `${String(state.score[0]).padStart(2, "0")} - ${String(state.score[1]).padStart(2, "0")}` : "00 - 00", 275, 42);
+      ctx.shadowBlur = 0;
       if (state) {
-        state.players.forEach((p, i) => this.player(p.x, p.y, i === 0 ? "#263a46" : "#8f4a39", p.swing, i === 0 ? 1 : -1, state.tick));
-        const b = state.birdie;
-        ctx.save();
-        ctx.translate(b.x, b.y);
-        ctx.rotate(Math.atan2(b.vy, b.vx) + Math.PI / 2);
-        ctx.fillStyle = "#f9f5e6";
-        ctx.beginPath();
-        ctx.moveTo(0, -9);
-        ctx.lineTo(-6, 3);
-        ctx.lineTo(6, 3);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = "#e2b94f";
-        ctx.beginPath();
-        ctx.arc(0, 5, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-        ctx.textAlign = "center";
-        ctx.font = "bold 18px system-ui";
-        ctx.fillStyle = "#263b3c";
-        ctx.fillText(`${state.score[0]}  :  ${state.score[1]}`, NET_X, 38);
-        ctx.font = "12px system-ui";
-        ctx.fillText(`P1${seat === 1 ? " \xB7 \u4F60" : ""}`, 105, 40);
-        ctx.fillText(`P2${seat === 2 ? " \xB7 \u4F60" : ""}`, 445, 40);
+        state.players.forEach((player, i) => this.player(state, i));
+        if (state.rally !== "serve") {
+          const bird = state.birdie;
+          ctx.save();
+          ctx.translate(bird.x, bird.y);
+          ctx.rotate(Math.atan2(bird.vy, bird.vx) + Math.PI / 2);
+          this.draw("birdie", -20.5, -22);
+          ctx.restore();
+        }
         if (state.phase === "waiting") this.banner("\u53CC\u65B9\u5165\u5EA7\u5E76\u51C6\u5907\u540E\u5F00\u59CB");
-        else if (state.phase === "finished") this.banner(`P${state.winner} \u83B7\u80DC \xB7 \u70B9\u51FB\u51C6\u5907\u518D\u6765\u4E00\u5C40`);
+        else if (state.phase === "finished") this.banner(`P${state.winner} \u83B7\u80DC \xB7 \u518D\u6B21\u51C6\u5907\u53EF\u91CD\u5F00`);
         else if (state.rally === "serve") this.banner(`P${state.serve} \u53D1\u7403 \xB7 \u6309 S / \u2193`);
         else if (state.rally === "point") this.banner(`P${state.lastPoint} \u5F97\u5206`);
       } else this.banner("\u6B63\u5728\u8FDE\u63A5\u623F\u95F4\u2026");
+      if (seat) {
+        ctx.font = "bold 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#191919";
+        const player = state?.players[seat - 1];
+        if (player) ctx.fillText("\u4F60", player.x, Math.max(115, player.y - 96));
+      }
       this.frames++;
       const now = performance.now();
       if (now - this.fpsAt >= 1e3) {
@@ -509,70 +530,40 @@
         this.frames = 0;
         this.fpsAt = now;
       }
-      this.lastFrame = now;
     }
-    player(x, y, color, swing, dir, tick) {
+    player(state, index) {
+      const p = state.players[index];
+      const side = index === 0 ? "p1" : "p2";
+      const moving = state.inputs[index].left !== state.inputs[index].right;
       const ctx = this.ctx;
-      const moving = Math.sin(tick * 0.5) * 3;
-      ctx.strokeStyle = "#382d27";
-      ctx.lineWidth = 5;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x, y - 32);
-      ctx.lineTo(x - 8, y - 15);
-      ctx.lineTo(x - 11 + moving, y);
-      ctx.moveTo(x - 8, y - 15);
-      ctx.lineTo(x + 8, y - 15);
-      ctx.lineTo(x + 13 - moving, y);
-      ctx.stroke();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.moveTo(x, y - 55);
-      ctx.lineTo(x - 8, y - 15);
-      ctx.stroke();
-      ctx.fillStyle = "#efc9a1";
-      ctx.beginPath();
-      ctx.arc(x, y - 67, 10, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "#382d27";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(x - 2, y - 46);
-      ctx.lineTo(x + dir * 15, y - 42);
-      ctx.lineTo(x + dir * 23, swing ? y - 66 : y - 36);
-      ctx.stroke();
-      ctx.strokeStyle = "#6a503a";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(x + dir * 23, swing ? y - 66 : y - 36);
-      ctx.lineTo(x + dir * 31, swing ? y - 87 : y - 69);
-      ctx.stroke();
       ctx.save();
-      ctx.translate(x + dir * 34, swing ? y - 92 : y - 77);
-      ctx.rotate(dir * 0.35);
-      ctx.strokeStyle = "#eee2c6";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 10, 17, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.lineWidth = 0.7;
-      for (let k = -5; k <= 5; k += 5) {
-        ctx.beginPath();
-        ctx.moveTo(k, -14);
-        ctx.lineTo(k, 14);
-        ctx.stroke();
+      ctx.translate(p.x, p.y);
+      if (index === 0) this.draw(moving && p.y >= GROUND && state.tick % 2 === 0 ? "p1-body-alt" : "p1-body", -14, -78);
+      else {
+        this.draw("p2-body", -12, -62);
+        this.draw("p2-head", -8, -81);
       }
+      ctx.restore();
+      const serving = p.servePose > 0 || state.rally === "serve" && state.serve === index + 1;
+      const kind = serving ? "serve" : p.underhand && p.swing > 0 ? "underhand" : "swing";
+      const frame = p.swing > 0 ? serving ? 15 - p.swing : 16 - p.swing : 1;
+      const bounded = Math.max(1, Math.min(serving ? 13 : kind === "underhand" ? 14 : 15, kind === "underhand" ? frame - 1 : frame));
+      const key = `${side}-${kind}-${String(bounded).padStart(2, "0")}`;
+      ctx.save();
+      ctx.translate(p.x, p.y - 58);
+      if (index === 1) ctx.scale(-1, 1);
+      if (serving) ctx.scale(1, -1);
+      this.draw(key, serving ? index === 0 ? -77 : -101 : index === 0 ? -67 : -69, -(serving ? 108 : 95));
       ctx.restore();
     }
     banner(message) {
       const ctx = this.ctx;
-      ctx.fillStyle = "#213b3bdc";
-      ctx.fillRect(90, 70, 370, 44);
-      ctx.fillStyle = "#fff4d8";
+      ctx.fillStyle = "#171717da";
+      ctx.fillRect(140, 67, 270, 33);
+      ctx.fillStyle = "#f4eee8";
+      ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.font = "bold 17px system-ui";
-      ctx.fillText(message, NET_X, 98);
+      ctx.fillText(message, 275, 88);
     }
   };
 
@@ -698,7 +689,7 @@
       }
     };
     function currentInput() {
-      if ((keys.has("KeyS") || keys.has("ArrowDown")) && frame - lastHitTick >= 12) {
+      if ((keys.has("KeyS") || keys.has("ArrowDown")) && frame - lastHitTick >= 15) {
         hitCount++;
         lastHitTick = frame;
       }
@@ -730,8 +721,8 @@
           pending.push(input);
           pending = pending.slice(-HZ * 2);
           const player = state.players[seat - 1];
-          player.x = Math.max(seat === 1 ? 22 : 297, Math.min(
-            seat === 1 ? 253 : 528,
+          player.x = Math.max(seat === 1 ? 50 : 298, Math.min(
+            seat === 1 ? 252 : 500,
             player.x + (Number(input.right) - Number(input.left)) * 5.9
           ));
         }
