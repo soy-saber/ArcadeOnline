@@ -122,7 +122,7 @@
   }
 
   function gameHref(game) {
-    return (game.runtime === "native" ? "/native-room.html" : "/room.html") + "?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
+    return (game.runtime === "native" ? (game.id === "46923-native" ? "/badminton-room.html" : "/native-room.html") : "/room.html") + "?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
   }
 
   function make(tag, className, text) {

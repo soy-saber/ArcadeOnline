@@ -4,5 +4,5 @@
     "lib": ["ES2020", "DOM"], "strict": true, "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src/native/**/*.ts"]
+  "include": ["src/native/**/*.ts", "src/badminton/**/*.ts"]
 }

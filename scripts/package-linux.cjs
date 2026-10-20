@@ -28,7 +28,7 @@ function copy(relative) {
   }
 }
 // Explicit allowlist: no .env, node_modules, SWF analysis, credentials or Git history.
-for (const relative of ["package.json", "package-lock.json", "server.js", "deploy-linux.sh", "README.md", "LINUX_DEPLOY.md", "NATIVE_PLATFORM.md", "SWF_RECONSTRUCTION.md", "DEPLOYMENT_STATUS.md", "AGENT_HANDOFF_TODO.md", "integration-notes.md", "optimization-notes.md", "public", "games", "libs", "src/native", "deploy",
+for (const relative of ["package.json", "package-lock.json", "server.js", "deploy-linux.sh", "README.md", "LINUX_DEPLOY.md", "NATIVE_PLATFORM.md", "SWF_RECONSTRUCTION.md", "DEPLOYMENT_STATUS.md", "AGENT_HANDOFF_TODO.md", "integration-notes.md", "optimization-notes.md", "public", "games", "libs", "src/native", "src/badminton", "deploy",
   "scripts/native-build.json", "scripts/verify-native-build.cjs", "scripts/verify-release.cjs", "scripts/check-public.cjs", "scripts/check-turn.cjs"]) copy(relative);
 fs.writeFileSync(path.join(staging, "release-manifest.json"), JSON.stringify({ created: new Date().toISOString(), files }, null, 2) + "\n");
 runNode("scripts/verify-release.cjs", staging);

@@ -228,7 +228,7 @@ function pushState(room) {
 }
 
 function clearNativeReady(room) {
-  if (room.gameId === "3881-native") for (const player of room.members.values()) player.ready = false;
+  if (nativeGames.has(room.gameId)) for (const player of room.members.values()) player.ready = false;
 }
 
 function releaseSeat(room, memberId, announce) {
@@ -270,7 +270,7 @@ function removeMember(room, memberId, announce) {
 function scheduleDisconnect(member, ws) {
   if (!member || member.ws !== ws) return;
   member.ws = null;
-  if (member.room.gameId === "3881-native" && member.ready) {
+  if (nativeGames.has(member.room.gameId) && member.ready) {
     member.ready = false;
     pushState(member.room);
   }
@@ -508,14 +508,14 @@ wss.on("connection", (ws) => {
       }
 
       case "ready": {
-        if (!member || member.room.gameId !== "3881-native" || member.seat == null || typeof msg.ready !== "boolean") return;
+        if (!member || !nativeGames.has(member.room.gameId) || member.seat == null || typeof msg.ready !== "boolean") return;
         member.ready = msg.ready;
         pushState(member.room);
         break;
       }
 
       case "resetReady": {
-        if (!member || member.room.gameId !== "3881-native" || member.room.hostId !== member.id) return;
+        if (!member || !nativeGames.has(member.room.gameId) || member.room.hostId !== member.id) return;
         clearNativeReady(member.room);
         pushState(member.room);
         break;
