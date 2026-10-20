@@ -1,4 +1,6 @@
-**ArcadeOnline 公网部署记录 · 2026-10-20**
+**ArcadeOnline 公网部署记录 · 2026-10-21**
+
+2026-10-21 更新：已将 `53d9c83` 的火柴人打羽毛球双人原生联机版部署到 `https://223.109.141.251/`，独立入口为 `https://223.109.141.251/badminton-room.html?game=46923-native&room=demo`。发布目录 `/opt/arcade-online/releases/20261020155902-1137475`（UTC），上传包位于 `/home/zkh/arcade-deploy-20261020-badminton/release`，SHA256 为 `73225944c9a736459b8eb148d21e45370c1e85b09069ed411169f999adaab06f`；238 个包内文件和原生构建哈希通过校验，应用、Caddy、coturn 均为 active。公网探针验证新页面、浏览器包、音效资源、目录和双席位 WSS 入房；公网双浏览器加观战页跑通双方准备、移动、发球、7 分结算和再次准备重开。强制中继前观测到 WebRTC `p2p`，强制 WebSocket 中继后状态同步仍正常，页面无脚本错误。真实跨地点设备、TURN 数据通道和羽毛球原作动作/物理细节仍待验收。旧 Flash 羽毛球入口保留。
 
 2026-10-20 再更新：将 `5acf9fd` 发布到公网，修复人物行走/站立时的模型尺寸切换，恢复特殊武器弹药优先于普通炸弹的攻击规则，并加入可持久化的音效开关和音量滑杆。当前目录 `/opt/arcade-online/releases/20261019181231-921469`（UTC），上一版 `/opt/arcade-online/releases/20261019171801-913055` 可回滚。上传包位于 `/home/zkh/arcade-deploy-20261020-effects/release`，SHA256 为 `f321a55ddb788ae7dab70ba09e3b28934c3c8b20e5f4f104e72298e0f702fab2`；包内 229 文件与构建哈希均通过校验。三服务 active，公网 `check-public` 通过；公网双浏览器验证音效设置刷新保留、两次特殊武器攻击不放炸弹、弹药用尽后普通炸弹成功放置，页面无脚本错误。行走比例另由本地四浏览器截图核对；真实跨设备体验仍待验收。
 
