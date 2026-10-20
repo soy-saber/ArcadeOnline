@@ -46,6 +46,9 @@ test("original service area checks the scaled netLimit and keeps the server behi
   }
   assert.equal(p1Serve.players[0].x, 150.55);
   assert(Math.abs(p1Serve.players[1].x - 334.25) < 1e-9);
+  p1Serve.serve = 0; // The serve clip clears this on frame 13.
+  for (let tick = 0; tick < 20; tick++) movePlayer(p1Serve, 1, 1);
+  assert(Math.abs(p1Serve.players[0].x - 215.45) < 1e-9);
 
   const p2Serve = createGame(7, true);
   p2Serve.serve = 2;
@@ -58,6 +61,7 @@ test("original service area checks the scaled netLimit and keeps the server behi
 
   p1Serve.players[0].x = 210;
   p1Serve.rally = "point";
+  p1Serve.lastPoint = 1;
   p1Serve.pointTicks = 1;
   step(p1Serve, [EMPTY_INPUT, EMPTY_INPUT]);
   assert(Math.abs(p1Serve.players[0].x - (5499 / 20 - 10.5 * 6.177414 - 65)) < 1e-9);
@@ -68,17 +72,27 @@ test("original service area checks the scaled netLimit and keeps the server behi
   assert(Math.abs(p2Serve.players[1].x - (5499 / 20 + 10.5 * 6.177414 + 65)) < 1e-9);
 });
 
-test("the original serving side cannot jump until service changes; the receiver can", () => {
+test("the server cannot jump until serve clip frame 13, then regains jump and net reach", () => {
   const state = createGame(8, true);
-  state.rally = "flight";
-  state.birdie = { x: 275, y: 200, vx: 0, vy: 0, lastHitter: 1 };
-  step(state, [input(1, { jump: 1 }), input(1, { jump: 1 })]);
+  step(state, [input(1, { jump: 1, hit: 1 }), input(1, { jump: 1 })]);
   assert.equal(state.players[0].vy, 0);
   assert.equal(state.players[1].vy, -12);
-  state.serve = 2;
-  step(state, [input(2, { jump: 2 }), input(2, { jump: 2 })]);
+  for (let tick = 2; tick <= 11; tick++) step(state, [input(tick, { jump: 1, hit: 1 }), EMPTY_INPUT]);
+  assert.equal(state.serve, 1);
+  assert.equal(state.rally, "flight");
+  step(state, [input(12, { jump: 2, hit: 1 }), EMPTY_INPUT]);
+  assert.equal(state.serve, 0);
   assert.equal(state.players[0].vy, -12);
-  assert.notEqual(state.players[1].vy, -12);
+
+  const other = createGame(9, true);
+  other.serve = 2;
+  step(other, [input(1, { jump: 1 }), input(1, { jump: 1, hit: 1 })]);
+  assert.equal(other.players[0].vy, -12);
+  assert.equal(other.players[1].vy, 0);
+  for (let tick = 2; tick <= 11; tick++) step(other, [EMPTY_INPUT, input(tick, { jump: 1, hit: 1 })]);
+  step(other, [EMPTY_INPUT, input(12, { jump: 2, hit: 1 })]);
+  assert.equal(other.serve, 0);
+  assert.equal(other.players[1].vy, -12);
 });
 
 test("timed racket contact sends the shuttle back; own side landing awards opponent", () => {

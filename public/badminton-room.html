@@ -28,7 +28,7 @@
     <div id="layout">
       <section class="stage-column">
         <div id="native-stage"><canvas id="game-canvas" tabindex="0" aria-label="火柴人打羽毛球游戏画面"></canvas><div id="connection-overlay" hidden></div></div>
-        <div class="stage-caption"><span id="seat-caption">A/D 或 ←/→ 移动，W/↑ 跳跃，S/↓ 击球；发球方本分不能跳跃</span><div class="sound-controls"><button id="sound-toggle" class="topbar-action" type="button" aria-pressed="true">音效：开</button><label for="sound-volume">音量 <input id="sound-volume" type="range" min="0" max="100" value="24"><span id="sound-volume-value">24%</span></label></div></div>
+        <div class="stage-caption"><span id="seat-caption">A/D 或 ←/→ 移动，W/↑ 跳跃，S/↓ 击球；发球动画结束后可跳跃</span><div class="sound-controls"><button id="sound-toggle" class="topbar-action" type="button" aria-pressed="true">音效：开</button><label for="sound-volume">音量 <input id="sound-volume" type="range" min="0" max="100" value="24"><span id="sound-volume-value">24%</span></label></div></div>
         <div class="touch-controls" aria-label="触屏控制"><div class="direction-pad"><button data-key="KeyW" class="up" aria-label="跳跃">↑</button><button data-key="KeyA" class="left" aria-label="向左">←</button><button data-key="KeyD" class="right" aria-label="向右">→</button></div><div class="action-pad"><button data-key="KeyS" class="bomb-button">发球 / 挥拍</button></div></div>
       </section>
       <aside>
@@ -42,7 +42,7 @@
           <button id="start-game" class="btn native-start" disabled>准备</button>
           <p id="connection-note" class="native-note" role="status">正在连接房间…</p><input id="invite-link" aria-label="邀请链接" readonly hidden>
         </section>
-        <section class="panel native-guide"><header class="panel-heading"><h2>操作</h2></header><p>键盘：A / D 或 ← / → 移动，W 或 ↑ 跳跃，S 或 ↓ 发球、挥拍。手机上使用画面下方按钮。发球方须先按击球键；按原作规则，发球方直到这一分结束都不能跳跃，也不能进入网前区域，接发球方可以跳跃。</p><p>连接状态显示“对等连接”时走 WebRTC；若无法直连，会自动通过服务器中继。</p></section>
+        <section class="panel native-guide"><header class="panel-heading"><h2>操作</h2></header><p>键盘：A / D 或 ← / → 移动，W 或 ↑ 跳跃，S 或 ↓ 发球、挥拍。手机上使用画面下方按钮。发球方须先按击球键；按原作规则，发球动画结束前不能跳跃或进入网前，动画结束后恢复正常移动和跳跃。接发球方可以跳跃。</p><p>连接状态显示“对等连接”时走 WebRTC；若无法直连，会自动通过服务器中继。</p></section>
       </aside>
     </div>
   </main>

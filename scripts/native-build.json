@@ -2,12 +2,12 @@
   "version": 1,
   "hashes": {
     "public/native/bomb.js": "80bbc8d5bae7c7b5033e26500f106e258eaa941d509a2fad30ef9c9e2fded453",
-    "public/native/badminton.js": "8fdc81c5e7b7abaaa98114d1b8c4b8586ee962d2538a299fc79d210f7ec4734c",
+    "public/native/badminton.js": "cf8252e1633b8491adf57bdb43b50bad69406659fc971bcf5cc15d0535305d78",
     "src/native/core.ts": "9eced40f21394f319f7e89250e5b5ce36b7009987faf028402d3950cee82d6cf",
     "src/native/main.ts": "93d5e0c8ee6ec5facd7e902b0532d8491a81825d5632becfab82ccc9ba397330",
     "src/native/network.ts": "a214b0e8ca6cd73ab5bafe6edf87d9547fb8984809693393da9a621bdabe3d0b",
     "src/native/view.ts": "305155d729e447a25621c22eb6dd30b6872d278f340b61645c869d86b82f1954",
-    "src/badminton/core.ts": "d8b40b7a6b47c79c616872a55b02d1371f62ad6ead9906c9d26fcd69b40b9fb3",
+    "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
     "src/badminton/main.ts": "05a7766f7916984af499d95717036d47f560ac22f73b03a4500a2f71460fe941",
     "src/badminton/view.ts": "5369ab28db580fd0f145adf848e769b7e7cbb24cc3c40073ed22d854b6f9a8e1"
   }

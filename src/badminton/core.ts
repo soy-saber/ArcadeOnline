@@ -28,7 +28,7 @@ export interface Player { x: number; y: number; vy: number; swing: number; serve
 export interface Birdie { x: number; y: number; vx: number; vy: number; lastHitter: number }
 export interface GameState {
   round: number; tick: number; phase: "waiting" | "playing" | "finished";
-  rally: "serve" | "flight" | "point"; serve: 1 | 2; winner: 0 | 1 | 2;
+  rally: "serve" | "flight" | "point"; serve: 0 | 1 | 2; winner: 0 | 1 | 2;
   score: [number, number]; players: [Player, Player]; birdie: Birdie;
   ack: [number, number]; inputs: [Input, Input]; pointTicks: number; lastPoint: 0 | 1 | 2;
 }
@@ -61,7 +61,7 @@ export function validState(value: unknown): value is GameState {
   const s = value as GameState;
   const finite = (n: unknown) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) < 1e15;
   return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) &&
-    ["serve", "flight", "point"].includes(s.rally) && [1, 2].includes(s.serve) &&
+    ["serve", "flight", "point"].includes(s.rally) && [0, 1, 2].includes(s.serve) &&
     [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) &&
     Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) &&
     Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) &&
@@ -119,7 +119,12 @@ export function step(state: GameState, incoming: readonly Input[]): void {
     player.y = Math.min(GROUND, player.y + player.vy + 1);
     if (player.y >= GROUND) player.vy = 0;
     else player.vy += 1;
-    if (player.swing > 0 && --player.swing === 0) player.servePose = 0;
+    if (player.swing > 0) {
+      player.swing--;
+      // Both original serve clips clear _root.serve on frame 13.
+      if (player.servePose && player.swing === 2) state.serve = 0;
+      if (player.swing === 0) player.servePose = 0;
+    }
     const speed = (Number(held.right) - Number(held.left)) * 5.9;
     if (speed) player.facing = speed > 0 ? 1 : -1;
     movePlayer(state, (i + 1) as 1 | 2, speed);

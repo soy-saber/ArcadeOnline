@@ -56,7 +56,7 @@
     if (!value || typeof value !== "object") return false;
     const s = value;
     const finite = (n) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) < 1e15;
-    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput);
+    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [0, 1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput);
   }
   function beginServe(state) {
     if (state.lastPoint) state.serve = state.lastPoint;
@@ -117,7 +117,11 @@
       player.y = Math.min(GROUND, player.y + player.vy + 1);
       if (player.y >= GROUND) player.vy = 0;
       else player.vy += 1;
-      if (player.swing > 0 && --player.swing === 0) player.servePose = 0;
+      if (player.swing > 0) {
+        player.swing--;
+        if (player.servePose && player.swing === 2) state.serve = 0;
+        if (player.swing === 0) player.servePose = 0;
+      }
       const speed = (Number(held.right) - Number(held.left)) * 5.9;
       if (speed) player.facing = speed > 0 ? 1 : -1;
       movePlayer(state, i + 1, speed);
