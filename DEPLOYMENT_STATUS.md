@@ -1,5 +1,13 @@
 **ArcadeOnline 公网部署记录 · 2026-10-23**
 
+2026-10-23 僵尸危机3 原版补齐已部署至 `https://223.109.141.251/`，实现提交 `b593464`。当前发布目录 `/opt/arcade-online/releases/20261022181006-1613521`，上一版 `/opt/arcade-online/releases/20261022165439-1600829` 保留可回滚。上传目录 `/home/zkh/arcade-deploy-20261023-boxhead-93de2e3a/release`；包 SHA256 `93de2e3aa1d9b824c26e362a8af49251ce09cf3b76294bb77a7a373b7e2fced4`，20.2 MiB，4669 文件及构建来源哈希校验通过，应用/Caddy/coturn active，健康检查通过。本条为部署后补充记录。
+
+`50737-server` 导入 18 张原版地图、四人外观及僵尸/恶魔的 78 组贴图动作、原版物件/特效与 26 音频；服务器实现十种武器、58 条连击升级、持续生存、队友复活、迷宫寻路和共享缩放视野。替换此前两张自制地图、五枪、三命和六波目标；切换武器保留弹药。画布 1280×800，常规世界视野至少宽 1152 像素，小图整体显示，队友分散时继续扩大范围。来源和仍有近似的行为见 [BOXHEAD_RECONSTRUCTION.md](BOXHEAD_RECONSTRUCTION.md)。原始 SWF 未改写。
+
+公网 210 个发布文件的 SHA256 与工作区按发布规则统一换行后的内容一致，涵盖全部僵尸地图、动画、物件、音频、来源清单、目录、封面及浏览器包；结果为 `artifacts/boxhead-public-hashes.json`。
+
+类型检查、`npm test` 128/128、部署测试 5/5 通过。Chrome 解码全部 178 张图和 26 音频，18 图的四人分散镜头及姓名对齐检查通过；本地与公网四浏览器 E2E 均通过 18 图选择、四席位准备、P3/P4 输入、真实移动/射击、创建者暂停后继续模拟、完整/增量恢复及离座换图。本地与公网八款全屏及两种触屏方向回归通过，健康/八款目录/WSS 探针通过。证据 `artifacts/boxhead-original/results.json`、`unit-tests.log`、`artifacts/expanded-public-e2e/results.json`、`artifacts/fullscreen-public-e2e/results.json`；这些浏览器仍来自同一设备，未宣称两地延迟验收。额外运行旧 `test:native` 时为 28/29：遗留 relay 测试仍请求已下线的 `3881-native`，在入房阶段超时；当前服务器入口对应的 128 项测试通过。
+
 2026-10-23 00:56（北京时间）游戏全屏布局修复已上线。当前发布目录 `/opt/arcade-online/releases/20261022165439-1600829`，上一版 `/opt/arcade-online/releases/20261022154927-1590253` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261023-fullscreen-511fa7d2/release`。发布包 SHA256 `511fa7d252769f1403e89da6cd5cd3a212053911e0f0c434d8cac74eb69852c5`，15.5 MiB，4466 个文件校验通过，应用、Caddy、coturn 均 active。此记录在发布包生成及部署完成后补充。
 
 全屏解除共享旧样式的 568px 宽度上限，以及侧栏、说明和触屏控制对画布高度的挤占；画布按原始宽高比最大化并居中，不裁剪或拉伸。全屏隐藏房间侧栏、战绩和设置，仅浮动显示准备与小型退出按钮；未入座时可一键选择空位并准备，按钮操作后键盘焦点回到游戏。触屏方向/攻击按钮覆盖在画面下方，不缩小画布。不支持原生全屏时使用同样的页面全屏布局，退出按钮和 Esc 均恢复普通房间。房间页的脚本与样式缓存版本更新为 `immersive-fullscreen-20261023`。
