@@ -1,4 +1,14 @@
-**ArcadeOnline 公网部署记录 · 2026-10-21**
+**ArcadeOnline 公网部署记录 · 2026-10-22**
+
+2026-10-22 大厅与服务器版更新已部署到 `https://223.109.141.251/`。当前应用 `/opt/arcade-online/releases/20261022061214-1497942`，上一版 `/opt/arcade-online/releases/20261021085137-1293425` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261022-060818-authority/release`。发布包 SHA256 `35ac02d7b24f7147a4e2a939ca5d10ecf06ce359a0b52c66772c597837193d48`，15.5 MiB，4466 个文件与构建哈希在本地及服务器全部通过校验。包内代码/素材与实现提交 `0fc6390a7c3b2409e39bce75207aff666d058a3d` 一致；本条现场记录在部署后另行提交，不反向修改已发布包的校验。部署工具记录 `2026-10-22T06:08:45Z`（北京时间 14:08:45），服务器目录时间有时钟偏差，不能当作本地精确时间。
+
+网站只展示八款服务器联机游戏，标题恢复原名，八张 WebP 封面为实际游戏画面。Flash 串流与浏览器房主网页、旧执行资源及原始 SWF 已退出网站/发布包；旧房间 URL 保留房间名并跳转对应服务器版。羽毛球素材和音效位于 `public/authority/assets/`。早濑优香与牧濑红莉栖最终背景通过用户指定的 Playwright 和已登录网站生成（网站模型标签 `GPT Image 2`），直接参考优香原图，已核对黑蓝三角机械发夹、双侧扎发和细长光环。WebP SHA256 `798c0eeac91beb2e13c2067135ae1efcdc28030dbb2351a21f0d3f6eecbefff6`；完整提示词与来源清单位于 `public/assets/site-background-prompt.txt`、`public/assets/site-artwork.json`。浏览器认证、临时下载地址和未选生成图不进入 Git 或发布包。
+
+应用仍只监听 `127.0.0.1:18088`，应用、Caddy、coturn 均为 active。公网可信 HTTPS/WSS、八款目录/素材/入房、所有封面及最终背景通过；公网大厅 E2E 验证桌面和手机、分类搜索、原名、旧链接跳转与旧资源 404。僵尸危机3和 Q版泡泡堂2通过公网四 Chrome 上下文准备、姓名、移动/攻击、管理者暂停后继续模拟、完整/增量恢复、准备保留及模式/地图切换。炸弹人公网专项通过全屏姓名、武器库存、冰箭恢复与公开 3 秒后只向拥有者展示的陷阱快照。证据：`artifacts/authority-deployment-results.json`、`artifacts/lobby-public-e2e/results.json`、`artifacts/expanded-public-e2e/results.json`、`artifacts/authority-weapons-public-e2e/results.json`。
+
+本轮本地 `npm test` 118/118、类型检查通过；服务器浏览器 E2E 覆盖四人准备/恢复与羽毛球自然 7 分结算和自动续局，四浏览器击杀 E2E 完成 10 次真实按键击杀、自然复活和自动续局。部署测试 4 通过、1 因本机无 Caddy 可执行文件跳过。干净目录 `npm ci`、类型检查与构建复现通过；发布包只安装生产依赖 `ws` 即可运行八款，不需 TypeScript/esbuild。上述公网浏览器来自同一台设备，不能据此宣称两地真实设备延迟已验收。金币/占地部分原作细则、扩展音效、冰火人逐关通关、容量与运维回滚仍待完善；当前八款使用 WSS，不依赖下方历史 TURN 待办。
+
+**历史发布记录（以下为各次发布时的状态）**
 
 2026-10-21 击杀模式更新已发布到 `https://223.109.141.251/`。当前目录 `/opt/arcade-online/releases/20261021085137-1293425`，上一版 `/opt/arcade-online/releases/20261021073346-1280560` 可回滚，原始资源和两个旧原生入口保留。上传目录 `/home/zkh/arcade-deploy-20261021-084719-authority/release`，发布包 SHA256 `01f1ee879ab5ee19eb76fbe6789bc38ddf29015d27718ce7917abd89d01745df`，4667 个文件和构建哈希全部通过校验；应用、Caddy、coturn 均为 active。本次仍基于未提交工作区，无新 Git 提交。部署脚本记录时间为 `2026-10-21T08:47:57Z`，服务器时钟比本地约快四分钟，目录时间不应作为本地精确时间。
 
