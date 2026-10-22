@@ -5,7 +5,30 @@ body {
   background: #101222;
 }
 body::before {
-  background: linear-gradient(180deg, rgba(9, 12, 24, .12), rgba(9, 12, 24, .35)), url('/assets/yuuka-kurisu-background.webp?v=outline-20261022') center top / cover no-repeat;
+  background: url('/assets/yuuka-kurisu-background.webp?v=flat-clear-20261022') center top / 100% auto no-repeat;
+}
+.lobby-page {
+  --portrait-width: clamp(160px, calc((100vw - 1120px) / 2 - 20px), 260px);
+  --portrait-sheet: calc(var(--portrait-width) * 3.4);
+}
+.lobby-page::before,
+.lobby-page::after {
+  content: "";
+  position: fixed;
+  inset: 120px auto auto 0;
+  width: var(--portrait-width);
+  height: calc(var(--portrait-sheet) * .48);
+  pointer-events: none;
+  z-index: 0;
+  background: url('/assets/yuuka-kurisu-background.webp?v=flat-clear-20261022') left top / var(--portrait-sheet) auto no-repeat;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 65%, transparent 92%), linear-gradient(to right, #000 84%, transparent);
+  mask-composite: intersect;
+}
+.lobby-page::after {
+  left: auto;
+  right: 0;
+  background-position: right top;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 65%, transparent 92%), linear-gradient(to left, #000 84%, transparent);
 }
 header.topbar {
   background: rgba(12, 15, 28, .78);
@@ -15,7 +38,7 @@ header.topbar {
   padding-bottom: 48px;
 }
 .lobby-library {
-  width: min(calc(100% - 48px), 1120px);
+  width: min(calc(100% - 360px), 1120px);
 }
 .lobby-heading {
   padding: 28px;
@@ -145,8 +168,26 @@ header.topbar {
 @media (max-width: 1050px) {
   .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+@media (max-width: 1100px) {
+  .lobby-page { --portrait-sheet: clamp(540px, 75vw, 720px); }
+  .lobby-page::before,
+  .lobby-page::after {
+    top: 64px;
+    width: 50%;
+    height: calc(var(--portrait-sheet) * .44);
+    background-position-y: -32px;
+    mask-image: linear-gradient(to bottom, #000 65%, transparent 96%);
+  }
+  .lobby-library {
+    width: calc(100% - 48px);
+    padding-top: calc(var(--portrait-sheet) * .44 + 12px);
+  }
+  .login-stage {
+    margin-top: calc(var(--portrait-sheet) * .44 + 12px);
+    min-height: 430px;
+  }
+}
 @media (max-width: 700px) {
-  body::before { background-position: center top; }
   .lobby-library { width: calc(100% - 28px); }
   .lobby-heading { padding: 20px; }
   .game-grid { gap: 16px; }

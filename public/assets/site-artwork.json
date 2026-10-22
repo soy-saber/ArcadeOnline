@@ -1,21 +1,21 @@
 {
   "background": {
     "path": "/assets/yuuka-kurisu-background.webp",
-    "method": "Generated and reference-corrected through the user-selected website with Playwright; converted to WebP with Pillow",
+    "method": "Generated and refined on the user-selected website with Playwright; WebP format conversion only",
     "website": "https://l0veyou.com/chat",
     "websiteModelLabel": "GPT Image 2",
     "promptPath": "/assets/site-background-prompt.txt",
-    "sourceImageSha256": "1c6d8cedb2f2b6c62569e33cddc2553d9aeb76d0a8461567a7f77dddf19922b1",
+    "sourceImageSha256": "0332374e16c756555e6641021cf053044a67ec67e749566b1ba95ad214bb52bc",
     "sourceDimensions": [
       1536,
       864
     ],
     "outputDimensions": [
-      1280,
-      720
+      1536,
+      864
     ],
-    "outputBytes": 6558,
-    "composition": "Minimal low-contrast violet and amber hair contours at the edges; elliptical halo and clock arc; no face or costume details; quiet dark central space",
+    "outputBytes": 49256,
+    "composition": "Clear flat-color bust portraits with visible faces, Yuuka halo and mechanical clips, blue and red ties; responsive CSS side placement on desktop and portrait banner on narrow screens",
     "sources": [
       {
         "subject": "Hayase Yuuka / Blue Archive",
@@ -28,7 +28,18 @@
         "sha256": "988a60f8bd772edac2fc1622de64f9748c2a04cac5d220913fd5a088c663689a"
       }
     ],
-    "sha256": "60781337c52f1239cfb7957e1051580a05bffe76bdf7462f79ed522fa4180756"
+    "sha256": "ab32bd65bd67de823c07ebd86e3bd0f6a48cd83c034ad0a733dbf0b759bd2b51",
+    "generationInputs": [
+      {
+        "role": "Character identity reference board",
+        "sha256": "b249fa4a018bde65a27c9617b239a77c336a3c6f017c36edd96af1f19176453b"
+      }
+    ],
+    "postProcessing": {
+      "method": "WebP format conversion only, quality 91; CSS placement and masks",
+      "generatedSourceSha256": "0332374e16c756555e6641021cf053044a67ec67e749566b1ba95ad214bb52bc"
+    },
+    "generationUrl": "https://d1ptb5b3fy36g3.cloudfront.net/aichat/anonymous/sa0/20261022/ps1/prod/6edf5a9a-5ddc-497e-9b41-77d2b342f6c6/4624aef9-b7fb-4cfb-abee-089ef83266e0.png"
   },
   "covers": [
     {
