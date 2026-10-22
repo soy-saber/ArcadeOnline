@@ -1,0 +1,3 @@
+Sammle 
+--- RECORDSEPARATOR ---
+10 Münzen

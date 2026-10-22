@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:ffdec="https://www.free-decompiler.com/flash" xmlns:xlink="http://www.w3.org/1999/xlink" ffdec:objectType="shape" height="30.9px" width="30.9px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 0.45, 0.0)">
+    <path d="M0.0 0.9 L30.0 0.9 30.0 30.9 0.0 30.9 0.0 0.9" fill="#ffdd88" fill-rule="evenodd" stroke="none"/>
+    <path d="M12.25 14.15 Q12.25 13.45 12.75 12.9 13.3 12.4 14.0 12.4 14.75 12.4 15.25 12.9 15.75 13.45 15.75 14.15 15.75 14.9 15.25 15.4 14.75 15.9 14.0 15.9 13.3 15.9 12.75 15.4 12.25 14.9 12.25 14.15" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M24.85 20.8 Q24.85 20.05 25.35 19.55 25.85 19.05 26.6 19.05 27.3 19.05 27.85 19.55 28.35 20.05 28.35 20.8 28.35 21.5 27.85 22.05 27.3 22.55 26.6 22.55 25.85 22.55 25.35 22.05 24.85 21.5 24.85 20.8" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M26.55 3.45 Q26.55 3.05 26.85 2.75 27.15 2.45 27.55 2.45 27.95 2.45 28.2 2.75 L28.5 3.45 28.2 4.1 27.55 4.4 26.85 4.1 Q26.55 3.85 26.55 3.45" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M12.4 29.1 Q12.4 28.7 12.7 28.4 13.0 28.1 13.4 28.1 13.8 28.1 14.1 28.4 L14.4 29.1 14.1 29.8 13.4 30.1 Q13.0 30.1 12.7 29.8 12.4 29.5 12.4 29.1" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M16.0 19.3 Q16.0 18.7 16.45 18.25 16.85 17.8 17.5 17.8 18.15 17.8 18.6 18.25 19.05 18.7 19.05 19.3 19.05 19.95 18.6 20.4 18.15 20.85 17.5 20.85 16.85 20.85 16.45 20.4 16.0 19.95 16.0 19.3" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M9.35 3.25 Q9.35 2.85 9.65 2.55 9.95 2.3 10.35 2.3 10.75 2.3 11.0 2.55 L11.3 3.25 11.0 3.95 10.35 4.2 9.65 3.95 Q9.35 3.65 9.35 3.25" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M0.85 28.6 Q0.85 28.0 1.25 27.6 1.65 27.2 2.25 27.2 2.8 27.2 3.25 27.6 3.65 28.0 3.65 28.6 3.65 29.15 3.25 29.6 2.8 30.0 2.25 30.0 1.65 30.0 1.25 29.6 0.85 29.15 0.85 28.6" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M26.45 29.25 Q26.45 28.55 27.15 28.55 27.9 28.55 27.9 29.25 27.9 29.95 27.15 29.95 26.45 29.95 26.45 29.25" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M0.8 15.25 Q0.8 14.7 1.15 14.4 1.45 14.05 2.0 14.05 2.5 14.05 2.8 14.4 3.15 14.75 3.15 15.25 3.15 15.75 2.8 16.05 2.5 16.4 2.0 16.4 1.5 16.4 1.15 16.05 0.8 15.75 0.8 15.25" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M15.2 3.0 Q15.2 2.6 15.5 2.3 15.8 2.0 16.2 2.0 16.6 2.0 16.9 2.3 L17.2 3.0 16.9 3.7 16.2 4.0 15.5 3.7 Q15.2 3.4 15.2 3.0" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M19.85 9.75 Q19.85 9.05 20.35 8.5 20.9 8.0 21.6 8.0 22.3 8.0 22.85 8.5 23.35 9.05 23.35 9.75 23.35 10.45 22.85 11.0 22.3 11.5 21.6 11.5 20.9 11.5 20.35 11.0 19.85 10.45 19.85 9.75" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M2.05 4.05 Q2.05 3.3 2.55 2.8 3.05 2.3 3.8 2.3 4.5 2.3 5.05 2.8 5.55 3.3 5.55 4.05 5.55 4.75 5.05 5.3 4.5 5.8 3.8 5.8 3.05 5.8 2.55 5.3 2.05 4.75 2.05 4.05" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <path d="M10.25 8.6 Q10.25 8.2 10.55 7.9 10.85 7.6 11.25 7.6 11.65 7.6 11.95 7.9 L12.25 8.6 11.95 9.3 Q11.65 9.6 11.25 9.6 L10.55 9.3 10.25 8.6" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M18.5 27.65 Q18.5 27.1 18.9 26.65 19.35 26.25 19.9 26.25 20.5 26.25 20.9 26.65 21.3 27.1 21.3 27.65 21.3 28.25 20.9 28.65 20.5 29.05 19.9 29.05 19.35 29.05 18.9 28.65 18.5 28.25 18.5 27.65" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M24.2 14.4 L24.4 13.85 24.9 13.65 25.4 13.85 25.65 14.4 Q25.65 15.1 24.9 15.1 24.2 15.1 24.2 14.4" fill="#ffe1f1" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.9 21.15 Q6.9 20.65 7.25 20.35 7.6 20.0 8.1 20.0 8.6 20.0 8.9 20.35 9.25 20.65 9.25 21.15 9.25 21.65 8.9 22.0 8.6 22.35 8.1 22.35 7.6 22.35 7.25 22.0 6.9 21.65 6.9 21.15" fill="#fffba9" fill-rule="evenodd" stroke="none"/>
+    <pattern height="17" id="PatternID_3424_1" overflow="visible" patternTransform="matrix(-1.0, 0.0, 0.0, -1.0, 30.0, 22.45)" patternUnits="userSpaceOnUse" viewBox="0 0 30 17" width="30">
+      <image height="17" style="image-rendering:optimizeSpeed; image-rendering:pixelated" width="30" xlink:href="data:image/PNG;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAARCAYAAADKZhx3AAABLUlEQVR42u3VzStEYRzF8edfsJOsJCvriWiMvGQsSN7uTN5mhv9Fkj9A2SkvKaWUFCWJZjRSlkKomWEjWagZ5furo2SlmWd5n/qsbp3TfW6d65xzjRhAgDlkMI8FTywrjRlMoB8tcL3YxBUeUcKrRy8o4h45rGPKiuPYxwM+UEYFX55UlPmOW+zpFlw7VrCLY5zhHBceWeYRdrCMYSuuQysi6EBUujyKKjuirnoXnvCEx+dpQA9GkdSm2mantLE/Mv+Q/iOlrGkkMIJuNFtxDGs4wQ3u8IyCNrZUhaJYxpOm8lrLuIpJK+7Dth4UtKmfvza7FmVlvell8tjArBW3YQlbOMSp9jWrv8llFXKS1e7bbR6odBFDTrvZiUF9g3FdRaDvUotAWWPKjqur6RtHE7mgYvgxpwAAAABJRU5ErkJggg=="/>
+    </pattern>
+    <path d="M30.0 22.45 L0.0 22.45 0.0 5.45 30.0 5.45 30.0 22.45" ffdec:fill-bitmapId="3409" fill-rule="evenodd" style="fill:url(#PatternID_3424_1)"/>
+    <pattern height="29" id="PatternID_3424_2" overflow="visible" patternTransform="matrix(-1.0, 0.0, 0.0, -1.0, 26.7, 29.0)" patternUnits="userSpaceOnUse" viewBox="0 0 24 29" width="24">
+      <image height="29" style="image-rendering:optimizeSpeed; image-rendering:pixelated" width="24" xlink:href="data:image/PNG;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAdCAYAAACwuqxLAAABfElEQVR42u3WzSuEURTH8Rv/AGJDXkpW/gSyoRSFNIRmGBkbZWfhf7BiIQtZkcRoFlhRUigvedlhoURCKS9DTTPG99Z56jY995mpYfec+uzuub/7zCzOUUqpYrSiH2ERRCdqUaDsVYIm9GAQQxhAG+qcXn35Bq7wgEfcYh8TcomtWrCAM9xJ/w22MYlSJYnXSCItfvCKWZR7BASwi0+jN4V7zKFCHxqWV6czJLCESo8A/bjTjMdp71h0ekfw7BKgm1ZR7REQwrm82uyNYwVV+lAEL5aAaJYA/cdeyE9q9n6Zjxu1BKRyDLjMJ2AdNX6AH+AH+AF+QJ4B0b8IiOQxD0KWgRM3A/TIfLJMtLUsAcFcRmZY1g23ob/sHLKU3qWOXYb+mzn0A7IZfMjBpFyuN42ZLGtLF7ZkaUhI77fsRtNOr97M5rGDI5zgADGMocgjoBFT2MSh9O/Jl487S1sZmtGNPvlsvQq2m+ufpXRvAzrQK/0B2RbrUaj+u34B3AxsJzDThjAAAAAASUVORK5CYII="/>
+    </pattern>
+    <path d="M26.7 29.0 L2.7 29.0 2.7 0.0 26.7 0.0 26.7 29.0" ffdec:fill-bitmapId="3408" fill-rule="evenodd" style="fill:url(#PatternID_3424_2)"/>
+    <path d="M18.35 28.45 L18.35 3.3 Q18.35 2.75 18.7 2.3 19.0 1.9 19.5 1.9 L25.5 1.9 Q26.0 1.9 26.3 2.3 26.65 2.75 26.65 3.3 L26.65 28.45 26.3 29.4 Q26.0 29.8 25.5 29.8 L19.5 29.8 Q19.0 29.8 18.7 29.4 18.35 29.0 18.35 28.45" fill="#6f411e" fill-rule="evenodd" stroke="none"/>
+    <path d="M18.65 28.6 L18.65 4.25 Q18.65 3.7 18.95 3.35 19.3 2.95 19.75 2.95 L25.25 2.95 Q25.7 2.95 26.0 3.35 26.35 3.7 26.35 4.25 L26.35 28.6 Q26.35 29.15 26.0 29.55 25.7 29.9 25.25 29.9 L19.75 29.9 Q19.3 29.9 18.95 29.55 18.65 29.15 18.65 28.6" fill="#6f411e" fill-rule="evenodd" stroke="none"/>
+    <path d="M19.35 27.95 L19.35 4.95 Q19.35 4.45 19.6 4.1 L20.25 3.7 24.75 3.7 Q25.1 3.7 25.4 4.1 L25.65 4.95 25.65 27.95 25.4 28.85 24.75 29.2 20.25 29.2 Q19.85 29.2 19.6 28.85 L19.35 27.95" fill="#f7e28b" fill-rule="evenodd" stroke="none"/>
+    <path d="M19.35 27.6 L19.35 4.6 Q19.35 4.1 19.6 3.75 19.9 3.4 20.25 3.4 L24.75 3.4 25.4 3.75 25.65 4.6 25.65 27.6 25.4 28.5 24.75 28.85 20.25 28.85 Q19.85 28.85 19.6 28.5 L19.35 27.6" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M22.6 3.4 L24.65 3.4 24.65 28.85 22.6 28.85 22.6 3.4" fill="#e0c557" fill-rule="evenodd" stroke="none"/>
+    <path d="M21.05 25.75 L21.4 12.7 Q22.15 19.6 21.65 23.35 L21.05 25.75" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M20.1 19.6 L20.45 4.3 Q21.2 11.2 20.7 16.1 L20.1 19.6" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M23.8 16.05 L23.75 4.05 Q24.45 7.65 24.2 12.2 L23.8 16.05" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M22.6 14.9 L22.7 5.4 Q23.3 9.6 23.0 12.65 L22.6 14.9" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M24.15 27.7 L24.25 15.65 Q25.2 21.4 24.8 25.1 L24.15 27.7" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M23.1 28.55 L22.9 18.95 Q23.6 22.55 23.45 25.9 L23.1 28.55" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M25.35 28.9 Q25.75 28.9 25.75 29.4 25.75 29.9 25.35 29.9 L19.65 29.9 Q19.25 29.9 19.25 29.4 19.25 28.9 19.65 28.9 L25.35 28.9" fill="#fff7d7" fill-rule="evenodd" stroke="none"/>
+    <path d="M3.35 28.45 L3.35 3.3 Q3.35 2.75 3.7 2.3 4.05 1.9 4.55 1.9 L10.45 1.9 Q10.95 1.9 11.25 2.3 L11.6 3.3 11.6 28.45 11.25 29.4 Q10.95 29.8 10.45 29.8 L4.55 29.8 Q4.05 29.8 3.7 29.4 3.35 29.0 3.35 28.45" fill="#6f411e" fill-rule="evenodd" stroke="none"/>
+    <path d="M3.65 28.6 L3.65 4.25 Q3.65 3.7 3.95 3.35 4.3 2.95 4.75 2.95 L10.25 2.95 Q10.7 2.95 11.0 3.35 11.35 3.7 11.35 4.25 L11.35 28.6 11.0 29.55 Q10.7 29.9 10.25 29.9 L4.75 29.9 Q4.3 29.9 3.95 29.55 3.65 29.15 3.65 28.6" fill="#6f411e" fill-rule="evenodd" stroke="none"/>
+    <path d="M4.35 27.95 L4.35 4.95 Q4.35 4.45 4.6 4.1 4.9 3.7 5.25 3.7 L9.75 3.7 Q10.1 3.7 10.4 4.1 L10.65 4.95 10.65 27.95 10.4 28.85 Q10.1 29.2 9.75 29.2 L5.25 29.2 Q4.85 29.2 4.6 28.85 L4.35 27.95" fill="#f7e28b" fill-rule="evenodd" stroke="none"/>
+    <path d="M4.35 27.6 L4.35 4.6 Q4.35 4.1 4.6 3.75 4.9 3.4 5.25 3.4 L9.75 3.4 Q10.1 3.4 10.4 3.75 L10.65 4.6 10.65 27.6 10.4 28.5 Q10.1 28.85 9.75 28.85 L5.25 28.85 Q4.85 28.85 4.6 28.5 L4.35 27.6" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M7.6 3.4 L9.65 3.4 9.65 28.85 7.6 28.85 7.6 3.4" fill="#e0c557" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.05 25.75 L6.4 12.7 Q7.15 19.6 6.65 23.35 L6.05 25.75" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M5.1 19.6 L5.45 4.3 Q6.2 11.2 5.7 16.1 L5.1 19.6" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M8.8 16.05 L8.75 4.05 Q9.45 7.65 9.2 12.2 L8.8 16.05" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M7.6 14.9 L7.7 5.4 Q8.3 9.6 8.0 12.65 L7.6 14.9" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M9.15 27.7 L9.25 15.65 Q10.2 21.4 9.8 25.1 L9.15 27.7" fill="#9e6624" fill-rule="evenodd" stroke="none"/>
+    <path d="M8.1 28.55 L7.9 18.95 Q8.6 22.55 8.45 25.9 L8.1 28.55" fill="#d3a346" fill-rule="evenodd" stroke="none"/>
+    <path d="M10.35 28.9 Q10.75 28.9 10.75 29.4 10.75 29.9 10.35 29.9 L4.65 29.9 Q4.25 29.9 4.25 29.4 4.25 28.9 4.65 28.9 L10.35 28.9" fill="#fff7d7" fill-rule="evenodd" stroke="none"/>
+    <path d="M0.0 7.45 L30.0 7.45 30.0 12.05 0.0 12.05 0.0 7.45" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M0.0 8.35 L30.0 8.35 30.0 11.15 0.0 11.15 0.0 8.35" fill="#939393" fill-rule="evenodd" stroke="none"/>
+    <path d="M30.0 11.6 L0.0 11.6" ffdec:has-small-stroke="true" ffdec:original-stroke-width="0.9" fill="none" stroke="#ffffff" stroke-linecap="butt" stroke-linejoin="miter-clip" stroke-miterlimit="10.0" stroke-width="1.0"/>
+    <path d="M0.0 19.65 L30.0 19.65 30.0 24.2 0.0 24.2 0.0 19.65" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M0.0 20.5 L30.0 20.5 30.0 23.3 0.0 23.3 0.0 20.5" fill="#939393" fill-rule="evenodd" stroke="none"/>
+    <path d="M30.0 23.75 L0.0 23.75" ffdec:has-small-stroke="true" ffdec:original-stroke-width="0.85" fill="none" stroke="#ffffff" stroke-linecap="butt" stroke-linejoin="miter-clip" stroke-miterlimit="10.0" stroke-width="1.0"/>
+    <path d="M21.45 5.25 Q21.45 4.8 21.75 4.5 22.1 4.2 22.55 4.2 23.0 4.2 23.3 4.5 L23.6 5.25 23.3 6.0 Q23.0 6.35 22.55 6.35 L21.75 6.0 Q21.45 5.7 21.45 5.25" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M21.6 5.65 Q21.6 5.25 21.9 4.95 L22.6 4.7 Q23.0 4.7 23.25 4.95 L23.55 5.65 23.25 6.35 22.6 6.65 Q22.2 6.65 21.9 6.35 21.6 6.05 21.6 5.65" fill="#d6d6d6" fill-rule="evenodd" stroke="none"/>
+    <path d="M23.5 5.4 L23.5 5.85 Q23.45 6.35 23.0 6.55 L22.1 6.5 21.65 5.9 22.0 6.2 22.85 6.3 23.4 5.75 23.5 5.4" fill="#ffffff" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.5 5.25 Q6.5 4.8 6.8 4.5 7.15 4.2 7.6 4.2 8.05 4.2 8.35 4.5 L8.65 5.25 8.35 6.0 Q8.05 6.35 7.6 6.35 7.15 6.35 6.8 6.0 6.5 5.7 6.5 5.25" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.65 5.65 Q6.65 5.25 6.95 4.95 L7.6 4.7 Q8.0 4.7 8.3 4.95 L8.6 5.65 8.3 6.35 7.6 6.65 Q7.2 6.65 6.95 6.35 L6.65 5.65" fill="#d6d6d6" fill-rule="evenodd" stroke="none"/>
+    <path d="M8.55 5.4 L8.55 5.85 Q8.5 6.35 8.05 6.55 L7.1 6.5 6.65 5.9 7.0 6.2 7.85 6.3 8.45 5.75 8.55 5.4" fill="#ffffff" fill-rule="evenodd" stroke="none"/>
+    <path d="M21.45 26.6 Q21.45 26.2 21.75 25.85 22.1 25.55 22.55 25.55 23.0 25.55 23.3 25.85 L23.6 26.6 23.3 27.35 Q23.0 27.7 22.55 27.7 L21.75 27.35 Q21.45 27.05 21.45 26.6" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M21.6 27.0 Q21.6 26.6 21.9 26.35 22.2 26.05 22.6 26.05 22.95 26.05 23.25 26.35 L23.55 27.0 23.25 27.7 22.6 28.0 Q22.2 28.0 21.9 27.7 21.6 27.4 21.6 27.0" fill="#d6d6d6" fill-rule="evenodd" stroke="none"/>
+    <path d="M23.5 26.75 L23.5 27.2 Q23.45 27.7 23.0 27.9 L22.1 27.85 21.65 27.25 22.0 27.55 22.85 27.65 23.4 27.1 23.5 26.75" fill="#ffffff" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.25 26.6 Q6.25 26.15 6.55 25.8 6.9 25.5 7.35 25.5 7.8 25.5 8.1 25.8 L8.4 26.6 8.1 27.35 Q7.8 27.65 7.35 27.65 L6.55 27.35 Q6.25 27.05 6.25 26.6" fill="#545454" fill-rule="evenodd" stroke="none"/>
+    <path d="M6.4 27.0 Q6.4 26.6 6.7 26.3 6.95 26.0 7.35 26.0 7.75 26.0 8.05 26.3 L8.35 27.0 8.05 27.65 7.35 27.95 Q6.95 27.95 6.7 27.65 6.4 27.35 6.4 27.0" fill="#d6d6d6" fill-rule="evenodd" stroke="none"/>
+    <path d="M8.3 26.75 L8.3 27.2 Q8.25 27.65 7.8 27.85 L6.85 27.8 6.4 27.2 6.75 27.5 7.6 27.6 8.2 27.1 8.3 26.75" fill="#ffffff" fill-rule="evenodd" stroke="none"/>
+  </g>
+</svg>

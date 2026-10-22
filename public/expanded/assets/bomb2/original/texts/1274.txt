@@ -1,0 +1,3 @@
+Zbierz 
+--- RECORDSEPARATOR ---
+10 monet

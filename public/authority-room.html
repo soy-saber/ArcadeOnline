@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10272b">
+  <title>在线联机 - ArcadeOnline</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/authority/style.css">
+  <link rel="stylesheet" href="/theme.css">
+  <script src="/arcade.js"></script>
+</head>
+<body class="room-page authority-page">
+  <header class="topbar room-topbar">
+    <div class="room-title-group"><a class="back-link" href="/" aria-label="返回大厅">←</a><div><span class="section-kicker">在线联机 · 全员准备开局</span><h1 id="game-title">Q版泡泡堂</h1></div></div>
+    <div class="room-meta"><span class="room-code"><small>房间</small><b id="room-name"></b></span><span class="badge" id="conn-badge">连接中</span><button id="copy-invite" class="topbar-action">邀请好友</button><a href="/" id="leave-room" class="topbar-action danger">退出</a></div>
+  </header>
+  <main class="room-shell">
+    <div class="authority-statusbar">
+      <div class="status-cluster"><span><small>身份</small><b id="role-status">观战</b></span><span><small>连接</small><b id="transport-status">服务器连接</b></span><span><small>延迟</small><b id="latency-status">采样中</b></span><span><small>画面</small><b id="render-status">0 FPS</b></span><span><small>房间</small><b id="member-count">0 人</b></span></div>
+      <div class="status-actions"><span id="my-name"></span><button id="fullscreen-stage" class="btn ghost compact">全屏</button></div>
+    </div>
+    <div id="fullscreen-room">
+      <button id="exit-fullscreen" class="btn fullscreen-exit" aria-label="退出全屏">退出全屏</button>
+      <section class="stage-column">
+        <div id="native-stage"><canvas id="game-canvas" tabindex="0" aria-label="联机游戏画面"></canvas></div>
+        <div class="stage-caption"><span id="controls-guide">WASD / 方向键移动，空格 / 回车攻击。躲开爆炸，收集道具。</span><div class="sound-controls"><button id="sound-toggle" class="topbar-action" type="button" aria-pressed="true">音效：开</button><label for="sound-volume">音量 <input id="sound-volume" type="range" min="0" max="100" value="24"><span id="sound-volume-value">24%</span></label></div></div>
+        <p id="weapon-status" class="weapon-status" aria-live="polite">空格 / 回车 放炸弹</p>
+        <div class="touch-controls" aria-label="触屏控制"><div class="direction-pad"><button id="touch-up" data-key="KeyW" class="up" aria-label="向上">↑</button><button data-key="KeyA" class="left" aria-label="向左">←</button><button id="touch-down" data-key="KeyS" class="down" aria-label="向下">↓</button><button data-key="KeyD" class="right" aria-label="向右">→</button></div><div class="action-pad"><button id="attack-button" data-key="Space" class="bomb-button"><span id="attack-button-text">放炸弹</span></button><button id="alt-button" data-key="KeyK" class="bomb-button" hidden>副操作</button></div></div>
+      </section>
+      <aside class="room-controls">
+        <section class="panel seats-panel">
+          <div class="seat-heading"><div><span class="panel-kicker">PLAYERS</span><h2>玩家席位</h2></div><span id="round-status" role="status">等待准备</span></div>
+          <div class="seat-row p1" id="seat-1"><span class="seat-index">01</span><div class="seat-copy"><b>P1</b><div class="who">空闲</div></div><button class="btn" data-seat="1">入座</button></div>
+          <div class="seat-row p2" id="seat-2"><span class="seat-index">02</span><div class="seat-copy"><b>P2</b><div class="who">空闲</div></div><button class="btn" data-seat="2">入座</button></div>
+          <div class="seat-row p3" id="seat-3"><span class="seat-index">03</span><div class="seat-copy"><b>P3</b><div class="who">空闲</div></div><button class="btn" data-seat="3">入座</button></div>
+          <div class="seat-row p4" id="seat-4"><span class="seat-index">04</span><div class="seat-copy"><b>P4</b><div class="who">空闲</div></div><button class="btn" data-seat="4">入座</button></div>
+          <button id="start-game" class="btn authority-ready" disabled>准备</button>
+          <p id="mode-note" class="native-note">至少两人入座，全员准备后自动开始。结束 3 秒后自动开下一局；取消准备可退出下一局。</p>
+          <p id="score-line" class="native-note"></p>
+          <div id="round-options" class="round-options"><label for="game-mode" hidden>模式<select id="game-mode"></select></label><label for="game-map">地图<select id="game-map"></select></label><label for="game-loadout">开局武器<select id="game-loadout"><option value="none">地图拾取</option><option value="rocket">火箭</option><option value="mine">地雷</option><option value="grenade">手榴弹</option><option value="gas">汽弹</option><option value="ice">冰箭</option><option value="fire">火焰箭</option></select></label></div>
+          <p id="host-line" class="native-note"></p>
+          <p id="connection-note" class="native-note" role="status">正在连接房间…</p><input id="invite-link" aria-label="邀请链接" readonly hidden>
+        </section>
+        <section class="panel battle-records" id="battle-records" aria-label="房间战绩">
+          <div class="seat-heading"><h2>房间战绩</h2><span>跨局累计</span></div>
+          <div class="records-scroll"><table><thead><tr><th>玩家</th><th>击杀</th><th>死亡</th><th>胜场</th><th>局数</th></tr></thead><tbody id="records-body"></tbody></table></div>
+          <p id="records-note" class="native-note">自爆只计死亡；连锁击杀按造成伤害的炸弹或武器归属。</p>
+        </section>
+      </aside>
+    </div>
+    <details class="panel authority-metrics"><summary>连接诊断</summary><dl><dt>最近状态更新</dt><dd id="metrics-age">等待同步</dd><dt>本地输入到绘制</dt><dd id="metrics-predict">操作后采样</dd><dt>收发数据</dt><dd id="metrics-bandwidth">—</dd></dl></details>
+  </main>
+  <script src="/authority/game.js"></script>
+</body>
+</html>

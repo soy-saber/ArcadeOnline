@@ -1,0 +1,5 @@
+收集
+--- RECORDSEPARATOR ---
+10
+--- RECORDSEPARATOR ---
+枚金币

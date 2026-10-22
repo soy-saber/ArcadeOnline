@@ -1,0 +1,3 @@
+Klik pada tombol-tombol
+--- RECORDSEPARATOR ---
+ kontrol untuk menggantinya:

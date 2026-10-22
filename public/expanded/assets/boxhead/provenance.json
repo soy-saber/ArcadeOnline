@@ -1,0 +1,11 @@
+{
+  "source": "games/50737/game.swf",
+  "sha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "tool": "JPEXS 26.4.0 + Pillow",
+  "models": [
+    "mPlayer_Default_Handgun_Walk",
+    "mZombie_Default_Zombie_Walk",
+    "mDevil_Default_Devil_Attack"
+  ],
+  "limitations": "Original polygon positions and material colors; material bitmap mapping approximated with flat fills."
+}

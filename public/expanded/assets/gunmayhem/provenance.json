@@ -1,0 +1,11 @@
+{
+  "source": "games/97734/yy1-1.swf",
+  "sha256": "ea675f3e0df73671ffe1a376138ed5f4a13691b5c51b11bd6c590b2c1db53fe9",
+  "tool": "JPEXS 26.4.0 + Pillow",
+  "platformSprites": [
+    1838,
+    1872,
+    1875
+  ],
+  "note": "Collision islands preserve original relative layout; scaled into 900x600 arena. Colors derive from original rendered sprites."
+}

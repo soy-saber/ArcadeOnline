@@ -1,0 +1,148 @@
+body {
+  background: #101222;
+}
+body::before {
+  background: linear-gradient(180deg, rgba(9, 12, 24, .12), rgba(9, 12, 24, .35)), url('/assets/yuuka-kurisu-background.webp') center top / cover no-repeat;
+}
+header.topbar {
+  background: rgba(12, 15, 28, .78);
+  border-bottom-color: rgba(177, 166, 224, .25);
+}
+.lobby-shell {
+  padding-bottom: 48px;
+}
+.lobby-library {
+  width: min(calc(100% - 48px), 1120px);
+}
+.lobby-heading {
+  padding: 28px;
+  border: 1px solid rgba(178, 170, 222, .2);
+  border-radius: 12px;
+  background: rgba(13, 18, 34, .82);
+  backdrop-filter: blur(16px);
+}
+.library-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(178, 170, 222, .18);
+  border-radius: 10px;
+  background: rgba(13, 18, 34, .86);
+  backdrop-filter: blur(12px);
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+}
+.segmented button {
+  border-radius: 5px;
+}
+.segmented button.active {
+  color: #f2efff;
+  background: #514578;
+}
+.compact-field {
+  flex: 1 1 170px;
+}
+.game-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.game-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(178, 170, 222, .26);
+  border-radius: 12px;
+  background: rgba(14, 19, 34, .94);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
+}
+.game-card:hover {
+  border-color: #9b8dc4;
+  box-shadow: 0 12px 30px rgba(15, 10, 35, .36);
+}
+.game-cover {
+  min-height: 0;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-right: 0;
+  border-bottom: 1px solid rgba(178, 170, 222, .18);
+  background: #1c2132;
+}
+.game-cover img {
+  object-fit: cover;
+  object-position: center;
+  filter: none;
+}
+.game-cover::after {
+  background: linear-gradient(180deg, transparent 60%, rgba(9, 12, 24, .8));
+}
+.game-card-body {
+  flex: 1;
+  padding: 20px;
+  gap: 4px;
+}
+.game-title {
+  font-size: 22px;
+}
+.game-description {
+  min-height: 54px;
+  margin: 8px 0 14px;
+  font-size: 12px;
+  color: #bdc3d4;
+}
+.game-card-footer {
+  gap: 8px;
+}
+.room-state {
+  font-size: 10px;
+}
+.selected-room {
+  font-size: 10px;
+  color: #a6adbf;
+}
+.game-enter {
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+.login-stage {
+  border-radius: 14px;
+  background: transparent;
+}
+.login-backdrop {
+  display: block;
+}
+.login-backdrop img {
+  filter: none;
+  object-fit: cover;
+}
+.login-stage::after {
+  background: rgba(9, 12, 24, .2);
+}
+.login-card {
+  border-radius: 12px;
+  background: rgba(13, 18, 34, .9);
+}
+.authority-page .panel {
+  background: rgba(13, 21, 29, .94);
+}
+@media (max-width: 1050px) {
+  .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  body::before { background-position: center top; }
+  .lobby-library { width: calc(100% - 28px); }
+  .lobby-heading { padding: 20px; }
+  .game-grid { gap: 16px; }
+  .game-card-body { padding: 16px; }
+  .game-title { font-size: 19px; }
+  .segmented button { padding: 8px 10px; }
+}
+@media (max-width: 540px) {
+  .game-grid { grid-template-columns: 1fr; }
+}

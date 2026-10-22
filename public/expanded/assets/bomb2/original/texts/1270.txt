@@ -1,0 +1,3 @@
+Recolher 
+--- RECORDSEPARATOR ---
+10 moedas

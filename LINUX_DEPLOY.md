@@ -1,8 +1,8 @@
 # ArcadeOnline Linux 部署
 
-本次部署目标：**Ubuntu 24.04 LTS，仅公网 IPv4，无需域名**。不依赖 Docker、数据库或 Redis。建议至少 1 核 1GB 内存，实际承载量仍需公网压测。游戏逻辑在浏览器运行，Linux 提供网页、房间信令、备用状态中继和 TURN。
+部署支持带 systemd 的 Linux；当前现场为 **Ubuntu 26.04.1 LTS，仅公网 IPv4，无需域名**。不依赖 Docker、数据库或 Redis。Node.js 运行八款游戏的服务器模拟，浏览器发送输入并绘制确认状态，通过 WSS 联机。建议至少 1 核 1GB 内存，实际承载量仍需实机压测。
 
-2026-10-14 实际部署：`https://223.109.141.251/`，服务器报告 Ubuntu 26.04.1 LTS，应用监听 `127.0.0.1:18088`（8000 已有其他服务）。IP 证书签发、可信 HTTPS、WSS 入房及浏览器经 WSS 的游戏输入同步已通过；TURN 外部 TCP/UDP 3478 超时，待云安全组放行后复测。现场记录见 `DEPLOYMENT_STATUS.md`，下文尚待验收的描述为通用检查要求。
+实际部署：`https://223.109.141.251/`，应用监听 `127.0.0.1:18088`（8000 已有其他服务）。可信 HTTPS、WSS 入房和服务器状态同步已通过；现场版本、校验与证据见 `DEPLOYMENT_STATUS.md`。当前服务器游戏不依赖 TURN，下方 TURN 配置保留供旧 WebRTC 部署追溯，未验收的 TURN 端口不阻塞当前 WSS 游戏。
 
 仅 IP 且经过 NAT 时，部署会在 Caddy 全局选项中设置 `default_sni` 为公网 IP，以便未发送 SNI 的浏览器选择正确证书；若已有其他站点的不同 `default_sni`，安装会停止并恢复配置，要求人工整合。依据：[Caddy 全局 default_sni](https://caddyserver.com/docs/caddyfile/options#default-sni)。
 
@@ -14,7 +14,7 @@
 npm run package:linux
 ```
 
-生成 `artifacts/releases/arcade-online-linux.tar.gz` 和同名 `.sha256` 校验文件。包内含构建好的页面、原游戏资源、部署脚本和校验清单，不含依赖目录、密钥、`.env` 或反编译中间文件。当前压缩包约 19MB；修改代码后重新打包。
+生成 `artifacts/releases/arcade-online-linux.tar.gz` 和同名 `.sha256` 校验文件。包内含统一联机页面、生产模拟包、所需精选素材、部署脚本和校验清单；不含旧 native 网页、原串流、games/libs、依赖目录、密钥、`.env` 或反编译中间文件。修改代码或素材后重新打包，实际体积以打包输出为准。
 
 把这两个文件上传到服务器（例如使用 `scp`），然后执行：
 
@@ -33,9 +33,9 @@ sudo env PUBLIC_IP=203.0.113.10 bash deploy/public-linux.sh
 | 用途 | 入站端口 |
 | --- | --- |
 | HTTP 证书验证与 HTTPS 跳转 | TCP 80 |
-| 网站、WSS 信令及备用中继 | TCP 443 |
-| TURN 连接 | UDP 3478、TCP 3478 |
-| TURN 数据转发 | UDP 49160–49260 |
+| 网站及当前 WSS 游戏输入/快照 | TCP 443 |
+| 旧 WebRTC 的 TURN 连接（当前游戏不使用） | UDP 3478、TCP 3478 |
+| 旧 WebRTC 的 TURN 数据转发 | UDP 49160–49260 |
 | SSH 运维 | 保留你当前实际使用的 SSH 端口 |
 
 公网安装完成后，Node 只监听 `127.0.0.1:8000`，不需要开放 8000。脚本不会改防火墙。若主机已经启用 UFW，可添加规则：

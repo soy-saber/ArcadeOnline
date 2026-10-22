@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:ffdec="https://www.free-decompiler.com/flash" xmlns:xlink="http://www.w3.org/1999/xlink" ffdec:objectType="shape" height="387.7px" width="572.55px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, -13.7, -9.75)">
+    <path d="M351.25 225.1 L336.2 241.35 218.4 241.35 218.4 210.1 336.2 210.1 351.25 225.1" fill="#ff4d95" fill-rule="evenodd" stroke="none"/>
+    <path d="M17.3 9.75 L586.25 9.75 586.25 397.45 17.3 397.45 17.3 9.75" fill="#dff4f4" fill-rule="evenodd" stroke="none"/>
+    <path d="M153.55 234.7 L22.45 234.7 22.45 203.45 153.55 203.45 153.55 234.7" fill="#91d3ff" fill-rule="evenodd" stroke="none"/>
+    <path d="M153.55 234.7 L22.45 234.7 22.45 203.45 153.55 203.45 153.55 234.7 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0"/>
+    <path d="M150.05 353.95 L150.05 385.2 22.3 385.2 22.3 353.95 150.05 353.95" fill="#91d3ff" fill-rule="evenodd" stroke="none"/>
+    <path d="M150.05 353.95 L150.05 385.2 22.3 385.2 22.3 353.95 150.05 353.95 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0"/>
+    <path d="M153.05 272.3 L22.3 272.3 22.3 241.05 153.05 241.05 153.05 272.3" fill="#91d3ff" fill-rule="evenodd" stroke="none"/>
+    <path d="M153.05 272.3 L22.3 272.3 22.3 241.05 153.05 241.05 153.05 272.3 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0"/>
+    <path d="M22.25 278.65 L151.8 278.65 152.35 294.0 151.8 309.9 22.25 309.9 22.25 278.65" fill="#91d3ff" fill-rule="evenodd" stroke="none"/>
+    <path d="M22.25 278.65 L151.8 278.65 152.35 294.0 151.8 309.9 22.25 309.9 22.25 278.65 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0"/>
+    <path d="M22.1 316.25 L150.85 316.25 150.85 347.5 22.1 347.5 22.1 316.25" fill="#91d3ff" fill-rule="evenodd" stroke="none"/>
+    <path d="M22.1 316.25 L150.85 316.25 150.85 347.5 22.1 347.5 22.1 316.25 Z" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0"/>
+    <path d="M582.75 202.15 L13.7 202.15 13.7 55.9 582.75 55.9 582.75 202.15" fill="#ffffff" fill-rule="evenodd" stroke="none"/>
+  </g>
+</svg>

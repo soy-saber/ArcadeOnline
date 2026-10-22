@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node smoke_test.js",
+    "test": "node --test tests/authority-*.test.cjs tests/original-maps.test.cjs tests/expanded-*.test.cjs",
     "test:bomb-p2": "node bomb_p2_e2e.js",
     "test:stream": "node stream_stability_test.js",
     "build:native": "node scripts/build-native.cjs",
@@ -13,6 +13,13 @@
     "test:badminton:e2e": "node scripts/build-native.cjs && node tests/badminton-e2e.cjs",
     "test:native:e2e": "node tests/native-e2e.cjs",
     "test:deploy": "node --test tests/deploy.test.cjs",
+    "test:authority": "node --test tests/authority-protocol.test.cjs tests/authority-engine.test.cjs tests/authority-relay.test.cjs tests/authority-presentation.test.cjs tests/authority-records.test.cjs tests/authority-mechanics.test.cjs tests/original-maps.test.cjs",
+    "test:authority:e2e": "node tests/authority-e2e.cjs",
+    "test:authority:weapons:e2e": "node tests/authority-weapons-e2e.cjs",
+    "test:expanded": "node --test tests/expanded-*.test.cjs",
+    "test:expanded:e2e": "node tests/expanded-e2e.cjs",
+    "test:expanded:kill:e2e": "node scripts/build-native.cjs && node tests/expanded-kill-e2e.cjs",
+    "test:lobby:e2e": "node tests/lobby-e2e.cjs",
     "package:linux": "node scripts/package-linux.cjs",
     "check:public": "node scripts/check-public.cjs"
   },

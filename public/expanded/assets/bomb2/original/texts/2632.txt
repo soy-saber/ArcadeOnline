@@ -1,0 +1,3 @@
+Anda ingin nilai lebih tinggi? 
+--- RECORDSEPARATOR ---
+Pilih diantara 20 level dan mainkan permainannya di mode Normal atau Sukar!

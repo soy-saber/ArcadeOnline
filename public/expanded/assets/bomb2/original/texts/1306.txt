@@ -1,0 +1,3 @@
+Kleur 
+--- RECORDSEPARATOR ---
+50 tegels

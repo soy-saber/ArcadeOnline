@@ -117,7 +117,8 @@ publish_release() {
   install -d -m 0755 "$release"
   log "发布应用文件到 $release。"
   cp -a "$ROOT_DIR/package.json" "$ROOT_DIR/package-lock.json" "$ROOT_DIR/server.js" "$release/"
-  cp -a "$ROOT_DIR/public" "$ROOT_DIR/games" "$ROOT_DIR/libs" "$release/"
+  cp -a "$ROOT_DIR/public" "$release/"
+  cp -a "$ROOT_DIR/runtime" "$release/"
   "$NODE_BIN" "$ROOT_DIR/scripts/verify-native-build.cjs"
   if [[ -f "$ROOT_DIR/release-manifest.json" ]]; then "$NODE_BIN" "$ROOT_DIR/scripts/verify-release.cjs" "$ROOT_DIR"; fi
   env PATH="$BASE_DIR/node/bin:$PATH" "$NPM_BIN" ci --omit=dev --ignore-scripts --prefix "$release"

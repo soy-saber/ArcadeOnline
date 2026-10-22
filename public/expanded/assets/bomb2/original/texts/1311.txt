@@ -1,0 +1,3 @@
+Pinte 
+--- RECORDSEPARATOR ---
+50 mosaicos

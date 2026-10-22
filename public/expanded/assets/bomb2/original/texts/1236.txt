@@ -1,0 +1,5 @@
+Zabij 
+--- RECORDSEPARATOR ---
+wszystkich 
+--- RECORDSEPARATOR ---
+wrogów

@@ -1,6 +1,6 @@
 import { GameState, GROUND, HEIGHT, WIDTH } from "./core";
 
-const ASSET_ROOT = "/native/assets/badminton/";
+const ASSET_ROOT = "/authority/assets/badminton/";
 type ImageKey = "court" | "birdie" | "p1-body" | "p1-body-alt" | "p2-body" | "p2-head" | `${"p1" | "p2"}-${"swing" | "serve"}-${string}` | `p1-underhand-${string}`;
 
 export class BadmintonView {

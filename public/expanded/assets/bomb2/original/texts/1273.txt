@@ -1,0 +1,3 @@
+Samla 
+--- RECORDSEPARATOR ---
+10 mynt

@@ -1,0 +1,3 @@
+Verzamel 
+--- RECORDSEPARATOR ---
+10 munten

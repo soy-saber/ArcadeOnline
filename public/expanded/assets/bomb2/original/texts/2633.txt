@@ -1,0 +1,5 @@
+Adakah anda inginkan skor yang tertinggi? 
+--- RECORDSEPARATOR ---
+Pilih antara 20 tahap dan main permainan tersebut dalam mod Normal 
+--- RECORDSEPARATOR ---
+atau Sukar!

@@ -1,0 +1,35 @@
+# 疯狂小斗士与森林冰火人：服务器版重建记录
+
+这两个入口使用原生 TypeScript 模拟和 Canvas 渲染，比赛状态由 Node.js 服务器计算。客户端只发送输入和接收状态。`6232-server` 支持 2–4 名真人，`fbw_forest-server` 要求 2 名真人；等待房间不会添加电脑玩家。座位采用平台的 1 起始编号，输入、确认序号和失效动作计数保存在快照中，断线后不会重复执行旧攻击或跳跃。
+
+## 原始证据与导入
+
+疯狂小斗士的输入为 `games/6232/game.swf`，SHA-256 为 `c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77`。本次使用已存在的 JPEXS FFDec 26.4.0 导出 ActionScript、符号列表、SWF XML 与精灵 PNG，没有运行 SWF。`artifacts/brawler-original/scripts/__Packages/Fighter.as` 显示跑速为 `8 * Speed`、初次/二段跳速为 `-9`、重力为 `0.5`、损伤百分比影响击飞强度；`DefaultPlayer.as` 显示普通攻击 5 点和上击/空中攻击 10 点；`frame_51/DoAction.as` 给出四个场景的死亡边界。地图导入从 SWF `Fixed*` / `Moving*` 碰撞实例与 `SpawnH*` 出生实例的矩阵和形状边界生成，包含 Rooftop、Mogadishu、B52、Space。
+
+`scripts/import-expanded-brawler.cjs` 可重做 FFDec 导出，随后调用 `scripts/import-expanded-brawler.py` 生成数据并裁剪精灵透明边缘；需要 Java、仓库中现有 FFDec，以及 Python/Pillow。六个人类角色的四个原始姿态已导入，服务器按座位分配前四种角色并使用各自原始速度、重量参数。四个场景与背景图均复用原始美术。
+
+冰火人的原始资料位于 `games/fbw_forest`。`js/init.js` 含完整的打包游戏代码和 Phaser/Box2D；`js/lib.js` 主要是引擎，`js/main.js` 是 Windows 应用外壳。原始 `States/Level/character` 常量给出每米 32 像素、跑速上限 8.5 米/秒、跳速 15.5 米/秒、重力 1000 像素/秒²。同一模块明确规定水(type 5)杀死火人、熔岩(type 6)杀死水人、绿水(type 7)杀死两人。`States/Level/Level.checkEndGame` 规定双方进入各自门即可通关，宝石用于成绩，而不是强制开门条件。
+
+`scripts/import-expanded-forest.cjs` 按每張图自身的 `firstgid` 与 Ground/Chars/Objects/LargeObjects tileset 属性解析全部 32 张 Tiled 原图：教学 `forest_01` 和 `forest_02`–`forest_32`，每图 39×29 格、格宽 32 像素。每张原图的 SHA-256 留在生成数据中。导入没有根据全局 gid 猜测物体，后续地图的 tileset 排列不同。四张原始精灵图集、森林大厅背景、角色、门、宝石、箱子、平台和机关均来自该目录。
+
+REA MCP 在本会话未注册，使用 `npx rea-agents@latest` CLI 进行了只读诊断和明确选择 `js/init.js` 的静态分析。分析 60 秒超时，保留的部分证据 ID 是 `ev_5a149b380c3ab16baaf40b4078a1dd12310b98f8c9bdb24a0bf91ba99bc86464`，完整回执保存于 `artifacts/forest-rea-evidence.json`，摘要于 `artifacts/forest-rea-summary.json`。该证据提供包身份与部分静态语法观察，不能宣称完整 REA 行为覆盖。上面的游戏机制结论来自明确标注的 FFDec 导出和原始 JavaScript/JSON 静态读取；没有把静态分析说成原作运行观察。
+
+## 已实现的服务器玩法
+
+- 小斗士：三个生命、损伤百分比、方向攻击、上击、特技范围攻击、二段跳、盾与盾耗尽、击飞/硬直、出界归因和复活无敌、每次掉命的死亡计数、手雷/地雷拾取投掷、种子决定道具生成、最终生命与五分钟比赛结算。
+- 冰火人：32 张可选原始关卡、地形斜坡、角色元素、同色/公共宝石、各自出口、失败/成功结算、按钮与拉杆组内 OR 控制、平移和旋转平台、平台承载、推动箱子/滚动物体、风向和输入反相、吊台、保持绳长的双端滑轮。适配器也支持传送门、镜面光束与冻结液体等原始图集/tileset 类型，但当前森林 32 张图的导入机关没有使用这些类型。
+- 两者：服务器动作计数消费、稀疏座位输入路由、无 DOM 的创建/模拟、JSON 快照可重放、客户端延迟创建 Image、游戏身份和状态结构校验。
+
+## 边界与未验证内容
+
+全部 32 张地图已导入并能创建、模拟和渲染，不代表 32 张图都已由真人完整通关。测试覆盖每张图初始化和 120 个静止模拟步，以及代表性机关/元素条件；全关卡实际路线和难度仍需逐关体验。
+
+冰火人没有移植原始 Box2D 求解器，采用固定步长碰撞、斜坡探测和平台状态模拟。旋转平台使用矩形旋转碰撞，但人物、球、箱子以矩形边界模拟；吊台/滑轮/罗马杠杆的力矩、绳约束、承重和斜坡滚动是近似，不是原始刚体逐帧等价。物理精度可能影响复杂关卡的路线。没有复制原作评分星级、进度树、广告、Windows 接口或完整音频播放。
+
+小斗士使用原始实例的轴对齐边界恢复碰撞台，斜面和不规则边缘没有完整矢量碰撞。`Moving*` 在原作也用于可从下方穿越的平台标记，本次保留薄台穿越规则，没有重建场景时间轴里的直升机/其他动态场景交互。攻击动画时机、各角色专属远程武器、抓投、多种原版模式和全部特技没有逐项复刻；当前为真人混战玩法重建，原始敌人、菜单和练习流程没有加入比赛。
+
+## 验证
+
+`node --test tests/expanded-forest.test.cjs tests/expanded-brawler.test.cjs`：18 个测试通过。包括全部 32 图的实体/出口结构、元素安全/死亡、同色收集、可选宝石通关、按钮复位、旋转台角度、风向、确定性重放、重复动作、稀疏座位、失效输入消费、二段跳、护盾和逐生命出界结算。
+
+两模块单独的严格 TypeScript 检查通过。`node scripts/import-expanded-forest-preview.cjs` 使用本机 Chrome 渲染森林第 1/14 关及 Rooftop/Space，四张截图成功且没有缺失资源或页面错误；截图位于 `artifacts/*-preview.png`。该探针是新适配器的渲染验证，不是原作运行证据。实际双浏览器房间同步、大厅集成、续局、重连和发布校验由共用服务器平台的验证覆盖，应结合其结果评估最终入口。

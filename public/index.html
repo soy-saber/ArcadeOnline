@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0a0f10">
 <title>ArcadeOnline - 童年游戏联机平台</title>
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/theme.css">
+<link rel="preload" as="image" href="/assets/yuuka-kurisu-background.webp">
 </head>
 <body class="lobby-page">
 <header class="topbar">
@@ -18,10 +20,6 @@
 
 <main class="lobby-shell">
   <section class="login-stage" id="login-card">
-    <div class="login-backdrop" aria-hidden="true">
-      <img src="/assets/game-46923.png" alt="">
-      <img src="/assets/game-3881.png" alt="">
-    </div>
     <div class="login-card">
       <span class="login-kicker">漫游者名册</span>
       <h1>留下你的名字</h1>
@@ -37,7 +35,7 @@
       <div>
         <span class="section-kicker">游戏藏馆</span>
         <h1>今晚玩什么？</h1>
-        <p class="library-summary"><span id="game-total">0</span> 款典藏 · 双人实时联机</p>
+        <p class="library-summary"><span id="game-total">0</span> 款经典 · 和好友一起玩</p>
       </div>
       <div class="profile-line">
         <span class="profile-avatar" id="profile-avatar" aria-hidden="true"></span>
@@ -51,6 +49,8 @@
         <button type="button" class="active" data-filter="all">全部</button>
         <button type="button" data-filter="sports">体育竞技</button>
         <button type="button" data-filter="party">休闲对战</button>
+        <button type="button" data-filter="action">动作射击</button>
+        <button type="button" data-filter="adventure">合作冒险</button>
       </div>
       <label class="compact-field search-field">
         <span>搜索</span>
@@ -108,8 +108,8 @@
         return response.json();
       })
       .then((games) => {
-        allGames = games;
-        document.getElementById("game-total").textContent = String(games.length);
+        allGames = games.filter((game) => game.runtime === "server");
+        document.getElementById("game-total").textContent = String(allGames.length);
         renderRecent();
         renderGames();
       })
@@ -122,7 +122,7 @@
   }
 
   function gameHref(game) {
-    return (game.runtime === "native" ? (game.id === "46923-native" ? "/badminton-room.html" : "/native-room.html") : "/room.html") + "?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
+      return "/authority-room.html?game=" + encodeURIComponent(game.id) + "&room=" + encodeURIComponent(normalizedRoom(game));
   }
 
   function make(tag, className, text) {
@@ -153,10 +153,11 @@
       image.src = game.cover || "/assets/game-" + encodeURIComponent(game.id) + ".png";
       image.alt = game.title + "游戏画面";
       image.loading = "lazy";
+      image.decoding = "async";
       coverLink.appendChild(image);
       const coverMeta = make("div", "cover-meta");
-      coverMeta.append(make("span", "source-tag", "典藏自 " + game.source));
-      coverMeta.append(make("span", "players-tag", game.seats.length + " 人联机"));
+      coverMeta.append(make("span", "source-tag", "经典游戏"));
+      coverMeta.append(make("span", "players-tag", game.seats.length === 2 ? "2 人联机" : "2–" + game.seats.length + " 人联机"));
       coverLink.appendChild(coverMeta);
 
       const body = make("div", "game-card-body");
@@ -165,14 +166,6 @@
       eyebrow.append(make("span", "room-state", "可开局"));
       const title = make("h2", "game-title", game.title);
       const description = make("p", "game-description", game.description || "童年经典双人游戏");
-
-      const seatHints = make("div", "seat-hints");
-      for (const seat of game.seats) {
-        const row = make("div");
-        row.append(make("b", "", seat.label));
-        row.append(make("span", "", seat.hint));
-        seatHints.appendChild(row);
-      }
 
       const footer = make("div", "game-card-footer");
       const roomLabel = make("span", "selected-room", "房间：" + normalizedRoom(game));
@@ -183,7 +176,7 @@
         localStorage.setItem("arcade_recent_game", game.id);
       });
       footer.append(roomLabel, enter);
-      body.append(eyebrow, title, description, seatHints, footer);
+      body.append(eyebrow, title, description, footer);
       article.append(coverLink, body);
       grid.appendChild(article);
     }

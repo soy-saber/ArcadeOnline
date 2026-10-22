@@ -1,0 +1,3 @@
+Coge 
+--- RECORDSEPARATOR ---
+10 monedas

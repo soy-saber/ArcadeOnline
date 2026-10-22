@@ -3,3 +3,5 @@
 *.cjs text eol=lf
 *.js text eol=lf
 *.json text eol=lf
+# Original exported strings retain their authored spacing and line endings.
+public/expanded/assets/**/original/texts/*.txt -whitespace

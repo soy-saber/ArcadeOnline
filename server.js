@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { WebSocketServer } = require("ws");
+const { AuthorityEngine } = require("./runtime/authority.cjs");
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 8000;
@@ -36,6 +37,7 @@ const MIME = {
   ".swf": "application/x-shockwave-flash",
   ".wasm": "application/wasm",
   ".png": "image/png",
+  ".webp": "image/webp",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".gif": "image/gif",
@@ -50,8 +52,10 @@ const MIME = {
   ".ttf": "font/ttf"
 };
 
-const games = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "games.json"), "utf8"));
+const games = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "games.json"), "utf8")).filter(game => game.runtime === "server");
 const nativeGames = new Set(games.filter((game) => game.runtime === "native").map((game) => game.id));
+const authorityGames = new Set(games.filter((game) => game.runtime === "server").map((game) => game.id));
+const authority = new AuthorityEngine((room) => pushState(room));
 const gameMap = new Map();
 for (const g of games) {
   const keyMap = {};
@@ -69,12 +73,13 @@ function getRoom(gameId, roomName) {
       key,
       gameId,
       name: roomName,
-      seats: { 1: null, 2: null, ...(gameId === "3881-native" ? { 3: null, 4: null } : {}) },
+      seats: Object.fromEntries(Object.keys(gameMap.get(gameId) || { 1: [], 2: [] }).map((seat) => [seat, null])),
       mouseOwner: null,
       hostId: null,
       members: new Map()
     };
     rooms.set(key, room);
+    if (authorityGames.has(gameId)) authority.onRoom(room);
   } else if (room._cleanup) {
     clearTimeout(room._cleanup);
     room._cleanup = null;
@@ -93,6 +98,7 @@ function scheduleRoomCleanup(room) {
 
 // 房主离开后自动转移：优先座位玩家，否则最早加入的成员
 function transferHost(room) {
+  if (authorityGames.has(room.gameId)) return;
   let next = null;
   for (const s of [1, 2]) {
     if (room.seats[s] != null) {
@@ -215,7 +221,8 @@ function seatState(room) {
     seats: { ...room.seats },
     mouseOwner: room.hostId,
     mouseOwnerName,
-    hostId: room.hostId
+    hostId: room.hostId,
+    ...(authorityGames.has(room.gameId) ? { controllerId: room.controllerId, auth: authority.info(room) } : {})
   };
 }
 
@@ -224,7 +231,9 @@ function resetStreamTransports(room) {
 }
 
 function pushState(room) {
+  if (authorityGames.has(room.gameId)) authority.onRoom(room);
   broadcast(room, seatState(room));
+  if (authorityGames.has(room.gameId)) authority.publish(room);
 }
 
 function clearNativeReady(room) {
@@ -319,6 +328,16 @@ const server = http.createServer((req, res) => {
     res.end(MOCHIBOT_SWF);
     return;
   }
+  const legacyPage = urlPath.replace(/^\/public(?=\/)/, "");
+  if (["/room.html", "/native-room.html", "/badminton-room.html"].includes(legacyPage)) {
+    const old = new URL(req.url, "http://localhost"), id = old.searchParams.get("game") || (legacyPage === "/badminton-room.html" ? "46923" : "3881");
+    const replacement = games.find(game => game.id === id || game.id === id.replace(/-native$/, "") + "-server");
+    const target = replacement ? "/authority-room.html?" + new URLSearchParams({ game: replacement.id, room: (old.searchParams.get("room") || "lobby").slice(0,20) }) : "/";
+    res.writeHead(302, { Location: target, "Cache-Control": "no-store" });res.end();return;
+  }
+  if (/^\/(?:public\/)?(?:native(?:\/|$)|games(?:\/|$)|libs(?:\/|$)|room\.js$|sw\.js$)/.test(urlPath)) {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });res.end("404 not found");return;
+  }
   if (urlPath === "/") urlPath = "/public/index.html";
   if (urlPath === "/games.json") urlPath = "/public/games.json";
   let filePath = path.normalize(path.join(ROOT, urlPath));
@@ -367,7 +386,7 @@ wss.on("connection", (ws) => {
   ws.on("message", (raw, isBinary) => {
     if (isBinary) {
       // 游戏画面帧：仅房主可发，转发给房间里其他所有成员
-      if (member && member.ws === ws && member.room.hostId === member.id) {
+      if (member && member.ws === ws && !authorityGames.has(member.room.gameId) && member.room.hostId === member.id) {
         broadcastRaw(member.room, raw, member.id);
       }
       return;
@@ -438,7 +457,8 @@ wss.on("connection", (ws) => {
           };
           room.members.set(memberId, member);
         }
-        if (room.hostId == null) {
+        if (authorityGames.has(room.gameId)) authority.reconnect(room, member);
+        if (room.hostId == null && !authorityGames.has(room.gameId)) {
           room.hostId = member.id;
           broadcast(room, { t: "sys", name: member.name, action: "host" });
         }
@@ -457,6 +477,7 @@ wss.on("connection", (ws) => {
       case "becomeHost": {
         if (!member) return;
         const room = member.room;
+        if (authorityGames.has(room.gameId)) return;
         if (room.hostId != null) {
           sendTo(ws, { t: "err", msg: "房间已有房主" });
           return;
@@ -475,7 +496,7 @@ wss.on("connection", (ws) => {
         if (!member) return;
         const seat = msg.seat;
         const room = member.room;
-        if (![1, 2].includes(seat) && !(room.gameId === "3881-native" && [3, 4].includes(seat))) return;
+        if (!Number.isInteger(seat) || !Object.prototype.hasOwnProperty.call(room.seats, seat)) return;
         if (member.seat === seat) return;
         if (room.seats[seat] != null) {
           sendTo(ws, { t: "err", msg: "该座位已被占" });
@@ -484,6 +505,7 @@ wss.on("connection", (ws) => {
         if (member.seat != null) releaseSeat(room, member.id, false);
         room.seats[seat] = member.id;
         member.seat = seat;
+        member.ready = false;
         clearNativeReady(room);
         broadcast(room, { t: "sys", name: member.name, action: "sit", seat });
         pushState(room);
@@ -508,7 +530,7 @@ wss.on("connection", (ws) => {
       }
 
       case "ready": {
-        if (!member || !nativeGames.has(member.room.gameId) || member.seat == null || typeof msg.ready !== "boolean") return;
+        if (!member || (!nativeGames.has(member.room.gameId) && !authorityGames.has(member.room.gameId)) || member.seat == null || typeof msg.ready !== "boolean") return;
         member.ready = msg.ready;
         pushState(member.room);
         break;
@@ -541,6 +563,7 @@ wss.on("connection", (ws) => {
       case "signal": {
         if (!member || typeof msg.to !== "string") return;
         const room = member.room;
+        if (authorityGames.has(room.gameId)) return;
         const target = room.members.get(msg.to);
         if (!target || target.id === member.id) return;
         if (member.id !== room.hostId && target.id !== room.hostId) return;
@@ -574,6 +597,27 @@ wss.on("connection", (ws) => {
         } else if (data.type !== "ping" && data.type !== "pong") return;
         if (!target.ws || target.ws.bufferedAmount > 128 * 1024) return;
         sendTo(target.ws, { t: "native", from: member.id, data });
+        break;
+      }
+
+      case "authInput": {
+        if (member && authorityGames.has(member.room.gameId)) authority.input(member.room, member, msg);
+        break;
+      }
+      case "authAck": {
+        if (member && authorityGames.has(member.room.gameId)) authority.ack(member.room, member, msg);
+        break;
+      }
+      case "authResync": {
+        if (member && authorityGames.has(member.room.gameId)) authority.resync(member.room, member);
+        break;
+      }
+      case "authPing": {
+        if (member && authorityGames.has(member.room.gameId) && Number.isFinite(msg.at)) sendTo(ws, { t: "authPong", at: msg.at, serverTime: Date.now() });
+        break;
+      }
+      case "authOptions": {
+        if (member && authorityGames.has(member.room.gameId) && authority.options(member.room, member, msg)) pushState(member.room);
         break;
       }
 
@@ -645,6 +689,11 @@ setInterval(() => {
     }
   }
 }, 30000).unref();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const room of rooms.values()) if (authorityGames.has(room.gameId)) authority.pump(room, now);
+}, 10).unref();
 
 server.listen(PORT, HOST, () => {
   console.log("ArcadeOnline server: http://localhost:" + PORT);

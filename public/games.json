@@ -1,104 +1,675 @@
 [
   {
-    "id": "46923",
-    "title": "火柴人打羽毛球",
-    "genre": "体育竞技",
-    "category": "sports",
-    "description": "轻快直接的双人球场对决，把每一次起跳和扣杀都交给默契。",
-    "source": "4399",
-    "swf": "/games/46923/game.swf",
-    "width": 550,
-    "height": 400,
-    "room": "lobby",
-    "seats": [
-      {
-        "seat": 1,
-        "label": "P1",
-        "hint": "W/A/S/D",
-        "keys": ["KeyA", "KeyD", "KeyW", "KeyS"]
-      },
-      {
-        "seat": 2,
-        "label": "P2",
-        "hint": "W/A/S/D",
-        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"],
-        "map": {
-          "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },
-          "KeyA": { "code": "ArrowLeft", "key": "ArrowLeft", "keyCode": 37 },
-          "KeyS": { "code": "ArrowDown", "key": "ArrowDown", "keyCode": 40 },
-          "KeyD": { "code": "ArrowRight", "key": "ArrowRight", "keyCode": 39 }
-        }
-      }
-    ]
-  },
-  {
-    "id": "3881",
+    "id": "3881-server",
     "title": "Q版泡泡堂",
     "genre": "休闲对战",
     "category": "party",
-    "description": "在紧凑地图里布置泡泡、抢占路线，和朋友来一局经典攻防。",
-    "source": "4399",
-    "swf": "/games/3881/game.swf",
-    "width": 550,
-    "height": 400,
-    "room": "lobby",
-    "seats": [
-      {
-        "seat": 1,
-        "label": "P1",
-        "hint": "W/A/S/D + 空格",
-        "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"]
-      },
-      {
-        "seat": 2,
-        "label": "P2",
-        "hint": "W/A/S/D 移动 + 回车（Enter）",
-        "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"],
-        "map": {
-          "KeyW": { "code": "ArrowUp", "key": "ArrowUp", "keyCode": 38 },
-          "KeyA": { "code": "ArrowLeft", "key": "ArrowLeft", "keyCode": 37 },
-          "KeyS": { "code": "ArrowDown", "key": "ArrowDown", "keyCode": 40 },
-          "KeyD": { "code": "ArrowRight", "key": "ArrowRight", "keyCode": 39 },
-          "Space": { "code": "Enter", "key": "Enter", "keyCode": 13 },
-          "Enter": { "code": "Enter", "key": "Enter", "keyCode": 13 }
-        }
-      }
-    ]
-  },
-  {
-    "id": "46923-native",
-    "title": "火柴人打羽毛球 · 双人联机版",
-    "genre": "双人联机",
-    "category": "sports",
-    "description": "两人实时对打，双方准备后开局；移动、跳跃、挥拍，先得 7 分获胜。",
+    "description": "放下炸弹、收集道具，在五种经典场景里和好友一决胜负。",
     "source": "经典重建",
-    "runtime": "native",
-    "cover": "/assets/game-46923.png",
-    "width": 550,
-    "height": 400,
-    "room": "lobby",
-    "seats": [
-      { "seat": 1, "label": "P1", "hint": "A/D 移动 · W 跳跃 · S 挥拍", "keys": ["KeyA", "KeyD", "KeyW", "KeyS"] },
-      { "seat": 2, "label": "P2", "hint": "←/→ 移动 · ↑ 跳跃 · ↓ 挥拍", "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"] }
-    ]
-  },
-  {
-    "id": "3881-native",
-    "title": "泡泡堂 · 对等联机版",
-    "genre": "多人联机",
-    "category": "party",
-    "description": "2～4 名好友实时联机，全部准备后开局，放炸弹、抢道具，争夺最后胜利。",
-    "source": "经典重建",
-    "runtime": "native",
-    "cover": "/assets/game-3881.png",
+    "runtime": "server",
+    "cover": "/assets/game-3881.webp",
     "width": 716,
     "height": 666,
     "room": "lobby",
     "seats": [
-      { "seat": 1, "label": "P1", "hint": "WASD / 方向键 + 空格", "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"] },
-      { "seat": 2, "label": "P2", "hint": "WASD / 方向键 + 空格", "keys": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter"] },
-      { "seat": 3, "label": "P3", "hint": "WASD / 方向键 + 空格", "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"] },
-      { "seat": 4, "label": "P4", "hint": "WASD / 方向键 + 空格", "keys": ["KeyA", "KeyD", "KeyW", "KeyS", "Space"] }
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "WASD / 方向键 + 空格",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "Space"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "WASD / 方向键 + 空格",
+        "keys": [
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Enter"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "WASD / 方向键 + 空格",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "Space"
+        ]
+      },
+      {
+        "seat": 4,
+        "label": "P4",
+        "hint": "WASD / 方向键 + 空格",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "Space"
+        ]
+      }
     ]
+  },
+  {
+    "id": "46923-server",
+    "title": "火柴人打羽毛球",
+    "genre": "体育竞技",
+    "category": "sports",
+    "description": "发球、起跳、挥拍，来一场先得 7 分的双人羽毛球对决。",
+    "source": "经典重建",
+    "runtime": "server",
+    "cover": "/assets/game-46923.webp",
+    "width": 550,
+    "height": 400,
+    "room": "lobby",
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "A/D 移动 · W 跳跃 · S 挥拍",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "←/→ 移动 · ↑ 跳跃 · ↓ 挥拍",
+        "keys": [
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "137953-server",
+    "title": "坦克动荡2",
+    "genre": "坦克对战",
+    "category": "party",
+    "description": "穿梭迷宫、利用弹墙反弹，最多三人同场坦克对战。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 712,
+    "height": 490,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "左右 / AD 转向；上下 / WS 前进后退；空格开火；J / Shift 引爆碎片弹、控制遥控导弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "左右 / AD 转向；上下 / WS 前进后退；空格开火；J / Shift 引爆碎片弹、控制遥控导弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "左右 / AD 转向；上下 / WS 前进后退；空格开火；J / Shift 引爆碎片弹、控制遥控导弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-137953.webp"
+  },
+  {
+    "id": "50737-server",
+    "title": "僵尸危机3",
+    "genre": "合作射击",
+    "category": "action",
+    "description": "最多四人并肩迎战僵尸，解锁武器、收集补给、守住阵地。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 900,
+    "height": 650,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 4,
+        "label": "P4",
+        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-50737.webp"
+  },
+  {
+    "id": "6232-server",
+    "title": "疯狂小人战斗",
+    "genre": "动作格斗",
+    "category": "action",
+    "description": "跳跃、拾取武器、发动特技，把对手击出场外。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 1000,
+    "height": 650,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，↑+攻击 上击，↓+攻击 特技，↓ 防御/穿过薄平台。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，↑+攻击 上击，↓+攻击 特技，↓ 防御/穿过薄平台。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，↑+攻击 上击，↓+攻击 特技，↓ 防御/穿过薄平台。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 4,
+        "label": "P4",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，↑+攻击 上击，↓+攻击 特技，↓ 防御/穿过薄平台。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-6232.webp"
+  },
+  {
+    "id": "9109-server",
+    "title": "Q版泡泡堂2",
+    "genre": "休闲对战",
+    "category": "party",
+    "description": "十八张地图，生存、击杀、金币、占地四种模式，最多四人一起玩。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 600,
+    "height": 550,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "方向键 / WASD 移动；空格放炸弹；J / Shift 使用武器或引爆遥控弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "方向键 / WASD 移动；空格放炸弹；J / Shift 使用武器或引爆遥控弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "方向键 / WASD 移动；空格放炸弹；J / Shift 使用武器或引爆遥控弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 4,
+        "label": "P4",
+        "hint": "方向键 / WASD 移动；空格放炸弹；J / Shift 使用武器或引爆遥控弹",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-9109.webp"
+  },
+  {
+    "id": "97734-server",
+    "title": "混乱大枪战2",
+    "genre": "平台射击",
+    "category": "action",
+    "description": "二段跳、射击、投掷手雷，在平台竞技场中决出最后的胜者。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 900,
+    "height": 600,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "方向键 / WASD 移动，上键跳跃（可二段跳），下键穿过平台；空格 / J 射击；K / X 投掷手雷。将对手击出地图，最后存活者获胜。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "方向键 / WASD 移动，上键跳跃（可二段跳），下键穿过平台；空格 / J 射击；K / X 投掷手雷。将对手击出地图，最后存活者获胜。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 3,
+        "label": "P3",
+        "hint": "方向键 / WASD 移动，上键跳跃（可二段跳），下键穿过平台；空格 / J 射击；K / X 投掷手雷。将对手击出地图，最后存活者获胜。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 4,
+        "label": "P4",
+        "hint": "方向键 / WASD 移动，上键跳跃（可二段跳），下键穿过平台；空格 / J 射击；K / X 投掷手雷。将对手击出地图，最后存活者获胜。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-97734.webp"
+  },
+  {
+    "id": "fbw_forest-server",
+    "title": "森林冰火人",
+    "genre": "合作冒险",
+    "category": "adventure",
+    "description": "红人与蓝人互相配合，解开机关，探索森林神殿的三十二关。",
+    "source": "经典重建",
+    "runtime": "server",
+    "room": "lobby",
+    "width": 1248,
+    "height": 928,
+    "seats": [
+      {
+        "seat": 1,
+        "label": "P1",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 跳跃，J/空格 操作拉杆；红人避蓝水，蓝人避熔岩，两人避绿水。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      },
+      {
+        "seat": 2,
+        "label": "P2",
+        "hint": "A/D 或 ←/→ 移动，W/↑ 跳跃，J/空格 操作拉杆；红人避蓝水，蓝人避熔岩，两人避绿水。",
+        "keys": [
+          "KeyA",
+          "KeyD",
+          "KeyW",
+          "KeyS",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "Space",
+          "Enter",
+          "KeyE",
+          "KeyJ",
+          "KeyK",
+          "KeyX",
+          "ShiftLeft",
+          "ShiftRight"
+        ]
+      }
+    ],
+    "cover": "/assets/game-fbw_forest.webp"
   }
 ]

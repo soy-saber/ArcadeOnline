@@ -1,0 +1,80 @@
+.authority-page { background: #10272b; color: #e9f0e9; }
+.authority-page .room-shell { max-width: 1370px; margin: 0 auto; padding: 18px 24px 36px; }
+.authority-statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 16px; }
+.status-cluster, .status-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+.status-cluster span { display: flex; gap: 6px; align-items: baseline; }
+.status-cluster small, .native-note { color: #a7c0b9; }
+.status-cluster b { font-size: 12px; }
+#fullscreen-room { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; position: relative; }
+.stage-column, .room-controls { min-width: 0; }
+#native-stage { background: #10272b; border: 1px solid #375852; border-radius: 16px; overflow: hidden; position: relative; }
+.player-nameplates { position: absolute; pointer-events: none; }
+.player-nameplate { position: absolute; transform: translate(-50%, 0); max-width: 130px; padding: 2px 5px; border-radius: 4px; background: #10272be8; color: #fff; font: 600 12px/16px system-ui; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.player-nameplate.mine { color: #fff2a0; box-shadow: 0 0 0 1px #d6c77c; }
+#game-canvas { width: 100%; height: auto; display: block; outline: none; }
+.stage-caption { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: 12px; color: #c3d5ca; padding: 12px 0 4px; flex-wrap: wrap; }
+.sound-controls { display: flex; gap: 12px; align-items: center; }
+.sound-controls label { display: flex; align-items: center; gap: 5px; }
+.sound-controls input { width: 80px; accent-color: #ace5b3; }
+.weapon-status { font-size: 13px; min-height: 18px; color: #f5df9b; margin: 8px 0; }
+.seats-panel { background: #173632; border-color: #34564f; padding: 18px; }
+.seat-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding-bottom: 12px; }
+.seat-heading h2 { margin: 3px 0 0; font-size: 19px; }
+.panel-kicker { color: #a7c0b9; font-size: 10px; letter-spacing: 2px; }
+#round-status { color: #c5e8b7; font-size: 12px; text-align: right; max-width: 150px; }
+.seat-row { display: flex; gap: 10px; align-items: center; border: 1px solid #34554e; border-left: 3px solid var(--seat-color); border-radius: 9px; margin-bottom: 9px; padding: 9px; min-height: 58px; }
+.p1 { --seat-color: #f394c9; }.p2 { --seat-color: #f5d474; }.p3 { --seat-color: #85b6ee; }.p4 { --seat-color: #a9db7a; }
+.seat-index { color: var(--seat-color); font: 700 18px monospace; }
+.seat-copy { flex: 1; min-width: 0; font-size: 12px; }
+.who { font-size: 12px; color: #b5c8bd; overflow-wrap: anywhere; margin-top: 3px; }
+.seat-row.ready .who { color: #c3e6a9; }.seat-row.mine { background: #284a43; }
+.authority-page .btn { padding: 8px 13px; min-height: 36px; font-size: 12px; white-space: nowrap; }
+.authority-page button:disabled { opacity: .46; cursor: default; }
+.authority-ready { width: 100%; background: #b8e698; color: #183522; border-color: #b8e698; font-weight: 800; margin: 4px 0 3px; }
+.native-note { font-size: 12px; line-height: 1.7; margin: 9px 0; }
+.round-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.round-options label { font-size: 12px; display: grid; gap: 6px; color: #c1d0c4; }
+.round-options select { width: 100%; min-width: 0; background: #102b27; border: 1px solid #557367; border-radius: 6px; padding: 8px; color: #e9f0e9; }
+#invite-link { width: 100%; background: #102b27; color: #fff; border: 1px solid #557367; padding: 8px; }
+.touch-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 18px; user-select: none; }
+.direction-pad { display: grid; grid-template: repeat(2, 44px) / repeat(3, 48px); gap: 5px; }
+.direction-pad .up { grid-area: 1 / 2; }.direction-pad .left { grid-area: 2 / 1; }.direction-pad .down { grid-area: 2 / 2; }.direction-pad .right { grid-area: 2 / 3; }
+.touch-controls button { border: 1px solid #65896c; background: #26483e; color: #f2f6e2; border-radius: 10px; font: 700 21px system-ui; touch-action: none; cursor: pointer; }
+.touch-controls button:active { background: #527450; }.bomb-button { padding: 18px 22px; min-height: 60px; font-size: 16px !important; }
+.authority-metrics { margin-top: 22px; max-width: 480px; background: #173632; border-color: #34564f; padding: 16px; font-size: 12px; }
+.authority-metrics dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.authority-metrics dd { margin: 0; }
+.fullscreen-exit { display: none; }
+.battle-records { margin-top: 16px; padding: 16px; background: #173632; border-color: #34564f; }
+.battle-records .seat-heading h2 { font-size: 16px; }
+.battle-records .seat-heading > span { font-size: 11px; color: #a7c0b9; }
+.records-scroll { overflow-x: auto; }
+.battle-records table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.battle-records th, .battle-records td { text-align: center; padding: 9px 5px; border-bottom: 1px solid #34554e; }
+.battle-records th:first-child, .battle-records td:first-child { text-align: left; max-width: 120px; overflow-wrap: anywhere; }
+.battle-records tr.mine { background: #284a43; }
+#fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { background: #10272b; width: 100%; height: 100%; padding: 44px 18px 16px; box-sizing: border-box; overflow: auto; align-items: start; grid-template-columns: minmax(0, 1fr) 310px; gap: 18px; }
+#fullscreen-room.fullscreen-fallback { position: fixed; inset: 0; z-index: 1000; }
+#fullscreen-room:fullscreen .fullscreen-exit, #fullscreen-room.fullscreen-fallback .fullscreen-exit { display: block; position: absolute; top: 5px; right: 18px; z-index: 2; }
+#fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { width: auto; max-width: 100%; max-height: calc(100dvh - 230px); margin: auto; }
+#fullscreen-room:fullscreen #native-stage, #fullscreen-room.fullscreen-fallback #native-stage { border: 0; }
+[hidden] { display: none !important; }
+@media (min-width: 1000px) and (pointer: fine) { .touch-controls { display: none; } #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { max-height: calc(100dvh - 145px); } }
+@media (max-width: 850px) {
+  .authority-page .room-shell { padding: 12px 12px 24px; }
+  .authority-statusbar { align-items: start; gap: 8px; }.status-cluster { gap: 8px; }.status-cluster span { gap: 3px; }.status-cluster small { font-size: 10px; }
+  .status-actions { gap: 8px; flex-shrink: 0; } #my-name { display: none; }
+  #fullscreen-room { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .stage-caption { font-size: 11px; }.seats-panel { padding: 14px; }
+  #fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { grid-template-columns: minmax(0, 1fr); padding: 42px 12px 12px; gap: 12px; height: 100dvh; }
+  #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { width: 100%; max-height: 45dvh; object-fit: contain; }
+  #fullscreen-room:fullscreen .seat-row, #fullscreen-room.fullscreen-fallback .seat-row { min-height: 45px; padding: 6px; margin-bottom: 6px; }
+  #fullscreen-room:fullscreen .seats-panel, #fullscreen-room.fullscreen-fallback .seats-panel { padding: 10px; }
+}
+@media (max-width: 950px) and (orientation: landscape) {
+  #fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { grid-template-columns: minmax(0, 1fr) 260px; gap: 10px; }
+  #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { max-height: calc(100dvh - 125px); }
+  #fullscreen-room:fullscreen .stage-caption, #fullscreen-room.fullscreen-fallback .stage-caption,
+  #fullscreen-room:fullscreen .weapon-status, #fullscreen-room.fullscreen-fallback .weapon-status { display: none; }
+  #fullscreen-room:fullscreen .direction-pad, #fullscreen-room.fullscreen-fallback .direction-pad { grid-template: repeat(2, 30px) / repeat(3, 38px); }
+  #fullscreen-room:fullscreen .bomb-button, #fullscreen-room.fullscreen-fallback .bomb-button { min-height: 46px; padding: 10px 12px; }
+}

@@ -1,0 +1,649 @@
+{
+  "source": "games/3881/game.swf",
+  "sha256": "a2b4cc65115e4b6eb813962d80e91f1e65746a91f27e91d5e86fa1963ed5b54d",
+  "exporter": "JPEXS Free Flash Decompiler v.26.4.0",
+  "cellPixels": 30,
+  "brickRasterOrigin": {
+    "x": -12.85,
+    "y": -38.0
+  },
+  "palettes": [
+    {
+      "spriteId": 196,
+      "frame": 1,
+      "label": "森林系"
+    },
+    {
+      "spriteId": 196,
+      "frame": 10,
+      "label": "沙漠系"
+    },
+    {
+      "spriteId": 196,
+      "frame": 20,
+      "label": "城市系"
+    },
+    {
+      "spriteId": 196,
+      "frame": 32,
+      "label": "藏宝系"
+    },
+    {
+      "spriteId": 196,
+      "frame": 42,
+      "label": "糖果屋系"
+    },
+    {
+      "spriteId": 196,
+      "frame": 52,
+      "label": "森林系_大型"
+    },
+    {
+      "spriteId": 196,
+      "frame": 53,
+      "label": "沙漠系_大型"
+    },
+    {
+      "spriteId": 196,
+      "frame": 55,
+      "label": "城市系_大型"
+    },
+    {
+      "spriteId": 196,
+      "frame": 57,
+      "label": "藏宝系_大型"
+    },
+    {
+      "spriteId": 196,
+      "frame": 58,
+      "label": "糖果屋系_大型"
+    },
+    {
+      "spriteId": 232,
+      "frame": 1,
+      "label": "森林系"
+    },
+    {
+      "spriteId": 232,
+      "frame": 4,
+      "label": "沙漠系"
+    },
+    {
+      "spriteId": 232,
+      "frame": 6,
+      "label": "城市系"
+    },
+    {
+      "spriteId": 232,
+      "frame": 8,
+      "label": "藏宝系"
+    },
+    {
+      "spriteId": 232,
+      "frame": 11,
+      "label": "糖果屋系"
+    }
+  ],
+  "files": [
+    {
+      "name": "brick-1.png",
+      "spriteId": 196,
+      "frame": 1,
+      "width": 92,
+      "height": 101,
+      "sha256": "03901617fa462b869b0d2d5874598e3468f9a92a69c4d493db90e1f9f4200874"
+    },
+    {
+      "name": "brick-2.png",
+      "spriteId": 196,
+      "frame": 2,
+      "width": 92,
+      "height": 101,
+      "sha256": "49eab05c3a1e067137aa2e33bea50c75f1c1c0938a2ab12d336210b16833a992"
+    },
+    {
+      "name": "brick-3.png",
+      "spriteId": 196,
+      "frame": 3,
+      "width": 92,
+      "height": 101,
+      "sha256": "13daff764e8627c23eeb973756305c4514d433b27c8f15cc2f4cff04a4ce591e"
+    },
+    {
+      "name": "brick-4.png",
+      "spriteId": 196,
+      "frame": 4,
+      "width": 92,
+      "height": 101,
+      "sha256": "7fb504cf756954cc6dd8ac43a35e96b97bb5953ece3e74126e4791b4ece9471e"
+    },
+    {
+      "name": "brick-5.png",
+      "spriteId": 196,
+      "frame": 5,
+      "width": 92,
+      "height": 101,
+      "sha256": "fb65eaa76296b9ccc2530fa52bd558685870f7811e79911b2f99b45c1c31512b"
+    },
+    {
+      "name": "brick-6.png",
+      "spriteId": 196,
+      "frame": 6,
+      "width": 92,
+      "height": 101,
+      "sha256": "ed8951d98fc817e54549c7b044d7574a143711cdef1c2b0dfe2085f7444575a9"
+    },
+    {
+      "name": "brick-7.png",
+      "spriteId": 196,
+      "frame": 7,
+      "width": 92,
+      "height": 101,
+      "sha256": "f3c0e2d53d93fb21baacae182a950f7cd5227f6d923e9c1ba1dc7628b8d22cce"
+    },
+    {
+      "name": "brick-8.png",
+      "spriteId": 196,
+      "frame": 8,
+      "width": 92,
+      "height": 101,
+      "sha256": "6e9a5dc4a9e23f7cf6027c552ddb2df8affe6e67aa4ae38ce8200af6d08f8038"
+    },
+    {
+      "name": "brick-9.png",
+      "spriteId": 196,
+      "frame": 9,
+      "width": 92,
+      "height": 101,
+      "sha256": "96692a3204c576481dbb745d1bd4d9bf07e00719e4820203dd82c6ad2e58bcc1"
+    },
+    {
+      "name": "brick-10.png",
+      "spriteId": 196,
+      "frame": 10,
+      "width": 92,
+      "height": 101,
+      "sha256": "a9f76a227ded8405ec138ebb49065f3ac0e09c0f4d22f1ed2db7b9314ed78242"
+    },
+    {
+      "name": "brick-11.png",
+      "spriteId": 196,
+      "frame": 11,
+      "width": 92,
+      "height": 101,
+      "sha256": "ca0fcb0a51f3cee0ada5a72254a376e2a664dc20a60e7e512e82b287b1f87d4d"
+    },
+    {
+      "name": "brick-12.png",
+      "spriteId": 196,
+      "frame": 12,
+      "width": 92,
+      "height": 101,
+      "sha256": "c7ec1d04b00aa7a17ca9370288f48ac9410c1320107eed83c2c99a9146bb98b5"
+    },
+    {
+      "name": "brick-13.png",
+      "spriteId": 196,
+      "frame": 13,
+      "width": 92,
+      "height": 101,
+      "sha256": "cee8eca7b7e289d1438286d344cd93d9f88a80962cb1a16953bd5a4d572c9b40"
+    },
+    {
+      "name": "brick-14.png",
+      "spriteId": 196,
+      "frame": 14,
+      "width": 92,
+      "height": 101,
+      "sha256": "00d43281a532b6f5f90fbc239f5c40124c732d9e7bba54798d7f19c4ec0a9b2a"
+    },
+    {
+      "name": "brick-15.png",
+      "spriteId": 196,
+      "frame": 15,
+      "width": 92,
+      "height": 101,
+      "sha256": "2ede214a13818f52cda30f0ad61195e8b6dd9fc512026ef6aa491c04475cee3c"
+    },
+    {
+      "name": "brick-16.png",
+      "spriteId": 196,
+      "frame": 16,
+      "width": 92,
+      "height": 101,
+      "sha256": "bee2f7b5755ac6f8b4580c0f088708a0ec5bae972c2c472faab5fab4dceda15e"
+    },
+    {
+      "name": "brick-17.png",
+      "spriteId": 196,
+      "frame": 17,
+      "width": 92,
+      "height": 101,
+      "sha256": "6d9995889c6171d453864df6ec52a72a92f4242ad756eb83f4d5c2532c35dee2"
+    },
+    {
+      "name": "brick-18.png",
+      "spriteId": 196,
+      "frame": 18,
+      "width": 92,
+      "height": 101,
+      "sha256": "4e239551e1a48905fbb3cb06774688ca468bca69e1ea681307390385e3eb4c72"
+    },
+    {
+      "name": "brick-19.png",
+      "spriteId": 196,
+      "frame": 19,
+      "width": 92,
+      "height": 101,
+      "sha256": "c2fd4e76e76a08f5a4a688966b34fff829391f41a9afef87764244ad97c49f88"
+    },
+    {
+      "name": "brick-20.png",
+      "spriteId": 196,
+      "frame": 20,
+      "width": 92,
+      "height": 101,
+      "sha256": "a431d71592fc2fc439af207f299c5ba0dce16321fffa752a11a6fc16f4c9cdbf"
+    },
+    {
+      "name": "brick-21.png",
+      "spriteId": 196,
+      "frame": 21,
+      "width": 92,
+      "height": 101,
+      "sha256": "1348bc7dc3f2c33585d7611f3d508f786fa56d2ed61ab326d76c888bc927e457"
+    },
+    {
+      "name": "brick-22.png",
+      "spriteId": 196,
+      "frame": 22,
+      "width": 92,
+      "height": 101,
+      "sha256": "9860e3dfc38b12448e3cc2e1cdb3b99b9d481298017c4a5ca17a4f3e2ee41f65"
+    },
+    {
+      "name": "brick-23.png",
+      "spriteId": 196,
+      "frame": 23,
+      "width": 92,
+      "height": 101,
+      "sha256": "14a4c14b0963f1cce26ef3eb6a459fb97c023d88581aa1bd5cdf11269b886c07"
+    },
+    {
+      "name": "brick-24.png",
+      "spriteId": 196,
+      "frame": 24,
+      "width": 92,
+      "height": 101,
+      "sha256": "bee2f7b5755ac6f8b4580c0f088708a0ec5bae972c2c472faab5fab4dceda15e"
+    },
+    {
+      "name": "brick-25.png",
+      "spriteId": 196,
+      "frame": 25,
+      "width": 92,
+      "height": 101,
+      "sha256": "0701f7368d30d06c9566f4035139f070fb3b44671a73d5fb01df7ae7696b1b5c"
+    },
+    {
+      "name": "brick-26.png",
+      "spriteId": 196,
+      "frame": 26,
+      "width": 92,
+      "height": 101,
+      "sha256": "4968237cfd7bd4ade0bd7bdb9246cdda2ef8349724bc0a7670d3415c52fe7799"
+    },
+    {
+      "name": "brick-27.png",
+      "spriteId": 196,
+      "frame": 27,
+      "width": 92,
+      "height": 101,
+      "sha256": "062cb372b2465afb252d62bcbf6d47b4b20cf1c013a491779b55d148f28edcca"
+    },
+    {
+      "name": "brick-28.png",
+      "spriteId": 196,
+      "frame": 28,
+      "width": 92,
+      "height": 101,
+      "sha256": "a38331f61b89af518b411e32b7796640949ab681faf487466d5ebef765b55b41"
+    },
+    {
+      "name": "brick-29.png",
+      "spriteId": 196,
+      "frame": 29,
+      "width": 92,
+      "height": 101,
+      "sha256": "ce2fd8690494e6593642d677a6c455d8c39b9a6bd5bbf297bb29cdf95efbeb26"
+    },
+    {
+      "name": "brick-30.png",
+      "spriteId": 196,
+      "frame": 30,
+      "width": 92,
+      "height": 101,
+      "sha256": "5fc3b1f8cebb9ef81f28a68735b9cfc6b139c7e444b1205c84adc1639ce60273"
+    },
+    {
+      "name": "brick-31.png",
+      "spriteId": 196,
+      "frame": 31,
+      "width": 92,
+      "height": 101,
+      "sha256": "1305caf68dd701c0de3f9101c8c9ee8e037cc18b652b2272818c3aa17dde1b6b"
+    },
+    {
+      "name": "brick-32.png",
+      "spriteId": 196,
+      "frame": 32,
+      "width": 92,
+      "height": 101,
+      "sha256": "79bcf1842cd1b8e155f00b765c982135a31a7c92e8ae749a240f0696470537c6"
+    },
+    {
+      "name": "brick-33.png",
+      "spriteId": 196,
+      "frame": 33,
+      "width": 92,
+      "height": 101,
+      "sha256": "c03f88d39fa34bb8de8e50eb717153c16a848d2b1a9c6b1024b77bf85d96b35e"
+    },
+    {
+      "name": "brick-34.png",
+      "spriteId": 196,
+      "frame": 34,
+      "width": 92,
+      "height": 101,
+      "sha256": "ab0dfd4421eb94ef802096367fdeeccf13a341ae228885ca6a81035c1f6fda23"
+    },
+    {
+      "name": "brick-35.png",
+      "spriteId": 196,
+      "frame": 35,
+      "width": 92,
+      "height": 101,
+      "sha256": "a247efe4d3f0eae953bc64740a0f07ea5ac30909e36e20b72c683ff66d305237"
+    },
+    {
+      "name": "brick-36.png",
+      "spriteId": 196,
+      "frame": 36,
+      "width": 92,
+      "height": 101,
+      "sha256": "83cd4c1562e99bb87f5b78e723b741d5e0a95d88dd0715864cafed434b12b9eb"
+    },
+    {
+      "name": "brick-37.png",
+      "spriteId": 196,
+      "frame": 37,
+      "width": 92,
+      "height": 101,
+      "sha256": "2969802ebe1463f96fe75803823d228173cc82261713bb1a21e1bc6f5c4a7868"
+    },
+    {
+      "name": "brick-38.png",
+      "spriteId": 196,
+      "frame": 38,
+      "width": 92,
+      "height": 101,
+      "sha256": "3e954ab0faca9db3cc09fd30479e2a08ecdbcab5f257208afb01d938b2469005"
+    },
+    {
+      "name": "brick-39.png",
+      "spriteId": 196,
+      "frame": 39,
+      "width": 92,
+      "height": 101,
+      "sha256": "3c4f15334c4bc56f2c6b8f4d814c8a5cd37780fa620554fe9904d705d1e35ffd"
+    },
+    {
+      "name": "brick-40.png",
+      "spriteId": 196,
+      "frame": 40,
+      "width": 92,
+      "height": 101,
+      "sha256": "1ca82d27ea61d76d9bb4384c52110ac29ff252cd9f1f67b589e4668c8cf6d690"
+    },
+    {
+      "name": "brick-41.png",
+      "spriteId": 196,
+      "frame": 41,
+      "width": 92,
+      "height": 101,
+      "sha256": "0701f7368d30d06c9566f4035139f070fb3b44671a73d5fb01df7ae7696b1b5c"
+    },
+    {
+      "name": "brick-42.png",
+      "spriteId": 196,
+      "frame": 42,
+      "width": 92,
+      "height": 101,
+      "sha256": "6d30fb74df3536b48c7166ddd59e737474e7818f39680c3a158cb23b3afba728"
+    },
+    {
+      "name": "brick-43.png",
+      "spriteId": 196,
+      "frame": 43,
+      "width": 92,
+      "height": 101,
+      "sha256": "f75919b9717fe2cdd17b8e5da37fb3328fe3848d1824aec54754350d4e6946bc"
+    },
+    {
+      "name": "brick-44.png",
+      "spriteId": 196,
+      "frame": 44,
+      "width": 92,
+      "height": 101,
+      "sha256": "8b7cc65fc254ba4efceaa636cae572d361d8c2b782ef6b64e695cf6f930559e0"
+    },
+    {
+      "name": "brick-45.png",
+      "spriteId": 196,
+      "frame": 45,
+      "width": 92,
+      "height": 101,
+      "sha256": "6750bfef910f925ddb0d7bf34c23ce46c9d9f72d4ef74d21d576fb5efd26f76d"
+    },
+    {
+      "name": "brick-46.png",
+      "spriteId": 196,
+      "frame": 46,
+      "width": 92,
+      "height": 101,
+      "sha256": "ed8951d98fc817e54549c7b044d7574a143711cdef1c2b0dfe2085f7444575a9"
+    },
+    {
+      "name": "brick-47.png",
+      "spriteId": 196,
+      "frame": 47,
+      "width": 92,
+      "height": 101,
+      "sha256": "e8a5d1d098938a516576d2cf0df9d870c7488dee492caa5691bb50c498c0febd"
+    },
+    {
+      "name": "brick-48.png",
+      "spriteId": 196,
+      "frame": 48,
+      "width": 92,
+      "height": 101,
+      "sha256": "20bbd991ec1e9b74ea658be93f452c621eb112823c968d312b9561ec21a7e3d7"
+    },
+    {
+      "name": "brick-49.png",
+      "spriteId": 196,
+      "frame": 49,
+      "width": 92,
+      "height": 101,
+      "sha256": "062cb372b2465afb252d62bcbf6d47b4b20cf1c013a491779b55d148f28edcca"
+    },
+    {
+      "name": "brick-50.png",
+      "spriteId": 196,
+      "frame": 50,
+      "width": 92,
+      "height": 101,
+      "sha256": "c06e9a626a79efeb7a556f53b4413e5e1c90f8e7451a1c30b4f97c0456d9834b"
+    },
+    {
+      "name": "brick-51.png",
+      "spriteId": 196,
+      "frame": 51,
+      "width": 92,
+      "height": 101,
+      "sha256": "314aabdc9759436472f2c3877eb0bc7a057f7e6fdd7d12adcd2221d30f66e545"
+    },
+    {
+      "name": "brick-52.png",
+      "spriteId": 196,
+      "frame": 52,
+      "width": 92,
+      "height": 101,
+      "sha256": "146cd29f48a46f994a52f9594a55ca998285d92ffc0fac757e5470ecd77530ee"
+    },
+    {
+      "name": "brick-53.png",
+      "spriteId": 196,
+      "frame": 53,
+      "width": 92,
+      "height": 101,
+      "sha256": "c9b7fcb169dee0b9faea9658361d7d4113e20c1c6f8068b7ffeb31835f221ac8"
+    },
+    {
+      "name": "brick-54.png",
+      "spriteId": 196,
+      "frame": 54,
+      "width": 92,
+      "height": 101,
+      "sha256": "e4d493eab59ab8efdb0b24f5178760e3f70ad56ebaf51dba24ae25846074b8c9"
+    },
+    {
+      "name": "brick-55.png",
+      "spriteId": 196,
+      "frame": 55,
+      "width": 92,
+      "height": 101,
+      "sha256": "2d6ec718b060c9df86d3c220e5c99579fcaa449b031f1208df72260ea1e98b7b"
+    },
+    {
+      "name": "brick-56.png",
+      "spriteId": 196,
+      "frame": 56,
+      "width": 92,
+      "height": 101,
+      "sha256": "e4d493eab59ab8efdb0b24f5178760e3f70ad56ebaf51dba24ae25846074b8c9"
+    },
+    {
+      "name": "brick-57.png",
+      "spriteId": 196,
+      "frame": 57,
+      "width": 92,
+      "height": 101,
+      "sha256": "c9b7fcb169dee0b9faea9658361d7d4113e20c1c6f8068b7ffeb31835f221ac8"
+    },
+    {
+      "name": "brick-58.png",
+      "spriteId": 196,
+      "frame": 58,
+      "width": 92,
+      "height": 101,
+      "sha256": "f5154799bcbf4ce47b8dbee07e04baf8e5e9be5453929f507c4635a71e074777"
+    },
+    {
+      "name": "floor-1.png",
+      "spriteId": 232,
+      "frame": 1,
+      "width": 30,
+      "height": 30,
+      "sha256": "f39c03e448db0877becd65c07bd441b875a4859f2ccb36907632391e68d99d07"
+    },
+    {
+      "name": "floor-2.png",
+      "spriteId": 232,
+      "frame": 2,
+      "width": 30,
+      "height": 30,
+      "sha256": "c3ee319124183589921379cfd3d4a1ef118f0253d0978eadd85913829c46e51f"
+    },
+    {
+      "name": "floor-3.png",
+      "spriteId": 232,
+      "frame": 3,
+      "width": 30,
+      "height": 30,
+      "sha256": "23f665e5e7e842e08bb5343a676d279ebee06097b0d9318012847f63dd4d7676"
+    },
+    {
+      "name": "floor-4.png",
+      "spriteId": 232,
+      "frame": 4,
+      "width": 30,
+      "height": 30,
+      "sha256": "036fac7e433bd6a4b14821c7d0a7767c44683241f453998ae9602e1101eb8971"
+    },
+    {
+      "name": "floor-5.png",
+      "spriteId": 232,
+      "frame": 5,
+      "width": 30,
+      "height": 30,
+      "sha256": "3fec77acb58359e8118a55ef3f51a5dc850f04749f000ceb4182df8038aae1fb"
+    },
+    {
+      "name": "floor-6.png",
+      "spriteId": 232,
+      "frame": 6,
+      "width": 30,
+      "height": 30,
+      "sha256": "51bc4b5e5ddb7050d98cf8663850f66c4b4b1c73c55b952f829280780c4be486"
+    },
+    {
+      "name": "floor-7.png",
+      "spriteId": 232,
+      "frame": 7,
+      "width": 30,
+      "height": 30,
+      "sha256": "5a45862ac2d98550ebcfddc8c6b7b61653751c93354b098b058990cd12a0d0de"
+    },
+    {
+      "name": "floor-8.png",
+      "spriteId": 232,
+      "frame": 8,
+      "width": 30,
+      "height": 30,
+      "sha256": "57996df337e5550ed61500fef79cc7a56996da284fa02fdce9d195164cc60f7a"
+    },
+    {
+      "name": "floor-9.png",
+      "spriteId": 232,
+      "frame": 9,
+      "width": 30,
+      "height": 30,
+      "sha256": "15653705e0ffdef2b4b9b97248d5d4251ca2e727b93da85f3fd47e7f74a43d8a"
+    },
+    {
+      "name": "floor-10.png",
+      "spriteId": 232,
+      "frame": 10,
+      "width": 30,
+      "height": 30,
+      "sha256": "3da64b3bf8949d29a7ed6e24778e663303705c9ca32800d1235b121d45c222ec"
+    },
+    {
+      "name": "floor-11.png",
+      "spriteId": 232,
+      "frame": 11,
+      "width": 30,
+      "height": 30,
+      "sha256": "51bc4b5e5ddb7050d98cf8663850f66c4b4b1c73c55b952f829280780c4be486"
+    },
+    {
+      "name": "floor-12.png",
+      "spriteId": 232,
+      "frame": 12,
+      "width": 30,
+      "height": 30,
+      "sha256": "5a45862ac2d98550ebcfddc8c6b7b61653751c93354b098b058990cd12a0d0de"
+    }
+  ]
+}

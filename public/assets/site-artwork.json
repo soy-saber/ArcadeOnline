@@ -1,0 +1,85 @@
+{
+  "background": {
+    "path": "/assets/yuuka-kurisu-background.webp",
+    "method": "Generated and reference-corrected through the user-selected website with Playwright; converted to WebP with Pillow",
+    "website": "https://l0veyou.com/chat",
+    "websiteModelLabel": "GPT Image 2",
+    "promptPath": "/assets/site-background-prompt.txt",
+    "sourceImageSha256": "9b65e5f4b61a5b13b8c9ef0818c8b6fd0fb8cbcd4a2f6ee7f6ec4b71d5ba3118",
+    "sourceDimensions": [
+      1360,
+      768
+    ],
+    "composition": "Yuuka left with black/blue mechanical hair accessories and elliptical halo; Kurisu right with clock/circuit motifs; violet/amber night backdrop and dark central space",
+    "sources": [
+      {
+        "subject": "Hayase Yuuka / Blue Archive",
+        "source": "https://raw.githubusercontent.com/SchaleDB/SchaleDB/main/images/student/portrait/13010.webp",
+        "sha256": "bc5e4a65be975bd652b6055adac49c2838bd87f4aadc12db1e18673ff382751b"
+      },
+      {
+        "subject": "Makise Kurisu / STEINS;GATE",
+        "source": "https://steinsgate.jp/sgflash/img/chara2_l.png",
+        "sha256": "988a60f8bd772edac2fc1622de64f9748c2a04cac5d220913fd5a088c663689a"
+      }
+    ],
+    "sha256": "798c0eeac91beb2e13c2067135ae1efcdc28030dbb2351a21f0d3f6eecbefff6",
+    "generationInputs": [
+      {
+        "role": "Character identity reference",
+        "subject": "Hayase Yuuka",
+        "sha256": "79e3a0d1b720e18ed97b416f318d878e97c89bf13496bed264b9a3f750011f1a"
+      }
+    ]
+  },
+  "covers": [
+    {
+      "game": "3881-server",
+      "path": "/assets/game-3881.webp",
+      "sha256": "63056baeac76d14b70e2902b175bc4296f18bb7fa35edfc0e2944f9e14230c5f",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "46923-server",
+      "path": "/assets/game-46923.webp",
+      "sha256": "f675a98a67867363f2aa9270b4c0c2a6c6f8e1a7f2abb105fb976f066ae24313",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "137953-server",
+      "path": "/assets/game-137953.webp",
+      "sha256": "14f71cfbbc4506bea59e326e3aa8d243c68c530cc52bac47fcab0279ea38c1ef",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "50737-server",
+      "path": "/assets/game-50737.webp",
+      "sha256": "015e996d612298c0e6c9becb8e2de78d0804de63f97ff7dd16bc382ab1fe04fc",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "6232-server",
+      "path": "/assets/game-6232.webp",
+      "sha256": "b913f6327af52ea00abc6b4412677f22f7dc32c5de75b9094f2421727c5bda98",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "9109-server",
+      "path": "/assets/game-9109.webp",
+      "sha256": "3ad95c4e8ca1027710822fec44fda66a609158b4f92d8e9c8156f2283e75c39a",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "97734-server",
+      "path": "/assets/game-97734.webp",
+      "sha256": "35e297b08b6cacebbb89790219d58897778032fd7ea25091e2ad34efbf1868e5",
+      "source": "Current reconstructed game canvas capture"
+    },
+    {
+      "game": "fbw_forest-server",
+      "path": "/assets/game-fbw_forest.webp",
+      "sha256": "318004ed34952ab9a61327973fa0f6140362e253ea1e17c5c4ef4b36b2646f67",
+      "source": "Current reconstructed game canvas capture"
+    }
+  ]
+}

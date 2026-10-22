@@ -1,0 +1,3 @@
+Raccogli 
+--- RECORDSEPARATOR ---
+10 monete

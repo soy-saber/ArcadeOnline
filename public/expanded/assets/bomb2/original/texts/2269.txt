@@ -1,0 +1,3 @@
+Diese Taste kann nicht gewählt werden. 
+--- RECORDSEPARATOR ---
+Bitte wähle eine andere Taste.

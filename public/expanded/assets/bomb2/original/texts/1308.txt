@@ -1,0 +1,3 @@
+Färbe 
+--- RECORDSEPARATOR ---
+50 Spielfelder

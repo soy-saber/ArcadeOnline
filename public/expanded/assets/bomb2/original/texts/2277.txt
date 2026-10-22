@@ -1,0 +1,3 @@
+Bu tuş kullanılamaz. 
+--- RECORDSEPARATOR ---
+Farklı bir tuş seçin.

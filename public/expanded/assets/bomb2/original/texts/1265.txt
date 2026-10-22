@@ -1,0 +1,3 @@
+Collect  
+--- RECORDSEPARATOR ---
+10 coins
