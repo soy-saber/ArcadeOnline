@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="https://www.free-decompiler.com/flash" xmlns:ns2="http://www.w3.org/1999/xlink" ns1:objectType="frame" height="800" width="800" viewBox="0 0 800 800">
+  <ns0:g transform="matrix(1 0 0 1 0 0)">
+    <ns0:use ns1:characterId="132" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 480.0, 480.0)" width="64.2" ns2:href="#sprite0" />
+    <ns0:use ns1:characterId="132" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 480.0, 320.0)" width="64.2" ns2:href="#sprite2" />
+    <ns0:use ns1:characterId="132" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 320.0, 320.0)" width="64.2" ns2:href="#sprite4" />
+    <ns0:use ns1:characterId="132" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 320.0, 480.0)" width="64.2" ns2:href="#sprite6" />
+  </ns0:g>
+  <ns0:defs>
+    <ns0:g id="sprite0">
+      <ns0:use ns1:characterId="131" height="66.6" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, -74.5)" width="64.2" ns2:href="#sprite1" />
+    </ns0:g>
+    <ns0:g id="sprite1">
+      <ns0:use ns1:characterId="130" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="64.2" ns2:href="#shape0" />
+    </ns0:g>
+    <ns0:g id="shape0">
+      <ns0:path d="M32.0 33.95 L16.0 45.25 -16.0 45.25 -32.0 30.7 -32.0 15.35 -16.0 0.0 16.0 0.0 32.0 15.35 32.0 33.95" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M16.0 45.25 L32.0 33.95 32.0 58.5 16.0 58.5 16.0 45.25" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-16.0 45.25 L16.0 45.25 16.0 58.5 -16.0 58.5 -16.0 45.25" fill="#888888" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 30.7 L-16.0 45.25 -16.0 58.5 -32.0 58.5 -32.0 30.7" fill="#a4a4a4" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 66.5 L-32.0 65.4 -32.0 66.5" fill="#000000" fill-opacity="0.2509804" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M32.0 58.5 L32.0 15.35 16.0 0.0 -16.0 0.0 -32.0 15.35 -32.0 58.5" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite2">
+      <ns0:use ns1:characterId="131" height="66.6" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, -74.5)" width="64.2" ns2:href="#sprite3" />
+    </ns0:g>
+    <ns0:g id="sprite3">
+      <ns0:use ns1:characterId="130" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="64.2" ns2:href="#shape1" />
+    </ns0:g>
+    <ns0:g id="shape1">
+      <ns0:path d="M32.0 33.95 L16.0 45.25 -16.0 45.25 -32.0 30.7 -32.0 15.35 -16.0 0.0 16.0 0.0 32.0 15.35 32.0 33.95" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M16.0 45.25 L32.0 33.95 32.0 58.5 16.0 58.5 16.0 45.25" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-16.0 45.25 L16.0 45.25 16.0 58.5 -16.0 58.5 -16.0 45.25" fill="#888888" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 30.7 L-16.0 45.25 -16.0 58.5 -32.0 58.5 -32.0 30.7" fill="#a4a4a4" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 66.5 L-32.0 65.4 -32.0 66.5" fill="#000000" fill-opacity="0.2509804" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M32.0 58.5 L32.0 15.35 16.0 0.0 -16.0 0.0 -32.0 15.35 -32.0 58.5" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite4">
+      <ns0:use ns1:characterId="131" height="66.6" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, -74.5)" width="64.2" ns2:href="#sprite5" />
+    </ns0:g>
+    <ns0:g id="sprite5">
+      <ns0:use ns1:characterId="130" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="64.2" ns2:href="#shape2" />
+    </ns0:g>
+    <ns0:g id="shape2">
+      <ns0:path d="M32.0 33.95 L16.0 45.25 -16.0 45.25 -32.0 30.7 -32.0 15.35 -16.0 0.0 16.0 0.0 32.0 15.35 32.0 33.95" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M16.0 45.25 L32.0 33.95 32.0 58.5 16.0 58.5 16.0 45.25" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-16.0 45.25 L16.0 45.25 16.0 58.5 -16.0 58.5 -16.0 45.25" fill="#888888" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 30.7 L-16.0 45.25 -16.0 58.5 -32.0 58.5 -32.0 30.7" fill="#a4a4a4" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 66.5 L-32.0 65.4 -32.0 66.5" fill="#000000" fill-opacity="0.2509804" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M32.0 58.5 L32.0 15.35 16.0 0.0 -16.0 0.0 -32.0 15.35 -32.0 58.5" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite6">
+      <ns0:use ns1:characterId="131" height="66.6" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, -74.5)" width="64.2" ns2:href="#sprite7" />
+    </ns0:g>
+    <ns0:g id="sprite7">
+      <ns0:use ns1:characterId="130" height="66.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="64.2" ns2:href="#shape3" />
+    </ns0:g>
+    <ns0:g id="shape3">
+      <ns0:path d="M32.0 33.95 L16.0 45.25 -16.0 45.25 -32.0 30.7 -32.0 15.35 -16.0 0.0 16.0 0.0 32.0 15.35 32.0 33.95" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M16.0 45.25 L32.0 33.95 32.0 58.5 16.0 58.5 16.0 45.25" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-16.0 45.25 L16.0 45.25 16.0 58.5 -16.0 58.5 -16.0 45.25" fill="#888888" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 30.7 L-16.0 45.25 -16.0 58.5 -32.0 58.5 -32.0 30.7" fill="#a4a4a4" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-32.0 66.5 L-32.0 65.4 -32.0 66.5" fill="#000000" fill-opacity="0.2509804" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M32.0 58.5 L32.0 15.35 16.0 0.0 -16.0 0.0 -32.0 15.35 -32.0 58.5" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+  </ns0:defs>
+</ns0:svg>

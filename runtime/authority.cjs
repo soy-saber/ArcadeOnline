@@ -38,13 +38,13 @@ var ORIGINAL_WIDTH = 15;
 var ORIGINAL_HEIGHT = 13;
 var BRICK_RASTER_ORIGIN = { x: -257 / 20, y: -760 / 20 };
 var originalMap = (id) => ORIGINAL_MAPS.find((map) => map.id === id);
-function generateOriginalMap(id, random5) {
+function generateOriginalMap(id, random6) {
   const map = originalMap(id);
   const at = (x, y) => y * ORIGINAL_WIDTH + x;
   const inside3 = (x, y) => x >= 0 && x < ORIGINAL_WIDTH && y >= 0 && y < ORIGINAL_HEIGHT;
   const board = Array(ORIGINAL_WIDTH * ORIGINAL_HEIGHT).fill(0);
   const tiles = Array(board.length).fill(0);
-  const roll = (length) => Math.floor(random5() * length);
+  const roll = (length) => Math.floor(random6() * length);
   const shuffle = (values) => {
     const result = [...values];
     const last = result[result.length - 1];
@@ -76,12 +76,12 @@ function generateOriginalMap(id, random5) {
     const [x, y] = candidates[i];
     if (!emptyAt(x, y)) continue;
     const emptyNeighbor = (j) => emptyAt(x + around[j % 8][0], y + around[j % 8][1]);
-    let blocked = false;
+    let blocked2 = false;
     for (let j = 0; j < 8; j += 2) if (!emptyNeighbor(j) && !emptyNeighbor(j + 1) && !emptyNeighbor(j + 2)) {
-      blocked = true;
+      blocked2 = true;
       break;
     }
-    if (blocked) continue;
+    if (blocked2) continue;
     let empty = emptyNeighbor(0), totalEmpty = empty ? 1 : 0, totalBrick = empty ? 0 : 1;
     for (let j = 1; j < 8; j++) {
       if (empty) {
@@ -138,7 +138,7 @@ function random(state) {
   state.rng = x >>> 0;
   return state.rng / 4294967296;
 }
-function createGame(seed, round = 1, playing = true, options = {}) {
+function createGame(seed, round = 1, playing2 = true, options = {}) {
   const config = { ...DEFAULT_OPTIONS, ...options, bots: [...options.bots || []], activeSeats: [...options.activeSeats || [1, 2]] };
   if (config.mode === "coop") config.bots = [.../* @__PURE__ */ new Set([...config.bots, 3, 4])];
   if (config.mode === "online") config.bots = [];
@@ -150,7 +150,7 @@ function createGame(seed, round = 1, playing = true, options = {}) {
     rng: seed >>> 0 || 1,
     nextBomb: 1,
     options: config,
-    phase: playing ? "playing" : "waiting",
+    phase: playing2 ? "playing" : "waiting",
     winner: null,
     board: Array(WIDTH * HEIGHT).fill(0),
     items: Array(WIDTH * HEIGHT).fill(null),
@@ -439,8 +439,8 @@ function botInput(state, player) {
       if (current.depth && hazards2[cell] === Infinity) {
         if (escape) return current.dir;
         const crates = DIRECTIONS.filter(([dx2, dy2]) => state.board[index(current.x + dx2, current.y + dy2)] === 2).length;
-        const enemies = state.players.filter((p) => p.alive && p.seat !== player.seat && (state.options.mode !== "coop" || p.seat <= 2 !== player.seat <= 2));
-        const distance = Math.min(30, ...enemies.map((p) => Math.abs(p.x - current.x) + Math.abs(p.y - current.y)));
+        const enemies2 = state.players.filter((p) => p.alive && p.seat !== player.seat && (state.options.mode !== "coop" || p.seat <= 2 !== player.seat <= 2));
+        const distance = Math.min(30, ...enemies2.map((p) => Math.abs(p.x - current.x) + Math.abs(p.y - current.y)));
         const score = (state.items[cell] ? 18 : 0) + crates * 3 - current.depth * 0.7 - distance * 0.3;
         if (score > best) {
           best = score;
@@ -628,7 +628,7 @@ var P2_TIP = [[-61, -44], [-61, -44], [-45, -57], [-26, -65], [16, -61], [33, -4
 var P1_UNDERHAND_TIP = [[-59, -43], [-73, -11], [-67, 30], [-44, 57], [-12, 66], [30, 56], [53, 29], [57, -12]];
 var EMPTY_INPUT2 = { seq: 0, left: false, right: false, jump: 0, hit: 0 };
 var clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
-function createGame2(round, playing) {
+function createGame2(round, playing2) {
   const players = [
     { x: 132.85, y: GROUND, vy: 0, swing: 0, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: 1 },
     { x: 416.85, y: GROUND, vy: 0, swing: 0, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: -1 }
@@ -636,7 +636,7 @@ function createGame2(round, playing) {
   return {
     round,
     tick: 0,
-    phase: playing ? "playing" : "waiting",
+    phase: playing2 ? "playing" : "waiting",
     rally: "serve",
     serve: 1,
     winner: 0,
@@ -857,13 +857,13 @@ function generateMaze(s, width, height) {
   }
   return { walls, reachable: queue };
 }
-function create(round, playing, seats, seed, mapId) {
+function create(round, playing2, seats, seed, mapId) {
   const s = {
     gameId: "137953-server",
     version: 1,
     round,
     tick: 0,
-    phase: playing ? "playing" : "waiting",
+    phase: playing2 ? "playing" : "waiting",
     winner: null,
     ack: [0, 0, 0],
     players: [],
@@ -1328,7 +1328,7 @@ var inside2 = (x, y) => x >= 0 && x < WIDTH2 && y >= 0 && y < HEIGHT2;
 function direction(i) {
   return i.left ? 0 : i.up ? 1 : i.right ? 2 : i.down ? 3 : -1;
 }
-function create2(round, playing, seats, seed, mapId, gameMode) {
+function create2(round, playing2, seats, seed, mapId, gameMode) {
   const [legacyMode, selectedMap] = mapId?.includes(":") ? mapId.split(":") : ["arcade", mapId];
   const selectedMode = gameMode ?? legacyMode;
   const mode = MODES.includes(selectedMode) ? selectedMode : "arcade";
@@ -1338,7 +1338,7 @@ function create2(round, playing, seats, seed, mapId, gameMode) {
     version: 1,
     round,
     tick: 0,
-    phase: playing ? "playing" : "waiting",
+    phase: playing2 ? "playing" : "waiting",
     winner: null,
     ack: [0, 0, 0, 0],
     rng: seed >>> 0 || 1,
@@ -1545,40 +1545,40 @@ function updateAttacks(s) {
     } else if ((kind === 16 || kind === 19) && s.shots.length < 64) {
       s.shots.push({ id: s.nextId++, owner: p.seat, x: x + 0.5, y: y + 0.5, vx: dx * (kind === 19 ? 12 / 30 : 10 / 30), vy: dy * (kind === 19 ? 12 / 30 : 10 / 30), until: s.tick + HZ4 * 4, kind });
     } else if ((kind === 20 || kind === 21) && s.effects.length < 64) {
-      const effect = { id: s.nextId++, kind, owner: p.seat, x, y, dir, born: s.tick, until: s.tick + (kind === 20 ? 11 : 23), cells: [] };
+      const effect2 = { id: s.nextId++, kind, owner: p.seat, x, y, dir, born: s.tick, until: s.tick + (kind === 20 ? 11 : 23), cells: [] };
       if (kind === 20) for (let d = 1; d < Math.max(WIDTH2, HEIGHT2); d++) {
         const tx = x + dx * d, ty = y + dy * d;
         if (!inside2(tx, ty) || s.board[index2(tx, ty)] === 1) break;
-        const cell = index2(tx, ty), blocked = s.board[cell] === 2 || s.bombs.some((b) => b.x === tx && b.y === ty);
-        effect.cells.push(cell);
-        if (blocked) break;
+        const cell = index2(tx, ty), blocked2 = s.board[cell] === 2 || s.bombs.some((b) => b.x === tx && b.y === ty);
+        effect2.cells.push(cell);
+        if (blocked2) break;
       }
-      s.effects.push(effect);
+      s.effects.push(effect2);
     }
   }
-  for (const effect of s.effects) {
-    if (effect.until <= s.tick) continue;
-    const [dx, dy] = DIRS[effect.dir];
-    if (effect.kind === 21) {
-      effect.cells = [];
-      const range = Math.min(3, 1 + Math.floor((s.tick - effect.born) / 8));
+  for (const effect2 of s.effects) {
+    if (effect2.until <= s.tick) continue;
+    const [dx, dy] = DIRS[effect2.dir];
+    if (effect2.kind === 21) {
+      effect2.cells = [];
+      const range = Math.min(3, 1 + Math.floor((s.tick - effect2.born) / 8));
       for (let d = 1; d <= range; d++) {
-        const x = effect.x + dx * d, y = effect.y + dy * d;
+        const x = effect2.x + dx * d, y = effect2.y + dy * d;
         if (!inside2(x, y) || s.board[index2(x, y)] === 1) break;
-        effect.cells.push(index2(x, y));
+        effect2.cells.push(index2(x, y));
       }
     }
-    for (const cell of effect.cells) {
+    for (const cell of effect2.cells) {
       const x = cell % WIDTH2, y = Math.floor(cell / WIDTH2);
-      if (effect.kind === 21 || effect.born === s.tick) {
+      if (effect2.kind === 21 || effect2.born === s.tick) {
         if (s.board[cell] === 2) breakCrate2(s, cell);
         else s.items[cell] = 0;
         for (const b of s.bombs) if (b.x === x && b.y === y) b.explodeAt = s.tick;
       }
-      for (const q of s.players) if (q.seat !== effect.owner && q.x === x && q.y === y) hit(s, q, effect.owner);
+      for (const q of s.players) if (q.seat !== effect2.owner && q.x === x && q.y === y) hit(s, q, effect2.owner);
     }
   }
-  s.effects = s.effects.filter((effect) => effect.until > s.tick);
+  s.effects = s.effects.filter((effect2) => effect2.until > s.tick);
 }
 function hazards(s, p) {
   if (p.teleportUntil > s.tick || p.vehicle === 11) return;
@@ -1710,34 +1710,34 @@ function step4(s, inputs) {
     }
     if (s.flames[index2(b.x, b.y)] > s.tick) b.explodeAt = s.tick;
   }
-  s.shots = s.shots.filter((shot) => {
+  s.shots = s.shots.filter((shot2) => {
     for (let k = 0; k < 4; k++) {
-      const oldX = Math.floor(shot.x), oldY = Math.floor(shot.y);
-      shot.x += shot.vx / 4;
-      shot.y += shot.vy / 4;
-      const x = Math.floor(shot.x), y = Math.floor(shot.y);
+      const oldX = Math.floor(shot2.x), oldY = Math.floor(shot2.y);
+      shot2.x += shot2.vx / 4;
+      shot2.y += shot2.vy / 4;
+      const x = Math.floor(shot2.x), y = Math.floor(shot2.y);
       if (!inside2(x, y)) return false;
       if (s.board[index2(x, y)] || s.bombs.some((b) => b.x === x && b.y === y)) {
-        if (shot.kind === 16) {
+        if (shot2.kind === 16) {
           const tx = s.board[index2(x, y)] === 1 ? oldX : x, ty = s.board[index2(x, y)] === 1 ? oldY : y;
-          ignite2(s, tx, ty, shot.owner);
-          for (const [dx, dy] of DIRS) ignite2(s, tx + dx, ty + dy, shot.owner);
+          ignite2(s, tx, ty, shot2.owner);
+          for (const [dx, dy] of DIRS) ignite2(s, tx + dx, ty + dy, shot2.owner);
         } else {
           breakCrate2(s, index2(x, y));
           for (const b of s.bombs) if (b.x === x && b.y === y) b.explodeAt = s.tick;
         }
         return false;
       }
-      const p = s.players.find((p2) => p2.alive && !p2.respawnAt && p2.seat !== shot.owner && Math.hypot(p2.x + 0.5 - shot.x, p2.y + 0.5 - shot.y) < 0.4);
+      const p = s.players.find((p2) => p2.alive && !p2.respawnAt && p2.seat !== shot2.owner && Math.hypot(p2.x + 0.5 - shot2.x, p2.y + 0.5 - shot2.y) < 0.4);
       if (p) {
-        if (shot.kind === 16) {
-          ignite2(s, x, y, shot.owner);
-          for (const [dx, dy] of DIRS) ignite2(s, x + dx, y + dy, shot.owner);
-        } else hit(s, p, shot.owner);
+        if (shot2.kind === 16) {
+          ignite2(s, x, y, shot2.owner);
+          for (const [dx, dy] of DIRS) ignite2(s, x + dx, y + dy, shot2.owner);
+        } else hit(s, p, shot2.owner);
         return false;
       }
     }
-    return shot.until > s.tick;
+    return shot2.until > s.tick;
   });
   const exploded = /* @__PURE__ */ new Set();
   for (let cycle = 0; cycle < 32; cycle++) {
@@ -1872,33 +1872,33 @@ function render2(canvas, s, seat) {
       ctx.fillRect(left + b.x * cell + 10, top + b.y * cell + 10, 8, 8);
     }
   }
-  for (const effect of s.effects) {
-    ctx.fillStyle = effect.kind === 20 ? "#ff4aaa" : "#ff9c27cc";
-    if (effect.kind === 21) {
+  for (const effect2 of s.effects) {
+    ctx.fillStyle = effect2.kind === 20 ? "#ff4aaa" : "#ff9c27cc";
+    if (effect2.kind === 21) {
       ctx.save();
       ctx.beginPath();
-      for (const i of effect.cells) ctx.rect(left + i % WIDTH2 * cell, top + Math.floor(i / WIDTH2) * cell, cell, cell);
+      for (const i of effect2.cells) ctx.rect(left + i % WIDTH2 * cell, top + Math.floor(i / WIDTH2) * cell, cell, cell);
       ctx.clip();
-      ctx.translate(left + (effect.x + 0.5) * cell, top + (effect.y + 0.5) * cell);
-      ctx.rotate([Math.PI, -Math.PI / 2, 0, Math.PI / 2][effect.dir]);
+      ctx.translate(left + (effect2.x + 0.5) * cell, top + (effect2.y + 0.5) * cell);
+      ctx.rotate([Math.PI, -Math.PI / 2, 0, Math.PI / 2][effect2.dir]);
       const meta = KILL_ART.fire, img2 = asset("kill-fire");
-      if (img2.complete && img2.naturalWidth) ctx.drawImage(img2, Math.min(meta.frames - 1, s.tick - effect.born) * meta.w, 0, meta.w, meta.h, cell / 2, -meta.h / 2, meta.w, meta.h);
+      if (img2.complete && img2.naturalWidth) ctx.drawImage(img2, Math.min(meta.frames - 1, s.tick - effect2.born) * meta.w, 0, meta.w, meta.h, cell / 2, -meta.h / 2, meta.w, meta.h);
       ctx.restore();
     }
-    for (const i of effect.cells) {
+    for (const i of effect2.cells) {
       const x = left + i % WIDTH2 * cell, y = top + Math.floor(i / WIDTH2) * cell;
-      if (effect.kind === 20) {
-        const [dx] = DIRS[effect.dir];
+      if (effect2.kind === 20) {
+        const [dx] = DIRS[effect2.dir];
         ctx.fillRect(x + (dx ? 0 : 12), y + (dx ? 12 : 0), dx ? cell : 6, dx ? 6 : cell);
       } else if (!asset("kill-fire").naturalWidth) {
         ctx.fillRect(x + 3, y + 4, cell - 6, cell - 8);
       }
     }
   }
-  for (const shot of s.shots) {
-    ctx.fillStyle = shot.kind === 20 ? "#ff4aaa" : "#ffe44e";
+  for (const shot2 of s.shots) {
+    ctx.fillStyle = shot2.kind === 20 ? "#ff4aaa" : "#ffe44e";
     ctx.beginPath();
-    ctx.arc(left + shot.x * cell, top + shot.y * cell, shot.kind === 20 ? 3 : 5, 0, Math.PI * 2);
+    ctx.arc(left + shot2.x * cell, top + shot2.y * cell, shot2.kind === 20 ? 3 : 5, 0, Math.PI * 2);
     ctx.fill();
   }
   const rails = s.hazards.filter((h) => h.kind === "Rail");
@@ -1992,27 +1992,817 @@ var adapter2 = {
   }
 };
 
+// src/expanded/boxhead-data.json
+var boxhead_data_default = { sourceSha256: "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90", maps: [{ id: "original-01", label: "01 \xB7 BOXY", symbol: 99, width: 704, height: 544, columns: 22, rows: 17, collision: ["1111111111111111111111", "1111111111001111111111", "1111111111001111111111", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1000000000000000000001", "1111111111111111111111"], playerSpawns: [{ x: 272, y: 272, dir: 0 }], otherSpawns: [{ x: 432, y: 272, dir: 3.14159 }, { x: 624, y: 144, dir: 3.14159 }, { x: 592, y: 432, dir: 3.14159 }, { x: 80, y: 144, dir: 0 }, { x: 80, y: 432, dir: 0 }, { x: 336, y: 432, dir: -1.5708 }, { x: 368, y: 144, dir: 1.5708 }], zombieSpawns: [{ x: 336, y: 528, dir: 0 }, { x: 368, y: 528, dir: 0 }, { x: 336, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }], devilSpawns: [{ x: 16, y: 272, dir: 0 }, { x: 688, y: 272, dir: 0 }, { x: 368, y: 528, dir: 0 }, { x: 336, y: 16, dir: 0 }], barrels: [{ x: 304, y: 112, dir: 0 }, { x: 400, y: 112, dir: 0 }, { x: 304, y: 464, dir: 0 }, { x: 400, y: 464, dir: 0 }, { x: 400, y: 432, dir: 0 }, { x: 304, y: 432, dir: 0 }, { x: 304, y: 400, dir: 0 }, { x: 400, y: 400, dir: 0 }, { x: 304, y: 144, dir: 0 }, { x: 400, y: 144, dir: 0 }, { x: 400, y: 176, dir: 0 }, { x: 304, y: 176, dir: 0 }], pickups: [{ x: 336, y: 80, dir: 0 }, { x: 368, y: 496, dir: 0 }], walls: [] }, { id: "original-02", label: "02 \xB7 BUTTONS", symbol: 104, width: 800, height: 672, columns: 25, rows: 21, collision: ["1111111111111111111111111", "1111000111100011110001111", "1111000111100011110001111", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1111000111100011110001111", "1111000111100011110001111", "1111000111100011110001111", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1111000111100011110001111", "1111000111100011110001111", "1111000111100011110001111", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1111000111100011110001111", "1111000111100011110001111", "1111111111111111111111111"], playerSpawns: [{ x: 176, y: 144, dir: 0.7854 }, { x: 400, y: 336, dir: 0 }], otherSpawns: [{ x: 176, y: 336, dir: 0 }, { x: 624, y: 336, dir: 3.14159 }, { x: 400, y: 528, dir: -1.5708 }, { x: 400, y: 144, dir: 1.5708 }, { x: 176, y: 528, dir: -0.7854 }, { x: 624, y: 144, dir: 2.35619 }, { x: 624, y: 528, dir: -2.35619 }], zombieSpawns: [{ x: 16, y: 144, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 16, y: 112, dir: 0 }, { x: 16, y: 368, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 528, dir: 0 }, { x: 16, y: 560, dir: 0 }, { x: 16, y: 496, dir: 0 }, { x: 784, y: 144, dir: 0 }, { x: 784, y: 176, dir: 0 }, { x: 784, y: 112, dir: 0 }, { x: 784, y: 368, dir: 0 }, { x: 784, y: 304, dir: 0 }, { x: 784, y: 528, dir: 0 }, { x: 784, y: 560, dir: 0 }, { x: 784, y: 496, dir: 0 }, { x: 144, y: 16, dir: 0 }, { x: 176, y: 16, dir: 0 }, { x: 208, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 432, y: 16, dir: 0 }, { x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 144, y: 656, dir: 0 }, { x: 176, y: 656, dir: 0 }, { x: 208, y: 656, dir: 0 }, { x: 368, y: 656, dir: 0 }, { x: 432, y: 656, dir: 0 }, { x: 592, y: 656, dir: 0 }, { x: 624, y: 656, dir: 0 }, { x: 656, y: 656, dir: 0 }], devilSpawns: [{ x: 16, y: 336, dir: 0 }, { x: 784, y: 336, dir: 0 }, { x: 400, y: 16, dir: 0 }, { x: 400, y: 656, dir: 0 }], barrels: [{ x: 80, y: 336, dir: 0 }, { x: 80, y: 144, dir: 0 }, { x: 176, y: 80, dir: 0 }, { x: 400, y: 80, dir: 0 }, { x: 624, y: 80, dir: 0 }, { x: 720, y: 144, dir: 0 }, { x: 624, y: 592, dir: 0 }, { x: 720, y: 528, dir: 0 }, { x: 720, y: 336, dir: 0 }, { x: 400, y: 592, dir: 0 }, { x: 176, y: 592, dir: 0 }, { x: 80, y: 528, dir: 0 }], pickups: [{ x: 144, y: 112, dir: 0 }, { x: 656, y: 112, dir: 0 }, { x: 656, y: 560, dir: 0 }, { x: 144, y: 560, dir: 0 }], walls: [] }, { id: "original-03", label: "03 \xB7 MAZEY", symbol: 113, width: 1088, height: 1216, columns: 34, rows: 38, collision: ["1111111111111111111111111111111111", "1100000011111111111111111111111111", "1100000011000000110000000000000011", "1100000011000000110000000000000011", "1100000011000000110000000000000011", "1100000011000000110000000000000011", "1100000011000000110000001100000011", "1100000011000000110000001100000011", "1100000011000000000000001100000011", "1100000011000000000000001100000011", "1100000011000000000000001100000011", "1100000011000000000000001100000011", "1100000011000000110000001100000011", "1100000011000000110000001100000011", "1100000000000000110000001100000011", "1100000000000000110000001100000011", "1100000000000000110000001100000011", "1100000000000000110000001100000011", "1111111111111111111111111100000011", "1111111111111111111111111100000011", "1000000000000000110000000000000011", "1000000000000000110000000000000011", "1000000000000000110000000000000011", "1000000000000000110000000000000011", "1111111111000000110000001111111111", "1111111111000000110000001111111111", "1100000000000000110000000000000011", "1100000000000000110000000000000011", "1100000000000000110000000000000011", "1100000000000000110000000000000011", "1100000011111111110000001100000011", "1100000011111111110000001100000011", "1100000000000000000000001100000011", "1100000000000000000000001100000011", "1100000000000000000000001100000011", "1100000000000000000000001100000011", "1111111111111111111111111100000011", "1111111111111111111111111111111111"], playerSpawns: [{ x: 400, y: 688, dir: 0 }], otherSpawns: [{ x: 688, y: 688, dir: 0 }, { x: 944, y: 592, dir: 0 }, { x: 688, y: 400, dir: 0 }, { x: 688, y: 144, dir: 0 }, { x: 944, y: 304, dir: 0 }, { x: 400, y: 208, dir: 0 }, { x: 144, y: 496, dir: 0 }, { x: 144, y: 272, dir: 0 }, { x: 432, y: 432, dir: 0 }, { x: 656, y: 976, dir: 0 }, { x: 944, y: 944, dir: 0 }, { x: 144, y: 1040, dir: 0 }, { x: 368, y: 880, dir: 0 }], zombieSpawns: [{ x: 16, y: 752, dir: 0 }, { x: 16, y: 688, dir: 0 }, { x: 16, y: 720, dir: 0 }, { x: 16, y: 656, dir: 0 }, { x: 80, y: 16, dir: 0 }, { x: 112, y: 16, dir: 0 }, { x: 144, y: 16, dir: 0 }, { x: 176, y: 16, dir: 0 }, { x: 208, y: 16, dir: 0 }, { x: 240, y: 16, dir: 0 }, { x: 848, y: 1200, dir: 0 }, { x: 880, y: 1200, dir: 0 }, { x: 912, y: 1200, dir: 0 }, { x: 944, y: 1200, dir: 0 }, { x: 976, y: 1200, dir: 0 }, { x: 1008, y: 1200, dir: 0 }], devilSpawns: [{ x: 144, y: 16, dir: 0 }, { x: 912, y: 1200, dir: 0 }, { x: 16, y: 688, dir: 0 }], barrels: [{ x: 208, y: 144, dir: 0 }, { x: 112, y: 144, dir: 0 }, { x: 880, y: 1072, dir: 0 }, { x: 976, y: 1072, dir: 0 }, { x: 112, y: 656, dir: 0 }, { x: 112, y: 720, dir: 0 }], pickups: [{ x: 656, y: 496, dir: 0 }, { x: 208, y: 112, dir: 0 }, { x: 112, y: 112, dir: 0 }, { x: 112, y: 688, dir: 0 }, { x: 976, y: 1104, dir: 0 }, { x: 880, y: 1104, dir: 0 }, { x: 432, y: 1072, dir: 0 }], walls: [{ x: 848, y: 1168, dir: 0 }, { x: 880, y: 1168, dir: 0 }, { x: 912, y: 1168, dir: 0 }, { x: 944, y: 1168, dir: 0 }, { x: 976, y: 1168, dir: 0 }, { x: 1008, y: 1168, dir: 0 }, { x: 80, y: 48, dir: 0 }, { x: 112, y: 48, dir: 0 }, { x: 144, y: 48, dir: 0 }, { x: 176, y: 48, dir: 0 }, { x: 208, y: 48, dir: 0 }, { x: 240, y: 48, dir: 0 }] }, { id: "original-04", label: "04 \xB7 GLADIATOR", symbol: 143, width: 800, height: 800, columns: 25, rows: 25, collision: ["1111111111111111111111111", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000001100011000000001", "1000000001100011000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000001100011000000001", "1000000001100011000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1000000000000000000000001", "1111111111111111111111111"], playerSpawns: [{ x: 400, y: 400, dir: 0 }], otherSpawns: [{ x: 176, y: 400, dir: 3.14159 }, { x: 176, y: 176, dir: -2.35619 }, { x: 400, y: 176, dir: -1.5708 }, { x: 624, y: 176, dir: 2.35619 }, { x: 624, y: 624, dir: 0.7854 }, { x: 176, y: 624, dir: 2.35619 }, { x: 400, y: 624, dir: 1.5708 }, { x: 624, y: 400, dir: 0 }], zombieSpawns: [{ x: 16, y: 80, dir: 0 }, { x: 16, y: 144, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 336, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 16, y: 464, dir: 0 }, { x: 16, y: 528, dir: 0 }, { x: 16, y: 592, dir: 0 }, { x: 16, y: 656, dir: 0 }, { x: 16, y: 720, dir: 0 }, { x: 784, y: 80, dir: 0 }, { x: 784, y: 144, dir: 0 }, { x: 784, y: 208, dir: 0 }, { x: 784, y: 272, dir: 0 }, { x: 784, y: 336, dir: 0 }, { x: 784, y: 400, dir: 0 }, { x: 784, y: 464, dir: 0 }, { x: 784, y: 528, dir: 0 }, { x: 784, y: 592, dir: 0 }, { x: 784, y: 656, dir: 0 }, { x: 784, y: 720, dir: 0 }, { x: 80, y: 16, dir: 0 }, { x: 144, y: 16, dir: 0 }, { x: 208, y: 16, dir: 0 }, { x: 272, y: 16, dir: 0 }, { x: 336, y: 16, dir: 0 }, { x: 400, y: 16, dir: 0 }, { x: 464, y: 16, dir: 0 }, { x: 528, y: 16, dir: 0 }, { x: 592, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 720, y: 16, dir: 0 }, { x: 80, y: 784, dir: 0 }, { x: 144, y: 784, dir: 0 }, { x: 208, y: 784, dir: 0 }, { x: 272, y: 784, dir: 0 }, { x: 336, y: 784, dir: 0 }, { x: 400, y: 784, dir: 0 }, { x: 464, y: 784, dir: 0 }, { x: 528, y: 784, dir: 0 }, { x: 592, y: 784, dir: 0 }, { x: 656, y: 784, dir: 0 }, { x: 720, y: 784, dir: 0 }], devilSpawns: [{ x: 16, y: 400, dir: 0 }, { x: 784, y: 400, dir: 0 }, { x: 400, y: 784, dir: 0 }, { x: 400, y: 16, dir: 0 }], barrels: [{ x: 144, y: 112, dir: 0 }, { x: 112, y: 144, dir: 0 }, { x: 272, y: 112, dir: 0 }, { x: 400, y: 112, dir: 0 }, { x: 528, y: 112, dir: 0 }, { x: 656, y: 112, dir: 0 }, { x: 144, y: 688, dir: 0 }, { x: 272, y: 688, dir: 0 }, { x: 400, y: 688, dir: 0 }, { x: 528, y: 688, dir: 0 }, { x: 656, y: 688, dir: 0 }, { x: 112, y: 272, dir: 0 }, { x: 112, y: 400, dir: 0 }, { x: 112, y: 528, dir: 0 }, { x: 112, y: 656, dir: 0 }, { x: 688, y: 144, dir: 0 }, { x: 688, y: 272, dir: 0 }, { x: 688, y: 400, dir: 0 }, { x: 688, y: 528, dir: 0 }, { x: 688, y: 656, dir: 0 }], pickups: [{ x: 144, y: 400, dir: 0 }, { x: 400, y: 656, dir: 0 }, { x: 656, y: 400, dir: 0 }, { x: 400, y: 144, dir: 0 }], walls: [{ x: 368, y: 304, dir: 0 }, { x: 400, y: 304, dir: 0 }, { x: 432, y: 304, dir: 0 }, { x: 368, y: 496, dir: 0 }, { x: 400, y: 496, dir: 0 }, { x: 432, y: 496, dir: 0 }] }, { id: "original-05", label: "05 \xB7 STRIP", symbol: 145, width: 1472, height: 544, columns: 46, rows: 17, collision: ["1111111111111111111111111111111111111111111111", "1000000000000001100000000000011000001100000001", "1000000000000001100000000000011000001100000001", "1000000000000000000000110000000000001100000001", "1000000011000000000000110000000000001100000001", "1000000011000000000000110000000000000000000001", "1000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000001", "1000000000000001100000000000011000001100000001", "1000000000000001100000000000011000001100000001", "1000000011000000000000000000000000000000000001", "1000000011000000000000110000000000000000000001", "1000000011000000000000110000000000000000000001", "1000000000000000000000000000000000001100000001", "1000000000000000000000000000000000001100000001", "1000000000000001100000000000011000001100000001", "1111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 208, y: 272, dir: 3.14159 }], otherSpawns: [{ x: 1360, y: 144, dir: 3.14159 }, { x: 1360, y: 368, dir: 3.14159 }, { x: 1104, y: 144, dir: 3.14159 }, { x: 1104, y: 368, dir: 3.14159 }, { x: 848, y: 144, dir: 3.14159 }, { x: 848, y: 368, dir: 3.14159 }, { x: 624, y: 144, dir: 3.14159 }, { x: 624, y: 368, dir: 3.14159 }, { x: 400, y: 144, dir: 3.14159 }, { x: 400, y: 368, dir: 3.14159 }], zombieSpawns: [{ x: 16, y: 336, dir: 0 }, { x: 16, y: 368, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 240, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 112, dir: 0 }, { x: 16, y: 80, dir: 0 }, { x: 16, y: 464, dir: 0 }, { x: 16, y: 432, dir: 0 }], devilSpawns: [{ x: 16, y: 272, dir: 0 }, { x: 16, y: 144, dir: 0 }, { x: 16, y: 400, dir: 0 }], barrels: [{ x: 112, y: 208, dir: 0 }, { x: 112, y: 336, dir: 0 }], pickups: [{ x: 112, y: 368, dir: 0 }, { x: 112, y: 176, dir: 0 }, { x: 1328, y: 112, dir: 0 }, { x: 1328, y: 400, dir: 0 }], walls: [{ x: 144, y: 144, dir: 0 }, { x: 144, y: 176, dir: 0 }, { x: 144, y: 208, dir: 0 }, { x: 144, y: 336, dir: 0 }, { x: 144, y: 368, dir: 0 }, { x: 144, y: 400, dir: 0 }] }, { id: "original-06", label: "06 \xB7 TIGHT", symbol: 150, width: 704, height: 1312, columns: 22, rows: 41, collision: ["1111111111111111111111", "1111000000000000000011", "1000000000000000000011", "1111100000000000000111", "1111100000000000000111", "1111100000000000000111", "1110111100000000011111", "1110111100000000011111", "1110111100000000011111", "1011110000000011110111", "1011110000000011110111", "1011110000000011110111", "1000111100000001111001", "1000111100000001111001", "1000111100000001111001", "1000000000000111100001", "1000001111000111100001", "1000001111000111100001", "1000001111000011110111", "1000000111100011110111", "1000000111100011110111", "1100000111100000000001", "1100011110000000000001", "1000011110000000111101", "1000011110000000111101", "1000001111000000111101", "1000001111000111101111", "1000001111000111101111", "1001111000000111101111", "1001111000000001111011", "1001111000000001111011", "1000011110000001111011", "1000011110000000011111", "1000011110000000011111", "1101111000000000011111", "1101111000000000000111", "1101111000000000000111", "1000000000000000000111", "1000000000000000000001", "1110000000000000001111", "1111111111111111111111"], playerSpawns: [{ x: 368, y: 208, dir: -1.5708 }], otherSpawns: [{ x: 368, y: 528, dir: -1.5708 }, { x: 656, y: 496, dir: 1.5708 }, { x: 112, y: 592, dir: -1.5708 }, { x: 48, y: 976, dir: 1.5708 }, { x: 464, y: 752, dir: 1.5708 }, { x: 336, y: 1008, dir: 1.5708 }, { x: 496, y: 1136, dir: 1.5708 }, { x: 304, y: 368, dir: -1.5708 }, { x: 560, y: 112, dir: -1.5708 }], zombieSpawns: [{ x: 176, y: 16, dir: 0 }, { x: 240, y: 16, dir: 0 }, { x: 304, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 432, y: 16, dir: 0 }, { x: 496, y: 16, dir: 0 }, { x: 560, y: 16, dir: 0 }, { x: 144, y: 1296, dir: 0 }, { x: 208, y: 1296, dir: 0 }, { x: 272, y: 1296, dir: 0 }, { x: 336, y: 1296, dir: 0 }, { x: 400, y: 1296, dir: 0 }, { x: 464, y: 1296, dir: 0 }, { x: 528, y: 1296, dir: 0 }], devilSpawns: [{ x: 368, y: 16, dir: 0 }, { x: 336, y: 1296, dir: 0 }], barrels: [{ x: 240, y: 144, dir: 0 }, { x: 368, y: 144, dir: 0 }, { x: 464, y: 144, dir: 0 }, { x: 272, y: 1200, dir: 0 }, { x: 400, y: 1200, dir: 0 }, { x: 496, y: 1200, dir: 0 }], pickups: [{ x: 240, y: 304, dir: 0 }, { x: 80, y: 1104, dir: 0 }, { x: 656, y: 464, dir: 0 }, { x: 80, y: 528, dir: 0 }, { x: 144, y: 624, dir: 0 }], walls: [] }, { id: "original-07", label: "07 \xB7 COLUMNS", symbol: 151, width: 1056, height: 960, columns: 33, rows: 30, collision: ["111111111111111111111111111111111", "100110011001100110011001100110011", "100110011001100110011001100110011", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000000110000000000000000001", "110000001100110011001100110000001", "110000001100110011001100110000001", "100000000000000000000000000000001", "100000000000000000000000000000001", "100110000000000000000001100000001", "100110011000000110011001100110011", "100110011000000110011001100110011", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000000000000000000000000001", "110011001100110011000000110011001", "110011001100110011000000110011001", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000001100000000000000000001", "100110000001100110011001100110011", "100110000001100110011001100110011", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000000000000000000000000001", "100000000000000000000000110000001", "110011001100110000001100110011001", "111111111111111111111111111111111"], playerSpawns: [{ x: 560, y: 784, dir: 1.5708 }], otherSpawns: [{ x: 656, y: 624, dir: 1.5708 }, { x: 304, y: 656, dir: 1.5708 }, { x: 208, y: 784, dir: 1.5708 }, { x: 368, y: 816, dir: 1.5708 }, { x: 752, y: 816, dir: 1.5708 }, { x: 848, y: 624, dir: 1.5708 }, { x: 368, y: 432, dir: 1.5708 }, { x: 80, y: 496, dir: 1.5708 }, { x: 144, y: 272, dir: 1.5708 }, { x: 240, y: 144, dir: 1.5708 }, { x: 464, y: 144, dir: 1.5708 }, { x: 720, y: 144, dir: 1.5708 }, { x: 944, y: 240, dir: 1.5708 }, { x: 848, y: 336, dir: 1.5708 }, { x: 592, y: 336, dir: 1.5708 }, { x: 1008, y: 496, dir: 1.5708 }, { x: 944, y: 816, dir: 1.5708 }, { x: 720, y: 464, dir: 1.5708 }, { x: 496, y: 496, dir: 1.5708 }], zombieSpawns: [{ x: 80, y: 944, dir: 0 }, { x: 112, y: 944, dir: 0 }, { x: 208, y: 944, dir: 0 }, { x: 240, y: 944, dir: 0 }, { x: 336, y: 944, dir: 0 }, { x: 368, y: 944, dir: 0 }, { x: 464, y: 944, dir: 0 }, { x: 496, y: 944, dir: 0 }, { x: 592, y: 944, dir: 0 }, { x: 624, y: 944, dir: 0 }, { x: 720, y: 944, dir: 0 }, { x: 752, y: 944, dir: 0 }, { x: 848, y: 944, dir: 0 }, { x: 880, y: 944, dir: 0 }, { x: 976, y: 944, dir: 0 }, { x: 1008, y: 944, dir: 0 }, { x: 528, y: 944, dir: 0 }, { x: 560, y: 944, dir: 0 }], devilSpawns: [{ x: 752, y: 944, dir: 0 }, { x: 976, y: 944, dir: 0 }, { x: 880, y: 944, dir: 0 }, { x: 336, y: 944, dir: 0 }, { x: 208, y: 944, dir: 0 }, { x: 80, y: 944, dir: 0 }], barrels: [{ x: 176, y: 720, dir: 0 }, { x: 432, y: 720, dir: 0 }, { x: 560, y: 720, dir: 0 }, { x: 688, y: 720, dir: 0 }, { x: 816, y: 720, dir: 0 }, { x: 944, y: 720, dir: 0 }, { x: 336, y: 272, dir: 0 }, { x: 464, y: 272, dir: 0 }, { x: 624, y: 272, dir: 0 }, { x: 752, y: 272, dir: 0 }, { x: 496, y: 848, dir: 0 }, { x: 592, y: 848, dir: 0 }], pickups: [{ x: 432, y: 848, dir: 0 }, { x: 784, y: 784, dir: 0 }, { x: 80, y: 720, dir: 0 }, { x: 752, y: 848, dir: 0 }, { x: 528, y: 144, dir: 0 }], walls: [{ x: 208, y: 912, dir: 0 }, { x: 240, y: 912, dir: 0 }, { x: 720, y: 912, dir: 0 }, { x: 752, y: 912, dir: 0 }, { x: 976, y: 912, dir: 0 }, { x: 1008, y: 912, dir: 0 }, { x: 336, y: 912, dir: 0 }, { x: 368, y: 912, dir: 0 }, { x: 848, y: 912, dir: 0 }, { x: 880, y: 912, dir: 0 }, { x: 80, y: 912, dir: 0 }, { x: 112, y: 912, dir: 0 }] }, { id: "original-08", label: "08 \xB7 CASTLE", symbol: 152, width: 960, height: 800, columns: 30, rows: 25, collision: ["111111111111111111111111111111", "111111111100110011001111111111", "110000000000000000000000000011", "110000000000000000000000000011", "110011111111110011111111110011", "110011111111110011111111110011", "110011000000000000000000110011", "110011000000000000000000110011", "100011000000000000000000110001", "100011000000000000000000110001", "110011000000000000000000110011", "110011000000011110000000110011", "100000000000011110000000000001", "100000000000011110000000000001", "110011000000000000000000110011", "110011000000000000000000110011", "100011000000000000000000110001", "100011000000000000000000110001", "110011000000000000000000110011", "110011000000000000000000110011", "110011111111110011111111110011", "110011111111110011111111110011", "110000000000000000000000000011", "110000000000000000000000000011", "111111111111111111111111111111"], playerSpawns: [{ x: 656, y: 368, dir: 0 }], otherSpawns: [{ x: 496, y: 528, dir: 1.5708 }, { x: 272, y: 560, dir: 1.5708 }, { x: 240, y: 240, dir: 1.5708 }, { x: 688, y: 240, dir: 1.5708 }, { x: 720, y: 560, dir: 1.5708 }, { x: 304, y: 400, dir: 1.5708 }, { x: 496, y: 240, dir: 1.5708 }, { x: 688, y: 80, dir: 1.5708 }, { x: 848, y: 272, dir: 1.5708 }, { x: 848, y: 592, dir: 1.5708 }, { x: 624, y: 720, dir: 1.5708 }, { x: 368, y: 720, dir: 1.5708 }, { x: 80, y: 624, dir: 1.5708 }, { x: 80, y: 176, dir: 1.5708 }, { x: 304, y: 80, dir: 1.5708 }], zombieSpawns: [{ x: 336, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 336, y: 784, dir: 0 }, { x: 368, y: 784, dir: 0 }, { x: 592, y: 784, dir: 0 }, { x: 624, y: 784, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 528, dir: 0 }, { x: 16, y: 560, dir: 0 }, { x: 944, y: 272, dir: 0 }, { x: 944, y: 304, dir: 0 }, { x: 944, y: 528, dir: 0 }, { x: 944, y: 560, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 944, y: 432, dir: 0 }, { x: 464, y: 16, dir: 0 }, { x: 496, y: 16, dir: 0 }, { x: 464, y: 784, dir: 0 }, { x: 496, y: 784, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 944, y: 400, dir: 0 }], devilSpawns: [{ x: 464, y: 16, dir: 0 }, { x: 496, y: 16, dir: 0 }, { x: 464, y: 784, dir: 0 }, { x: 496, y: 784, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 944, y: 400, dir: 0 }, { x: 944, y: 272, dir: 0 }, { x: 944, y: 528, dir: 0 }, { x: 16, y: 560, dir: 0 }], barrels: [{ x: 432, y: 208, dir: 0 }, { x: 528, y: 208, dir: 0 }, { x: 432, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 208, y: 368, dir: 0 }, { x: 208, y: 464, dir: 0 }, { x: 752, y: 368, dir: 0 }, { x: 752, y: 464, dir: 0 }], pickups: [{ x: 80, y: 80, dir: 0 }, { x: 880, y: 80, dir: 0 }, { x: 848, y: 720, dir: 0 }, { x: 112, y: 720, dir: 0 }], walls: [{ x: 48, y: 272, dir: 0 }, { x: 48, y: 304, dir: 0 }, { x: 48, y: 400, dir: 0 }, { x: 48, y: 432, dir: 0 }, { x: 48, y: 528, dir: 0 }, { x: 48, y: 560, dir: 0 }, { x: 912, y: 272, dir: 0 }, { x: 912, y: 304, dir: 0 }, { x: 912, y: 400, dir: 0 }, { x: 912, y: 432, dir: 0 }, { x: 912, y: 528, dir: 0 }, { x: 912, y: 560, dir: 0 }] }, { id: "original-09", label: "09 \xB7 BIG BOXY", symbol: 114, width: 1312, height: 1056, columns: 41, rows: 33, collision: ["11111111111111111111111111111111111111111", "11111111111111111100000111111111111111111", "11111111111111111100000111111111111111111", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "10000000000000000000000000000000000000001", "11111111111111111111111111111111111111111"], playerSpawns: [{ x: 528, y: 560, dir: 0 }], otherSpawns: [{ x: 784, y: 560, dir: 3.14159 }, { x: 784, y: 304, dir: 3.14159 }, { x: 528, y: 816, dir: 0 }, { x: 272, y: 816, dir: 0 }, { x: 272, y: 560, dir: 0 }, { x: 272, y: 304, dir: 0 }, { x: 528, y: 304, dir: 0 }, { x: 784, y: 816, dir: 3.14159 }, { x: 1040, y: 816, dir: 3.14159 }, { x: 1040, y: 560, dir: 3.14159 }, { x: 1040, y: 304, dir: 3.14159 }, { x: 1264, y: 816, dir: 3.14159 }, { x: 1264, y: 560, dir: 3.14159 }, { x: 1264, y: 304, dir: 3.14159 }, { x: 80, y: 304, dir: 0 }, { x: 80, y: 560, dir: 0 }, { x: 80, y: 816, dir: 0 }, { x: 784, y: 144, dir: 3.14159 }, { x: 272, y: 144, dir: 0 }, { x: 528, y: 144, dir: 0 }, { x: 1040, y: 144, dir: 3.14159 }, { x: 1264, y: 144, dir: 3.14159 }, { x: 80, y: 144, dir: 0 }, { x: 784, y: 944, dir: 3.14159 }, { x: 272, y: 944, dir: 0 }, { x: 528, y: 944, dir: 0 }, { x: 1040, y: 944, dir: 3.14159 }, { x: 1264, y: 944, dir: 3.14159 }, { x: 80, y: 944, dir: 0 }], zombieSpawns: [{ x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 720, y: 16, dir: 0 }, { x: 592, y: 1040, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 656, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }, { x: 720, y: 1040, dir: 0 }], devilSpawns: [{ x: 16, y: 528, dir: 0 }, { x: 1296, y: 528, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }], barrels: [{ x: 464, y: 624, dir: 0 }, { x: 592, y: 624, dir: 0 }, { x: 720, y: 624, dir: 0 }, { x: 848, y: 624, dir: 0 }, { x: 720, y: 496, dir: 0 }, { x: 592, y: 496, dir: 0 }, { x: 848, y: 496, dir: 0 }, { x: 464, y: 496, dir: 0 }, { x: 464, y: 368, dir: 0 }, { x: 592, y: 368, dir: 0 }, { x: 720, y: 368, dir: 0 }, { x: 848, y: 368, dir: 0 }, { x: 720, y: 240, dir: 0 }, { x: 592, y: 240, dir: 0 }, { x: 848, y: 240, dir: 0 }, { x: 464, y: 240, dir: 0 }, { x: 464, y: 880, dir: 0 }, { x: 592, y: 880, dir: 0 }, { x: 720, y: 880, dir: 0 }, { x: 848, y: 880, dir: 0 }, { x: 720, y: 752, dir: 0 }, { x: 592, y: 752, dir: 0 }, { x: 848, y: 752, dir: 0 }, { x: 464, y: 752, dir: 0 }], pickups: [{ x: 528, y: 240, dir: 0 }, { x: 784, y: 240, dir: 0 }, { x: 528, y: 368, dir: 0 }, { x: 784, y: 368, dir: 0 }, { x: 528, y: 368, dir: 0 }, { x: 784, y: 368, dir: 0 }, { x: 528, y: 752, dir: 0 }, { x: 784, y: 752, dir: 0 }, { x: 528, y: 880, dir: 0 }, { x: 784, y: 880, dir: 0 }, { x: 528, y: 880, dir: 0 }, { x: 784, y: 880, dir: 0 }, { x: 528, y: 496, dir: 0 }, { x: 784, y: 496, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 784, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 784, y: 624, dir: 0 }], walls: [] }, { id: "original-10", label: "10 \xB7 RECTY", symbol: 115, width: 1856, height: 544, columns: 58, rows: 17, collision: ["1111111111111111111111111111111111111111111111111111111111", "1111111111111111111111111111111111111111111111111111111111", "1111111111111111111111111111111111111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111111111111111111111111111111111111", "1111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 272, y: 272, dir: 3.14159 }], otherSpawns: [{ x: 496, y: 272, dir: 3.14159 }, { x: 336, y: 144, dir: 3.14159 }, { x: 336, y: 400, dir: 3.14159 }, { x: 848, y: 272, dir: 3.14159 }, { x: 688, y: 144, dir: 3.14159 }, { x: 688, y: 400, dir: 3.14159 }, { x: 1168, y: 272, dir: 3.14159 }, { x: 1008, y: 144, dir: 3.14159 }, { x: 1008, y: 400, dir: 3.14159 }, { x: 1520, y: 272, dir: 3.14159 }, { x: 1360, y: 144, dir: 3.14159 }, { x: 1360, y: 400, dir: 3.14159 }, { x: 1680, y: 144, dir: 3.14159 }, { x: 1680, y: 400, dir: 3.14159 }, { x: 144, y: 144, dir: 3.14159 }, { x: 144, y: 400, dir: 3.14159 }], zombieSpawns: [{ x: 16, y: 240, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 336, dir: 0 }, { x: 16, y: 368, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 16, y: 144, dir: 0 }, { x: 1840, y: 240, dir: 0 }, { x: 1840, y: 272, dir: 0 }, { x: 1840, y: 304, dir: 0 }, { x: 1840, y: 336, dir: 0 }, { x: 1840, y: 368, dir: 0 }, { x: 1840, y: 400, dir: 0 }, { x: 1840, y: 208, dir: 0 }, { x: 1840, y: 176, dir: 0 }, { x: 1840, y: 144, dir: 0 }], devilSpawns: [{ x: 16, y: 208, dir: 0 }, { x: 16, y: 336, dir: 0 }, { x: 1840, y: 208, dir: 0 }, { x: 1840, y: 336, dir: 0 }], barrels: [{ x: 1104, y: 272, dir: 0 }, { x: 720, y: 272, dir: 0 }, { x: 1104, y: 176, dir: 0 }, { x: 720, y: 176, dir: 0 }, { x: 1104, y: 368, dir: 0 }, { x: 720, y: 368, dir: 0 }], pickups: [{ x: 1680, y: 240, dir: 0 }, { x: 1680, y: 304, dir: 0 }, { x: 1264, y: 240, dir: 0 }, { x: 1264, y: 304, dir: 0 }, { x: 592, y: 240, dir: 0 }, { x: 592, y: 304, dir: 0 }, { x: 176, y: 240, dir: 0 }, { x: 176, y: 304, dir: 0 }], walls: [] }, { id: "original-11", label: "11 \xB7 PATCHY", symbol: 120, width: 1312, height: 1056, columns: 41, rows: 33, collision: ["11111111111111111111111111111111111111111", "11110000000000000000000000111111110001111", "11110000000000000000000000111111110001111", "11110000000000000000000000111111110001111", "10000000000000000000000000111111110000001", "10000000000111111110000000111111110000001", "10000000000111111110000000000000000000001", "10000000000111111110000000000000000000001", "11110000000111111110000000000000000000001", "11110000000111111110000000000000000000001", "11110000000111111110000000000000000001111", "11110000000000000000000000000000000001111", "11110000000000000000000000000000000001111", "11110000000000000000000000000000000001111", "10000000000000000000000000000000000001111", "10000000000000000000000000000000000001111", "10000000000000000000000011111111000000001", "10000000000000000000000011111111000000001", "10000000000000000000000011111111000000001", "10000000000000000000000011111111000000001", "11111111100000000000000011111111000000001", "11111111100000000000000011111111000000001", "11111111100000000000000000000000000000001", "11111111100000000000000000000000000000001", "11111111100000000000000000000000000000001", "11111111100001111111100000000000000000001", "10000000000001111111100000000000000000001", "10000000000001111111100000000000000000001", "10000000000001111111100000000000000000001", "10000000000001111111100000000000000000001", "11110000000001111111100000000000000001111", "11110000000000000000000000000000000001111", "11111111111111111111111111111111111111111"], playerSpawns: [{ x: 528, y: 560, dir: 0 }], otherSpawns: [{ x: 784, y: 304, dir: 3.14159 }, { x: 272, y: 528, dir: 0 }, { x: 272, y: 304, dir: 0 }, { x: 528, y: 304, dir: 0 }, { x: 784, y: 816, dir: 3.14159 }, { x: 1040, y: 816, dir: 3.14159 }, { x: 1040, y: 560, dir: 3.14159 }, { x: 1040, y: 304, dir: 3.14159 }, { x: 1264, y: 816, dir: 3.14159 }, { x: 1264, y: 592, dir: 3.14159 }, { x: 80, y: 304, dir: 0 }, { x: 80, y: 560, dir: 0 }, { x: 784, y: 144, dir: 3.14159 }, { x: 272, y: 144, dir: 0 }, { x: 496, y: 80, dir: 0 }, { x: 1264, y: 176, dir: 3.14159 }, { x: 80, y: 144, dir: 0 }, { x: 784, y: 944, dir: 3.14159 }, { x: 272, y: 944, dir: 0 }, { x: 1040, y: 944, dir: 3.14159 }, { x: 80, y: 880, dir: 0 }], zombieSpawns: [{ x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 720, y: 16, dir: 0 }, { x: 592, y: 1040, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 656, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }, { x: 720, y: 1040, dir: 0 }, { x: 272, y: 16, dir: 0 }, { x: 304, y: 16, dir: 0 }, { x: 336, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 400, y: 16, dir: 0 }, { x: 976, y: 1040, dir: 0 }, { x: 1008, y: 1040, dir: 0 }, { x: 1040, y: 1040, dir: 0 }, { x: 1072, y: 1040, dir: 0 }, { x: 1104, y: 1040, dir: 0 }, { x: 240, y: 1040, dir: 0 }, { x: 272, y: 1040, dir: 0 }, { x: 304, y: 1040, dir: 0 }, { x: 336, y: 1040, dir: 0 }, { x: 368, y: 1040, dir: 0 }, { x: 1136, y: 16, dir: 0 }, { x: 1168, y: 16, dir: 0 }, { x: 1104, y: 16, dir: 0 }, { x: 16, y: 176, dir: 0 }], devilSpawns: [{ x: 16, y: 528, dir: 0 }, { x: 1296, y: 528, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }, { x: 304, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 1008, y: 1040, dir: 0 }, { x: 1072, y: 1040, dir: 0 }, { x: 272, y: 1040, dir: 0 }, { x: 336, y: 1040, dir: 0 }, { x: 1136, y: 16, dir: 0 }], barrels: [{ x: 464, y: 624, dir: 0 }, { x: 592, y: 624, dir: 0 }, { x: 592, y: 496, dir: 0 }, { x: 464, y: 496, dir: 0 }, { x: 720, y: 880, dir: 0 }, { x: 848, y: 880, dir: 0 }], pickups: [{ x: 784, y: 880, dir: 0 }, { x: 784, y: 880, dir: 0 }, { x: 528, y: 496, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }], walls: [] }, { id: "original-12", label: "12 \xB7 FOREST BOX", symbol: 125, width: 1280, height: 1056, columns: 40, rows: 33, collision: ["1111111111111111111111111111111111111111", "1000000000000000000000000000000000000001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011001100110011001100110011001100001", "1000000001100000011000000110000001100001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011000000110011001100000011001100001", "1000000000000000011000000000000001100001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011001100110000001100110011000000001", "1000000001100000000000000110000000000001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011001100110011001100110011001100001", "1000000001100000011000000110000001100001", "1000000000000000000000000000000000000001", "1000011000000110000000000000000000000001", "1000011000000110011000000110000001100001", "1000000000000000011000000110000001100001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011001100110000001100110011001100001", "1000000001100000000000000110000001100001", "1000000000000000000000000000000000000001", "1000011000000110000001100000011000000001", "1000011001100110011001100110011001100001", "1000000001100000011000000110000001100001", "1000000000000000000000000000000000000001", "1000000000000000000000000000000000000001", "1111111111111111111111111111111111111111"], playerSpawns: [{ x: 656, y: 528, dir: 0 }], otherSpawns: [{ x: 784, y: 304, dir: 3.14159 }, { x: 272, y: 528, dir: 0 }, { x: 272, y: 304, dir: 0 }, { x: 528, y: 304, dir: 0 }, { x: 656, y: 944, dir: 3.14159 }, { x: 1040, y: 816, dir: 3.14159 }, { x: 1040, y: 560, dir: 3.14159 }, { x: 1040, y: 304, dir: 3.14159 }, { x: 80, y: 304, dir: 0 }, { x: 80, y: 560, dir: 0 }, { x: 784, y: 144, dir: 3.14159 }, { x: 272, y: 144, dir: 0 }, { x: 496, y: 80, dir: 0 }, { x: 80, y: 144, dir: 0 }, { x: 784, y: 944, dir: 3.14159 }, { x: 272, y: 944, dir: 0 }, { x: 1040, y: 944, dir: 3.14159 }, { x: 80, y: 880, dir: 0 }, { x: 784, y: 784, dir: 3.14159 }, { x: 272, y: 784, dir: 0 }, { x: 528, y: 784, dir: 0 }, { x: 752, y: 528, dir: 3.14159 }, { x: 496, y: 432, dir: 0 }, { x: 496, y: 592, dir: 0 }, { x: 1168, y: 400, dir: 0 }, { x: 1168, y: 656, dir: 0 }, { x: 1168, y: 144, dir: 0 }, { x: 1168, y: 880, dir: 0 }], zombieSpawns: [{ x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 720, y: 16, dir: 0 }, { x: 272, y: 16, dir: 0 }, { x: 304, y: 16, dir: 0 }, { x: 336, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 400, y: 16, dir: 0 }, { x: 1008, y: 16, dir: 0 }, { x: 1040, y: 16, dir: 0 }, { x: 976, y: 16, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 912, y: 16, dir: 0 }, { x: 944, y: 16, dir: 0 }, { x: 880, y: 16, dir: 0 }, { x: 592, y: 1040, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 656, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }, { x: 720, y: 1040, dir: 0 }, { x: 272, y: 1040, dir: 0 }, { x: 304, y: 1040, dir: 0 }, { x: 336, y: 1040, dir: 0 }, { x: 368, y: 1040, dir: 0 }, { x: 400, y: 1040, dir: 0 }, { x: 1008, y: 1040, dir: 0 }, { x: 1040, y: 1040, dir: 0 }, { x: 976, y: 1040, dir: 0 }, { x: 912, y: 1040, dir: 0 }, { x: 944, y: 1040, dir: 0 }, { x: 880, y: 1040, dir: 0 }, { x: 1264, y: 368, dir: 1.5708 }, { x: 1264, y: 400, dir: 1.5708 }, { x: 1264, y: 336, dir: 1.5708 }, { x: 1264, y: 272, dir: 1.5708 }, { x: 1264, y: 304, dir: 1.5708 }, { x: 1264, y: 240, dir: 1.5708 }, { x: 1264, y: 752, dir: 1.5708 }, { x: 1264, y: 784, dir: 1.5708 }, { x: 1264, y: 720, dir: 1.5708 }, { x: 1264, y: 656, dir: 1.5708 }, { x: 1264, y: 688, dir: 1.5708 }, { x: 1264, y: 624, dir: 1.5708 }, { x: 16, y: 880, dir: 0 }], devilSpawns: [{ x: 16, y: 528, dir: 0 }, { x: 1264, y: 528, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 624, y: 1040, dir: 0 }, { x: 688, y: 1040, dir: 0 }], barrels: [], pickups: [{ x: 784, y: 880, dir: 0 }, { x: 784, y: 880, dir: 0 }, { x: 528, y: 496, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }], walls: [] }, { id: "original-13", label: "13 \xB7 TIGHT 2", symbol: 126, width: 1216, height: 1088, columns: 38, rows: 34, collision: ["11111111111111111111111111111111111111", "11111100111111111111111111001111111111", "11000000110000001100000011001100110011", "11000000110000001100000011001100000011", "11000000110000001100000011001100000011", "11000000000000000000000000001100000011", "11001111110011111111111111001100000011", "11001111110011111111111111001100000011", "11001100110000000000000000001100000011", "11001100110011111111110011111111110011", "11001100110011111111110011111111110011", "11000000110011000000110000000000000011", "11000000110011111100111111111111110011", "11000000110011111100111111111111110011", "11000000110000000000000000000000110011", "11111100111111000000111111111100110011", "11111100111111000000111111111100110011", "11000000000000000000110000001100110011", "11000000111111000000110000001100110011", "11000000111111000000110000001100110011", "11000000000011000000000000001100000011", "11111111111111000000110011001100110011", "11111111111111000000110011001100110011", "11000000000000000000110011001100110011", "11000000111111111111110011001100110011", "11000000111111111111110011001100110011", "11000000000000001100000011000000110011", "11000000000011111100000011001111110011", "11000000000011111100000011001111110011", "11000000000011000000000011001100000011", "11111111110011001111111111001100000011", "11111111110011001111111111001100000011", "10000000000011001100000000000000000011", "11111111111111111111111111111111111111"], playerSpawns: [{ x: 560, y: 560, dir: 0 }], otherSpawns: [{ x: 592, y: 720, dir: 0 }, { x: 112, y: 432, dir: 0 }, { x: 496, y: 976, dir: 3.14159 }, { x: 1008, y: 784, dir: 3.14159 }, { x: 976, y: 560, dir: 3.14159 }, { x: 208, y: 272, dir: 0 }, { x: 144, y: 592, dir: 0 }, { x: 752, y: 144, dir: 3.14159 }, { x: 496, y: 80, dir: 0 }, { x: 208, y: 112, dir: 0 }, { x: 848, y: 944, dir: 3.14159 }, { x: 336, y: 944, dir: 0 }, { x: 1040, y: 976, dir: 3.14159 }, { x: 144, y: 848, dir: 0 }, { x: 880, y: 720, dir: 3.14159 }, { x: 624, y: 880, dir: 0 }, { x: 752, y: 560, dir: 3.14159 }, { x: 496, y: 592, dir: 0 }, { x: 1104, y: 400, dir: 0 }, { x: 1104, y: 656, dir: 0 }, { x: 1104, y: 144, dir: 0 }, { x: 1104, y: 880, dir: 0 }, { x: 1008, y: 208, dir: 0 }, { x: 720, y: 304, dir: 0 }, { x: 336, y: 304, dir: 0 }], zombieSpawns: [{ x: 208, y: 16, dir: 0 }, { x: 240, y: 16, dir: 0 }, { x: 464, y: 1104, dir: 0 }, { x: 496, y: 1104, dir: 0 }, { x: 848, y: 16, dir: 0 }, { x: 880, y: 16, dir: 0 }, { x: 1104, y: 1104, dir: 0 }, { x: 1136, y: 1104, dir: 0 }], devilSpawns: [{ x: 240, y: 16, dir: 0 }, { x: 496, y: 1104, dir: 0 }, { x: 880, y: 16, dir: 0 }, { x: 1136, y: 1104, dir: 0 }], barrels: [], pickups: [{ x: 848, y: 816, dir: 0 }, { x: 528, y: 496, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 176, y: 592, dir: 0 }, { x: 208, y: 848, dir: 0 }, { x: 1072, y: 112, dir: 0 }], walls: [] }, { id: "original-14", label: "14 \xB7 MASSIVE", symbol: 127, width: 1856, height: 1504, columns: 58, rows: 47, collision: ["1111111111111111111111111111111111111111111111111111111111", "1111111111111111111111111111111111111111111111111111111111", "1111111111111111111111111111111111111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111100000011111111111111111111111111", "1111111111111111111111111100000011111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111100000011111111111111111111111111", "1111111111111111111111111100000011111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111100000011111111111111111111111111", "1111111111111111111111111100000011111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111100000011111111111111111111111111", "1111111111111111111111111100000011111111111111111111111111", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1000000000000000000000000000000000000000000000000000000001", "1111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 1584, y: 784, dir: 0 }], otherSpawns: [{ x: 336, y: 208, dir: 3.14159 }, { x: 688, y: 208, dir: 3.14159 }, { x: 1008, y: 208, dir: 3.14159 }, { x: 1360, y: 208, dir: 3.14159 }, { x: 1680, y: 208, dir: 3.14159 }, { x: 144, y: 208, dir: 3.14159 }, { x: 336, y: 496, dir: 3.14159 }, { x: 688, y: 496, dir: 3.14159 }, { x: 1008, y: 496, dir: 3.14159 }, { x: 1360, y: 496, dir: 3.14159 }, { x: 1680, y: 496, dir: 3.14159 }, { x: 144, y: 496, dir: 3.14159 }, { x: 336, y: 784, dir: 3.14159 }, { x: 688, y: 784, dir: 3.14159 }, { x: 1008, y: 784, dir: 3.14159 }, { x: 1360, y: 784, dir: 3.14159 }, { x: 1680, y: 784, dir: 3.14159 }, { x: 144, y: 784, dir: 3.14159 }, { x: 336, y: 1072, dir: 3.14159 }, { x: 688, y: 1072, dir: 3.14159 }, { x: 1008, y: 1072, dir: 3.14159 }, { x: 1360, y: 1072, dir: 3.14159 }, { x: 1680, y: 1072, dir: 3.14159 }, { x: 144, y: 1072, dir: 3.14159 }, { x: 336, y: 1360, dir: 3.14159 }, { x: 688, y: 1360, dir: 3.14159 }, { x: 1008, y: 1360, dir: 3.14159 }, { x: 1360, y: 1360, dir: 3.14159 }, { x: 1680, y: 1360, dir: 3.14159 }, { x: 144, y: 1360, dir: 3.14159 }], zombieSpawns: [{ x: 16, y: 240, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 16, y: 144, dir: 0 }, { x: 1840, y: 240, dir: 0 }, { x: 1840, y: 272, dir: 0 }, { x: 1840, y: 208, dir: 0 }, { x: 1840, y: 176, dir: 0 }, { x: 1840, y: 144, dir: 0 }, { x: 16, y: 528, dir: 0 }, { x: 16, y: 560, dir: 0 }, { x: 16, y: 496, dir: 0 }, { x: 16, y: 464, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 1840, y: 528, dir: 0 }, { x: 1840, y: 560, dir: 0 }, { x: 1840, y: 496, dir: 0 }, { x: 1840, y: 464, dir: 0 }, { x: 1840, y: 432, dir: 0 }, { x: 16, y: 816, dir: 0 }, { x: 16, y: 848, dir: 0 }, { x: 16, y: 784, dir: 0 }, { x: 16, y: 752, dir: 0 }, { x: 16, y: 720, dir: 0 }, { x: 1840, y: 816, dir: 0 }, { x: 1840, y: 848, dir: 0 }, { x: 1840, y: 784, dir: 0 }, { x: 1840, y: 752, dir: 0 }, { x: 1840, y: 720, dir: 0 }, { x: 16, y: 1104, dir: 0 }, { x: 16, y: 1136, dir: 0 }, { x: 16, y: 1072, dir: 0 }, { x: 16, y: 1040, dir: 0 }, { x: 16, y: 1008, dir: 0 }, { x: 1840, y: 1104, dir: 0 }, { x: 1840, y: 1136, dir: 0 }, { x: 1840, y: 1072, dir: 0 }, { x: 1840, y: 1040, dir: 0 }, { x: 1840, y: 1008, dir: 0 }, { x: 16, y: 1392, dir: 0 }, { x: 16, y: 1424, dir: 0 }, { x: 16, y: 1360, dir: 0 }, { x: 16, y: 1328, dir: 0 }, { x: 16, y: 1296, dir: 0 }, { x: 1840, y: 1392, dir: 0 }, { x: 1840, y: 1424, dir: 0 }, { x: 1840, y: 1360, dir: 0 }, { x: 1840, y: 1328, dir: 0 }, { x: 1840, y: 1296, dir: 0 }], devilSpawns: [{ x: 16, y: 208, dir: 0 }, { x: 1840, y: 208, dir: 0 }, { x: 16, y: 496, dir: 0 }, { x: 1840, y: 496, dir: 0 }, { x: 16, y: 784, dir: 0 }, { x: 1840, y: 784, dir: 0 }, { x: 16, y: 1072, dir: 0 }, { x: 1840, y: 1072, dir: 0 }, { x: 16, y: 1360, dir: 0 }, { x: 1840, y: 1360, dir: 0 }], barrels: [{ x: 1104, y: 208, dir: 0 }, { x: 720, y: 208, dir: 0 }, { x: 1104, y: 496, dir: 0 }, { x: 720, y: 496, dir: 0 }, { x: 1104, y: 784, dir: 0 }, { x: 720, y: 784, dir: 0 }, { x: 1104, y: 1072, dir: 0 }, { x: 720, y: 1072, dir: 0 }, { x: 1104, y: 1360, dir: 0 }, { x: 720, y: 1360, dir: 0 }], pickups: [{ x: 1264, y: 208, dir: 0 }, { x: 592, y: 208, dir: 0 }, { x: 176, y: 208, dir: 0 }, { x: 1712, y: 208, dir: 0 }, { x: 1264, y: 496, dir: 0 }, { x: 592, y: 496, dir: 0 }, { x: 176, y: 496, dir: 0 }, { x: 1712, y: 496, dir: 0 }, { x: 1264, y: 784, dir: 0 }, { x: 592, y: 784, dir: 0 }, { x: 176, y: 784, dir: 0 }, { x: 1712, y: 784, dir: 0 }, { x: 1264, y: 1072, dir: 0 }, { x: 592, y: 1072, dir: 0 }, { x: 176, y: 1072, dir: 0 }, { x: 1712, y: 1072, dir: 0 }, { x: 1264, y: 1360, dir: 0 }, { x: 592, y: 1360, dir: 0 }, { x: 176, y: 1360, dir: 0 }, { x: 1712, y: 1360, dir: 0 }], walls: [{ x: 48, y: 208, dir: 0 }, { x: 48, y: 176, dir: 0 }, { x: 48, y: 240, dir: 0 }, { x: 48, y: 272, dir: 0 }, { x: 48, y: 304, dir: 0 }, { x: 48, y: 144, dir: 0 }, { x: 48, y: 112, dir: 0 }, { x: 16, y: 112, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 48, y: 496, dir: 0 }, { x: 48, y: 464, dir: 0 }, { x: 48, y: 528, dir: 0 }, { x: 48, y: 560, dir: 0 }, { x: 48, y: 592, dir: 0 }, { x: 48, y: 432, dir: 0 }, { x: 48, y: 400, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 16, y: 592, dir: 0 }, { x: 48, y: 784, dir: 0 }, { x: 48, y: 752, dir: 0 }, { x: 48, y: 816, dir: 0 }, { x: 48, y: 848, dir: 0 }, { x: 48, y: 880, dir: 0 }, { x: 48, y: 720, dir: 0 }, { x: 48, y: 688, dir: 0 }, { x: 16, y: 688, dir: 0 }, { x: 16, y: 880, dir: 0 }, { x: 48, y: 1072, dir: 0 }, { x: 48, y: 1040, dir: 0 }, { x: 48, y: 1104, dir: 0 }, { x: 48, y: 1136, dir: 0 }, { x: 48, y: 1168, dir: 0 }, { x: 48, y: 1008, dir: 0 }, { x: 48, y: 976, dir: 0 }, { x: 16, y: 976, dir: 0 }, { x: 16, y: 1168, dir: 0 }, { x: 48, y: 1360, dir: 0 }, { x: 48, y: 1328, dir: 0 }, { x: 48, y: 1392, dir: 0 }, { x: 48, y: 1424, dir: 0 }, { x: 48, y: 1456, dir: 0 }, { x: 48, y: 1296, dir: 0 }, { x: 48, y: 1264, dir: 0 }, { x: 16, y: 1264, dir: 0 }, { x: 16, y: 1456, dir: 0 }, { x: 1808, y: 208, dir: 0 }, { x: 1808, y: 176, dir: 0 }, { x: 1808, y: 240, dir: 0 }, { x: 1808, y: 272, dir: 0 }, { x: 1808, y: 304, dir: 0 }, { x: 1808, y: 144, dir: 0 }, { x: 1808, y: 112, dir: 0 }, { x: 1808, y: 496, dir: 0 }, { x: 1808, y: 464, dir: 0 }, { x: 1808, y: 528, dir: 0 }, { x: 1808, y: 560, dir: 0 }, { x: 1808, y: 592, dir: 0 }, { x: 1808, y: 432, dir: 0 }, { x: 1808, y: 400, dir: 0 }, { x: 1808, y: 848, dir: 0 }, { x: 1808, y: 880, dir: 0 }, { x: 1808, y: 720, dir: 0 }, { x: 1808, y: 688, dir: 0 }, { x: 1808, y: 1072, dir: 0 }, { x: 1808, y: 1040, dir: 0 }, { x: 1808, y: 1104, dir: 0 }, { x: 1808, y: 1136, dir: 0 }, { x: 1808, y: 1168, dir: 0 }, { x: 1808, y: 1008, dir: 0 }, { x: 1808, y: 976, dir: 0 }, { x: 1808, y: 1360, dir: 0 }, { x: 1808, y: 1328, dir: 0 }, { x: 1808, y: 1392, dir: 0 }, { x: 1808, y: 1424, dir: 0 }, { x: 1808, y: 1456, dir: 0 }, { x: 1808, y: 1296, dir: 0 }, { x: 1808, y: 1264, dir: 0 }, { x: 1840, y: 112, dir: 0 }, { x: 1840, y: 304, dir: 0 }, { x: 1840, y: 400, dir: 0 }, { x: 1840, y: 592, dir: 0 }, { x: 1840, y: 688, dir: 0 }, { x: 1840, y: 880, dir: 0 }, { x: 1840, y: 976, dir: 0 }, { x: 1840, y: 1168, dir: 0 }, { x: 1840, y: 1264, dir: 0 }, { x: 1840, y: 1456, dir: 0 }] }, { id: "original-15", label: "15 \xB7 THIN LINE", symbol: 128, width: 2688, height: 544, columns: 84, rows: 17, collision: ["111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 336, y: 304, dir: 3.14159 }], otherSpawns: [{ x: 432, y: 272, dir: 3.14159 }, { x: 752, y: 272, dir: 3.14159 }, { x: 1040, y: 272, dir: 3.14159 }, { x: 1328, y: 272, dir: 3.14159 }, { x: 1648, y: 272, dir: 3.14159 }, { x: 144, y: 272, dir: 3.14159 }, { x: 1936, y: 272, dir: 3.14159 }, { x: 2256, y: 272, dir: 3.14159 }, { x: 2544, y: 272, dir: 3.14159 }], zombieSpawns: [{ x: 16, y: 336, dir: 0 }, { x: 16, y: 368, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 2672, y: 336, dir: 0 }, { x: 2672, y: 368, dir: 0 }, { x: 1840, y: 304, dir: 0 }, { x: 2672, y: 272, dir: 0 }, { x: 2672, y: 240, dir: 0 }, { x: 16, y: 240, dir: 0 }, { x: 2672, y: 208, dir: 0 }, { x: 2672, y: 304, dir: 0 }, { x: 16, y: 304, dir: 0 }], devilSpawns: [{ x: 16, y: 304, dir: 0 }, { x: 2672, y: 240, dir: 0 }], barrels: [], pickups: [{ x: 1680, y: 336, dir: 0 }, { x: 1680, y: 240, dir: 0 }, { x: 1264, y: 336, dir: 0 }, { x: 1264, y: 240, dir: 0 }, { x: 592, y: 336, dir: 0 }, { x: 592, y: 240, dir: 0 }, { x: 144, y: 336, dir: 0 }, { x: 176, y: 240, dir: 0 }, { x: 2e3, y: 304, dir: 0 }, { x: 2384, y: 240, dir: 0 }], walls: [] }, { id: "original-16", label: "16 \xB7 4 CASTLES", symbol: 133, width: 1856, height: 1600, columns: 58, rows: 50, collision: ["1111111111111111111111111111111111111111111111111111111111", "1111111111001100110011111111111111111100110011001111111111", "1100000000000000000000000000110000000000000000000000000011", "1100000000000000000000000000110000000000000000000000000011", "1100111111111100111111111100110011111111110011111111110011", "1100111111111100111111111100110011111111110011111111110011", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1000110000000000000000001100000011000000000000000000110001", "1000110000000000000000001100000011000000000000000000110001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000111100000001100110011000000011110000000110011", "1000000000000111100000000000000000000000011110000000000001", "1000000000000111100000000000000000000000011110000000000001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1000110000000000000000001100000011000000000000000000110001", "1000110000000000000000001100000011000000000000000000110001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1100111111111100111111111100110011111111110011111111110011", "1100111111111100111111111100110011111111110011111111110011", "1100000000000000000000000000110000000000000000000000000011", "1100000000000000000000000000110000000000000000000000000011", "1111111111001100110011111111111111111100110011001111111111", "1111111111001100110011111111111111111100110011001111111111", "1100000000000000000000000000110000000000000000000000000011", "1100000000000000000000000000110000000000000000000000000011", "1100111111111100111111111100110011111111110011111111110011", "1100111111111100111111111100110011111111110011111111110011", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1000110000000000000000001100000011000000000000000000110001", "1000110000000000000000001100000011000000000000000000110001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000111100000001100110011000000011110000000110011", "1000000000000111100000000000000000000000011110000000000001", "1000000000000111100000000000000000000000011110000000000001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1000110000000000000000001100000011000000000000000000110001", "1000110000000000000000001100000011000000000000000000110001", "1100110000000000000000001100110011000000000000000000110011", "1100110000000000000000001100110011000000000000000000110011", "1100111111111100111111111100110011111111110011111111110011", "1100111111111100111111111100110011111111110011111111110011", "1100000000000000000000000000110000000000000000000000000011", "1100000000000000000000000000110000000000000000000000000011", "1111111111001100110011111111111111111100110011001111111111", "1111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 656, y: 368, dir: 0 }, { x: 1552, y: 368, dir: 0 }, { x: 656, y: 1136, dir: 0 }, { x: 1552, y: 1136, dir: 0 }], otherSpawns: [{ x: 496, y: 528, dir: 1.5708 }, { x: 272, y: 560, dir: 1.5708 }, { x: 240, y: 240, dir: 1.5708 }, { x: 688, y: 240, dir: 1.5708 }, { x: 720, y: 560, dir: 1.5708 }, { x: 304, y: 400, dir: 1.5708 }, { x: 496, y: 240, dir: 1.5708 }, { x: 688, y: 80, dir: 1.5708 }, { x: 848, y: 272, dir: 1.5708 }, { x: 848, y: 592, dir: 1.5708 }, { x: 624, y: 720, dir: 1.5708 }, { x: 368, y: 720, dir: 1.5708 }, { x: 80, y: 624, dir: 1.5708 }, { x: 80, y: 176, dir: 1.5708 }, { x: 304, y: 80, dir: 1.5708 }, { x: 1392, y: 528, dir: 1.5708 }, { x: 1168, y: 560, dir: 1.5708 }, { x: 1136, y: 240, dir: 1.5708 }, { x: 1584, y: 240, dir: 1.5708 }, { x: 1616, y: 560, dir: 1.5708 }, { x: 1200, y: 400, dir: 1.5708 }, { x: 1392, y: 240, dir: 1.5708 }, { x: 1584, y: 80, dir: 1.5708 }, { x: 1744, y: 272, dir: 1.5708 }, { x: 1744, y: 592, dir: 1.5708 }, { x: 1520, y: 720, dir: 1.5708 }, { x: 1264, y: 720, dir: 1.5708 }, { x: 976, y: 624, dir: 1.5708 }, { x: 976, y: 176, dir: 1.5708 }, { x: 1200, y: 80, dir: 1.5708 }, { x: 496, y: 1296, dir: 1.5708 }, { x: 272, y: 1328, dir: 1.5708 }, { x: 240, y: 1008, dir: 1.5708 }, { x: 688, y: 1008, dir: 1.5708 }, { x: 720, y: 1328, dir: 1.5708 }, { x: 304, y: 1168, dir: 1.5708 }, { x: 496, y: 1008, dir: 1.5708 }, { x: 688, y: 848, dir: 1.5708 }, { x: 848, y: 1040, dir: 1.5708 }, { x: 848, y: 1360, dir: 1.5708 }, { x: 624, y: 1488, dir: 1.5708 }, { x: 368, y: 1488, dir: 1.5708 }, { x: 80, y: 1392, dir: 1.5708 }, { x: 80, y: 944, dir: 1.5708 }, { x: 304, y: 848, dir: 1.5708 }, { x: 1392, y: 1296, dir: 1.5708 }, { x: 1168, y: 1328, dir: 1.5708 }, { x: 1136, y: 1008, dir: 1.5708 }, { x: 1584, y: 1008, dir: 1.5708 }, { x: 1616, y: 1328, dir: 1.5708 }, { x: 1200, y: 1168, dir: 1.5708 }, { x: 1392, y: 1008, dir: 1.5708 }, { x: 1584, y: 848, dir: 1.5708 }, { x: 1744, y: 1040, dir: 1.5708 }, { x: 1744, y: 1360, dir: 1.5708 }, { x: 1520, y: 1488, dir: 1.5708 }, { x: 1264, y: 1488, dir: 1.5708 }, { x: 976, y: 1392, dir: 1.5708 }, { x: 976, y: 944, dir: 1.5708 }, { x: 1200, y: 848, dir: 1.5708 }], zombieSpawns: [{ x: 336, y: 16, dir: 0 }, { x: 368, y: 16, dir: 0 }, { x: 592, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 304, dir: 0 }, { x: 16, y: 528, dir: 0 }, { x: 16, y: 560, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 464, y: 16, dir: 0 }, { x: 496, y: 16, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 1232, y: 16, dir: 0 }, { x: 1264, y: 16, dir: 0 }, { x: 1488, y: 16, dir: 0 }, { x: 1520, y: 16, dir: 0 }, { x: 1840, y: 272, dir: 0 }, { x: 1840, y: 304, dir: 0 }, { x: 1840, y: 528, dir: 0 }, { x: 1840, y: 560, dir: 0 }, { x: 1840, y: 432, dir: 0 }, { x: 1360, y: 16, dir: 0 }, { x: 1392, y: 16, dir: 0 }, { x: 1840, y: 400, dir: 0 }, { x: 336, y: 1552, dir: 0 }, { x: 368, y: 1552, dir: 0 }, { x: 592, y: 1552, dir: 0 }, { x: 624, y: 1552, dir: 0 }, { x: 16, y: 1040, dir: 0 }, { x: 16, y: 1072, dir: 0 }, { x: 16, y: 1296, dir: 0 }, { x: 16, y: 1328, dir: 0 }, { x: 16, y: 1168, dir: 0 }, { x: 464, y: 1552, dir: 0 }, { x: 496, y: 1552, dir: 0 }, { x: 16, y: 1200, dir: 0 }, { x: 1232, y: 1552, dir: 0 }, { x: 1264, y: 1552, dir: 0 }, { x: 1488, y: 1552, dir: 0 }, { x: 1520, y: 1552, dir: 0 }, { x: 1840, y: 1040, dir: 0 }, { x: 1840, y: 1072, dir: 0 }, { x: 1840, y: 1296, dir: 0 }, { x: 1840, y: 1328, dir: 0 }, { x: 1840, y: 1200, dir: 0 }, { x: 1360, y: 1552, dir: 0 }, { x: 1392, y: 1552, dir: 0 }, { x: 1840, y: 1168, dir: 0 }], devilSpawns: [{ x: 464, y: 16, dir: 0 }, { x: 496, y: 16, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 16, y: 560, dir: 0 }, { x: 1360, y: 16, dir: 0 }, { x: 1392, y: 16, dir: 0 }, { x: 1840, y: 400, dir: 0 }, { x: 1840, y: 272, dir: 0 }, { x: 1840, y: 528, dir: 0 }, { x: 464, y: 1552, dir: 0 }, { x: 496, y: 1552, dir: 0 }, { x: 16, y: 1040, dir: 0 }, { x: 16, y: 1200, dir: 0 }, { x: 16, y: 1328, dir: 0 }, { x: 1360, y: 1552, dir: 0 }, { x: 1392, y: 1552, dir: 0 }, { x: 1840, y: 1168, dir: 0 }, { x: 1840, y: 1040, dir: 0 }, { x: 1840, y: 1296, dir: 0 }], barrels: [{ x: 432, y: 208, dir: 0 }, { x: 528, y: 208, dir: 0 }, { x: 432, y: 624, dir: 0 }, { x: 528, y: 624, dir: 0 }, { x: 208, y: 368, dir: 0 }, { x: 208, y: 464, dir: 0 }, { x: 752, y: 368, dir: 0 }, { x: 752, y: 464, dir: 0 }, { x: 1328, y: 208, dir: 0 }, { x: 1424, y: 208, dir: 0 }, { x: 1328, y: 624, dir: 0 }, { x: 1424, y: 624, dir: 0 }, { x: 1104, y: 368, dir: 0 }, { x: 1104, y: 464, dir: 0 }, { x: 1648, y: 368, dir: 0 }, { x: 1648, y: 464, dir: 0 }, { x: 432, y: 976, dir: 0 }, { x: 528, y: 976, dir: 0 }, { x: 432, y: 1392, dir: 0 }, { x: 528, y: 1392, dir: 0 }, { x: 208, y: 1136, dir: 0 }, { x: 208, y: 1232, dir: 0 }, { x: 752, y: 1136, dir: 0 }, { x: 752, y: 1232, dir: 0 }, { x: 1328, y: 976, dir: 0 }, { x: 1424, y: 976, dir: 0 }, { x: 1328, y: 1392, dir: 0 }, { x: 1424, y: 1392, dir: 0 }, { x: 1104, y: 1136, dir: 0 }, { x: 1104, y: 1232, dir: 0 }, { x: 1648, y: 1136, dir: 0 }, { x: 1648, y: 1232, dir: 0 }], pickups: [{ x: 80, y: 80, dir: 0 }, { x: 880, y: 80, dir: 0 }, { x: 848, y: 720, dir: 0 }, { x: 112, y: 720, dir: 0 }, { x: 976, y: 80, dir: 0 }, { x: 1776, y: 80, dir: 0 }, { x: 1744, y: 720, dir: 0 }, { x: 1008, y: 720, dir: 0 }, { x: 80, y: 848, dir: 0 }, { x: 880, y: 848, dir: 0 }, { x: 848, y: 1488, dir: 0 }, { x: 112, y: 1488, dir: 0 }, { x: 976, y: 848, dir: 0 }, { x: 1776, y: 848, dir: 0 }, { x: 1744, y: 1488, dir: 0 }, { x: 1008, y: 1488, dir: 0 }], walls: [{ x: 48, y: 272, dir: 0 }, { x: 48, y: 304, dir: 0 }, { x: 48, y: 400, dir: 0 }, { x: 48, y: 432, dir: 0 }, { x: 48, y: 528, dir: 0 }, { x: 48, y: 560, dir: 0 }, { x: 1808, y: 272, dir: 0 }, { x: 1808, y: 304, dir: 0 }, { x: 1808, y: 400, dir: 0 }, { x: 1808, y: 432, dir: 0 }, { x: 1808, y: 528, dir: 0 }, { x: 1808, y: 560, dir: 0 }, { x: 48, y: 1040, dir: 0 }, { x: 48, y: 1072, dir: 0 }, { x: 48, y: 1168, dir: 0 }, { x: 48, y: 1200, dir: 0 }, { x: 48, y: 1296, dir: 0 }, { x: 48, y: 1328, dir: 0 }, { x: 1808, y: 1040, dir: 0 }, { x: 1808, y: 1072, dir: 0 }, { x: 1808, y: 1168, dir: 0 }, { x: 1808, y: 1200, dir: 0 }, { x: 1808, y: 1296, dir: 0 }, { x: 1808, y: 1328, dir: 0 }] }, { id: "original-17", label: "17 \xB7 THE STRIPS", symbol: 134, width: 2688, height: 704, columns: 84, rows: 22, collision: ["111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111111111111100000011111111111111111100000011111111111111111111111", "111111111111111111111111111111100000011111111111111111100000011111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111000000111111111111111111111111111111111111111111111111111111111", "111111111111111111111000000111111111111111111111111111111111111111111111111111111111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 336, y: 208, dir: 3.14159 }], otherSpawns: [{ x: 464, y: 400, dir: 3.14159 }, { x: 752, y: 432, dir: 3.14159 }, { x: 1072, y: 432, dir: 3.14159 }, { x: 1360, y: 432, dir: 3.14159 }, { x: 1648, y: 432, dir: 3.14159 }, { x: 176, y: 400, dir: 3.14159 }, { x: 1968, y: 432, dir: 3.14159 }, { x: 2256, y: 432, dir: 3.14159 }, { x: 2576, y: 432, dir: 3.14159 }, { x: 464, y: 176, dir: 3.14159 }, { x: 752, y: 176, dir: 3.14159 }, { x: 1040, y: 176, dir: 3.14159 }, { x: 1360, y: 176, dir: 3.14159 }, { x: 1648, y: 176, dir: 3.14159 }, { x: 144, y: 176, dir: 3.14159 }, { x: 1936, y: 176, dir: 3.14159 }, { x: 2256, y: 176, dir: 3.14159 }, { x: 2544, y: 176, dir: 3.14159 }, { x: 464, y: 592, dir: 3.14159 }, { x: 752, y: 592, dir: 3.14159 }, { x: 1072, y: 592, dir: 3.14159 }, { x: 1360, y: 592, dir: 3.14159 }, { x: 1648, y: 592, dir: 3.14159 }, { x: 144, y: 592, dir: 3.14159 }, { x: 1968, y: 592, dir: 3.14159 }, { x: 2256, y: 592, dir: 3.14159 }, { x: 2544, y: 592, dir: 3.14159 }], zombieSpawns: [{ x: 16, y: 240, dir: 0 }, { x: 16, y: 272, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 176, dir: 0 }, { x: 16, y: 112, dir: 0 }, { x: 2672, y: 240, dir: 0 }, { x: 2672, y: 272, dir: 0 }, { x: 1840, y: 208, dir: 0 }, { x: 2672, y: 176, dir: 0 }, { x: 2672, y: 144, dir: 0 }, { x: 16, y: 144, dir: 0 }, { x: 2672, y: 112, dir: 0 }, { x: 2672, y: 208, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 656, dir: 0 }, { x: 16, y: 592, dir: 0 }, { x: 16, y: 624, dir: 0 }, { x: 2672, y: 656, dir: 0 }, { x: 2672, y: 592, dir: 0 }, { x: 2672, y: 624, dir: 0 }, { x: 16, y: 432, dir: 0 }, { x: 16, y: 368, dir: 0 }, { x: 16, y: 400, dir: 0 }, { x: 16, y: 496, dir: 0 }, { x: 16, y: 464, dir: 0 }, { x: 2672, y: 432, dir: 0 }, { x: 2672, y: 368, dir: 0 }, { x: 2672, y: 400, dir: 0 }, { x: 2672, y: 496, dir: 0 }, { x: 2672, y: 464, dir: 0 }], devilSpawns: [{ x: 16, y: 208, dir: 0 }, { x: 2672, y: 144, dir: 0 }, { x: 2672, y: 624, dir: 0 }, { x: 16, y: 624, dir: 0 }], barrels: [], pickups: [{ x: 1680, y: 144, dir: 0 }, { x: 176, y: 144, dir: 0 }, { x: 2384, y: 144, dir: 0 }, { x: 1616, y: 592, dir: 0 }, { x: 1200, y: 592, dir: 0 }, { x: 400, y: 368, dir: 0 }, { x: 688, y: 368, dir: 0 }, { x: 1264, y: 400, dir: 0 }, { x: 2352, y: 368, dir: 0 }], walls: [] }, { id: "original-18", label: "18 \xB7 BIG ONE", symbol: 139, width: 2784, height: 2784, columns: 87, rows: 87, collision: ["111111111111111111111111111111111111111111111111111111111111111111111111111111111111111", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000001100000000000000000000000000000000001111", "100000000000000000000000000000000000000000000001100000000000000000000000000000000000001", "100000000000000000000000000000000000000000000001100000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000110000000000000000000000000000000000000000000011000000000000001", "100000000000000000000000110000000000000000000000000000000000000000000011000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000011000000000000001", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000110000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000110000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "100000000000000000000000000000000000000000000000000000000000000011000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000011000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000011000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000011000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000001100000000000000000000000000000000000000000000000000001", "111100000000000000000000000000001100000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000011000000000001111", "100000000000000000000000000000000000000000000000000000000000000000000011000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000110000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000110000000000000000000000000000000000000000000000000001", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000001100000000000000000011000000000000001111", "111100000000000000000000000000000000000000000001100000000000000000011000000000000001111", "100000000000000000000001100000000000000000000000000000000000000000000000000000000000001", "100000000000000000000001100000000000000000000000000000000000000000000000000000000000001", "100000000000000000000001100000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000011000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000011000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000011000000000000000000000000000001111", "111100000000000000000000000000000000000000000000000000000000000000000000000000000001111", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "100000000000000000000000000000000000000000000000000000000000000000000000000000000000001", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "111100000011111111000000111111110000000111111110000000011111111000000111111110000001111", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"], playerSpawns: [{ x: 1328, y: 1392, dir: 0 }], otherSpawns: [{ x: 944, y: 656, dir: 0 }, { x: 1200, y: 656, dir: 0 }, { x: 1424, y: 656, dir: 0 }, { x: 720, y: 656, dir: 0 }, { x: 464, y: 656, dir: 0 }, { x: 240, y: 656, dir: 0 }, { x: 1680, y: 656, dir: 0 }, { x: 1904, y: 656, dir: 0 }, { x: 2160, y: 656, dir: 0 }, { x: 2384, y: 656, dir: 0 }, { x: 2640, y: 656, dir: 0 }, { x: 944, y: 432, dir: 0 }, { x: 1168, y: 432, dir: 0 }, { x: 1424, y: 432, dir: 0 }, { x: 688, y: 432, dir: 0 }, { x: 464, y: 432, dir: 0 }, { x: 208, y: 432, dir: 0 }, { x: 1648, y: 432, dir: 0 }, { x: 1904, y: 432, dir: 0 }, { x: 2128, y: 432, dir: 0 }, { x: 2384, y: 432, dir: 0 }, { x: 2608, y: 432, dir: 0 }, { x: 944, y: 240, dir: 0 }, { x: 1200, y: 240, dir: 0 }, { x: 1424, y: 240, dir: 0 }, { x: 720, y: 240, dir: 0 }, { x: 464, y: 240, dir: 0 }, { x: 240, y: 240, dir: 0 }, { x: 1680, y: 240, dir: 0 }, { x: 1904, y: 240, dir: 0 }, { x: 2160, y: 240, dir: 0 }, { x: 2384, y: 240, dir: 0 }, { x: 2640, y: 240, dir: 0 }, { x: 944, y: 880, dir: 0 }, { x: 1200, y: 880, dir: 0 }, { x: 1424, y: 880, dir: 0 }, { x: 720, y: 880, dir: 0 }, { x: 464, y: 880, dir: 0 }, { x: 240, y: 880, dir: 0 }, { x: 1680, y: 880, dir: 0 }, { x: 1904, y: 880, dir: 0 }, { x: 2160, y: 880, dir: 0 }, { x: 2384, y: 880, dir: 0 }, { x: 2640, y: 880, dir: 0 }, { x: 912, y: 1104, dir: 0 }, { x: 1168, y: 1104, dir: 0 }, { x: 1392, y: 1104, dir: 0 }, { x: 688, y: 1104, dir: 0 }, { x: 432, y: 1104, dir: 0 }, { x: 208, y: 1104, dir: 0 }, { x: 1648, y: 1104, dir: 0 }, { x: 1872, y: 1104, dir: 0 }, { x: 2128, y: 1104, dir: 0 }, { x: 2352, y: 1104, dir: 0 }, { x: 2608, y: 1104, dir: 0 }, { x: 944, y: 1296, dir: 0 }, { x: 1200, y: 1296, dir: 0 }, { x: 1424, y: 1296, dir: 0 }, { x: 720, y: 1296, dir: 0 }, { x: 464, y: 1296, dir: 0 }, { x: 240, y: 1296, dir: 0 }, { x: 1680, y: 1296, dir: 0 }, { x: 1904, y: 1296, dir: 0 }, { x: 2160, y: 1296, dir: 0 }, { x: 2384, y: 1296, dir: 0 }, { x: 2640, y: 1296, dir: 0 }, { x: 912, y: 1488, dir: 0 }, { x: 1168, y: 1488, dir: 0 }, { x: 1392, y: 1488, dir: 0 }, { x: 688, y: 1488, dir: 0 }, { x: 432, y: 1488, dir: 0 }, { x: 208, y: 1488, dir: 0 }, { x: 1648, y: 1488, dir: 0 }, { x: 1872, y: 1488, dir: 0 }, { x: 2128, y: 1488, dir: 0 }, { x: 2352, y: 1488, dir: 0 }, { x: 2608, y: 1488, dir: 0 }, { x: 944, y: 1712, dir: 0 }, { x: 1200, y: 1712, dir: 0 }, { x: 1424, y: 1712, dir: 0 }, { x: 720, y: 1712, dir: 0 }, { x: 464, y: 1712, dir: 0 }, { x: 240, y: 1712, dir: 0 }, { x: 1680, y: 1712, dir: 0 }, { x: 1904, y: 1712, dir: 0 }, { x: 2160, y: 1712, dir: 0 }, { x: 2384, y: 1712, dir: 0 }, { x: 2640, y: 1712, dir: 0 }, { x: 944, y: 1904, dir: 0 }, { x: 1200, y: 1904, dir: 0 }, { x: 1424, y: 1904, dir: 0 }, { x: 720, y: 1904, dir: 0 }, { x: 464, y: 1904, dir: 0 }, { x: 240, y: 1904, dir: 0 }, { x: 1680, y: 1904, dir: 0 }, { x: 1904, y: 1904, dir: 0 }, { x: 2160, y: 1904, dir: 0 }, { x: 2384, y: 1904, dir: 0 }, { x: 2640, y: 1904, dir: 0 }, { x: 944, y: 2128, dir: 0 }, { x: 1200, y: 2128, dir: 0 }, { x: 1424, y: 2128, dir: 0 }, { x: 720, y: 2128, dir: 0 }, { x: 464, y: 2128, dir: 0 }, { x: 240, y: 2128, dir: 0 }, { x: 1680, y: 2128, dir: 0 }, { x: 1904, y: 2128, dir: 0 }, { x: 2160, y: 2128, dir: 0 }, { x: 2384, y: 2128, dir: 0 }, { x: 2640, y: 2128, dir: 0 }, { x: 912, y: 2352, dir: 0 }, { x: 1168, y: 2352, dir: 0 }, { x: 1392, y: 2352, dir: 0 }, { x: 688, y: 2352, dir: 0 }, { x: 432, y: 2352, dir: 0 }, { x: 208, y: 2352, dir: 0 }, { x: 1648, y: 2352, dir: 0 }, { x: 1872, y: 2352, dir: 0 }, { x: 2128, y: 2352, dir: 0 }, { x: 2352, y: 2352, dir: 0 }, { x: 2608, y: 2352, dir: 0 }, { x: 944, y: 2576, dir: 0 }, { x: 1200, y: 2576, dir: 0 }, { x: 1424, y: 2576, dir: 0 }, { x: 720, y: 2576, dir: 0 }, { x: 464, y: 2576, dir: 0 }, { x: 240, y: 2576, dir: 0 }, { x: 1680, y: 2576, dir: 0 }, { x: 1904, y: 2576, dir: 0 }, { x: 2160, y: 2576, dir: 0 }, { x: 2384, y: 2576, dir: 0 }, { x: 2640, y: 2576, dir: 0 }], zombieSpawns: [{ x: 144, y: 16, dir: 0 }, { x: 176, y: 16, dir: 0 }, { x: 208, y: 16, dir: 0 }, { x: 240, y: 16, dir: 0 }, { x: 272, y: 16, dir: 0 }, { x: 720, y: 16, dir: 0 }, { x: 752, y: 16, dir: 0 }, { x: 688, y: 16, dir: 0 }, { x: 624, y: 16, dir: 0 }, { x: 656, y: 16, dir: 0 }, { x: 592, y: 16, dir: 0 }, { x: 2768, y: 272, dir: 1.5708 }, { x: 2768, y: 304, dir: 1.5708 }, { x: 2768, y: 240, dir: 1.5708 }, { x: 2768, y: 176, dir: 1.5708 }, { x: 2768, y: 208, dir: 1.5708 }, { x: 2768, y: 144, dir: 1.5708 }, { x: 2768, y: 688, dir: 1.5708 }, { x: 2768, y: 720, dir: 1.5708 }, { x: 2768, y: 656, dir: 1.5708 }, { x: 2768, y: 592, dir: 1.5708 }, { x: 2768, y: 624, dir: 1.5708 }, { x: 2768, y: 560, dir: 1.5708 }, { x: 2768, y: 1104, dir: 1.5708 }, { x: 2768, y: 1136, dir: 1.5708 }, { x: 2768, y: 1072, dir: 1.5708 }, { x: 2768, y: 1008, dir: 1.5708 }, { x: 2768, y: 1040, dir: 1.5708 }, { x: 2768, y: 976, dir: 1.5708 }, { x: 2768, y: 1168, dir: 1.5708 }, { x: 2768, y: 1200, dir: 1.5708 }, { x: 2768, y: 1232, dir: 1.5708 }, { x: 2768, y: 1616, dir: 1.5708 }, { x: 2768, y: 1648, dir: 1.5708 }, { x: 2768, y: 1584, dir: 1.5708 }, { x: 2768, y: 1520, dir: 1.5708 }, { x: 2768, y: 1552, dir: 1.5708 }, { x: 2768, y: 1488, dir: 1.5708 }, { x: 2768, y: 1680, dir: 1.5708 }, { x: 2768, y: 1712, dir: 1.5708 }, { x: 2768, y: 1744, dir: 1.5708 }, { x: 2768, y: 1776, dir: 1.5708 }, { x: 2768, y: 2032, dir: 1.5708 }, { x: 2768, y: 2064, dir: 1.5708 }, { x: 2768, y: 2096, dir: 1.5708 }, { x: 2768, y: 2128, dir: 1.5708 }, { x: 2768, y: 2160, dir: 1.5708 }, { x: 2768, y: 2192, dir: 1.5708 }, { x: 2768, y: 2448, dir: 1.5708 }, { x: 2768, y: 2480, dir: 1.5708 }, { x: 2768, y: 2512, dir: 1.5708 }, { x: 2768, y: 2544, dir: 1.5708 }, { x: 2768, y: 2576, dir: 1.5708 }, { x: 2768, y: 2608, dir: 1.5708 }, { x: 304, y: 16, dir: 0 }, { x: 1168, y: 16, dir: 0 }, { x: 1200, y: 16, dir: 0 }, { x: 1136, y: 16, dir: 0 }, { x: 1072, y: 16, dir: 0 }, { x: 1104, y: 16, dir: 0 }, { x: 1040, y: 16, dir: 0 }, { x: 1232, y: 16, dir: 0 }, { x: 1648, y: 16, dir: 0 }, { x: 1680, y: 16, dir: 0 }, { x: 1616, y: 16, dir: 0 }, { x: 1552, y: 16, dir: 0 }, { x: 1584, y: 16, dir: 0 }, { x: 1520, y: 16, dir: 0 }, { x: 1712, y: 16, dir: 0 }, { x: 1744, y: 16, dir: 0 }, { x: 2160, y: 16, dir: 0 }, { x: 2192, y: 16, dir: 0 }, { x: 2128, y: 16, dir: 0 }, { x: 2064, y: 16, dir: 0 }, { x: 2096, y: 16, dir: 0 }, { x: 2032, y: 16, dir: 0 }, { x: 2608, y: 16, dir: 0 }, { x: 2640, y: 16, dir: 0 }, { x: 2576, y: 16, dir: 0 }, { x: 2512, y: 16, dir: 0 }, { x: 2544, y: 16, dir: 0 }, { x: 2480, y: 16, dir: 0 }, { x: 144, y: 2768, dir: 0 }, { x: 176, y: 2768, dir: 0 }, { x: 208, y: 2768, dir: 0 }, { x: 240, y: 2768, dir: 0 }, { x: 272, y: 2768, dir: 0 }, { x: 720, y: 2768, dir: 0 }, { x: 752, y: 2768, dir: 0 }, { x: 688, y: 2768, dir: 0 }, { x: 624, y: 2768, dir: 0 }, { x: 656, y: 2768, dir: 0 }, { x: 592, y: 2768, dir: 0 }, { x: 304, y: 2768, dir: 0 }, { x: 1168, y: 2768, dir: 0 }, { x: 1200, y: 2768, dir: 0 }, { x: 1136, y: 2768, dir: 0 }, { x: 1072, y: 2768, dir: 0 }, { x: 1104, y: 2768, dir: 0 }, { x: 1040, y: 2768, dir: 0 }, { x: 1232, y: 2768, dir: 0 }, { x: 1648, y: 2768, dir: 0 }, { x: 1680, y: 2768, dir: 0 }, { x: 1616, y: 2768, dir: 0 }, { x: 1552, y: 2768, dir: 0 }, { x: 1584, y: 2768, dir: 0 }, { x: 1520, y: 2768, dir: 0 }, { x: 1712, y: 2768, dir: 0 }, { x: 1744, y: 2768, dir: 0 }, { x: 2160, y: 2768, dir: 0 }, { x: 2192, y: 2768, dir: 0 }, { x: 2128, y: 2768, dir: 0 }, { x: 2064, y: 2768, dir: 0 }, { x: 2096, y: 2768, dir: 0 }, { x: 2032, y: 2768, dir: 0 }, { x: 2608, y: 2768, dir: 0 }, { x: 2640, y: 2768, dir: 0 }, { x: 2576, y: 2768, dir: 0 }, { x: 2512, y: 2768, dir: 0 }, { x: 2544, y: 2768, dir: 0 }, { x: 2480, y: 2768, dir: 0 }, { x: 16, y: 272, dir: 1.5708 }, { x: 16, y: 304, dir: 1.5708 }, { x: 16, y: 240, dir: 1.5708 }, { x: 16, y: 176, dir: 1.5708 }, { x: 16, y: 208, dir: 1.5708 }, { x: 16, y: 144, dir: 1.5708 }, { x: 16, y: 688, dir: 1.5708 }, { x: 16, y: 720, dir: 1.5708 }, { x: 16, y: 656, dir: 1.5708 }, { x: 16, y: 592, dir: 1.5708 }, { x: 16, y: 624, dir: 1.5708 }, { x: 16, y: 560, dir: 1.5708 }, { x: 16, y: 1104, dir: 1.5708 }, { x: 16, y: 1136, dir: 1.5708 }, { x: 16, y: 1072, dir: 1.5708 }, { x: 16, y: 1008, dir: 1.5708 }, { x: 16, y: 1040, dir: 1.5708 }, { x: 16, y: 976, dir: 1.5708 }, { x: 16, y: 1168, dir: 1.5708 }, { x: 16, y: 1200, dir: 1.5708 }, { x: 16, y: 1232, dir: 1.5708 }, { x: 16, y: 1616, dir: 1.5708 }, { x: 16, y: 1648, dir: 1.5708 }, { x: 16, y: 1584, dir: 1.5708 }, { x: 16, y: 1520, dir: 1.5708 }, { x: 16, y: 1552, dir: 1.5708 }, { x: 16, y: 1488, dir: 1.5708 }, { x: 16, y: 1680, dir: 1.5708 }, { x: 16, y: 1712, dir: 1.5708 }, { x: 16, y: 1744, dir: 1.5708 }, { x: 16, y: 1776, dir: 1.5708 }, { x: 16, y: 2032, dir: 1.5708 }, { x: 16, y: 2064, dir: 1.5708 }, { x: 16, y: 2096, dir: 1.5708 }, { x: 16, y: 2128, dir: 1.5708 }, { x: 16, y: 2160, dir: 1.5708 }, { x: 16, y: 2192, dir: 1.5708 }, { x: 16, y: 2448, dir: 1.5708 }, { x: 16, y: 2480, dir: 1.5708 }, { x: 16, y: 2512, dir: 1.5708 }, { x: 16, y: 2544, dir: 1.5708 }, { x: 16, y: 2576, dir: 1.5708 }, { x: 16, y: 2608, dir: 1.5708 }], devilSpawns: [{ x: 2768, y: 208, dir: 0 }, { x: 2768, y: 624, dir: 0 }, { x: 2768, y: 1040, dir: 0 }, { x: 2768, y: 1552, dir: 0 }, { x: 16, y: 208, dir: 0 }, { x: 16, y: 624, dir: 0 }, { x: 16, y: 1040, dir: 0 }, { x: 16, y: 1552, dir: 0 }], barrels: [], pickups: [{ x: 1264, y: 1296, dir: 0 }, { x: 1520, y: 1296, dir: 0 }, { x: 1520, y: 1552, dir: 0 }, { x: 1264, y: 1552, dir: 0 }], walls: [] }], animations: { "swat-stand": { file: "swat-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-walk": { file: "swat-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-handgun-stand": { file: "swat-handgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-handgun-walk": { file: "swat-handgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-uzi-stand": { file: "swat-uzi-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-uzi-walk": { file: "swat-uzi-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-shotgun-stand": { file: "swat-shotgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-shotgun-walk": { file: "swat-shotgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-rocketlauncher-stand": { file: "swat-rocketlauncher-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-rocketlauncher-walk": { file: "swat-rocketlauncher-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-railgun-stand": { file: "swat-railgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-railgun-walk": { file: "swat-railgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-hitfront": { file: "swat-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-hitrear": { file: "swat-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-dying": { file: "swat-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "swat-dead": { file: "swat-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-stand": { file: "bond-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-walk": { file: "bond-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-handgun-stand": { file: "bond-handgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-handgun-walk": { file: "bond-handgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-uzi-stand": { file: "bond-uzi-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-uzi-walk": { file: "bond-uzi-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-shotgun-stand": { file: "bond-shotgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-shotgun-walk": { file: "bond-shotgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-rocketlauncher-stand": { file: "bond-rocketlauncher-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-rocketlauncher-walk": { file: "bond-rocketlauncher-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-railgun-stand": { file: "bond-railgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-railgun-walk": { file: "bond-railgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-hitfront": { file: "bond-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-hitrear": { file: "bond-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-dying": { file: "bond-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bond-dead": { file: "bond-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-stand": { file: "gijoe-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-walk": { file: "gijoe-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-handgun-stand": { file: "gijoe-handgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-handgun-walk": { file: "gijoe-handgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-uzi-stand": { file: "gijoe-uzi-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-uzi-walk": { file: "gijoe-uzi-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-shotgun-stand": { file: "gijoe-shotgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-shotgun-walk": { file: "gijoe-shotgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-rocketlauncher-stand": { file: "gijoe-rocketlauncher-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-rocketlauncher-walk": { file: "gijoe-rocketlauncher-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-railgun-stand": { file: "gijoe-railgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-railgun-walk": { file: "gijoe-railgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-hitfront": { file: "gijoe-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-hitrear": { file: "gijoe-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-dying": { file: "gijoe-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "gijoe-dead": { file: "gijoe-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-stand": { file: "bambo-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-walk": { file: "bambo-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-handgun-stand": { file: "bambo-handgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-handgun-walk": { file: "bambo-handgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-uzi-stand": { file: "bambo-uzi-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-uzi-walk": { file: "bambo-uzi-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-shotgun-stand": { file: "bambo-shotgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-shotgun-walk": { file: "bambo-shotgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-rocketlauncher-stand": { file: "bambo-rocketlauncher-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-rocketlauncher-walk": { file: "bambo-rocketlauncher-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-railgun-stand": { file: "bambo-railgun-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-railgun-walk": { file: "bambo-railgun-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-hitfront": { file: "bambo-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-hitrear": { file: "bambo-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-dying": { file: "bambo-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "bambo-dead": { file: "bambo-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-stand": { file: "zombie-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-walk": { file: "zombie-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-attack": { file: "zombie-attack.png", frames: 4, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-hitfront": { file: "zombie-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-hitrear": { file: "zombie-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-dying": { file: "zombie-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "zombie-dead": { file: "zombie-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-stand": { file: "devil-stand.png", frames: 1, directions: 16, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-walk": { file: "devil-walk.png", frames: 5, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-attack": { file: "devil-attack.png", frames: 4, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-hitfront": { file: "devil-hitfront.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-hitrear": { file: "devil-hitrear.png", frames: 2, directions: 8, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-dying": { file: "devil-dying.png", frames: 5, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 }, "devil-dead": { file: "devil-dead.png", frames: 1, directions: 4, w: 192, h: 192, x: -48, y: -80, scale: 0.5 } }, objects: { "Effect.Explosion": { file: "effect-explosion.png", frames: 18, w: 217, h: 163, x: -109, y: -109 }, "Effect.BloodHitBack": { file: "effect-bloodhitback.png", frames: 1, w: 75, h: 8, x: -4, y: -4 }, "Effect.Explosion_MidAir": { file: "effect-explosion-midair.png", frames: 18, w: 217, h: 217, x: -109, y: -109 }, "Effect.RocketSmoke": { file: "effect-rocketsmoke.png", frames: 6, w: 128, h: 128, x: -64, y: -64 }, "Effect.FireBall": { file: "effect-fireball.png", frames: 1, w: 39, h: 42, x: -7, y: -10 }, "Effect.BloodPool": { file: "effect-bloodpool.png", frames: 1, w: 61, h: 55, x: -31, y: -28 }, "Effect.BloodSplat": { file: "effect-bloodsplat.png", frames: 1, w: 69, h: 66, x: -30, y: -26 }, "Effect.BulletHit": { file: "effect-bullethit.png", frames: 1, w: 23, h: 34, x: -9, y: -24 }, "Effect.ScorchMark": { file: "effect-scorchmark.png", frames: 1, w: 122, h: 122, x: -61, y: -61 }, "Effect.WallMark": { file: "effect-wallmark.png", frames: 1, w: 29, h: 24, x: -15, y: -13 }, "Effect.SmokeCloud": { file: "effect-smokecloud.png", frames: 1, w: 134, h: 134, x: -64, y: -101 }, "Object.Barrel": { file: "object-barrel.png", frames: 1, w: 36, h: 46, x: -19, y: -33 }, "Object.ChargePack": { file: "object-chargepack.png", frames: 2, w: 28, h: 26, x: -10, y: -9 }, "Object.Mine": { file: "object-mine.png", frames: 2, w: 25, h: 21, x: -11, y: -8 }, "Object.Pickup": { file: "object-pickup.png", frames: 1, w: 32, h: 30, x: -15, y: -19 }, "Object.Wall": { file: "object-wall.png", frames: 10, w: 45, h: 49, x: -26, y: -33 }, "Shot.ClusterShell": { file: "shot-clustershell.png", frames: 1, w: 8, h: 5, x: -4, y: -3 }, "Shot.Devastator": { file: "shot-devastator.png", frames: 1, w: 8, h: 8, x: -4, y: -5 }, "Shot.Grenade": { file: "shot-grenade.png", frames: 1, w: 7, h: 7, x: -4, y: -6 }, "Shot.Rocket": { file: "shot-rocket.png", frames: 1, w: 52, h: 53, x: -11, y: -8 }, "Pistol.MuzzleFlash": { file: "pistol-muzzleflash.png", frames: 1, w: 86, h: 70, x: -30, y: -30 }, "Railgun.MuzzleFlash": { file: "railgun-muzzleflash.png", frames: 1, w: 86, h: 70, x: -30, y: -30 }, "Shotgun.MuzzleFlash": { file: "shotgun-muzzleflash.png", frames: 1, w: 86, h: 70, x: -30, y: -30 }, "UZI.MuzzleFlash": { file: "uzi-muzzleflash.png", frames: 1, w: 86, h: 70, x: -30, y: -30 }, Zombie_Skin_Color: { file: "zombie-skin-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Zombie_Body_Back: { file: "zombie-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Zombie_Body_Front: { file: "zombie-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Zombie_Body_Side: { file: "zombie-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Zombie_Body_Top: { file: "zombie-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Zombie_Hair_Color: { file: "zombie-hair-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Swat_Body_Back: { file: "swat-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Swat_Body_Front: { file: "swat-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Swat_Body_Side: { file: "swat-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Swat_Body_Top: { file: "swat-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, GIJOE_Body_Back: { file: "gijoe-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, GIJOE_Body_Front: { file: "gijoe-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, GIJOE_Body_Side: { file: "gijoe-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, GIJOE_Body_Top: { file: "gijoe-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, GIJOE_Skin_Color: { file: "gijoe-skin-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Devil_Skin_Color: { file: "devil-skin-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Devil_Body_Back: { file: "devil-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Devil_Body_Front: { file: "devil-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Devil_Body_Side: { file: "devil-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Devil_Body_Top: { file: "devil-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bond_Body_Back: { file: "bond-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bond_Body_Front: { file: "bond-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bond_Body_Side: { file: "bond-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bond_Body_Top: { file: "bond-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bond_Skin_Color: { file: "bond-skin-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Bambo_Skin_Color: { file: "bambo-skin-color.png", frames: 1, w: 64, h: 64, x: -32, y: -32 }, Bambo_Body_Back: { file: "bambo-body-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Body_Front: { file: "bambo-body-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Body_Side: { file: "bambo-body-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Body_Top: { file: "bambo-body-top.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Head_Back: { file: "bambo-head-back.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Head_Front: { file: "bambo-head-front.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Bambo_Head_Side: { file: "bambo-head-side.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Body_Back_MC: { file: "body-back-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Body_Front_MC: { file: "body-front-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Body_Side_MC: { file: "body-side-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Body_Top_MC: { file: "body-top-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Head_Back_MC: { file: "head-back-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Head_Front_MC: { file: "head-front-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 }, Head_Side_MC: { file: "head-side-mc.png", frames: 1, w: 64, h: 64, x: 0, y: 0 } }, audio: { "Creature.HitFloor.wav": "creature-hitfloor.mp3", "Creature.Player.Scream.1.wav": "creature-player-scream-1.mp3", "Creature.Player.Scream.2.wav": "creature-player-scream-2.mp3", "Creature.Zombie.Ambience.1.wav": "creature-zombie-ambience-1.mp3", "Creature.Zombie.Ambience.2.wav": "creature-zombie-ambience-2.mp3", "Creature.Zombie.Ambience.3.wav": "creature-zombie-ambience-3.mp3", "Creature.Zombie.Ambience.4.wav": "creature-zombie-ambience-4.mp3", "Creature.Zombie.Attack.wav": "creature-zombie-attack.mp3", "Creature.Zombie.Hit.wav": "creature-zombie-hit.mp3", "Effect.Explosion.wav": "effect-explosion.mp3", "Object.Barrel.Place.wav": "object-barrel-place.mp3", "Object.Mine.Detonate.wav": "object-mine-detonate.mp3", "Object.Pickup.wav": "object-pickup.mp3", "Shot.Grenade.Bounce.wav": "shot-grenade-bounce.mp3", "Shot.HitWall.1.wav": "shot-hitwall-1.mp3", "Shot.HitWall.2.wav": "shot-hitwall-2.mp3", "Shot.HitWall.3.wav": "shot-hitwall-3.mp3", "Shot.Rocket.Fire.wav": "shot-rocket-fire.mp3", "Weapon.Mine.Place.wav": "weapon-mine-place.mp3", "Weapon.Pistol.Fire.wav": "weapon-pistol-fire.mp3", "Weapon.Railgun.Fire.wav": "weapon-railgun-fire.mp3", "Weapon.Rocket.Fire.wav": "weapon-rocket-fire.mp3", "Weapon.ShotGun.Fire.wav": "weapon-shotgun-fire.mp3", "Weapon.UZI.Fire.wav": "weapon-uzi-fire.mp3", "World.End.wav": "world-end.mp3", "CLICK.wav": "click.mp3" }, upgrades: [{ mClassID: "CThing_Weapon_Pistol", mProp: "FastFire", mValue: true, mName: "\u624B\u67AA+:\u901F\u5C04", threshold: 3 }, { mClassID: "CThing_Creature_Player", mProp: "NW_uzi", mValue: "uzi", mName: "\u65B0\u6B66\u5668:\u51B2\u950B\u67AA(2\u952E)", threshold: 5 }, { mClassID: "CThing_Weapon_Pistol", mProp: "DoubleDamage", mValue: true, mName: "\u624B\u67AA+:\u53CC\u500D\u4F24\u5BB3", threshold: 8 }, { mClassID: "CThing_Creature_Player", mProp: "NW_shotgun", mValue: "shotgun", mName: "\u65B0\u6B66\u5668:\u6563\u5F39\u67AA(3\u952E)", threshold: 10 }, { mClassID: "CThing_Weapon_UZI", mProp: "RapidFire", mValue: true, mName: "\u51B2\u950B\u67AA+:\u901F\u5C04", threshold: 13 }, { mClassID: "CThing_Creature_Player", mProp: "NW_barrel", mValue: "barrel", mName: "\u65B0\u6B66\u5668:\u6CB9\u6876(4\u952E)", threshold: 15 }, { mClassID: "CThing_Weapon_UZI", mProp: "DoubleAmmo", mValue: true, mName: "\u51B2\u950B\u67AA+:\u53CC\u500D\u5F39\u836F", threshold: 17 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "FastFire", mValue: true, mName: "\u6563\u5F39\u67AA+:\u901F\u5C04", threshold: 18 }, { mClassID: "CThing_Creature_Player", mProp: "NW_grenade", mValue: "grenade", mName: "\u65B0\u6B66\u5668:\u624B\u96F7(5\u952E)", threshold: 20 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "DoubleAmmo", mValue: true, mName: "\u6563\u5F39\u67AA+:\u53CC\u500D\u5F39\u836F", threshold: 21 }, { mClassID: "CThing_Weapon_UZI", mProp: "LongShot", mValue: true, mName: "\u51B2\u950B\u67AA+:\u5C04\u7A0B", threshold: 23 }, { mClassID: "CThing_Weapon_Barrel", mProp: "DoubleAmmo", mValue: true, mName: "\u6CB9\u6876+:\u53CC\u500D\u5F39\u836F", threshold: 26 }, { mClassID: "CThing_Creature_Player", mProp: "NW_fakewall", mValue: "fakewall", mName: "\u65B0\u6B66\u5668:\u5047\u5899(6\u952E)", threshold: 30 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "WideShot", mValue: true, mName: "\u6563\u5F39\u67AA+:\u6563\u5C04", threshold: 31 }, { mClassID: "CThing_Object_Barrel", mProp: "BigBang", mValue: true, mName: "\u6CB9\u6876+:\u7206\u70B8", threshold: 32 }, { mClassID: "CThing_Weapon_Grenade", mProp: "ClusterExplode", mValue: true, mName: "\u624B\u96F7+:\u96C6\u675F\u7206\u70B8", threshold: 33 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "LongShot", mValue: true, mName: "\u6563\u5F39\u67AA+:\u5C04\u7A0B", threshold: 35 }, { mClassID: "CThing_Weapon_Barrel", mProp: "QuadAmmo", mValue: true, mName: "\u6CB9\u6876+:\u56DB\u500D\u5F39\u836F", threshold: 36 }, { mClassID: "CThing_Weapon_FakeWall", mProp: "DoubleAmmo", mValue: true, mName: "\u5047\u5899+:\u53CC\u500D\u5F39\u836F", threshold: 37 }, { mClassID: "CThing_Weapon_UZI", mProp: "QuadAmmo", mValue: true, mName: "\u51B2\u950B\u67AA+:\u56DB\u500D\u5F39\u836F", threshold: 39 }, { mClassID: "CThing_Creature_Player", mProp: "NW_mine", mValue: "mine", mName: "\u65B0\u6B66\u5668:\u5730\u96F7(7\u952E)", threshold: 40 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "QuadAmmo", mValue: true, mName: "\u6563\u5F39\u67AA+:\u56DB\u500D\u5F39\u836F", threshold: 41 }, { mClassID: "CThing_Weapon_Grenade", mProp: "DoubleAmmo", mValue: true, mName: "\u624B\u96F7+:\u53CC\u500D\u5F39\u836F", threshold: 42 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "RapidFire", mValue: true, mName: "\u6563\u5F39\u67AA+:\u901F\u5C04", threshold: 43 }, { mClassID: "CThing_Object_Barrel", mProp: "BiggerBang", mValue: true, mName: "\u6CB9\u6876+:\u5927\u7206\u70B8", threshold: 44 }, { mClassID: "CThing_Weapon_Grenade", mProp: "BigBang", mValue: true, mName: "\u624B\u96F7+:\u7206\u70B8", threshold: 45 }, { mClassID: "CThing_Object_Mine", mProp: "ClusterExplode", mValue: true, mName: "\u5730\u96F7+:\u96C6\u675F\u7206\u70B8", threshold: 47 }, { mClassID: "CThing_Weapon_UZI", mProp: "DoubleDamage", mValue: true, mName: "\u51B2\u950B\u67AA+:\u53CC\u500D\u4F24\u5BB3", threshold: 48 }, { mClassID: "CThing_Creature_Player", mProp: "NW_rocket", mValue: "rocket", mName: "\u65B0\u6B66\u5668:\u706B\u7BAD\u70AE(8\u952E)", threshold: 50 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "WiderShot", mValue: true, mName: "\u6563\u5F39\u67AA+:\u6563\u5C04", threshold: 51 }, { mClassID: "CThing_Weapon_Grenade", mProp: "QuadAmmo", mValue: true, mName: "\u624B\u96F7+:\u56DB\u500D\u5F39\u836F", threshold: 52 }, { mClassID: "CThing_Weapon_FakeWall", mProp: "QuadAmmo", mValue: true, mName: "\u5047\u5899+:\u56DB\u500D\u5F39\u836F", threshold: 53 }, { mClassID: "CThing_Weapon_Mine", mProp: "DoubleAmmo", mValue: true, mName: "\u5730\u96F7+:\u53CC\u500D\u5F39\u836F", threshold: 54 }, { mClassID: "CThing_Creature_Player", mProp: "NW_chargepack", mValue: "chargepack", mName: "\u65B0\u6B66\u5668:\u5B9A\u65F6\u70B8\u5F39(9\u952E)", threshold: 55 }, { mClassID: "CThing_Weapon_Shotgun", mProp: "DoubleDamage", mValue: true, mName: "\u6563\u5F39\u67AA+:\u53CC\u500D\u4F24\u5BB3", threshold: 56 }, { mClassID: "CThing_Weapon_Grenade", mProp: "BiggerBang", mValue: true, mName: "\u624B\u96F7+:\u5927\u7206\u70B8", threshold: 57 }, { mClassID: "CThing_Object_Mine", mProp: "BigBang", mValue: true, mName: "\u5730\u96F7+:\u7206\u70B8", threshold: 58 }, { mClassID: "CThing_Weapon_Rocket", mProp: "FastFire", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u901F\u5C04", threshold: 59 }, { mClassID: "CThing_Weapon_UZI", mProp: "InfinateRange", mValue: true, mName: "\u51B2\u950B\u67AA+:\u65E0\u9650\u5C04\u7A0B", threshold: 61 }, { mClassID: "CThing_Object_Mine", mProp: "BiggerBang", mValue: true, mName: "\u5730\u96F7+:\u5927\u7206\u70B8", threshold: 62 }, { mClassID: "CThing_Object_ChargePack", mProp: "ClusterExplode", mValue: true, mName: "\u5B9A\u65F6\u70B8\u5F39+:\u96C6\u675F\u7206\u70B8", threshold: 63 }, { mClassID: "CThing_Weapon_Mine", mProp: "QuadAmmo", mValue: true, mName: "\u5730\u96F7+:\u56DB\u500D\u5F39\u836F", threshold: 64 }, { mClassID: "CThing_Weapon_Rocket", mProp: "DoubleAmmo", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u53CC\u500D\u5F39\u836F", threshold: 66 }, { mClassID: "CThing_Weapon_ChargePack", mProp: "DoubleAmmo", mValue: true, mName: "\u5B9A\u65F6\u70B8\u5F39+:\u53CC\u500D\u5F39\u836F", threshold: 68 }, { mClassID: "CThing_Creature_Player", mProp: "NW_railgun", mValue: "railgun", mName: "\u65B0\u6B66\u5668:\u8F68\u9053\u70AE(0\u952E)", threshold: 70 }, { mClassID: "CThing_Weapon_Rocket", mProp: "BigBang", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u7206\u70B8", threshold: 72 }, { mClassID: "CThing_Object_ChargePack", mProp: "BigBang", mValue: true, mName: "\u5B9A\u65F6\u70B8\u5F39+:\u7206\u70B8", threshold: 74 }, { mClassID: "CThing_Weapon_ChargePack", mProp: "QuadAmmo", mValue: true, mName: "\u5B9A\u65F6\u70B8\u5F39+:\u56DB\u500D\u5F39\u836F", threshold: 76 }, { mClassID: "CThing_Weapon_Railgun", mProp: "FastFire", mValue: true, mName: "\u8F68\u9053\u70AE+:\u901F\u5C04", threshold: 78 }, { mClassID: "CThing_Weapon_Railgun", mProp: "DoubleAmmo", mValue: true, mName: "\u8F68\u9053\u70AE+:\u53CC\u500D\u5F39\u836F", threshold: 80 }, { mClassID: "CThing_Weapon_Rocket", mProp: "QuadAmmo", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u56DB\u500D\u5F39\u836F", threshold: 85 }, { mClassID: "CThing_Weapon_UZI", mProp: "QuadDamage", mValue: true, mName: "\u51B2\u950B\u67AA+:\u56DB\u500D\u4F24\u5BB3", threshold: 90 }, { mClassID: "CThing_Object_ChargePack", mProp: "BiggerBang", mValue: true, mName: "\u5B9A\u65F6\u70B8\u5F39+:\u5927\u7206\u70B8", threshold: 95 }, { mClassID: "CThing_Weapon_Railgun", mProp: "RapidFire", mValue: true, mName: "\u8F68\u9053\u70AE+:\u901F\u5C04", threshold: 100 }, { mClassID: "CThing_Weapon_Rocket", mProp: "BiggerBang", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u5927\u7206\u70B8", threshold: 105 }, { mClassID: "CThing_Weapon_Railgun", mProp: "QuadAmmo", mValue: true, mName: "\u8F68\u9053\u70AE+:\u56DB\u500D\u5F39\u836F", threshold: 110 }, { mClassID: "CThing_Weapon_Rocket", mProp: "RapidFire", mValue: true, mName: "\u706B\u7BAD\u70AE+:\u901F\u5C04", threshold: 120 }, { mClassID: "CThing_Weapon_Railgun", mProp: "LongShot", mValue: true, mName: "\u8F68\u9053\u70AE+:\u5C04\u7A0B", threshold: 125 }] };
+
 // src/expanded/types.ts
 var EMPTY_INPUT3 = { seq: 0, left: false, right: false, up: false, down: false, attack: 0, alt: 0 };
 function validInput3(value) {
   if (!value || typeof value !== "object") return false;
   const input = value;
-  return [input.seq, input.attack, input.alt].every((n) => Number.isSafeInteger(n) && n >= 0 && n < 1e9) && [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean");
+  return [input.seq, input.attack, input.alt].every((n) => Number.isSafeInteger(n) && n >= 0 && n < 1e9) && [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean") && (input.weapon === void 0 || Number.isInteger(input.weapon) && input.weapon >= 0 && input.weapon < 10);
+}
+
+// src/expanded/boxhead-world.ts
+var WIDTH3 = 1280;
+var HEIGHT3 = 800;
+var HUD = 84;
+var CELL2 = 32;
+var MAPS2 = boxhead_data_default.maps;
+var CHARACTERS = ["swat", "bond", "gijoe", "bambo"];
+var WEAPONS3 = [
+  { id: "pistol", name: "\u624B\u67AA", classId: "Pistol", rate: 8, damage: 26, ammo: -1, range: 8, pose: "handgun", sound: "Pistol" },
+  { id: "uzi", name: "UZI", classId: "UZI", rate: 4, damage: 35, ammo: 100, range: 8, pose: "uzi", sound: "UZI" },
+  { id: "shotgun", name: "\u9730\u5F39\u67AA", classId: "Shotgun", rate: 12, damage: 51, ammo: 20, range: 7, pose: "shotgun", sound: "ShotGun" },
+  { id: "barrel", name: "\u6CB9\u6876", classId: "Barrel", rate: 1, damage: 150, ammo: 10, range: 1, pose: "", sound: "" },
+  { id: "grenade", name: "\u624B\u96F7", classId: "Grenade", rate: 12, damage: 150, ammo: 20, range: 6, pose: "", sound: "" },
+  { id: "fakewall", name: "\u5047\u5899", classId: "FakeWall", rate: 1, damage: 100, ammo: 5, range: 1, pose: "", sound: "" },
+  { id: "mine", name: "\u5730\u96F7", classId: "Mine", rate: 1, damage: 100, ammo: 10, range: 1, pose: "", sound: "" },
+  { id: "rocket", name: "\u706B\u7BAD\u70AE", classId: "Rocket", rate: 12, damage: 250, ammo: 20, range: 100, pose: "rocketlauncher", sound: "Rocket" },
+  { id: "chargepack", name: "\u9065\u63A7\u70B8\u836F", classId: "ChargePack", rate: 1, damage: 150, ammo: 10, range: 1, pose: "", sound: "" },
+  { id: "railgun", name: "\u8F68\u9053\u70AE", classId: "Railgun", rate: 5, damage: 100, ammo: 15, range: 10, pose: "railgun", sound: "Railgun" }
+];
+function room(s) {
+  return MAPS2.find((m) => m.id === s.mapId) || MAPS2[0];
+}
+function solid(map, x, y) {
+  return map.collision[Math.floor(y / CELL2)]?.[Math.floor(x / CELL2)] !== "0";
+}
+function blocked(s, x, y, radius = 11, ignore) {
+  const map = room(s);
+  for (const dx of [-radius, radius]) for (const dy of [-radius, radius]) if (solid(map, x + dx, y + dy)) return true;
+  return s.barrels.some((b) => b !== ignore && b.hp > 0 && (b.kind === "barrel" || b.kind === "wall") && Math.abs(b.x - x) < radius + 14 && Math.abs(b.y - y) < radius + 14);
+}
+function move(s, p, dx, dy, radius = 11) {
+  if (!blocked(s, p.x + dx, p.y, radius, p)) p.x += dx;
+  if (!blocked(s, p.x, p.y + dy, radius, p)) p.y += dy;
+}
+function openPosition(s, x, y, used = []) {
+  const map = room(s), candidates = [];
+  for (let row = 1; row < map.rows - 1; row++) for (let col = 1; col < map.columns - 1; col++) {
+    const px = col * CELL2 + 16, py = row * CELL2 + 16;
+    if (!blocked(s, px, py) && !used.some((p) => Math.hypot(p.x - px, p.y - py) < 30)) candidates.push({ x: px, y: py, d: Math.hypot(px - x, py - y) });
+  }
+  candidates.sort((a, b) => a.d - b.d);
+  return candidates[0] || { x: 48, y: 48 };
+}
+function lineClear(s, x, y, tx, ty) {
+  const length = Math.hypot(tx - x, ty - y), steps = Math.ceil(length / 8), map = room(s);
+  for (let n = 1; n <= steps; n++) if (solid(map, x + (tx - x) * n / steps, y + (ty - y) * n / steps)) return false;
+  return true;
+}
+function camera(s, width = WIDTH3, height = HEIGHT3) {
+  const map = room(s), alive = s.players.filter((p) => p.alive), areaH = height - HUD;
+  const xs = alive.map((p) => p.x), ys = alive.map((p) => p.y);
+  const minX = xs.length ? Math.min(...xs) : map.width / 2, maxX = xs.length ? Math.max(...xs) : minX;
+  const minY = ys.length ? Math.min(...ys) : map.height / 2, maxY = ys.length ? Math.max(...ys) : minY;
+  const scale = Math.min(width / Math.min(map.width, 1152), areaH / Math.min(map.height, 720), width / (maxX - minX + 240), areaH / (maxY - minY + 240));
+  const viewW = width / scale, viewH = areaH / scale;
+  const cx = viewW >= map.width ? map.width / 2 : Math.max(viewW / 2, Math.min(map.width - viewW / 2, (minX + maxX) / 2));
+  const cy = viewH >= map.height ? map.height / 2 : Math.max(viewH / 2, Math.min(map.height - viewH / 2, (minY + maxY) / 2));
+  return { scale, x: width / 2 - cx * scale, y: HUD + areaH / 2 - cy * scale, visibleWidth: viewW, visibleHeight: viewH };
+}
+function weaponStats(s, index3) {
+  const base2 = WEAPONS3[index3], props = {};
+  for (const u of boxhead_data_default.upgrades) if (u.threshold <= s.peakCombo && (u.mClassID === "CThing_Weapon_" + base2.classId || u.mClassID === "CThing_Object_" + base2.classId)) props[u.mProp] = true;
+  return {
+    ...base2,
+    damage: base2.damage * (props.FatalDamage ? 10 : props.QuadDamage ? 4 : props.DoubleDamage ? 2 : 1),
+    rate: props.RapidFire ? Math.max(2, Math.round(base2.rate / 4)) : base2.rate,
+    ammo: props.InfinateAmmo ? -1 : base2.ammo * (props.QuadAmmo ? 4 : props.DoubleAmmo ? 2 : 1),
+    range: props.InfinateRange ? 100 : base2.range * (props.LongShot ? 1.5 : 1),
+    spread: props.WiderShot ? 2 : props.WideShot ? 1 : 0,
+    bang: props.BiggerBang ? 2 : props.BigBang ? 1 : 0,
+    cluster: !!props.ClusterExplode
+  };
+}
+
+// src/expanded/boxhead-core.ts
+var ID = "50737-server";
+function random4(s) {
+  s.rng = Math.imul(s.rng, 1664525) + 1013904223 >>> 0;
+  return s.rng / 4294967296;
+}
+function sound(s, name) {
+  s.sounds.push({ id: ++s.soundId, tick: s.tick, name });
+}
+function effect(s, kind, x, y, life = 12, extra = {}) {
+  s.effects.push({ id: ++s.nextId, kind, x, y, life, total: life, ...extra });
+}
+function accept(s, p, candidate) {
+  const at = p.seat - 1, current = s.inputs[at];
+  let next;
+  if (!validInput3(candidate)) next = { ...current, left: false, right: false, up: false, down: false };
+  else if (candidate.seq < current.seq) next = current;
+  else if (candidate.seq === current.seq) next = { ...current, left: current.left && candidate.left, right: current.right && candidate.right, up: current.up && candidate.up, down: current.down && candidate.down };
+  else next = { ...candidate, attack: Math.max(candidate.attack, current.attack, p.lastAttack), alt: Math.max(candidate.alt, current.alt, p.lastAlt) };
+  s.inputs[at] = { ...next };
+  return next;
+}
+function create3(round, playing2, seats, seed, mapId) {
+  const map = MAPS2.find((m) => m.id === mapId) || MAPS2[0];
+  const s = {
+    gameId: ID,
+    round,
+    tick: 0,
+    phase: playing2 ? "playing" : "waiting",
+    winner: null,
+    ack: [0, 0, 0, 0],
+    inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })),
+    rng: seed >>> 0,
+    mapId: map.id,
+    players: [],
+    zombies: [],
+    bullets: [],
+    barrels: [],
+    pickups: [],
+    effects: [],
+    corpses: [],
+    sounds: [],
+    soundId: 0,
+    wave: 0,
+    spawnLeft: 0,
+    devilLeft: 0,
+    nextSpawn: 0,
+    nextDevil: 0,
+    waveReady: 1,
+    nextId: 0,
+    score: 0,
+    combo: 1,
+    peakCombo: 1,
+    comboUntil: 75,
+    message: "",
+    messageUntil: 0
+  };
+  for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 60, owner: 0, exploded: false, armed: 0 });
+  for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", hp: 100, owner: 0, exploded: false, armed: 0 });
+  for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250 });
+  const primary = map.playerSpawns[0] || { x: map.width / 2, y: map.height / 2, dir: 0 };
+  const spawns = [primary, ...map.otherSpawns].sort((a, b) => Math.hypot(a.x - primary.x, a.y - primary.y) - Math.hypot(b.x - primary.x, b.y - primary.y));
+  for (const seat of [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort()) {
+    const spawn = spawns[s.players.length] || primary, pos = openPosition(s, spawn.x, spawn.y, s.players);
+    s.players.push({
+      seat,
+      x: pos.x,
+      y: pos.y,
+      dir: spawn.dir,
+      character: CHARACTERS[seat - 1],
+      hp: 200,
+      alive: true,
+      lives: 1,
+      respawn: 0,
+      kills: 0,
+      deaths: 0,
+      killedBy: 0,
+      weapon: 0,
+      unlocked: [true, ...Array(9).fill(false)],
+      inventory: WEAPONS3.map((w) => w.ammo),
+      ammo: -1,
+      cooldown: 0,
+      invul: 200,
+      lastAttack: 0,
+      lastAlt: 0,
+      moving: false,
+      fireAt: -99,
+      hitAt: -99,
+      deadAt: 0
+    });
+  }
+  return s;
+}
+function beginWave(s) {
+  s.wave++;
+  s.spawnLeft = 10 + 5 * (s.wave - 1);
+  s.devilLeft = s.wave === 1 ? 0 : Math.floor(1 + (s.wave - 2) * 0.25);
+  s.nextSpawn = s.tick + 15;
+  s.nextDevil = s.tick + 100;
+  s.waveReady = 0;
+  s.message = `\u7B2C ${s.wave} \u6CE2`;
+  s.messageUntil = s.tick + 65;
+  sound(s, "CLICK.wav");
+}
+function spawnEnemy(s, devil) {
+  const map = room(s), locations = devil ? map.devilSpawns : map.zombieSpawns;
+  const marker = locations[Math.floor(random4(s) * locations.length)] || map.zombieSpawns[0] || { x: 48, y: 48 };
+  const pos = openPosition(s, marker.x, marker.y);
+  s.zombies.push({ id: ++s.nextId, x: pos.x, y: pos.y, hp: devil ? 1e3 : 100, devil, attack: 0, dir: 0, owner: 0, hitAt: -99, attackAt: -99 });
+}
+function damage(s, target, amount, owner) {
+  if (target.hp <= 0) return;
+  target.hp -= amount;
+  target.owner = owner;
+  target.hitAt = s.tick;
+  if ("devil" in target) effect(s, "Effect.BloodSplat", target.x, target.y - 14, 8);
+}
+function hurt(s, p, amount) {
+  if (!p.alive || p.invul > 0) return;
+  p.hp -= amount;
+  p.invul = 14;
+  p.hitAt = s.tick;
+}
+function explode(s, x, y, amount, owner, bang = 0, cluster = false) {
+  const radius = (2 + Math.max(amount - 100, 0) * 5e-3) * 32;
+  effect(s, "Effect.Explosion", x, y, 10, { scale: 1 + bang * 0.3 });
+  effect(s, "Effect.ScorchMark", x, y, 500);
+  sound(s, "Effect.Explosion.wav");
+  for (const z of s.zombies) if (Math.hypot(z.x - x, z.y - y) < radius + bang * 22) damage(s, z, amount, owner);
+  for (const b of s.barrels) if (b.hp > 0 && Math.hypot(b.x - x, b.y - y) < radius + bang * 22) damage(s, b, amount, owner);
+  for (const p of s.players) if (owner === 0 && Math.hypot(p.x - x, p.y - y) < radius) hurt(s, p, amount);
+  if (cluster) for (let i = 0; i < 4; i++) {
+    const dir = i * Math.PI / 2 + random4(s) * 0.2;
+    s.bullets.push({ id: ++s.nextId, x, y, z: 20, vz: 5, vx: Math.cos(dir) * 9, vy: Math.sin(dir) * 9, owner, weapon: 4, damage: amount, life: 15, bang: 0, cluster: false });
+  }
+}
+function shot(s, p, angle, amount, range, pierce) {
+  let x = p.x, y = p.y;
+  const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
+  for (let n = 0; n < range * CELL2 / 4; n++) {
+    x += dx;
+    y += dy;
+    if (solid(room(s), x, y)) {
+      effect(s, "Effect.BulletHit", x, y - 18, 5);
+      break;
+    }
+    const target = [...s.barrels.filter((b) => b.kind === "barrel" || b.kind === "wall"), ...s.zombies].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < 15);
+    if (target) {
+      damage(s, target, amount, p.seat);
+      hits.add(target);
+      if (!pierce || target.kind === "wall") break;
+    }
+  }
+  s.bullets.push({ id: ++s.nextId, x: p.x, y: p.y, tx: x, ty: y, vx: 0, vy: 0, owner: p.seat, weapon: p.weapon, damage: amount, life: 2 });
+}
+function fire2(s, p) {
+  const gun = weaponStats(s, p.weapon);
+  if (gun.id === "chargepack") {
+    const packs = s.barrels.filter((b) => b.kind === "chargepack" && b.owner === p.seat && b.hp > 0);
+    if (packs.length) {
+      for (const b of packs) b.hp = 0;
+      p.cooldown = 6;
+      return;
+    }
+  }
+  if (p.inventory[p.weapon] === 0) {
+    p.weapon = 0;
+    p.ammo = -1;
+    return;
+  }
+  if (["barrel", "fakewall", "mine", "chargepack"].includes(gun.id)) {
+    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL2) * CELL2 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL2) * CELL2 + 16;
+    if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
+    s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "fakewall" ? 100 : 60, owner: p.seat, exploded: false, armed: s.tick + 20 });
+    sound(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
+  } else if (gun.id === "grenade" || gun.id === "rocket") {
+    const speed = 16;
+    s.bullets.push({ id: ++s.nextId, x: p.x + Math.cos(p.dir) * 20, y: p.y + Math.sin(p.dir) * 20, z: gun.id === "grenade" ? 40 : 18, vz: 8, vx: Math.cos(p.dir) * speed, vy: Math.sin(p.dir) * speed, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: gun.id === "grenade" ? 60 : 100, bang: gun.bang, cluster: gun.cluster });
+  } else {
+    const count = gun.id === "shotgun" ? gun.spread ? 5 : 3 : 1, spacing = 1.25 * (gun.spread + 1) * Math.PI / 180;
+    for (let i = 0; i < count; i++) shot(s, p, p.dir + (i - (count - 1) / 2) * spacing + (gun.id === "uzi" ? (random4(s) - 0.5) * 0.06 : 0), gun.damage, gun.range, gun.id === "railgun");
+  }
+  if (p.inventory[p.weapon] > 0) p.inventory[p.weapon]--;
+  p.ammo = p.inventory[p.weapon];
+  p.cooldown = gun.rate;
+  p.fireAt = s.tick;
+  if (gun.sound) sound(s, "Weapon." + gun.sound + ".Fire.wav");
+}
+function upgrade(s) {
+  if (s.combo <= s.peakCombo) return;
+  const before = s.peakCombo;
+  s.peakCombo = s.combo;
+  for (const u of boxhead_data_default.upgrades.filter((u2) => u2.threshold > before && u2.threshold <= s.peakCombo)) {
+    s.message = u.mName;
+    s.messageUntil = s.tick + 90;
+    if (u.mClassID === "CThing_Creature_Player") {
+      const index3 = WEAPONS3.findIndex((w) => w.id === u.mValue);
+      if (index3 >= 0) for (const p of s.players) {
+        p.unlocked[index3] = true;
+        p.inventory[index3] = weaponStats(s, index3).ammo;
+        p.weapon = index3;
+        p.ammo = p.inventory[index3];
+      }
+    } else if (["DoubleAmmo", "QuadAmmo", "InfinateAmmo"].includes(u.mProp)) {
+      const index3 = WEAPONS3.findIndex((w) => "CThing_Weapon_" + w.classId === u.mClassID);
+      if (index3 >= 0) for (const p of s.players) {
+        p.inventory[index3] = weaponStats(s, index3).ammo;
+        p.ammo = p.inventory[p.weapon];
+      }
+    }
+  }
+}
+function navigation(s) {
+  const map = room(s), distances = new Int32Array(map.columns * map.rows).fill(-1), queue = [];
+  for (const p of s.players) if (p.alive) {
+    const cell = Math.floor(p.y / CELL2) * map.columns + Math.floor(p.x / CELL2);
+    if (distances[cell] === -1) {
+      distances[cell] = 0;
+      queue.push(cell);
+    }
+  }
+  for (let at = 0; at < queue.length; at++) {
+    const cell = queue[at], x = cell % map.columns, y = Math.floor(cell / map.columns);
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+      const nx = x + dx, ny = y + dy, index3 = ny * map.columns + nx;
+      if (map.collision[ny]?.[nx] === "0" && distances[index3] === -1) {
+        distances[index3] = distances[cell] + 1;
+        queue.push(index3);
+      }
+    }
+  }
+  return distances;
+}
+function enemies(s) {
+  const map = room(s), field = navigation(s);
+  for (const z of s.zombies) {
+    if (z.hp <= 0) continue;
+    const p = s.players.filter((p2) => p2.alive).sort((a, b) => Math.hypot(a.x - z.x, a.y - z.y) - Math.hypot(b.x - z.x, b.y - z.y))[0];
+    if (!p) continue;
+    const distance = Math.hypot(p.x - z.x, p.y - z.y), visible = lineClear(s, z.x, z.y, p.x, p.y);
+    let tx = p.x, ty = p.y;
+    if (!visible) {
+      const cx = Math.floor(z.x / CELL2), cy = Math.floor(z.y / CELL2);
+      let best = Infinity;
+      for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+        const x = cx + dx, y = cy + dy, d = field[y * map.columns + x];
+        if (map.collision[y]?.[x] === "0" && d >= 0 && d < best) {
+          best = d;
+          tx = x * CELL2 + 16;
+          ty = y * CELL2 + 16;
+        }
+      }
+    }
+    z.dir = Math.atan2(ty - z.y, tx - z.x);
+    if (z.attack > 0) z.attack--;
+    const blocker = s.barrels.find((b) => b.hp > 0 && ["barrel", "wall"].includes(b.kind) && Math.hypot(b.x - z.x, b.y - z.y) < 35);
+    if (blocker && z.attack === 0) {
+      damage(s, blocker, z.devil ? 100 : 50, 0);
+      z.attack = 25;
+      z.attackAt = s.tick;
+    }
+    if (distance < 34 && visible && z.attack === 0) {
+      hurt(s, p, 50);
+      z.attack = 25;
+      z.attackAt = s.tick;
+      sound(s, "Creature.Zombie.Attack.wav");
+    } else if (z.devil && visible && distance < 160 && z.attack === 0) {
+      z.dir = Math.atan2(p.y - z.y, p.x - z.x);
+      z.attack = 60;
+      z.attackAt = s.tick;
+      s.bullets.push({ id: ++s.nextId, x: z.x, y: z.y, z: 18, vx: Math.cos(z.dir) * 7, vy: Math.sin(z.dir) * 7, owner: -1, weapon: -1, damage: 50, life: 40 });
+    } else if (distance > 27 && s.tick - z.attackAt > 8) {
+      const speed = (z.devil ? 1.28 : 0.64) * Math.min(1 + s.wave * 0.1, 5);
+      const length = Math.max(1, Math.hypot(tx - z.x, ty - z.y));
+      move(s, z, (tx - z.x) / length * speed, (ty - z.y) / length * speed, 10);
+    }
+  }
+}
+function projectiles(s) {
+  for (const b of s.bullets) {
+    if (b.life <= 0) continue;
+    if (b.tx !== void 0) {
+      b.life--;
+      continue;
+    }
+    if (b.weapon === 4) {
+      b.vz -= 1.92;
+      b.z += b.vz;
+      if (b.z < 0) {
+        b.z = 0;
+        b.vz = Math.abs(b.vz) * 0.5;
+        b.vx *= 0.5;
+        b.vy *= 0.5;
+      }
+      if (blocked(s, b.x + b.vx, b.y, 3)) {
+        b.vx *= -0.25;
+        sound(s, "Shot.Grenade.Bounce.wav");
+      }
+      if (blocked(s, b.x, b.y + b.vy, 3)) {
+        b.vy *= -0.25;
+        sound(s, "Shot.Grenade.Bounce.wav");
+      }
+      b.x += b.vx;
+      b.y += b.vy;
+    } else {
+      if (b.weapon === 7) {
+        b.vx *= 1.1;
+        b.vy *= 1.1;
+        if (s.tick % 2 === 0) effect(s, "Effect.RocketSmoke", b.x, b.y - 16, 12, { scale: 0.25 });
+      }
+      const steps = Math.ceil(Math.hypot(b.vx, b.vy) / 5);
+      for (let n = 0; n < steps; n++) {
+        b.x += b.vx / steps;
+        b.y += b.vy / steps;
+        if (solid(room(s), b.x, b.y)) {
+          b.life = 0;
+          break;
+        }
+        if (b.owner < 0) {
+          const p = s.players.find((p2) => p2.alive && Math.hypot(p2.x - b.x, p2.y - b.y) < 16);
+          if (p) {
+            hurt(s, p, b.damage);
+            b.life = 0;
+            break;
+          }
+        } else if (s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => z.hp > 0 && ["wall", "barrel"].includes(z.kind) && Math.hypot(z.x - b.x, z.y - b.y) < 17)) {
+          b.life = 0;
+          break;
+        }
+      }
+    }
+    if (--b.life <= 0 && (b.weapon === 4 || b.weapon === 7)) explode(s, b.x, b.y, b.damage, b.owner, b.bang, b.cluster);
+  }
+  s.bullets = s.bullets.filter((b) => b.life > 0);
+}
+function step5(s, inputs) {
+  if (s.phase !== "playing") return;
+  s.tick++;
+  s.effects = s.effects.filter((e) => --e.life > 0);
+  s.corpses = s.corpses.filter((e) => s.tick - e.deadAt < 100);
+  s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
+  if (s.combo > 1 && s.tick > s.comboUntil) {
+    s.combo--;
+    s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
+  }
+  for (const p of s.players) {
+    const input = accept(s, p, inputs[p.seat - 1]);
+    s.ack[p.seat - 1] = Math.max(s.ack[p.seat - 1], input.seq);
+    const attack = input.attack > p.lastAttack, alt = input.alt > p.lastAlt;
+    p.lastAttack = Math.max(p.lastAttack, input.attack);
+    p.lastAlt = Math.max(p.lastAlt, input.alt);
+    p.cooldown = Math.max(0, p.cooldown - 1);
+    p.invul = Math.max(0, p.invul - 1);
+    if (!p.alive) {
+      p.respawn = Math.max(0, p.respawn - 1);
+      const other = s.players.find((q) => q.alive);
+      if (!p.respawn && other) {
+        const pos = openPosition(s, other.x + 32, other.y, s.players.filter((q) => q.alive));
+        p.x = pos.x;
+        p.y = pos.y;
+        p.alive = true;
+        p.hp = 200;
+        p.weapon = 0;
+        p.ammo = -1;
+        p.invul = 125;
+        p.inventory = WEAPONS3.map((_, i) => weaponStats(s, i).ammo);
+      }
+      continue;
+    }
+    const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
+    p.moving = !!(dx || dy);
+    if (p.moving) {
+      p.dir = Math.atan2(dy, dx);
+      move(s, p, dx * 5.12, dy * 5.12);
+    }
+    if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
+    if (alt) {
+      if (input.weapon !== void 0) {
+        if (p.unlocked[input.weapon]) p.weapon = input.weapon;
+      } else for (let i = 1; i <= 10; i++) {
+        const index3 = (p.weapon + i) % 10;
+        if (p.unlocked[index3]) {
+          p.weapon = index3;
+          break;
+        }
+      }
+      p.ammo = p.inventory[p.weapon];
+    }
+    if (attack && p.cooldown === 0) fire2(s, p);
+  }
+  if (s.waveReady && s.tick >= s.waveReady) beginWave(s);
+  if (s.spawnLeft > 0 && s.tick >= s.nextSpawn && s.zombies.filter((z) => !z.devil && z.hp > 0).length < Math.min(10 + 5 * (s.wave - 1), 60)) {
+    spawnEnemy(s, false);
+    s.spawnLeft--;
+    s.nextSpawn = s.tick + Math.max(25 - (s.wave - 1), 1);
+  }
+  if (s.devilLeft > 0 && s.tick >= s.nextDevil && s.zombies.filter((z) => z.devil && z.hp > 0).length < Math.min(1 + (s.wave - 2) * 0.3, 5)) {
+    spawnEnemy(s, true);
+    s.devilLeft--;
+    s.nextDevil = s.tick + Math.max(250 - (s.wave - 1), 25);
+  }
+  projectiles(s);
+  enemies(s);
+  for (const b of s.barrels) if (b.kind === "mine" && b.hp > 0 && s.tick >= b.armed && s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 27)) {
+    b.hp = 0;
+    sound(s, "Object.Mine.Detonate.wav");
+  }
+  let chain = true;
+  while (chain) {
+    chain = false;
+    for (const b of s.barrels) if (b.hp <= 0 && !b.exploded) {
+      b.exploded = true;
+      chain = true;
+      if (b.kind !== "wall") {
+        const index3 = b.kind === "mine" ? 6 : b.kind === "chargepack" ? 8 : 3;
+        const gun = weaponStats(s, index3);
+        explode(s, b.x, b.y, gun.damage, b.owner, gun.bang, gun.cluster);
+      }
+    }
+  }
+  s.barrels = s.barrels.filter((b) => b.hp > 0);
+  for (const z of s.zombies.filter((z2) => z2.hp <= 0)) {
+    const p = s.players.find((p2) => p2.seat === z.owner);
+    if (p) p.kills++;
+    s.score += (z.devil ? 1e3 : 100) * s.combo;
+    s.combo++;
+    s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
+    upgrade(s);
+    s.corpses.push({ x: z.x, y: z.y, dir: z.dir, character: z.devil ? "devil" : "zombie", deadAt: s.tick });
+    effect(s, "Effect.BloodPool", z.x, z.y, 500);
+    if (random4(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250 });
+    sound(s, "Creature.Zombie.Hit.wav");
+  }
+  s.zombies = s.zombies.filter((z) => z.hp > 0);
+  for (const item of s.pickups) {
+    for (const p of s.players) if (item.life > 0 && p.alive && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
+      const available = p.unlocked.map((v, i) => v && p.inventory[i] >= 0 && p.inventory[i] < weaponStats(s, i).ammo ? i : -1).filter((i) => i >= 0);
+      if (p.hp >= 200 && !available.length) continue;
+      if (p.hp < 200 && (!available.length || random4(s) < 1 - p.hp / 200)) p.hp = 200;
+      else if (available.length) {
+        const i = available[Math.floor(random4(s) * available.length)];
+        p.inventory[i] = weaponStats(s, i).ammo;
+        p.ammo = p.inventory[p.weapon];
+      }
+      item.life = 0;
+      sound(s, "Object.Pickup.wav");
+    }
+    item.life--;
+  }
+  s.pickups = s.pickups.filter((i) => i.life > 0);
+  for (const p of s.players) if (p.alive && p.hp <= 0) {
+    p.hp = 0;
+    p.alive = false;
+    p.deaths++;
+    p.respawn = 125;
+    p.deadAt = s.tick;
+    p.killedBy = 0;
+    sound(s, "Creature.Player.Scream.1.wav");
+  }
+  if (s.players.length && !s.players.some((p) => p.alive)) {
+    s.phase = "finished";
+    s.winner = 0;
+    sound(s, "World.End.wav");
+  }
+  if (s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
+  s.effects = s.effects.slice(-180);
+  s.sounds = s.sounds.slice(-40);
+  s.corpses = s.corpses.slice(-60);
+}
+function nums(v, keys) {
+  return !!v && keys.every((k) => Number.isFinite(v[k]));
+}
+function valid3(value) {
+  if (!value || typeof value !== "object") return false;
+  const s = value;
+  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every(Number.isFinite) && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"])) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean") && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string") && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil"]) && typeof s.message === "string";
+}
+
+// src/expanded/boxhead-view.ts
+var base = "/expanded/assets/boxhead/";
+var images2 = /* @__PURE__ */ new Map();
+function image(file) {
+  let im = images2.get(file);
+  if (!im) {
+    im = new Image();
+    im.src = base + file;
+    images2.set(file, im);
+  }
+  return im;
+}
+function ready(im) {
+  return im.complete && im.naturalWidth > 0;
+}
+function sprite2(c, key, x, y, frame = 0, scale = 1, rotation = 0) {
+  const meta = boxhead_data_default.objects[key];
+  if (!meta) return;
+  const im = image(meta.file);
+  if (!ready(im)) return;
+  c.save();
+  c.translate(x, y);
+  c.rotate(rotation);
+  c.scale(scale, scale);
+  c.drawImage(im, Math.min(meta.frames - 1, Math.max(0, Math.floor(frame))) * meta.w, 0, meta.w, meta.h, meta.x, meta.y, meta.w, meta.h);
+  c.restore();
+}
+function person(c, character, action, p, tick, age) {
+  const meta = boxhead_data_default.animations[character + "-" + action];
+  if (!meta) return;
+  const im = image(meta.file);
+  if (!ready(im)) return;
+  const direction2 = (Math.round(p.dir / (Math.PI * 2) * meta.directions) % meta.directions + meta.directions) % meta.directions;
+  const frame = age === void 0 ? Math.floor(tick / (action.includes("walk") ? 3 : 2)) % meta.frames : Math.min(meta.frames - 1, Math.floor(age / 3));
+  c.drawImage(im, frame * meta.w, direction2 * meta.h, meta.w, meta.h, p.x + meta.x, p.y + meta.y, meta.w * meta.scale, meta.h * meta.scale);
+}
+function health(c, p, seat) {
+  c.fillStyle = "#171a17";
+  c.fillRect(p.x - 19, p.y - 55, 38, 5);
+  c.fillStyle = p.seat === seat ? "#74dd71" : "#53a94c";
+  c.fillRect(p.x - 18, p.y - 54, 36 * Math.max(0, p.hp) / 200, 3);
+}
+function render3(canvas, s, seat) {
+  if (canvas.width !== WIDTH3) canvas.width = WIDTH3;
+  if (canvas.height !== HEIGHT3) canvas.height = HEIGHT3;
+  const c = canvas.getContext("2d");
+  if (!c) return;
+  c.fillStyle = "#2b302a";
+  c.fillRect(0, 0, WIDTH3, HEIGHT3);
+  if (!s) return;
+  const map = room(s), cam = camera(s);
+  c.save();
+  c.beginPath();
+  c.rect(0, HUD, WIDTH3, HEIGHT3 - HUD);
+  c.clip();
+  c.translate(cam.x, cam.y);
+  c.scale(cam.scale, cam.scale);
+  const floor = image(map.id + "-floor.svg"), cover = image(map.id + "-cover.svg");
+  if (ready(floor)) c.drawImage(floor, 0, 0, map.width, map.height);
+  else {
+    c.fillStyle = "#c6c5bd";
+    c.fillRect(0, 0, map.width, map.height);
+  }
+  for (const e of s.effects) if (["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
+    c.globalAlpha = Math.min(1, e.life / 60);
+    sprite2(c, e.kind, e.x, e.y);
+    c.globalAlpha = 1;
+  }
+  for (const corpse of s.corpses) {
+    const age = s.tick - corpse.deadAt;
+    person(c, corpse.character, age < 15 ? "dying" : "dead", corpse, s.tick, age);
+  }
+  for (const p of s.players.filter((p2) => !p2.alive)) person(c, p.character, s.tick - p.deadAt < 15 ? "dying" : "dead", p, s.tick, s.tick - p.deadAt);
+  for (const p of s.pickups) if (p.life > 50 || s.tick % 6 < 3) sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
+  const entities2 = [...s.barrels.map((b) => ({ ...b, entity: "object" })), ...s.zombies.map((z) => ({ ...z, entity: "enemy" })), ...s.players.filter((p) => p.alive).map((p) => ({ ...p, entity: "human" }))].sort((a, b) => a.y - b.y || a.x - b.x);
+  for (const p of entities2) {
+    if (p.entity === "object") {
+      sprite2(c, p.kind === "barrel" ? "Object.Barrel" : p.kind === "wall" ? "Object.Wall" : p.kind === "mine" ? "Object.Mine" : "Object.ChargePack", p.x, p.y, s.tick % 20 < 10 ? 0 : 1);
+      continue;
+    }
+    if (p.entity === "human") {
+      const gun = WEAPONS3[p.weapon], action = s.tick - p.hitAt < 5 ? "hitfront" : (gun.pose ? gun.pose + "-" : "") + (p.moving ? "walk" : "stand");
+      c.globalAlpha = p.invul > 0 && s.tick % 4 < 2 ? 0.55 : 1;
+      person(c, p.character, action, p, s.tick);
+      c.globalAlpha = 1;
+      if (s.tick - p.fireAt < 2 && gun.pose) {
+        const muzzle = gun.id === "uzi" ? "UZI.MuzzleFlash" : gun.id === "shotgun" ? "Shotgun.MuzzleFlash" : gun.id === "railgun" ? "Railgun.MuzzleFlash" : "Pistol.MuzzleFlash";
+        sprite2(c, muzzle, p.x + Math.cos(p.dir) * 24, p.y - 24 + Math.sin(p.dir) * 18, 0, 1, p.dir);
+      }
+    } else {
+      const action = s.tick - p.hitAt < 5 ? "hitfront" : s.tick - p.attackAt < 12 ? "attack" : "walk";
+      person(c, p.devil ? "devil" : "zombie", action, p, s.tick);
+    }
+  }
+  for (const b of s.bullets) {
+    if (b.tx !== void 0) {
+      c.strokeStyle = b.weapon === 9 ? "#9f80ef" : "#f3f0cf";
+      c.lineWidth = b.weapon === 9 ? 2 : 1;
+      c.beginPath();
+      c.moveTo(b.x, b.y - 23);
+      c.lineTo(b.tx, b.ty - 23);
+      c.stroke();
+    } else if (b.owner < 0) sprite2(c, "Effect.FireBall", b.x, b.y - 18, 0, 1, Math.atan2(b.vy, b.vx));
+    else sprite2(c, b.weapon === 4 ? "Shot.Grenade" : "Shot.Rocket", b.x, b.y - (b.z || 0), s.tick / 2, 1, b.weapon === 7 ? Math.atan2(b.vy, b.vx) : 0);
+  }
+  for (const e of s.effects) if (!["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
+    const meta = boxhead_data_default.objects[e.kind];
+    sprite2(c, e.kind, e.x, e.y, (1 - e.life / e.total) * (meta?.frames || 1), e.scale || 1);
+  }
+  if (ready(cover)) c.drawImage(cover, 0, 0, map.width, map.height);
+  for (const p of s.players.filter((p2) => p2.alive)) health(c, p, seat);
+  c.restore();
+  c.fillStyle = "#242823";
+  c.fillRect(0, 0, WIDTH3, HUD);
+  c.fillStyle = "#ecebdf";
+  c.font = "bold 20px monospace";
+  c.textAlign = "left";
+  c.fillText(`BOXHEAD 2PLAY  \xB7  \u7B2C ${s.wave || 1} \u6CE2`, 20, 28);
+  c.fillStyle = "#dddac3";
+  c.font = "17px monospace";
+  c.fillText(`SCORE ${s.score.toLocaleString()}   \xD7${s.combo}`, 430, 28);
+  c.fillStyle = "#b6baa9";
+  c.font = "14px sans-serif";
+  c.textAlign = "right";
+  c.fillText(map.label + "  \xB7  \u5171\u4EAB\u89C6\u91CE", WIDTH3 - 20, 28);
+  c.textAlign = "left";
+  for (const p of s.players) {
+    const x = 20 + (p.seat - 1) * WIDTH3 / 4, gun = WEAPONS3[p.weapon];
+    c.fillStyle = ["#9ac8ff", "#f1d585", "#9edc9c", "#e7a5ad"][p.seat - 1];
+    c.font = "bold 15px sans-serif";
+    c.fillText(`P${p.seat}  ${p.alive ? Math.ceil(p.hp) + " HP" : "\u5012\u5730 \xB7 " + Math.ceil(p.respawn / 25) + "s"}`, x, 52);
+    c.fillStyle = "#ddd";
+    c.font = "14px sans-serif";
+    c.fillText(`${gun.name}  ${p.ammo < 0 ? "\u221E" : p.ammo}  \xB7  ${p.kills} \u51FB\u6740`, x, 73);
+  }
+  if (s.messageUntil > s.tick && s.phase === "playing") {
+    c.font = "bold 19px sans-serif";
+    c.textAlign = "center";
+    const w = c.measureText(s.message).width + 40;
+    c.fillStyle = "#20251fcc";
+    c.fillRect((WIDTH3 - w) / 2, HUD + 18, w, 36);
+    c.fillStyle = "#f3e5ac";
+    c.fillText(s.message, WIDTH3 / 2, HUD + 43);
+    c.textAlign = "left";
+  }
+  if (s.phase !== "playing") {
+    c.fillStyle = "#101610bb";
+    c.fillRect(0, HUD, WIDTH3, HEIGHT3 - HUD);
+    c.fillStyle = "#fff";
+    c.font = "bold 32px sans-serif";
+    c.textAlign = "center";
+    c.fillText(s.phase === "waiting" ? "BOXHEAD \xB7 2\u20134 \u4EBA\u5408\u4F5C\u751F\u5B58" : "\u961F\u4F0D\u5168\u706D", WIDTH3 / 2, 365);
+    c.font = "18px sans-serif";
+    c.fillStyle = "#d9ddcf";
+    c.fillText(s.phase === "waiting" ? "\u9009\u62E9\u539F\u7248\u5730\u56FE\uFF0C\u5165\u5EA7\u5E76\u51C6\u5907" : "\u575A\u6301\u5230\u7B2C " + s.wave + " \u6CE2 \xB7 \u5F97\u5206 " + s.score.toLocaleString(), WIDTH3 / 2, 405);
+    c.fillText("WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6 \xB7 \u7A7A\u683C / J \u5C04\u51FB \xB7 K / X \u6362\u6B66\u5668 \xB7 1\u20130 \u9009\u6B66\u5668", WIDTH3 / 2, 444);
+    c.textAlign = "left";
+  }
+}
+var enabled = true;
+var volume = 0.24;
+var heardRound = -1;
+var heardId = 0;
+var playing = /* @__PURE__ */ new Set();
+function setSound(value) {
+  enabled = value;
+  if (!value) {
+    for (const audio of playing) audio.pause();
+    playing.clear();
+  }
+}
+function setVolume(value) {
+  volume = Math.max(0, Math.min(1, value));
+  for (const audio of playing) audio.volume = volume;
+}
+function confirm(s) {
+  if (s.round !== heardRound) {
+    heardRound = s.round;
+    heardId = s.soundId;
+    return;
+  }
+  for (const event of s.sounds) {
+    if (event.id <= heardId) continue;
+    if (enabled && volume > 0 && s.tick - event.tick <= 5 && playing.size < 12) {
+      const file = boxhead_data_default.audio[event.name];
+      if (!file) continue;
+      const audio = new Audio(base + file);
+      audio.volume = volume;
+      playing.add(audio);
+      const done = () => playing.delete(audio);
+      audio.onended = done;
+      audio.onerror = done;
+      void audio.play().catch(done);
+    }
+  }
+  heardId = s.soundId;
 }
 
 // src/expanded/boxhead.ts
-var ID = "50737-server";
+var adapter3 = {
+  id: ID,
+  title: "\u50F5\u5C38\u5371\u673A3",
+  seats: 4,
+  hz: 25,
+  width: WIDTH3,
+  height: HEIGHT3,
+  controls: "WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BK / X \u6362\u6B66\u5668\uFF1B1\u20130 \u9009\u62E9\u5DF2\u89E3\u9501\u6B66\u5668\u3002\u8FDE\u51FB\u89E3\u9501\u5341\u79CD\u539F\u7248\u6B66\u5668\uFF0C\u4E0E\u961F\u53CB\u6301\u7EED\u751F\u5B58\uFF1B\u961F\u53CB\u5B58\u6D3B\u65F6\u5012\u5730\u8005\u4F1A\u590D\u6D3B\u3002",
+  maps: MAPS2.map(({ id, label }) => ({ id, label })),
+  create: create3,
+  step: step5,
+  valid: valid3,
+  render: render3,
+  confirm,
+  setSound,
+  setVolume,
+  consumeInput(s, seat, input) {
+    const p = s.players.find((p2) => p2.seat === seat);
+    if (p) {
+      p.lastAttack = Math.max(p.lastAttack, input.attack);
+      p.lastAlt = Math.max(p.lastAlt, input.alt);
+    }
+  },
+  predict(s, seat, input, fraction) {
+    const p = s.players.find((p2) => p2.seat === seat);
+    if (!p?.alive) return;
+    const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
+    if (dx || dy) {
+      p.dir = Math.atan2(dy, dx);
+      move(s, p, dx * 5.12 * fraction, dy * 5.12 * fraction);
+    }
+  }
+};
+
+// src/expanded/gunmayhem-data.json
+var gunmayhem_data_default = [{ id: "1838", label: "Classic", platforms: [{ x: 467.06, y: 175, w: 194.62, h: 23.02 }, { x: 219.87, y: 251.74, w: 553.43, h: 23.02 }, { x: 40, y: 328.49, w: 346.82, h: 23.02 }, { x: 522.41, y: 328.49, w: 336.67, h: 23.02 }, { x: 139.62, y: 405.23, w: 554.35, h: 23.02 }, { x: 251.23, y: 481.98, w: 187.24, h: 23.02 }] }, { id: "1872", label: "Twin Towers", platforms: [{ x: 282.58, y: 175, w: 337.7, h: 23.02 }, { x: 63.78, y: 251.74, w: 274.92, h: 23.02 }, { x: 578.42, y: 251.74, w: 272.06, h: 23.02 }, { x: 275.92, y: 328.49, w: 348.17, h: 23.02 }, { x: 40, y: 405.23, w: 819.05, h: 23.02 }, { x: 109.44, y: 481.98, w: 683.97, h: 23.02 }] }, { id: "1875", label: "Crossfire", platforms: [{ x: 75.69, y: 175, w: 263.94, h: 23.02 }, { x: 555.67, y: 175, w: 266.76, h: 23.02 }, { x: 43.76, y: 251.74, w: 806.85, h: 23.02 }, { x: 332.12, y: 328.49, w: 236.7, h: 23.02 }, { x: 62.54, y: 405.23, w: 766.46, h: 23.02 }, { x: 40, y: 481.98, w: 284.6, h: 23.02 }, { x: 580.09, y: 481.98, w: 279.91, h: 23.02 }] }];
+
+// src/expanded/gunmayhem.ts
+var ID2 = "97734-server";
 var W = 900;
-var H = 650;
-var GUNS = [{ name: "\u624B\u67AA", rate: 8, damage: 26, speed: 18, pellets: 1, ammo: -1 }, { name: "UZI", rate: 4, damage: 35, speed: 21, pellets: 1, ammo: 100 }, { name: "\u9730\u5F39\u67AA", rate: 12, damage: 51, speed: 18, pellets: 5, ammo: 20 }, { name: "\u706B\u7BAD\u7B52", rate: 12, damage: 250, speed: 11, pellets: 1, ammo: 20 }, { name: "\u624B\u96F7", rate: 12, damage: 150, speed: 7, pellets: 1, ammo: 20 }];
-var MAPS2 = [{ id: "arena", label: "\u5408\u4F5C\u7ADE\u6280\u573A", walls: [{ x: 225, y: 185, w: 65, h: 135 }, { x: 610, y: 350, w: 65, h: 135 }, { x: 415, y: 280, w: 70, h: 75 }] }, { id: "pillars", label: "\u7ACB\u67F1\u8D70\u5ECA", walls: [{ x: 235, y: 200, w: 60, h: 60 }, { x: 605, y: 200, w: 60, h: 60 }, { x: 235, y: 430, w: 60, h: 60 }, { x: 605, y: 430, w: 60, h: 60 }] }];
+var H = 600;
+var GUNS = [{ name: "M1911", art: "pistol", rate: 11, pellets: 1, speed: 24, force: 4.8, ammo: -1 }, { name: "AK47", art: "ak47", rate: 5, pellets: 1, speed: 27, force: 3.2, ammo: 45 }, { name: "KSG", art: "shotgun", rate: 25, pellets: 5, speed: 22, force: 3.5, ammo: 12 }, { name: "AWM", art: "sniper", rate: 33, pellets: 1, speed: 40, force: 12, ammo: 10 }];
 function numeric(v, keys) {
   return keys.every((k) => Number.isFinite(v[k]));
 }
 function entities(s) {
-  return s.zombies.every((v) => numeric(v, ["id", "hp", "attack", "dir", "owner"]) && typeof v.devil === "boolean") && s.bullets.every((v) => numeric(v, ["id", "vx", "vy", "owner", "weapon", "damage", "life"])) && s.barrels.every((v) => numeric(v, ["hp", "owner"]) && typeof v.exploded === "boolean") && s.pickups.every((v) => numeric(v, ["id", "life"])) && s.effects.every((v) => numeric(v, ["life", "r"]));
+  return s.bullets.every((v) => numeric(v, ["id", "vx", "vy", "owner", "force", "life"])) && s.grenades.every((v) => numeric(v, ["id", "vx", "vy", "owner", "life"])) && s.crates.every((v) => numeric(v, ["id", "vy", "life"]) && Number.isInteger(v.weapon) && v.weapon > 0 && v.weapon < GUNS.length) && s.effects.every((v) => numeric(v, ["life"]));
 }
-function accept(s, p, candidate) {
+function accept2(s, p, candidate) {
   const at = p.seat - 1, current = s.inputs[at];
   let next;
   if (!validInput3(candidate)) next = { ...current, left: false, right: false, up: false, down: false };
@@ -2026,378 +2816,13 @@ function rnd(s) {
   s.rng = Math.imul(s.rng, 1664525) + 1013904223 >>> 0;
   return s.rng / 4294967296;
 }
-function hitRect(x, y, r, b) {
-  return x + r > b.x && x - r < b.x + b.w && y + r > b.y && y - r < b.y + b.h;
-}
-function move(s, p, dx, dy, r = 13) {
-  const map = MAPS2.find((m) => m.id === s.mapId);
-  const blocks = [...map.walls, ...s.barrels.filter((b) => b.hp > 0).map((b) => ({ x: b.x - 13, y: b.y - 13, w: 26, h: 26 }))];
-  let x = Math.max(24, Math.min(W - 24, p.x + dx));
-  if (!blocks.some((b) => hitRect(x, p.y, r, b))) p.x = x;
-  let y = Math.max(82, Math.min(H - 26, p.y + dy));
-  if (!blocks.some((b) => hitRect(p.x, y, r, b))) p.y = y;
-}
-function spawnWave(s) {
-  s.wave++;
-  s.spawnLeft = 8 + s.wave * 4;
-  s.nextSpawn = s.tick + 15;
-  s.waveReady = 0;
-  for (const p of s.players) if (p.alive) {
-    p.hp = Math.min(200, p.hp + 25);
-    p.ammo = GUNS[p.weapon].ammo;
-  }
-}
-function explode(s, x, y, damage, owner) {
-  s.effects.push({ x, y, life: 12, r: 80 });
-  for (const z of s.zombies) if (z.hp > 0 && Math.hypot(z.x - x, z.y - y) < 85) {
-    z.hp -= damage;
-    z.owner = owner;
-  }
-  for (const b of s.barrels) if (b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 95) {
-    b.hp = 0;
-    b.owner = owner;
-  }
-}
-function fire2(s, p) {
-  let gun = GUNS[p.weapon];
-  if (p.ammo === 0) {
-    p.weapon = 0;
-    p.ammo = -1;
-    gun = GUNS[0];
-  }
-  p.cooldown = gun.rate;
-  if (p.ammo > 0) p.ammo--;
-  for (let j = 0; j < gun.pellets; j++) {
-    const angle = p.dir + (j - (gun.pellets - 1) / 2) * 0.105 + (p.weapon === 1 ? (rnd(s) - 0.5) * 0.06 : 0);
-    s.bullets.push({ id: ++s.nextId, x: p.x + Math.cos(angle) * 20, y: p.y + Math.sin(angle) * 20, vx: Math.cos(angle) * gun.speed, vy: Math.sin(angle) * gun.speed, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: p.weapon === 4 ? 24 : 35 });
-  }
-}
-var adapter3 = {
-  id: ID,
-  title: "\u50F5\u5C38\u5371\u673A3",
-  seats: 4,
-  hz: 25,
-  width: W,
-  height: H,
-  controls: "\u65B9\u5411\u952E / WASD \u79FB\u52A8\u53CA\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BK / X \u5207\u6362\u6B66\u5668\u3002\u51FB\u6740\u89E3\u9501\u6B66\u5668\uFF0C\u62FE\u53D6\u8865\u7ED9\uFF0C\u5408\u4F5C\u901A\u8FC7 6 \u6CE2\u3002",
-  maps: MAPS2.map(({ id, label }) => ({ id, label })),
-  create(round, playing, seats, seed, mapId) {
-    const active = [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort();
-    return { gameId: ID, round, tick: 0, phase: playing ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), rng: seed >>> 0, mapId: MAPS2.some((m) => m.id === mapId) ? mapId : "arena", players: active.map((seat) => ({ seat, x: 360 + (seat - 1) % 2 * 160, y: 420 + Math.floor((seat - 1) / 2) * 110, dir: -Math.PI / 2, hp: 200, alive: true, lives: 3, respawn: 0, kills: 0, weapon: 0, ammo: -1, cooldown: 0, invul: 50, lastAttack: 0, lastAlt: 0, killedBy: 0, deaths: 0 })), zombies: [], bullets: [], barrels: [{ x: 150, y: 165, hp: 60, exploded: false, owner: 0 }, { x: 745, y: 165, hp: 60, exploded: false, owner: 0 }, { x: 450, y: 560, hp: 60, exploded: false, owner: 0 }], pickups: [], effects: [], wave: 0, spawnLeft: 0, nextSpawn: 0, waveReady: 1, nextId: 0, score: 0, combo: 0, comboUntil: 0 };
-  },
-  consumeInput(s, seat, input) {
-    const p = s.players.find((p2) => p2.seat === seat);
-    if (p) {
-      p.lastAttack = Math.max(p.lastAttack, input.attack);
-      p.lastAlt = Math.max(p.lastAlt, input.alt);
-    }
-  },
-  step(s, inputs) {
-    if (s.phase !== "playing") return;
-    s.tick++;
-    s.effects = s.effects.filter((e) => --e.life > 0);
-    if (s.comboUntil < s.tick) s.combo = 0;
-    for (const p of s.players) {
-      const input = accept(s, p, inputs[p.seat - 1]);
-      s.ack[p.seat - 1] = Math.max(s.ack[p.seat - 1], input.seq);
-      const attack = input.attack > p.lastAttack, alt = input.alt > p.lastAlt;
-      p.lastAttack = Math.max(p.lastAttack, input.attack);
-      p.lastAlt = Math.max(p.lastAlt, input.alt);
-      if (p.cooldown > 0) p.cooldown--;
-      if (p.invul > 0) p.invul--;
-      if (!p.alive) {
-        if (p.lives > 0 && --p.respawn <= 0) {
-          const other = s.players.find((q) => q.alive);
-          p.alive = true;
-          p.hp = 200;
-          p.x = other?.x ?? 450;
-          p.y = Math.min(H - 30, (other?.y ?? 430) + 35);
-          p.invul = 75;
-        }
-        continue;
-      }
-      const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
-      if (dx || dy) {
-        p.dir = Math.atan2(dy, dx);
-        const len = Math.hypot(dx, dy);
-        move(s, p, dx / len * 4.8, dy / len * 4.8);
-      }
-      p.hp = Math.min(200, p.hp + 200 / (25 * 30));
-      if (alt) {
-        const unlocked = Math.min(4, Math.floor(p.kills / 5));
-        p.weapon = (p.weapon + 1) % (unlocked + 1);
-        p.ammo = GUNS[p.weapon].ammo;
-      }
-      if (attack && p.cooldown === 0) fire2(s, p);
-    }
-    if (s.waveReady && s.tick >= s.waveReady) {
-      if (s.wave >= 6) {
-        s.phase = "finished";
-        s.winner = 1;
-        return;
-      }
-      spawnWave(s);
-    }
-    if (s.spawnLeft > 0 && s.tick >= s.nextSpawn) {
-      const side = Math.floor(rnd(s) * 4);
-      let x = side === 0 ? 30 : side === 1 ? 870 : 40 + rnd(s) * 820, y = side === 2 ? 90 : side === 3 ? 620 : 95 + rnd(s) * 510;
-      const devil = s.wave >= 3 && s.spawnLeft % 9 === 0;
-      s.zombies.push({ id: ++s.nextId, x, y, hp: devil ? 1e3 : 70 + s.wave * 7, devil, attack: 0, dir: 0, owner: 0 });
-      s.spawnLeft--;
-      s.nextSpawn = s.tick + Math.max(7, 22 - s.wave * 2);
-    }
-    for (const b of s.bullets) {
-      if (b.life <= 0) continue;
-      const steps = 3;
-      for (let k = 0; k < steps; k++) {
-        b.x += b.vx / steps;
-        b.y += b.vy / steps;
-        if (b.x < 20 || b.x > 880 || b.y < 70 || b.y > 630 || MAPS2.find((m) => m.id === s.mapId).walls.some((w) => hitRect(b.x, b.y, 2, w))) {
-          b.life = 0;
-          break;
-        }
-        if (b.owner < 0) {
-          const p = s.players.find((p2) => p2.alive && p2.invul === 0 && Math.hypot(p2.x - b.x, p2.y - b.y) < 18);
-          if (p) {
-            p.hp -= b.damage;
-            p.invul = 12;
-            b.life = 0;
-            break;
-          }
-        } else {
-          const z = s.zombies.find((z2) => z2.hp > 0 && Math.hypot(z2.x - b.x, z2.y - b.y) < 18);
-          const barrel = s.barrels.find((v) => v.hp > 0 && Math.hypot(v.x - b.x, v.y - b.y) < 17);
-          if (z || barrel) {
-            if (z) {
-              z.hp -= b.damage;
-              z.owner = b.owner;
-            }
-            if (barrel) {
-              barrel.hp -= b.damage;
-              barrel.owner = b.owner;
-            }
-            b.life = 0;
-            break;
-          }
-        }
-      }
-      if (--b.life <= 0 && (b.weapon === 3 || b.weapon === 4)) explode(s, b.x, b.y, b.damage, b.owner);
-    }
-    s.bullets = s.bullets.filter((b) => b.life > 0);
-    for (const barrel of s.barrels) if (barrel.hp <= 0 && !barrel.exploded) {
-      barrel.exploded = true;
-      explode(s, barrel.x, barrel.y, 150, barrel.owner);
-    }
-    for (const z of s.zombies) {
-      if (z.hp <= 0) continue;
-      const targets = s.players.filter((p2) => p2.alive).sort((a, b) => Math.hypot(a.x - z.x, a.y - z.y) - Math.hypot(b.x - z.x, b.y - z.y));
-      const p = targets[0];
-      if (!p) continue;
-      const dx = p.x - z.x, dy = p.y - z.y, len = Math.max(1, Math.hypot(dx, dy));
-      z.dir = Math.atan2(dy, dx);
-      move(s, z, dx / len * (z.devil ? 1.2 : 1.35 + s.wave * 0.08), dy / len * (z.devil ? 1.2 : 1.35 + s.wave * 0.08), 11);
-      if (z.attack > 0) z.attack--;
-      if (len < 30 && z.attack === 0 && p.invul === 0) {
-        p.hp -= z.devil ? 45 : 15;
-        p.invul = 14;
-        z.attack = 22;
-      }
-      if (z.devil && z.attack === 0 && len > 75) {
-        z.attack = 65;
-        s.bullets.push({ id: ++s.nextId, x: z.x, y: z.y, vx: dx / len * 6, vy: dy / len * 6, owner: -1, weapon: -1, damage: 28, life: 65 });
-      }
-    }
-    for (const z of s.zombies.filter((z2) => z2.hp <= 0)) {
-      const p = s.players.find((p2) => p2.seat === z.owner);
-      if (p) {
-        p.kills++;
-        s.combo++;
-        s.comboUntil = s.tick + 75;
-        s.score += (z.devil ? 1e3 : 100) * Math.min(10, s.combo);
-        if (p.kills % 5 === 0) {
-          p.weapon = Math.min(4, Math.floor(p.kills / 5));
-          p.ammo = GUNS[p.weapon].ammo;
-        }
-      }
-      if (rnd(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250 });
-    }
-    s.zombies = s.zombies.filter((z) => z.hp > 0);
-    for (const item of s.pickups) {
-      for (const p of s.players) if (p.alive && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
-        p.hp = Math.min(200, p.hp + 65);
-        p.ammo = GUNS[p.weapon].ammo;
-        item.life = 0;
-      }
-      item.life--;
-    }
-    s.pickups = s.pickups.filter((i) => i.life > 0);
-    for (const p of s.players) if (p.alive && p.hp <= 0) {
-      p.hp = 0;
-      p.alive = false;
-      p.lives--;
-      p.deaths++;
-      p.respawn = 75;
-      p.killedBy = 0;
-    }
-    if (!s.players.some((p) => p.alive || p.lives > 0)) {
-      s.phase = "finished";
-      s.winner = 0;
-    }
-    if (s.spawnLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
-    if (s.tick >= 25 * 60 * 12) {
-      s.phase = "finished";
-      s.winner = 0;
-    }
-  },
-  valid(value) {
-    if (!value || typeof value !== "object") return false;
-    const s = value;
-    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0, 1].includes(s.winner) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => p && [1, 2, 3, 4].includes(p.seat) && typeof p.alive === "boolean" && numeric(p, ["deaths", "killedBy", "x", "y", "dir", "hp", "lives", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "kills", "respawn"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < GUNS.length) && ["zombies", "bullets", "barrels", "pickups", "effects"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => e && Number.isFinite(e.x) && Number.isFinite(e.y))) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && numeric(s, ["rng", "wave", "spawnLeft", "nextSpawn", "waveReady", "score", "combo", "comboUntil", "nextId"]) && entities(s);
-  },
-  render(canvas, s, seat) {
-    const c = canvas.getContext("2d");
-    if (!c) return;
-    canvas.width = W;
-    canvas.height = H;
-    c.fillStyle = "#c3c8c0";
-    c.fillRect(0, 0, W, H);
-    c.strokeStyle = "#aeb4aa";
-    for (let x = 0; x < W; x += 40) {
-      c.beginPath();
-      c.moveTo(x, 65);
-      c.lineTo(x, H);
-      c.stroke();
-    }
-    for (let y = 65; y < H; y += 40) {
-      c.beginPath();
-      c.moveTo(0, y);
-      c.lineTo(W, y);
-      c.stroke();
-    }
-    if (!s) return;
-    for (const b of MAPS2.find((m) => m.id === s.mapId).walls) {
-      c.fillStyle = "#777d72";
-      c.fillRect(b.x, b.y, b.w, b.h);
-      c.fillStyle = "#e1e2db";
-      c.fillRect(b.x, b.y - 15, b.w, b.h);
-      c.strokeStyle = "#666b60";
-      c.strokeRect(b.x, b.y - 15, b.w, b.h);
-    }
-    for (const b of s.barrels) if (b.hp > 0) draw2(c, "barrel", b.x - 18, b.y - 28, 36, 40);
-    for (const p of s.pickups) draw2(c, "pickup", p.x - 12, p.y - 15, 24, 25);
-    for (const e of s.effects) {
-      c.fillStyle = `rgba(255,113,21,${e.life / 15})`;
-      c.beginPath();
-      c.arc(e.x, e.y, e.r * (1 - e.life / 18), 0, Math.PI * 2);
-      c.fill();
-    }
-    const entities3 = [...s.zombies.map((z) => ({ ...z, kind: z.devil ? "devil" : "zombie" })), ...s.players.filter((p) => p.alive).map((p) => ({ ...p, kind: "player" }))].sort((a, b) => a.y - b.y);
-    for (const p of entities3) {
-      c.fillStyle = "#0003";
-      c.beginPath();
-      c.ellipse(p.x, p.y + 3, 17, 7, 0, 0, Math.PI * 2);
-      c.fill();
-      const im = get(p.kind);
-      if (im.complete && im.naturalWidth) {
-        const d = (Math.round(p.dir / (Math.PI / 4)) % 8 + 8) % 8;
-        c.drawImage(im, Math.floor(s.tick / 3) % 8 * 64, d * 72, 64, 72, p.x - 25, p.y - 51, 50, 56);
-      } else {
-        c.fillStyle = p.kind === "player" ? "#e8b288" : "#788564";
-        c.fillRect(p.x - 11, p.y - 25, 22, 30);
-      }
-      if (p.seat) {
-        c.fillStyle = p.seat === seat ? "#1457be" : "#222";
-        c.font = "bold 15px sans-serif";
-        c.fillText("P" + p.seat, p.x - 12, p.y - 54);
-        c.fillStyle = "#ad2323";
-        c.fillRect(p.x - 20, p.y - 43, 40, 4);
-        c.fillStyle = "#42a755";
-        c.fillRect(p.x - 20, p.y - 43, 40 * p.hp / 200, 4);
-      }
-    }
-    for (const b of s.bullets) {
-      c.fillStyle = b.owner < 0 ? "#f25d18" : b.weapon >= 3 ? "#f68d1f" : "#ffe352";
-      c.beginPath();
-      c.arc(b.x, b.y, b.weapon >= 3 ? 5 : 3, 0, Math.PI * 2);
-      c.fill();
-    }
-    c.fillStyle = "#212621";
-    c.fillRect(0, 0, W, 65);
-    c.fillStyle = "#eee";
-    c.font = "bold 18px sans-serif";
-    c.fillText(`BOXHEAD 2PLAY \xB7 \u7B2C ${s.wave}/6 \u6CE2 \xB7 \u5206\u6570 ${s.score} \xB7 \u8FDE\u51FB \xD7${s.combo}`, 20, 25);
-    c.font = "13px sans-serif";
-    c.fillText(s.players.map((p) => `P${p.seat} ${Math.ceil(p.hp)} HP / ${p.lives} \u547D \xB7 ${GUNS[p.weapon].name} ${p.ammo < 0 ? "\u221E" : p.ammo}`).join("     "), 20, 49);
-    if (s.phase !== "playing") {
-      c.fillStyle = "#111b";
-      c.fillRect(200, 275, 500, 80);
-      c.fillStyle = "#fff";
-      c.textAlign = "center";
-      c.font = "bold 26px sans-serif";
-      c.fillText(s.phase === "waiting" ? "2\u20134 \u4EBA\u5408\u4F5C \xB7 \u51C6\u5907\u540E\u5F00\u59CB" : s.winner === 1 ? "\u5B88\u4F4F\u4E86\uFF01\u5408\u4F5C\u80DC\u5229" : "\u50F5\u5C38\u7A81\u7834\u4E86\u9632\u7EBF", 450, 325);
-      c.textAlign = "left";
-    }
-  },
-  predict(s, seat, input, fraction) {
-    const p = s.players.find((p2) => p2.seat === seat);
-    if (!p?.alive) return;
-    const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up), len = Math.hypot(dx, dy);
-    if (len) {
-      p.dir = Math.atan2(dy, dx);
-      move(s, p, dx / len * 4.8 * fraction, dy / len * 4.8 * fraction);
-    }
-  }
-};
-var images2 = /* @__PURE__ */ new Map();
-function get(name) {
-  let im = images2.get(name);
-  if (!im) {
-    im = new Image();
-    im.src = "/expanded/assets/boxhead/" + name + ".png";
-    images2.set(name, im);
-  }
-  return im;
-}
-function draw2(c, name, x, y, w, h) {
-  const im = get(name);
-  if (im.complete && im.naturalWidth) c.drawImage(im, x, y, w, h);
-}
-
-// src/expanded/gunmayhem-data.json
-var gunmayhem_data_default = [{ id: "1838", label: "Classic", platforms: [{ x: 467.06, y: 175, w: 194.62, h: 23.02 }, { x: 219.87, y: 251.74, w: 553.43, h: 23.02 }, { x: 40, y: 328.49, w: 346.82, h: 23.02 }, { x: 522.41, y: 328.49, w: 336.67, h: 23.02 }, { x: 139.62, y: 405.23, w: 554.35, h: 23.02 }, { x: 251.23, y: 481.98, w: 187.24, h: 23.02 }] }, { id: "1872", label: "Twin Towers", platforms: [{ x: 282.58, y: 175, w: 337.7, h: 23.02 }, { x: 63.78, y: 251.74, w: 274.92, h: 23.02 }, { x: 578.42, y: 251.74, w: 272.06, h: 23.02 }, { x: 275.92, y: 328.49, w: 348.17, h: 23.02 }, { x: 40, y: 405.23, w: 819.05, h: 23.02 }, { x: 109.44, y: 481.98, w: 683.97, h: 23.02 }] }, { id: "1875", label: "Crossfire", platforms: [{ x: 75.69, y: 175, w: 263.94, h: 23.02 }, { x: 555.67, y: 175, w: 266.76, h: 23.02 }, { x: 43.76, y: 251.74, w: 806.85, h: 23.02 }, { x: 332.12, y: 328.49, w: 236.7, h: 23.02 }, { x: 62.54, y: 405.23, w: 766.46, h: 23.02 }, { x: 40, y: 481.98, w: 284.6, h: 23.02 }, { x: 580.09, y: 481.98, w: 279.91, h: 23.02 }] }];
-
-// src/expanded/gunmayhem.ts
-var ID2 = "97734-server";
-var W2 = 900;
-var H2 = 600;
-var GUNS2 = [{ name: "M1911", art: "pistol", rate: 11, pellets: 1, speed: 24, force: 4.8, ammo: -1 }, { name: "AK47", art: "ak47", rate: 5, pellets: 1, speed: 27, force: 3.2, ammo: 45 }, { name: "KSG", art: "shotgun", rate: 25, pellets: 5, speed: 22, force: 3.5, ammo: 12 }, { name: "AWM", art: "sniper", rate: 33, pellets: 1, speed: 40, force: 12, ammo: 10 }];
-function numeric2(v, keys) {
-  return keys.every((k) => Number.isFinite(v[k]));
-}
-function entities2(s) {
-  return s.bullets.every((v) => numeric2(v, ["id", "vx", "vy", "owner", "force", "life"])) && s.grenades.every((v) => numeric2(v, ["id", "vx", "vy", "owner", "life"])) && s.crates.every((v) => numeric2(v, ["id", "vy", "life"]) && Number.isInteger(v.weapon) && v.weapon > 0 && v.weapon < GUNS2.length) && s.effects.every((v) => numeric2(v, ["life"]));
-}
-function accept2(s, p, candidate) {
-  const at = p.seat - 1, current = s.inputs[at];
-  let next;
-  if (!validInput3(candidate)) next = { ...current, left: false, right: false, up: false, down: false };
-  else if (candidate.seq < current.seq) next = current;
-  else if (candidate.seq === current.seq) next = { ...current, left: current.left && candidate.left, right: current.right && candidate.right, up: current.up && candidate.up, down: current.down && candidate.down, attack: Math.max(current.attack, p.lastAttack), alt: Math.max(current.alt, p.lastAlt) };
-  else next = { ...candidate, attack: Math.max(candidate.attack, current.attack, p.lastAttack), alt: Math.max(candidate.alt, current.alt, p.lastAlt) };
-  s.inputs[at] = { ...next };
-  return next;
-}
-function rnd2(s) {
-  s.rng = Math.imul(s.rng, 1664525) + 1013904223 >>> 0;
-  return s.rng / 4294967296;
-}
 function platforms(s) {
   return gunmayhem_data_default.find((m) => m.id === s.mapId).platforms;
 }
 function respawn(s, p) {
   const choices = platforms(s).filter((r2) => r2.w > 85 && r2.y < 460);
-  const r = choices[(p.seat - 1 + Math.floor(rnd2(s) * choices.length)) % choices.length];
-  p.x = r.x + r.w * (0.25 + rnd2(s) * 0.5);
+  const r = choices[(p.seat - 1 + Math.floor(rnd(s) * choices.length)) % choices.length];
+  p.x = r.x + r.w * (0.25 + rnd(s) * 0.5);
   p.y = r.y - 28;
   p.vx = 0;
   p.vy = 0;
@@ -2443,13 +2868,13 @@ var adapter4 = {
   title: "\u6DF7\u4E71\u5927\u67AA\u62182",
   seats: 4,
   hz: 35,
-  width: W2,
-  height: H2,
+  width: W,
+  height: H,
   controls: "\u65B9\u5411\u952E / WASD \u79FB\u52A8\uFF0C\u4E0A\u952E\u8DF3\u8DC3\uFF08\u53EF\u4E8C\u6BB5\u8DF3\uFF09\uFF0C\u4E0B\u952E\u7A7F\u8FC7\u5E73\u53F0\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BK / X \u6295\u63B7\u624B\u96F7\u3002\u5C06\u5BF9\u624B\u51FB\u51FA\u5730\u56FE\uFF0C\u6700\u540E\u5B58\u6D3B\u8005\u83B7\u80DC\u3002",
   maps: gunmayhem_data_default.map(({ id, label }) => ({ id, label })),
-  create(round, playing, seats, seed, mapId) {
+  create(round, playing2, seats, seed, mapId) {
     const active = [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort();
-    const s = { gameId: ID2, round, tick: 0, phase: playing ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), rng: seed >>> 0, mapId: gunmayhem_data_default.some((m) => m.id === mapId) ? mapId : gunmayhem_data_default[Math.max(0, round - 1) % gunmayhem_data_default.length].id, players: active.map((seat) => ({ seat, x: 0, y: 0, vx: 0, vy: 0, alive: true, lives: 5, facing: seat % 2 ? 1 : -1, damage: 0, weapon: 0, ammo: -1, cooldown: 0, grenades: 5, nadeCooldown: 0, invul: 70, jumps: 0, jumpHeld: false, grounded: false, drop: 0, lastAttack: 0, lastAlt: 0, killedBy: 0, deaths: 0, respawn: 0, lastHit: 0, hitTick: 0, kills: 0 })), bullets: [], grenades: [], crates: [], effects: [], nextId: 0, nextCrate: 150 };
+    const s = { gameId: ID2, round, tick: 0, phase: playing2 ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), rng: seed >>> 0, mapId: gunmayhem_data_default.some((m) => m.id === mapId) ? mapId : gunmayhem_data_default[Math.max(0, round - 1) % gunmayhem_data_default.length].id, players: active.map((seat) => ({ seat, x: 0, y: 0, vx: 0, vy: 0, alive: true, lives: 5, facing: seat % 2 ? 1 : -1, damage: 0, weapon: 0, ammo: -1, cooldown: 0, grenades: 5, nadeCooldown: 0, invul: 70, jumps: 0, jumpHeld: false, grounded: false, drop: 0, lastAttack: 0, lastAlt: 0, killedBy: 0, deaths: 0, respawn: 0, lastHit: 0, hitTick: 0, kills: 0 })), bullets: [], grenades: [], crates: [], effects: [], nextId: 0, nextCrate: 150 };
     for (const p of s.players) respawn(s, p);
     return s;
   },
@@ -2497,7 +2922,7 @@ var adapter4 = {
           p.weapon = 0;
           p.ammo = -1;
         }
-        const gun = GUNS2[p.weapon];
+        const gun = GUNS[p.weapon];
         p.cooldown = gun.rate;
         if (p.ammo > 0) p.ammo--;
         for (let k = 0; k < gun.pellets; k++) s.bullets.push({ id: ++s.nextId, x: p.x + p.facing * 23, y: p.y - 3, vx: p.facing * gun.speed, vy: (k - (gun.pellets - 1) / 2) * 2.3, owner: p.seat, force: gun.force, life: 40 });
@@ -2537,8 +2962,8 @@ var adapter4 = {
     }
     s.grenades = s.grenades.filter((g) => g.life > 0);
     if (s.tick >= s.nextCrate && s.crates.length < 4) {
-      const r = platforms(s)[Math.floor(rnd2(s) * platforms(s).length)];
-      s.crates.push({ id: ++s.nextId, x: r.x + r.w / 2, y: r.y - 180, vy: 0, weapon: 1 + Math.floor(rnd2(s) * 3), life: 800 });
+      const r = platforms(s)[Math.floor(rnd(s) * platforms(s).length)];
+      s.crates.push({ id: ++s.nextId, x: r.x + r.w / 2, y: r.y - 180, vy: 0, weapon: 1 + Math.floor(rnd(s) * 3), life: 800 });
       s.nextCrate = s.tick + 220;
     }
     for (const crate of s.crates) {
@@ -2552,7 +2977,7 @@ var adapter4 = {
       }
       for (const p of s.players) if (p.alive && !p.respawn && Math.hypot(p.x - crate.x, p.y - crate.y) < 35) {
         p.weapon = crate.weapon;
-        p.ammo = GUNS2[p.weapon].ammo;
+        p.ammo = GUNS[p.weapon].ammo;
         p.grenades = Math.min(5, p.grenades + 1);
         crate.life = 0;
       }
@@ -2584,18 +3009,18 @@ var adapter4 = {
   valid(value) {
     if (!value || typeof value !== "object") return false;
     const s = value;
-    return s.gameId === ID2 && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0, 1, 2, 3, 4].includes(s.winner) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && gunmayhem_data_default.some((m) => m.id === s.mapId) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => p && [1, 2, 3, 4].includes(p.seat) && typeof p.alive === "boolean" && typeof p.jumpHeld === "boolean" && typeof p.grounded === "boolean" && numeric2(p, ["deaths", "killedBy", "x", "y", "vx", "vy", "damage", "lives", "facing", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "kills", "respawn", "drop", "jumps", "grenades", "nadeCooldown", "lastHit", "hitTick"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < GUNS2.length) && ["bullets", "grenades", "crates", "effects"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => e && Number.isFinite(e.x) && Number.isFinite(e.y))) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && numeric2(s, ["rng", "nextId", "nextCrate"]) && entities2(s);
+    return s.gameId === ID2 && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0, 1, 2, 3, 4].includes(s.winner) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && gunmayhem_data_default.some((m) => m.id === s.mapId) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => p && [1, 2, 3, 4].includes(p.seat) && typeof p.alive === "boolean" && typeof p.jumpHeld === "boolean" && typeof p.grounded === "boolean" && numeric(p, ["deaths", "killedBy", "x", "y", "vx", "vy", "damage", "lives", "facing", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "kills", "respawn", "drop", "jumps", "grenades", "nadeCooldown", "lastHit", "hitTick"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < GUNS.length) && ["bullets", "grenades", "crates", "effects"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => e && Number.isFinite(e.x) && Number.isFinite(e.y))) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && numeric(s, ["rng", "nextId", "nextCrate"]) && entities(s);
   },
   render(canvas, s, seat) {
     const c = canvas.getContext("2d");
     if (!c) return;
-    canvas.width = W2;
-    canvas.height = H2;
-    const bg = c.createLinearGradient(0, 0, 0, H2);
+    canvas.width = W;
+    canvas.height = H;
+    const bg = c.createLinearGradient(0, 0, 0, H);
     bg.addColorStop(0, "#93c6e3");
     bg.addColorStop(1, "#dcebec");
     c.fillStyle = bg;
-    c.fillRect(0, 0, W2, H2);
+    c.fillRect(0, 0, W, H);
     c.fillStyle = "#b6c7d0";
     for (let i = 0; i < 8; i++) {
       c.beginPath();
@@ -2614,10 +3039,10 @@ var adapter4 = {
       c.strokeRect(r.x, r.y, r.w, r.h);
     }
     for (const cr of s.crates) {
-      draw3(c, "crate", cr.x - 16, cr.y - 15, 32, 27);
+      draw2(c, "crate", cr.x - 16, cr.y - 15, 32, 27);
       c.fillStyle = "#263344";
       c.font = "11px sans-serif";
-      c.fillText(GUNS2[cr.weapon].name, cr.x - 18, cr.y - 18);
+      c.fillText(GUNS[cr.weapon].name, cr.x - 18, cr.y - 18);
     }
     for (const g of s.grenades) {
       c.fillStyle = "#253e30";
@@ -2636,8 +3061,8 @@ var adapter4 = {
       c.translate(p.x, p.y);
       if (p.invul > 0) c.globalAlpha = 0.55 + Math.sin(s.tick) * 0.25;
       if (p.facing < 0) c.scale(-1, 1);
-      draw3(c, "player", -17, -28, 34, 56);
-      draw3(c, GUNS2[p.weapon].art, 2, -5, p.weapon === 0 ? 26 : 40, 13);
+      draw2(c, "player", -17, -28, 34, 56);
+      draw2(c, GUNS[p.weapon].art, 2, -5, p.weapon === 0 ? 26 : 40, 13);
       c.restore();
       c.fillStyle = ["", "#c02634", "#236ac0", "#1c8b48", "#904cc0"][p.seat];
       c.font = "bold 15px sans-serif";
@@ -2654,12 +3079,12 @@ var adapter4 = {
       c.stroke();
     }
     c.fillStyle = "#183247";
-    c.fillRect(0, 0, W2, 65);
+    c.fillRect(0, 0, W, 65);
     c.fillStyle = "#fff";
     c.font = "bold 18px sans-serif";
     c.fillText("GUN MAYHEM 2 \xB7 " + gunmayhem_data_default.find((m) => m.id === s.mapId).label, 20, 24);
     c.font = "14px sans-serif";
-    c.fillText(s.players.map((p) => `P${p.seat} \u2665${p.lives} \xB7 ${GUNS2[p.weapon].name} ${p.ammo < 0 ? "\u221E" : p.ammo} \xB7 \u96F7${p.grenades} \xB7 \u51FB\u9000${Math.round(p.damage)}%`).join("    "), 20, 49);
+    c.fillText(s.players.map((p) => `P${p.seat} \u2665${p.lives} \xB7 ${GUNS[p.weapon].name} ${p.ammo < 0 ? "\u221E" : p.ammo} \xB7 \u96F7${p.grenades} \xB7 \u51FB\u9000${Math.round(p.damage)}%`).join("    "), 20, 49);
     if (s.phase !== "playing") {
       c.fillStyle = "#123c";
       c.fillRect(200, 255, 500, 80);
@@ -2676,7 +3101,7 @@ var adapter4 = {
   }
 };
 var images3 = /* @__PURE__ */ new Map();
-function get2(name) {
+function get(name) {
   let im = images3.get(name);
   if (!im) {
     im = new Image();
@@ -2685,8 +3110,8 @@ function get2(name) {
   }
   return im;
 }
-function draw3(c, name, x, y, w, h) {
-  const im = get2(name);
+function draw2(c, name, x, y, w, h) {
+  const im = get(name);
   if (im.complete && im.naturalWidth) c.drawImage(im, x, y, w, h);
 }
 
@@ -2699,17 +3124,17 @@ var stages = brawler_data_default.stages;
 var stats = [{ weight: 0.5, speed: 0.5, power: 0.5 }, { weight: 0.4, speed: 0.7, power: 0.4 }, { weight: 0.5, speed: 0.6, power: 0.4 }, { weight: 0.5, speed: 0.5, power: 0.5 }, { weight: 0.6, speed: 0.4, power: 0.5 }, { weight: 0.4, speed: 0.5, power: 0.6 }];
 var clamp2 = (n, a, b) => Math.max(a, Math.min(b, n));
 var stageOf = (s) => stages.find((m) => m.id === s.mapId);
-var random4 = (s) => {
+var random5 = (s) => {
   s.seed = Math.imul(s.seed, 1664525) + 1013904223 >>> 0;
   return s.seed / 4294967296;
 };
-function create3(round, playing, seats, seed, mapId) {
+function create4(round, playing2, seats, seed, mapId) {
   const stage = stages.find((m) => m.id === mapId) || stages[0];
   const players = seats.filter((s) => s >= 1 && s <= 4).map((seat, i) => {
     const pt = stage.spawns[i % stage.spawns.length];
     return { seat, x: pt.x + 14, y: pt.y - 2, vx: 0, vy: 0, alive: true, damage: 0, stocks: 3, facing: i % 2 ? -1 : 1, grounded: false, jumps: 0, stun: 0, invincible: 60, cooldown: 0, attackFrame: 0, shield: 100, guarding: false, lastAttack: 0, lastAlt: 0, upHeld: false, killedBy: null, kos: 0, deaths: 0, respawn: 0, combo: 2, character: (seat - 1) % brawler_data_default.fighters.length };
   });
-  return { gameId: "6232-server", round, tick: 0, phase: playing && players.length >= 2 ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), mapId: stage.id, players, platforms: stage.platforms.map((p) => ({ ...p })), items: [], seed: seed >>> 0, nextItem: 0, flashes: [] };
+  return { gameId: "6232-server", round, tick: 0, phase: playing2 && players.length >= 2 ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), mapId: stage.id, players, platforms: stage.platforms.map((p) => ({ ...p })), items: [], seed: seed >>> 0, nextItem: 0, flashes: [] };
 }
 function hit3(s, p, owner, amount, power, angle) {
   if (!p.alive || p.invincible || p.respawn) return;
@@ -2736,12 +3161,12 @@ function melee(s, p, i) {
   const special = i.down, upper = i.up, air = !p.grounded;
   p.cooldown = special ? 25 : upper ? 21 : 13;
   p.attackFrame = p.cooldown;
-  const range = special ? 64 : upper ? 36 : 42, damage = special ? 10 : upper || air ? 10 : 5, power = special ? 5 : upper || air ? 6 : 3;
+  const range = special ? 64 : upper ? 36 : 42, damage2 = special ? 10 : upper || air ? 10 : 5, power = special ? 5 : upper || air ? 6 : 3;
   for (const other of s.players) {
     if (other.seat === p.seat || !other.alive) continue;
     const dx = other.x - p.x, dy = other.y - p.y;
     const inFront = dx * p.facing >= -10;
-    if (Math.abs(dx) <= range && Math.abs(dy) < (upper ? 75 : 32) && (inFront || special)) hit3(s, other, p.seat, damage, power, upper ? Math.PI / 2 : Math.PI / 4 + (p.facing < 0 ? Math.PI / 2 : 0));
+    if (Math.abs(dx) <= range && Math.abs(dy) < (upper ? 75 : 32) && (inFront || special)) hit3(s, other, p.seat, damage2, power, upper ? Math.PI / 2 : Math.PI / 4 + (p.facing < 0 ? Math.PI / 2 : 0));
   }
 }
 function explode2(s, item) {
@@ -2789,7 +3214,7 @@ function move2(p, platforms2, down) {
     }
   }
 }
-function step5(state, inputs) {
+function step6(state, inputs) {
   const s = state;
   if (s.phase !== "playing") return;
   s.tick++;
@@ -2850,8 +3275,8 @@ function step5(state, inputs) {
     if (p.x < stage.bounds[0] || p.x > stage.bounds[2] || p.y < stage.bounds[1] || p.y > stage.bounds[3]) loseStock(s, p);
   }
   if (s.tick % 210 === 0 && s.items.length < 6) {
-    const q = s.platforms[Math.floor(random4(s) * s.platforms.length)];
-    s.items.push({ id: s.nextItem++, type: random4(s) < 0.5 ? "grenade" : "mine", x: q.x + q.w * (0.15 + 0.7 * random4(s)), y: q.y - 80, vx: 0, vy: 0, timer: 600, owner: null, armed: false });
+    const q = s.platforms[Math.floor(random5(s) * s.platforms.length)];
+    s.items.push({ id: s.nextItem++, type: random5(s) < 0.5 ? "grenade" : "mine", x: q.x + q.w * (0.15 + 0.7 * random5(s)), y: q.y - 80, vx: 0, vy: 0, timer: 600, owner: null, armed: false });
   }
   const dead = /* @__PURE__ */ new Set();
   for (const it of s.items) {
@@ -2885,7 +3310,7 @@ function step5(state, inputs) {
     s.winner = ranked[0].stocks === ranked[1].stocks && ranked[0].damage === ranked[1].damage ? null : ranked[0].seat;
   }
 }
-function valid3(value) {
+function valid4(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
   if (s.gameId !== "6232-server" || !stages.some((m) => m.id === s.mapId) || !["waiting", "playing", "finished"].includes(s.phase) || !Number.isSafeInteger(s.round) || !Number.isSafeInteger(s.tick) || s.tick < 0 || !Array.isArray(s.players) || s.players.length > 4 || !Array.isArray(s.ack) || s.ack.length !== 4 || !Array.isArray(s.platforms) || s.platforms.length > 30 || !Array.isArray(s.items) || s.items.length > 8 || !Array.isArray(s.flashes) || s.flashes.length > 50) return false;
@@ -2899,10 +3324,10 @@ function img(name) {
   }
   return images4[name];
 }
-function render3(canvas, state, seat) {
+function render4(canvas, state, seat) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const s = state || create3(0, false, [1, 2, 3, 4], 1), stage = stageOf(s);
+  const s = state || create4(0, false, [1, 2, 3, 4], 1), stage = stageOf(s);
   const bounds = stage.bounds, worldW = bounds[2] - bounds[0], worldH = bounds[3] - bounds[1];
   const scale = Math.min(canvas.width / worldW, (canvas.height - 75) / worldH);
   ctx.fillStyle = stage.id === "Space" ? "#09051c" : "#142030";
@@ -2938,8 +3363,8 @@ function render3(canvas, state, seat) {
     ctx.scale(p.facing, 1);
     ctx.globalAlpha = p.invincible && Math.floor(s.tick / 3) % 2 ? 0.4 : 1;
     const fi = p.grounded ? Math.abs(p.vx) > 0.2 ? 2 : 1 : p.jumps > 1 ? 4 : 3;
-    const sprite2 = img(brawler_data_default.fighters[p.character].id + "-" + fi);
-    if (sprite2.complete && sprite2.naturalWidth) ctx.drawImage(sprite2, -14, -29, 28, 30);
+    const sprite3 = img(brawler_data_default.fighters[p.character].id + "-" + fi);
+    if (sprite3.complete && sprite3.naturalWidth) ctx.drawImage(sprite3, -14, -29, 28, 30);
     else {
       ctx.fillStyle = colors[p.seat - 1];
       ctx.fillRect(-10, -26, 20, 26);
@@ -2992,7 +3417,7 @@ function render3(canvas, state, seat) {
     ctx.fillText(s.winner === null ? "\u5E73\u5C40" : `P${s.winner} \u83B7\u80DC\uFF01`, canvas.width / 2, canvas.height / 2 + 10);
   }
 }
-var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0C\u2191+\u653B\u51FB \u4E0A\u51FB\uFF0C\u2193+\u653B\u51FB \u7279\u6280\uFF0C\u2193 \u9632\u5FA1/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create3, step: step5, valid: valid3, render: render3, consumeInput(state, seat, input) {
+var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0C\u2191+\u653B\u51FB \u4E0A\u51FB\uFF0C\u2193+\u653B\u51FB \u7279\u6280\uFF0C\u2193 \u9632\u5FA1/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create4, step: step6, valid: valid4, render: render4, consumeInput(state, seat, input) {
   const p = state.players.find((x) => x.seat === seat);
   if (p) {
     p.lastAttack = Math.max(p.lastAttack, input.attack);
@@ -3052,7 +3477,7 @@ function device(o) {
   }
   return { ...body(o.id, x, y, w, h), type: o.type, group: Number(p.group || 0), active: o.type === "lever" ? Number(p.startPos || 1) * Number(p.onis || 1) < 0 : !!p.initialState, timer: 0, baseX: x, baseY: y, dx: Number(p.dx ?? 4) * T, dy: Number(p.dy ?? 0) * T, amount: 0, rotation: r, props: p, pair: -1, anchorX: o.x, anchorY: o.y, swing: 0, angularVelocity: 0 };
 }
-function create4(round, playing, seats, seed, mapId) {
+function create5(round, playing2, seats, seed, mapId) {
   const l = levels.find((x) => x.id === mapId) || levels[0];
   const players = seats.filter((x) => x >= 1 && x <= 2).map((seat) => {
     const element = seat === 1 ? "fb" : "wg";
@@ -3081,7 +3506,7 @@ function create4(round, playing, seats, seed, mapId) {
     liquids.push({ x: x * T, y: y * T, w: w * T, h: T / 2, type: type === 55 ? 5 : type, frozen: type === 55 });
     x += w - 1;
   }
-  return { gameId: "fbw_forest-server", round, tick: 0, phase: playing && players.length === 2 ? "playing" : "waiting", winner: null, ack: [0, 0], inputs: [{ ...EMPTY_INPUT3 }, { ...EMPTY_INPUT3 }], levelId: l.id, seed: seed >>> 0, players, devices, gems: l.objects.filter((o) => o.type === "diamond").map((o) => ({ id: o.id, x: o.x + 32, y: o.y - 32, element: o.properties.char, taken: false })), exits: l.objects.filter((o) => o.type === "door").map((o) => ({ x: o.x + 32, y: o.y, element: o.properties.char })), liquids, beams: [], success: false, elapsed: 0, collected: 0 };
+  return { gameId: "fbw_forest-server", round, tick: 0, phase: playing2 && players.length === 2 ? "playing" : "waiting", winner: null, ack: [0, 0], inputs: [{ ...EMPTY_INPUT3 }, { ...EMPTY_INPUT3 }], levelId: l.id, seed: seed >>> 0, players, devices, gems: l.objects.filter((o) => o.type === "diamond").map((o) => ({ id: o.id, x: o.x + 32, y: o.y - 32, element: o.properties.char, taken: false })), exits: l.objects.filter((o) => o.type === "door").map((o) => ({ x: o.x + 32, y: o.y, element: o.properties.char })), liquids, beams: [], success: false, elapsed: 0, collected: 0 };
 }
 function tileSolid(l, x, y) {
   const tx = Math.floor(x / T), ty = Math.floor(y / T);
@@ -3188,7 +3613,7 @@ function castBeams(s) {
     }
   }
 }
-function step6(state, inputs) {
+function step7(state, inputs) {
   const s = state;
   if (s.phase !== "playing") return;
   s.tick++;
@@ -3335,7 +3760,7 @@ function step6(state, inputs) {
     s.winner = 1;
   }
 }
-function valid4(value) {
+function valid5(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
   if (s.gameId !== "fbw_forest-server" || !levels.some((l) => l.id === s.levelId) || !["waiting", "playing", "finished"].includes(s.phase) || !Number.isSafeInteger(s.tick) || s.tick < 0 || !Number.isSafeInteger(s.round) || !Array.isArray(s.players) || s.players.length > 2 || !Array.isArray(s.devices) || s.devices.length > 180 || !Array.isArray(s.gems) || s.gems.length > 100 || !Array.isArray(s.ack) || s.ack.length !== 2) return false;
@@ -3370,10 +3795,10 @@ function atlas(ctx, key, name, x, y, w, h) {
   ctx.drawImage(images5[key], frame.x, frame.y, frame.w, frame.h, x, y, w ?? frame.w, h ?? frame.h);
   return true;
 }
-function render4(canvas, state, seat) {
+function render5(canvas, state, seat) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const s = state || create4(0, false, [1, 2], 1), l = levelOf(s);
+  const s = state || create5(0, false, [1, 2], 1), l = levelOf(s);
   const sx = canvas.width / 1248, sy = canvas.height / 928;
   ctx.save();
   ctx.scale(sx, sy);
@@ -3487,7 +3912,7 @@ function render4(canvas, state, seat) {
   }
   ctx.restore();
 }
-var adapter6 = { id: "fbw_forest-server", title: "\u68EE\u6797\u51B0\u706B\u4EBA", seats: 2, hz: HZ6, width: 1248, height: 928, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u8DF3\u8DC3\uFF0CJ/\u7A7A\u683C \u64CD\u4F5C\u62C9\u6746\uFF1B\u7EA2\u4EBA\u907F\u84DD\u6C34\uFF0C\u84DD\u4EBA\u907F\u7194\u5CA9\uFF0C\u4E24\u4EBA\u907F\u7EFF\u6C34\u3002", maps: levels.map((l, i) => ({ id: l.id, label: `\u68EE\u6797\u795E\u6BBF ${i + 1}` })), create: create4, step: step6, valid: valid4, render: render4, consumeInput(state, seat, input) {
+var adapter6 = { id: "fbw_forest-server", title: "\u68EE\u6797\u51B0\u706B\u4EBA", seats: 2, hz: HZ6, width: 1248, height: 928, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u8DF3\u8DC3\uFF0CJ/\u7A7A\u683C \u64CD\u4F5C\u62C9\u6746\uFF1B\u7EA2\u4EBA\u907F\u84DD\u6C34\uFF0C\u84DD\u4EBA\u907F\u7194\u5CA9\uFF0C\u4E24\u4EBA\u907F\u7EFF\u6C34\u3002", maps: levels.map((l, i) => ({ id: l.id, label: `\u68EE\u6797\u795E\u6BBF ${i + 1}` })), create: create5, step: step7, valid: valid5, render: render5, consumeInput(state, seat, input) {
   const p = state.players.find((x) => x.seat === seat);
   if (p) {
     p.lastAttack = Math.max(p.lastAttack, input.attack);
@@ -3532,10 +3957,10 @@ function hashState(state) {
   visit(state);
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
-function createUpdate(base, next, serverTime, full = false) {
+function createUpdate(base2, next, serverTime, full = false) {
   const envelope = { t: "auth", kind: "full", round: next.round, tick: next.tick, serverTime, hash: hashState(next) };
-  if (full || !base || base.round !== next.round || next.tick <= base.tick) return { ...envelope, state: cloneState(next) };
-  const before = base, after = next;
+  if (full || !base2 || base2.round !== next.round || next.tick <= base2.tick) return { ...envelope, state: cloneState(next) };
+  const before = base2, after = next;
   const patch = {}, cells = {};
   for (const key of Object.keys(after)) {
     if (grids.includes(key) && scalarGrid(after[key]) && scalarGrid(before[key]) && after[key].length === before[key].length) {
@@ -3545,40 +3970,40 @@ function createUpdate(base, next, serverTime, full = false) {
       if (changes.length) cells[key] = changes;
     } else if (JSON.stringify(after[key]) !== JSON.stringify(before[key])) patch[key] = after[key];
   }
-  return { ...envelope, kind: "delta", base: base.tick, patch, ...Object.keys(cells).length ? { cells } : {} };
+  return { ...envelope, kind: "delta", base: base2.tick, patch, ...Object.keys(cells).length ? { cells } : {} };
 }
 
 // src/authority/engine.ts
-var isBomb = (room) => room.gameId === "3881-server";
-var hasRecords = (room) => isBomb(room) || !!getAdapter(room.gameId) && room.gameId !== "fbw_forest-server";
-var activeSeats = (room) => Object.keys(room.seats).map(Number).filter((seat) => !!room.seats[seat]);
-var allReady = (room) => {
-  const players = [...room.members.values()].filter((member) => member.seat != null);
+var isBomb = (room2) => room2.gameId === "3881-server";
+var hasRecords = (room2) => isBomb(room2) || !!getAdapter(room2.gameId) && room2.gameId !== "fbw_forest-server";
+var activeSeats = (room2) => Object.keys(room2.seats).map(Number).filter((seat) => !!room2.seats[seat]);
+var allReady = (room2) => {
+  const players = [...room2.members.values()].filter((member) => member.seat != null);
   return players.length >= 2 && players.every((member) => member.ready);
 };
 var roundId = Date.now();
-function newState(room, playing) {
+function newState(room2, playing2) {
   const round = roundId = Math.max(Date.now(), roundId + 1);
-  const adapter7 = getAdapter(room.gameId);
-  if (adapter7) return { ...adapter7.create(round, playing, activeSeats(room), Math.floor(Math.random() * 4294967296), room.auth?.options.map, room.auth?.options.gameMode), gameId: adapter7.id };
-  return isBomb(room) ? createGame(
+  const adapter7 = getAdapter(room2.gameId);
+  if (adapter7) return { ...adapter7.create(round, playing2, activeSeats(room2), Math.floor(Math.random() * 4294967296), room2.auth?.options.map, room2.auth?.options.gameMode), gameId: adapter7.id };
+  return isBomb(room2) ? createGame(
     Math.floor(Math.random() * 4294967296),
     round,
-    playing,
-    { ...room.auth?.options, mode: "online", bots: [], activeSeats: activeSeats(room) }
-  ) : createGame2(round, playing);
+    playing2,
+    { ...room2.auth?.options, mode: "online", bots: [], activeSeats: activeSeats(room2) }
+  ) : createGame2(round, playing2);
 }
 var copy = (state) => JSON.parse(JSON.stringify(state));
-function expireAction(room, seat, input) {
-  const adapter7 = getAdapter(room.gameId);
-  const player = adapter7 ? room.auth.state.players.find((player2) => player2.seat === seat) : room.auth.state.players[seat - 1];
+function expireAction(room2, seat, input) {
+  const adapter7 = getAdapter(room2.gameId);
+  const player = adapter7 ? room2.auth.state.players.find((player2) => player2.seat === seat) : room2.auth.state.players[seat - 1];
   if (adapter7) {
-    if (adapter7.consumeInput) adapter7.consumeInput(room.auth.state, seat, input);
+    if (adapter7.consumeInput) adapter7.consumeInput(room2.auth.state, seat, input);
     else if (player) {
       player.lastAttack = Math.max(player.lastAttack || 0, input.attack);
       player.lastAlt = Math.max(player.lastAlt || 0, input.alt);
     }
-  } else if (isBomb(room)) player.lastBomb = Math.max(player.lastBomb, input.bomb);
+  } else if (isBomb(room2)) player.lastBomb = Math.max(player.lastBomb, input.bomb);
   else {
     player.lastJump = Math.max(player.lastJump, input.jump);
     player.lastHit = Math.max(player.lastHit, input.hit);
@@ -3588,10 +4013,10 @@ var AuthorityEngine = class {
   constructor(changed) {
     this.changed = changed;
   }
-  onRoom(room) {
-    if (!room.auth) {
-      room.auth = {
-        state: newState(room, false),
+  onRoom(room2) {
+    if (!room2.auth) {
+      room2.auth = {
+        state: newState(room2, false),
         roster: "",
         clock: Date.now(),
         accumulator: 0,
@@ -3603,44 +4028,44 @@ var AuthorityEngine = class {
         records: /* @__PURE__ */ new Map(),
         roundMembers: /* @__PURE__ */ new Map()
       };
-      if (isBomb(room)) room.auth.options = { ...room.auth.state.options };
-      const adapter7 = getAdapter(room.gameId);
-      if (adapter7?.maps?.length) room.auth.options.map = adapter7.maps[0].id;
-      if (adapter7?.modes?.length) room.auth.options.gameMode = adapter7.modes[0].id;
+      if (isBomb(room2)) room2.auth.options = { ...room2.auth.state.options };
+      const adapter7 = getAdapter(room2.gameId);
+      if (adapter7?.maps?.length) room2.auth.options.map = adapter7.maps[0].id;
+      if (adapter7?.modes?.length) room2.auth.options.gameMode = adapter7.modes[0].id;
     }
-    const match = room.auth;
-    for (const member of room.members.values()) {
+    const match = room2.auth;
+    for (const member of room2.members.values()) {
       const record = match.records.get(member.id);
       if (record) record.name = member.name || record.name;
     }
-    const roster = JSON.stringify(room.seats);
-    if (!room.controllerId || !room.members.has(room.controllerId)) room.controllerId = room.members.keys().next().value || null;
-    for (const id of match.deliveries.keys()) if (!room.members.has(id)) match.deliveries.delete(id);
-    for (const id of match.inputs.keys()) if (!room.members.has(id)) match.inputs.delete(id);
+    const roster = JSON.stringify(room2.seats);
+    if (!room2.controllerId || !room2.members.has(room2.controllerId)) room2.controllerId = room2.members.keys().next().value || null;
+    for (const id of match.deliveries.keys()) if (!room2.members.has(id)) match.deliveries.delete(id);
+    for (const id of match.inputs.keys()) if (!room2.members.has(id)) match.inputs.delete(id);
     if (roster !== match.roster) {
       match.roster = roster;
-      this.begin(room, false);
+      this.begin(room2, false);
     }
-    if (match.state.phase === "waiting" && allReady(room)) this.begin(room, true);
+    if (match.state.phase === "waiting" && allReady(room2)) this.begin(room2, true);
   }
-  info(room) {
-    const match = room.auth;
+  info(room2) {
+    const match = room2.auth;
     return {
       phase: match.state.phase,
       round: match.state.round,
       nextRoundAt: match.nextRoundAt,
       options: match.options,
-      ...hasRecords(room) ? { records: [...match.records.values()].sort((a, b) => b.kills - a.kills || b.wins - a.wins || a.deaths - b.deaths) } : {}
+      ...hasRecords(room2) ? { records: [...match.records.values()].sort((a, b) => b.kills - a.kills || b.wins - a.wins || a.deaths - b.deaths) } : {}
     };
   }
-  begin(room, playing) {
-    const match = room.auth;
-    match.state = newState(room, playing);
+  begin(room2, playing2) {
+    const match = room2.auth;
+    match.state = newState(room2, playing2);
     match.inputs.clear();
     match.nextRoundAt = 0;
-    match.roundMembers = new Map(activeSeats(room).map((seat) => [seat, room.seats[seat]]));
-    if (hasRecords(room) && playing) for (const id of match.roundMembers.values()) {
-      if (!match.records.has(id)) match.records.set(id, { id, name: room.members.get(id)?.name || id, kills: 0, deaths: 0, wins: 0, rounds: 0 });
+    match.roundMembers = new Map(activeSeats(room2).map((seat) => [seat, room2.seats[seat]]));
+    if (hasRecords(room2) && playing2) for (const id of match.roundMembers.values()) {
+      if (!match.records.has(id)) match.records.set(id, { id, name: room2.members.get(id)?.name || id, kills: 0, deaths: 0, wins: 0, rounds: 0 });
     }
     match.clock = Date.now();
     match.accumulator = 0;
@@ -3651,18 +4076,18 @@ var AuthorityEngine = class {
       delivery.forceFull = true;
     }
   }
-  reconnect(room, member) {
-    if (room.auth && member.seat) {
-      const pending = room.auth.inputs.get(member.id)?.input || room.auth.state.inputs?.[member.seat - 1];
-      if (pending) expireAction(room, member.seat, pending);
+  reconnect(room2, member) {
+    if (room2.auth && member.seat) {
+      const pending = room2.auth.inputs.get(member.id)?.input || room2.auth.state.inputs?.[member.seat - 1];
+      if (pending) expireAction(room2, member.seat, pending);
     }
-    room.auth?.deliveries.delete(member.id);
-    room.auth?.inputs.delete(member.id);
+    room2.auth?.deliveries.delete(member.id);
+    room2.auth?.inputs.delete(member.id);
   }
-  publish(room, now = Date.now()) {
-    const match = room.auth;
+  publish(room2, now = Date.now()) {
+    const match = room2.auth;
     if (!match) return;
-    for (const member of room.members.values()) {
+    for (const member of room2.members.values()) {
       const ws = member.ws;
       if (!ws || ws.readyState !== 1) continue;
       let delivery = match.deliveries.get(member.id);
@@ -3680,7 +4105,7 @@ var AuthorityEngine = class {
       }
       if (delivery.base?.round === match.state.round && delivery.base.tick === match.state.tick && !delivery.forceFull && now - delivery.fullAt < 5e3) continue;
       const full = delivery.forceFull || !delivery.base || now - delivery.fullAt >= 5e3;
-      const view = isBomb(room) ? { ...match.state, specials: visibleSpecials(match.state, member.seat) } : match.state;
+      const view = isBomb(room2) ? { ...match.state, specials: visibleSpecials(match.state, member.seat) } : match.state;
       const update = createUpdate(delivery.base, view, now, full);
       delivery.outstanding = { ...update, state: copy(view) };
       delivery.sentAt = now;
@@ -3689,8 +4114,8 @@ var AuthorityEngine = class {
       ws.send(JSON.stringify(update));
     }
   }
-  ack(room, member, message) {
-    const delivery = room.auth?.deliveries.get(member.id), sent = delivery?.outstanding;
+  ack(room2, member, message) {
+    const delivery = room2.auth?.deliveries.get(member.id), sent = delivery?.outstanding;
     if (!delivery || !sent || message.round !== sent.round || message.tick !== sent.tick) return;
     if (message.hash !== sent.hash) {
       delivery.base = null;
@@ -3698,38 +4123,38 @@ var AuthorityEngine = class {
     } else delivery.base = sent.state;
     delivery.outstanding = null;
   }
-  resync(room, member) {
-    const delivery = room.auth?.deliveries.get(member.id);
+  resync(room2, member) {
+    const delivery = room2.auth?.deliveries.get(member.id);
     if (delivery) {
       delivery.outstanding = null;
       delivery.base = null;
       delivery.forceFull = true;
     }
-    this.publish(room);
+    this.publish(room2);
   }
-  input(room, member, message, now = Date.now()) {
-    const match = room.auth;
+  input(room2, member, message, now = Date.now()) {
+    const match = room2.auth;
     if (!match || !member.seat || message.round !== match.state.round || match.state.phase !== "playing") return;
     const input = message.input;
-    const adapter7 = getAdapter(room.gameId);
-    if (!(adapter7 ? validInput3(input) : isBomb(room) ? validInput(input) : validInput2(input))) return;
+    const adapter7 = getAdapter(room2.gameId);
+    if (!(adapter7 ? validInput3(input) : isBomb(room2) ? validInput(input) : validInput2(input))) return;
     const incoming = input;
     const previous = match.inputs.get(member.id);
     if (incoming.seq <= (previous?.input.seq || 0)) return;
     const timestamp = Number(message.serverTime);
     if (!Number.isFinite(timestamp) || timestamp > now + 250 || now - timestamp > 250) {
-      expireAction(room, member.seat, incoming);
-      const neutral = adapter7 ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...incoming, dir: -1 } : { ...incoming, left: false, right: false };
+      expireAction(room2, member.seat, incoming);
+      const neutral = adapter7 ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room2) ? { ...incoming, dir: -1 } : { ...incoming, left: false, right: false };
       match.inputs.set(member.id, { input: neutral, at: now - 251, receivedAt: now });
       return;
     }
     if (now - (previous?.receivedAt || 0) < 5) return;
     match.inputs.set(member.id, { input: { ...incoming }, at: timestamp, receivedAt: now });
   }
-  options(room, member, message) {
-    const match = room.auth;
-    if (!match || room.controllerId !== member.id || match.state.phase === "playing") return false;
-    const adapter7 = getAdapter(room.gameId);
+  options(room2, member, message) {
+    const match = room2.auth;
+    if (!match || room2.controllerId !== member.id || match.state.phase === "playing") return false;
+    const adapter7 = getAdapter(room2.gameId);
     if (adapter7) {
       const map = message.map ?? match.options.map, requestedMode = message.gameMode ?? match.options.gameMode;
       if (requestedMode !== void 0 && typeof requestedMode !== "string") return false;
@@ -3737,50 +4162,50 @@ var AuthorityEngine = class {
       if (typeof map !== "string" || !adapter7.maps?.some((item) => item.id === map)) return false;
       if (adapter7.modes && !adapter7.modes.some((item) => item.id === mode)) return false;
       if (!adapter7.modes && message.gameMode !== void 0) return false;
-      const candidate2 = adapter7.create(match.state.round, false, activeSeats(room), 123, map, mode);
+      const candidate2 = adapter7.create(match.state.round, false, activeSeats(room2), 123, map, mode);
       if (!adapter7.valid(candidate2)) return false;
       match.options.map = map;
       if (adapter7.modes) match.options.gameMode = mode;
-      this.begin(room, false);
+      this.begin(room2, false);
       return true;
     }
-    if (!isBomb(room)) return false;
+    if (!isBomb(room2)) return false;
     const options = { ...match.options };
     if (typeof message.map === "string") options.map = message.map;
     if (typeof message.loadout === "string") options.loadout = message.loadout;
-    const candidate = createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room) });
+    const candidate = createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room2) });
     if (!validState(candidate)) return false;
     match.options = options;
-    this.begin(room, false);
+    this.begin(room2, false);
     return true;
   }
-  pump(room, now = Date.now()) {
-    const match = room.auth;
-    if (!match || room.members.size === 0) return;
-    const adapter7 = getAdapter(room.gameId);
-    const stepMs = adapter7 ? 1e3 / adapter7.hz : isBomb(room) ? STEP_MS : STEP_MS2;
+  pump(room2, now = Date.now()) {
+    const match = room2.auth;
+    if (!match || room2.members.size === 0) return;
+    const adapter7 = getAdapter(room2.gameId);
+    const stepMs = adapter7 ? 1e3 / adapter7.hz : isBomb(room2) ? STEP_MS : STEP_MS2;
     const elapsed = Math.max(0, now - match.clock);
     match.clock = now;
     match.accumulator += Math.min(elapsed, stepMs * 2);
     let changed = false;
     while (match.state.phase === "playing" && match.accumulator >= stepMs) {
-      const inputs = Object.keys(room.seats).map(Number).map((seat) => {
-        const id = room.seats[seat], remote = id ? match.inputs.get(id) : null;
-        const empty = adapter7 ? EMPTY_INPUT3 : isBomb(room) ? EMPTY_INPUT : EMPTY_INPUT2;
+      const inputs = Object.keys(room2.seats).map(Number).map((seat) => {
+        const id = room2.seats[seat], remote = id ? match.inputs.get(id) : null;
+        const empty = adapter7 ? EMPTY_INPUT3 : isBomb(room2) ? EMPTY_INPUT : EMPTY_INPUT2;
         if (!remote) {
           const current = match.state.inputs?.[seat - 1] || empty;
-          return adapter7 ? { ...current, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
+          return adapter7 ? { ...current, left: false, right: false, up: false, down: false } : isBomb(room2) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
         }
         if (now - remote.at <= 250) return remote.input;
-        expireAction(room, seat, remote.input);
-        return adapter7 ? { ...remote.input, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
+        expireAction(room2, seat, remote.input);
+        return adapter7 ? { ...remote.input, left: false, right: false, up: false, down: false } : isBomb(room2) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
       });
       if (adapter7) {
         const game = match.state;
         const counts = (p) => ({ kills: p.kills ?? p.kos ?? 0, deaths: p.deaths ?? 0, lives: p.stocks ?? p.lives ?? null, alive: p.alive });
         const before = new Map(game.players.map((p) => [p.seat, counts(p)]));
         adapter7.step(game, inputs);
-        if (hasRecords(room)) {
+        if (hasRecords(room2)) {
           for (const player of game.players) {
             const previous = before.get(player.seat), id = match.roundMembers.get(player.seat), record = id ? match.records.get(id) : null;
             if (!previous || !record) continue;
@@ -3795,10 +4220,10 @@ var AuthorityEngine = class {
             const record = match.records.get(id);
             if (!record) continue;
             record.rounds++;
-            if (game.winner === seat || room.gameId === "50737-server" && game.winner === 1) record.wins++;
+            if (game.winner === seat || room2.gameId === "50737-server" && game.winner === 1) record.wins++;
           }
         }
-      } else if (isBomb(room)) {
+      } else if (isBomb(room2)) {
         const game = match.state;
         const alive = game.players.map((player) => player.alive);
         step(game, inputs);
@@ -3827,13 +4252,13 @@ var AuthorityEngine = class {
     }
     if (match.state.phase !== "playing") match.accumulator = 0;
     if (match.state.phase === "finished" && now >= match.nextRoundAt) {
-      this.begin(room, allReady(room));
+      this.begin(room2, allReady(room2));
       changed = true;
     }
-    if (changed) this.changed(room);
+    if (changed) this.changed(room2);
     if (now - match.lastPublish >= 50 || changed) {
       match.lastPublish = now;
-      this.publish(room, now);
+      this.publish(room2, now);
     }
   }
 };

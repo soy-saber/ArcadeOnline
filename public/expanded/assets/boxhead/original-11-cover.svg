@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="https://www.free-decompiler.com/flash" xmlns:ns2="http://www.w3.org/1999/xlink" ns1:objectType="frame" height="1056" width="1312" viewBox="0 0 1312 1056">
+  <ns0:g transform="matrix(1 0 0 1 0 0)">
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite0" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 1311.95, 0.0)" width="256.2" ns2:href="#sprite2" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 1311.95, 1024.0)" width="256.2" ns2:href="#sprite4" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 1024.0)" width="256.2" ns2:href="#sprite6" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 160.0, 704.0)" width="256.2" ns2:href="#sprite8" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 476.8, 227.4)" width="256.2" ns2:href="#sprite10" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 896.0, 576.0)" width="256.2" ns2:href="#sprite12" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 544.0, 864.0)" width="256.2" ns2:href="#sprite14" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 960.0, 64.0)" width="256.2" ns2:href="#sprite16" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 1312.0, 384.0)" width="256.2" ns2:href="#sprite18" />
+    <ns0:use ns1:characterId="119" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 320.0)" width="256.2" ns2:href="#sprite20" />
+  </ns0:g>
+  <ns0:defs>
+    <ns0:g id="sprite0">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite1" />
+    </ns0:g>
+    <ns0:g id="sprite1">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape0" />
+    </ns0:g>
+    <ns0:g id="shape0">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite2">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite3" />
+    </ns0:g>
+    <ns0:g id="sprite3">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape1" />
+    </ns0:g>
+    <ns0:g id="shape1">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite4">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite5" />
+    </ns0:g>
+    <ns0:g id="sprite5">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape2" />
+    </ns0:g>
+    <ns0:g id="shape2">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite6">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite7" />
+    </ns0:g>
+    <ns0:g id="sprite7">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape3" />
+    </ns0:g>
+    <ns0:g id="shape3">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite8">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite9" />
+    </ns0:g>
+    <ns0:g id="sprite9">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape4" />
+    </ns0:g>
+    <ns0:g id="shape4">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite10">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite11" />
+    </ns0:g>
+    <ns0:g id="sprite11">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape5" />
+    </ns0:g>
+    <ns0:g id="shape5">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite12">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite13" />
+    </ns0:g>
+    <ns0:g id="sprite13">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape6" />
+    </ns0:g>
+    <ns0:g id="shape6">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite14">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite15" />
+    </ns0:g>
+    <ns0:g id="sprite15">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape7" />
+    </ns0:g>
+    <ns0:g id="shape7">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite16">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite17" />
+    </ns0:g>
+    <ns0:g id="sprite17">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape8" />
+    </ns0:g>
+    <ns0:g id="shape8">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite18">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite19" />
+    </ns0:g>
+    <ns0:g id="sprite19">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape9" />
+    </ns0:g>
+    <ns0:g id="shape9">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+    <ns0:g id="sprite20">
+      <ns0:use ns1:characterId="118" height="183.85" id="_Cover" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#sprite21" />
+    </ns0:g>
+    <ns0:g id="sprite21">
+      <ns0:use ns1:characterId="117" height="183.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="256.2" ns2:href="#shape10" />
+    </ns0:g>
+    <ns0:g id="shape10">
+      <ns0:path d="M-128.0 71.45 L-128.0 -57.05 -128.0 -92.45 -112.0 -103.75 112.0 -103.75 128.0 -92.45 128.0 -57.05 128.0 71.45 116.0 79.9 -116.05 79.9 -128.0 71.45" fill="#ffffff" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M-128.0 71.45 L-116.05 79.9 -128.0 79.9 -128.0 71.45" fill="#9b9b9b" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M116.0 79.9 L128.0 71.45 128.0 79.9 116.0 79.9" fill="#bbbbbb" fill-rule="evenodd" stroke="none" />
+      <ns0:path d="M128.0 71.45 L128.0 -57.05 128.0 -92.45 112.0 -103.75 -112.0 -103.75 -128.0 -92.45 -128.0 -57.05 -128.0 71.45 -128.0 79.9 M128.0 71.45 L128.0 79.9" ns1:has-small-stroke="true" ns1:original-stroke-width="0.25" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="miter-clip" stroke-miterlimit="1.0" stroke-width="1.0" />
+    </ns0:g>
+  </ns0:defs>
+</ns0:svg>

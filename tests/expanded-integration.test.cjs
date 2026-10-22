@@ -41,7 +41,8 @@ for (const adapter of ADAPTERS) {
     if (adapter.id === "fbw_forest-server") {
       state.devices = []; state.liquids = [];
       for (const player of state.players) { const exit = state.exits.find(exit => exit.element === player.element); player.x = exit.x; player.y = exit.y; player.vx = player.vy = 0; }
-    } else state.tick = adapter.hz * (adapter.id === "137953-server" ? 180 : adapter.id === "9109-server" ? 180 : adapter.id === "50737-server" ? 720 : adapter.id === "97734-server" ? 480 : 300) - 1;
+    } else if (adapter.id === '50737-server') state.players.forEach(p=>p.hp=-1);
+    else state.tick = adapter.hz * (adapter.id === "137953-server" ? 180 : adapter.id === "9109-server" ? 180 : adapter.id === "97734-server" ? 480 : 300) - 1;
     for (let i = 0; i < 5 && state.phase === "playing"; i++) engine.pump(room, room.auth.clock + 1000 / adapter.hz + 1);
     assert.equal(state.phase, "finished"); const settled = engine.info(room).records;
     if (settled) assert(settled.every(row => row.rounds === 1));
@@ -77,9 +78,11 @@ test("room records count each stock loss and enemy kill across respawns, rematch
   room.seats[4] = null; room.members.get("b").seat = null; room.members.get("b").ready = false; engine.onRoom(room);
   assert.equal(engine.info(room).records.find(r => r.id === "b").deaths, 2);
 });
-test("cooperative Boxhead victory awards both participants and death is counted once", () => {
+test("cooperative Boxhead survival records team defeat and each death once", () => {
   const adapter = ADAPTERS.find(a => a.id === "50737-server"), { engine, room } = setup(adapter), state = room.auth.state;
-  state.wave = 6; state.waveReady = 1; state.spawnLeft = 0; state.zombies = [];
+  state.wave=6;state.players.forEach(p=>p.hp=-1);
   engine.pump(room, room.auth.clock + 41); assert.equal(state.phase, "finished");
-  for (const row of engine.info(room).records) { assert.equal(row.wins, 1); assert.equal(row.rounds, 1); }
+  const records=engine.info(room).records;
+  for (const row of records) { assert.equal(row.wins, 0); assert.equal(row.deaths,1); assert.equal(row.rounds, 1); }
+  engine.pump(room,room.auth.clock+41);assert.deepEqual(engine.info(room).records,records);
 });

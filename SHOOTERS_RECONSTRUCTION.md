@@ -1,5 +1,7 @@
 # Shooter server reconstructions
 
+**2026-10-23 Boxhead replacement:** the `50737-server` implementation described below has been superseded by 18 original rooms, textured native character animations, ten weapons, original multiplier upgrades, endless survival, original audio and an expanded shared camera. See [BOXHEAD_RECONSTRUCTION.md](BOXHEAD_RECONSTRUCTION.md) for current behavior, extraction evidence, tests and remaining approximations. The old Boxhead sections below are historical implementation notes; the Gun Mayhem section remains applicable.
+
 The native adapters `50737-server` and `97734-server` run simulation in Node, send authoritative snapshots, and lazily draw original extracted art in Canvas. No SWF runtime, creator-stream, client hit reports or client world-state writes are involved. Raw SWFs were preserved.
 
 ## Evidence and provenance

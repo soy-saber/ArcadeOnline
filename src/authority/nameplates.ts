@@ -1,6 +1,7 @@
 import type { State } from "./protocol";
 import { position } from "./bomb-core";
 import brawlerData from "../expanded/brawler-data.json";
+import { camera as boxheadCamera } from "../expanded/boxhead-world";
 
 interface Anchor { seat: number; x: number; y: number }
 export function nameAnchors(state: State, width: number, height: number): Anchor[] {
@@ -25,7 +26,8 @@ export function nameAnchors(state: State, width: number, height: number): Anchor
         x = (width - worldW * scale) / 2 + (p.x - bounds[0]) * scale;
         y = 45 + (p.y - bounds[1] - 49) * scale;
       } else if (state.gameId === "fbw_forest-server") { x *= width / 1248; y = (p.y - 82) * height / 928; }
-      else y -= state.gameId === "50737-server" ? 66 : 46;
+      else if (state.gameId === "50737-server") { const cam=boxheadCamera(state,width,height);x=cam.x+p.x*cam.scale;y=cam.y+(p.y-70)*cam.scale; }
+      else y -= 46;
       return { seat: p.seat, x: Math.max(36, Math.min(width - 36, x)), y: Math.max(12, Math.min(height - 20, y)) };
     });
 }

@@ -188,17 +188,17 @@
     "title": "僵尸危机3",
     "genre": "合作射击",
     "category": "action",
-    "description": "最多四人并肩迎战僵尸，解锁武器、收集补给、守住阵地。",
+    "description": "四人合作挑战 18 张原版地图，使用十种原版武器持续生存；共享镜头随队友分布扩大视野。",
     "source": "经典重建",
     "runtime": "server",
     "room": "lobby",
-    "width": 900,
-    "height": 650,
+    "width": 1280,
+    "height": 800,
     "seats": [
       {
         "seat": 1,
         "label": "P1",
-        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "hint": "WASD / 方向键移动与瞄准；空格 / J 射击；K / X 换武器；1–0 选择已解锁武器。连击解锁十种原版武器，与队友持续生存；队友存活时倒地者会复活。",
         "keys": [
           "KeyA",
           "KeyD",
@@ -215,13 +215,23 @@
           "KeyK",
           "KeyX",
           "ShiftLeft",
-          "ShiftRight"
+          "ShiftRight",
+          "Digit0",
+          "Digit1",
+          "Digit2",
+          "Digit3",
+          "Digit4",
+          "Digit5",
+          "Digit6",
+          "Digit7",
+          "Digit8",
+          "Digit9"
         ]
       },
       {
         "seat": 2,
         "label": "P2",
-        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "hint": "WASD / 方向键移动与瞄准；空格 / J 射击；K / X 换武器；1–0 选择已解锁武器。连击解锁十种原版武器，与队友持续生存；队友存活时倒地者会复活。",
         "keys": [
           "KeyA",
           "KeyD",
@@ -238,13 +248,23 @@
           "KeyK",
           "KeyX",
           "ShiftLeft",
-          "ShiftRight"
+          "ShiftRight",
+          "Digit0",
+          "Digit1",
+          "Digit2",
+          "Digit3",
+          "Digit4",
+          "Digit5",
+          "Digit6",
+          "Digit7",
+          "Digit8",
+          "Digit9"
         ]
       },
       {
         "seat": 3,
         "label": "P3",
-        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "hint": "WASD / 方向键移动与瞄准；空格 / J 射击；K / X 换武器；1–0 选择已解锁武器。连击解锁十种原版武器，与队友持续生存；队友存活时倒地者会复活。",
         "keys": [
           "KeyA",
           "KeyD",
@@ -261,13 +281,23 @@
           "KeyK",
           "KeyX",
           "ShiftLeft",
-          "ShiftRight"
+          "ShiftRight",
+          "Digit0",
+          "Digit1",
+          "Digit2",
+          "Digit3",
+          "Digit4",
+          "Digit5",
+          "Digit6",
+          "Digit7",
+          "Digit8",
+          "Digit9"
         ]
       },
       {
         "seat": 4,
         "label": "P4",
-        "hint": "方向键 / WASD 移动及瞄准；空格 / J 射击；K / X 切换武器。击杀解锁武器，拾取补给，合作通过 6 波。",
+        "hint": "WASD / 方向键移动与瞄准；空格 / J 射击；K / X 换武器；1–0 选择已解锁武器。连击解锁十种原版武器，与队友持续生存；队友存活时倒地者会复活。",
         "keys": [
           "KeyA",
           "KeyD",
@@ -284,7 +314,17 @@
           "KeyK",
           "KeyX",
           "ShiftLeft",
-          "ShiftRight"
+          "ShiftRight",
+          "Digit0",
+          "Digit1",
+          "Digit2",
+          "Digit3",
+          "Digit4",
+          "Digit5",
+          "Digit6",
+          "Digit7",
+          "Digit8",
+          "Digit9"
         ]
       }
     ],

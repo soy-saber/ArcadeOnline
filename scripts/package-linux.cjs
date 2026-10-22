@@ -30,7 +30,7 @@ function copy(relative) {
 }
 // Explicit allowlist: no .env, node_modules, SWF analysis, credentials or Git history.
 for (const relative of ["package.json", "package-lock.json", "server.js", "deploy-linux.sh", "README.md", "LINUX_DEPLOY.md", "NATIVE_PLATFORM.md", "SWF_RECONSTRUCTION.md", "DEPLOYMENT_STATUS.md", "AGENT_HANDOFF_TODO.md", "PENDING_GAMES.md", "integration-notes.md", "optimization-notes.md", "public", "src/badminton/core.ts", "src/badminton/view.ts", "deploy",
-  "src/authority", "src/expanded", "runtime", "SERVER_AUTHORITY.md", "ORIGINAL_MAPS.md", "EXPANDED_GAMES.md", "TANK_BOMB2_RECONSTRUCTION.md", "SHOOTERS_RECONSTRUCTION.md", "BRAWLER_FOREST_RECONSTRUCTION.md",
+  "src/authority", "src/expanded", "runtime", "SERVER_AUTHORITY.md", "ORIGINAL_MAPS.md", "EXPANDED_GAMES.md", "TANK_BOMB2_RECONSTRUCTION.md", "SHOOTERS_RECONSTRUCTION.md", "BOXHEAD_RECONSTRUCTION.md", "BRAWLER_FOREST_RECONSTRUCTION.md",
   "scripts/native-build.json", "scripts/verify-native-build.cjs", "scripts/verify-release.cjs", "scripts/check-public.cjs", "scripts/check-turn.cjs"]) copy(relative);
 fs.writeFileSync(path.join(staging, "release-manifest.json"), JSON.stringify({ created: new Date().toISOString(), files }, null, 2) + "\n");
 runNode("scripts/verify-release.cjs", staging);

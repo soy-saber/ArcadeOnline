@@ -31,6 +31,7 @@ function start(): void {
   const bombView = badminton || adapter ? null : new GameView(canvas), badmintonView = badminton ? new BadmintonView(canvas) : null;
   let seat: number | null = null, round = -1, seq = 0, bomb = 0, jump = 0, hit = 0;
   let held: Input | null = null, lastHitAt = 0, lastFrameAt = performance.now();
+  let selectedWeapon: number | undefined;
   let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
   let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
@@ -63,7 +64,7 @@ function start(): void {
   if (adapter) {
     canvas.width = adapter.width; canvas.height = adapter.height;
     el("battle-records").hidden = !recordsEnabled; el("weapon-status").hidden = true;
-    el("records-note").textContent = adapter.id === "50737-server" ? "击杀统计包含僵尸；合作通关计双方胜场。" : "按造成击杀的玩家计分；自杀只计死亡，换座与续局保留战绩。";
+    el("records-note").textContent = adapter.id === "50737-server" ? "原版持续生存：记录击杀与倒地次数；队伍全灭结束。" : "按造成击杀的玩家计分；自杀只计死亡，换座与续局保留战绩。";
     el("controls-guide").textContent = adapter.controls;
     el("mode-note").textContent = "至少两人入座，全员准备开局；结束后自动继续下一局。";
     el("attack-button-text").textContent = "攻击 / 操作";
@@ -72,7 +73,7 @@ function start(): void {
     for (let number = adapter.seats + 1; number <= 4; number++) el(`seat-${number}`).hidden = true;
     el("round-options").hidden = !adapter.maps?.length;
     el<HTMLSelectElement>("game-loadout").parentElement!.hidden = true;
-    el("sound-toggle").parentElement!.hidden = true;
+    el("sound-toggle").parentElement!.hidden = !adapter.setSound;
   }
   canvas.style.setProperty("--game-aspect", String(canvas.width / canvas.height));
   const mapSelect = el<HTMLSelectElement>("game-map");
@@ -85,7 +86,7 @@ function start(): void {
   function notice(message: string): void { el("connection-note").textContent = message; }
   function clearInput(): void { keys.clear(); held = null; presentation.clearPrediction(); }
   function resetRound(next: number): void {
-    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; clearInput();
+    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; clearInput();
   }
   function alignCounters(state: State): void {
     if (!seat) return;
@@ -115,7 +116,7 @@ function start(): void {
   function confirm(state: State): void {
     if (state.round === confirmedRound && state.tick === confirmedTick) return;
     confirmedRound = state.round; confirmedTick = state.tick;
-    if ("gameId" in state) return;
+    if ("gameId" in state) { adapter?.confirm?.(state as ExpandedState); return; }
     if (isBomb(state)) bombView!.confirm(state);
     else {
       const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner };
@@ -130,7 +131,8 @@ function start(): void {
   function currentInput(now: number): Input {
     if (adapter && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
     if (adapter) return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"),
-      up: keys.has("KeyW") || keys.has("ArrowUp"), down: keys.has("KeyS") || keys.has("ArrowDown"), attack: bomb, alt: jump };
+      up: keys.has("KeyW") || keys.has("ArrowUp"), down: keys.has("KeyS") || keys.has("ArrowDown"), attack: bomb, alt: jump,
+      ...(adapter.id === "50737-server" && selectedWeapon !== undefined ? {weapon:selectedWeapon} : {}) };
     if (badminton) {
       if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) { hit++; lastHitAt = now; }
       return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"), jump, hit };
@@ -149,11 +151,12 @@ function start(): void {
     if (!seat || net.authority?.phase !== "playing" || keys.has(code)) return;
     const now = performance.now(); keys.set(code, now); inputAt = now;
     if (actions.includes(code)) { if (badminton) { hit++; lastHitAt = now; play("whoosh"); } else { bomb++; lastHitAt = now; } }
-    if ((badminton || adapter) && jumps.includes(code)) jump++;
+    if ((badminton || adapter) && jumps.includes(code)) { jump++; selectedWeapon=undefined; }
+    if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {
     if ((event.target as HTMLElement)?.matches("input, textarea, select, button")) return;
-    if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code)) return;
+    if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code) && !(adapter?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
     event.preventDefault(); press(event.code, down);
   }
   window.addEventListener("keydown", (event) => keyboard(event, true));
@@ -197,6 +200,7 @@ function start(): void {
     el("sound-toggle").setAttribute("aria-pressed", String(sound));
     el<HTMLInputElement>("sound-volume").value = String(volume); el("sound-volume-value").textContent = `${volume}%`;
     bombView?.setSound(sound); bombView?.setVolume(volume / 100);
+    adapter?.setSound?.(sound); adapter?.setVolume?.(volume / 100);
   }
   el("sound-toggle").onclick = () => { sound = !sound; localStorage.setItem("arcade_native_sound", sound ? "on" : "off"); soundUi(); el("sound-toggle").blur(); };
   el<HTMLInputElement>("sound-volume").oninput = (event) => { volume = Number((event.target as HTMLInputElement).value); localStorage.setItem("arcade_native_volume", String(volume)); soundUi(); };

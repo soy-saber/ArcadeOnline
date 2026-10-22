@@ -1,4 +1,4 @@
-export interface Input { seq: number; left: boolean; right: boolean; up: boolean; down: boolean; attack: number; alt: number }
+export interface Input { seq: number; left: boolean; right: boolean; up: boolean; down: boolean; attack: number; alt: number; weapon?: number }
 export interface State {
   round: number; tick: number; phase: "waiting" | "playing" | "finished";
   winner: number | null; ack: number[]; players: any[]; [key: string]: any;
@@ -9,6 +9,9 @@ export interface Adapter {
   step(state: State, inputs: Input[]): void;
   valid(state: unknown): state is State;
   render(canvas: HTMLCanvasElement, state: State | null, seat: number | null): void;
+  confirm?(state: State): void;
+  setSound?(enabled: boolean): void;
+  setVolume?(volume: number): void;
   consumeInput?(state: State, seat: number, input: Input): void;
   maps?: { id: string; label: string }[];
   modes?: { id: string; label: string; description: string }[];
@@ -19,5 +22,6 @@ export function validInput(value: unknown): value is Input {
   if (!value || typeof value !== "object") return false;
   const input = value as Input;
   return [input.seq, input.attack, input.alt].every((n) => Number.isSafeInteger(n) && n >= 0 && n < 1e9) &&
-    [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean");
+    [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean") &&
+    (input.weapon === undefined || Number.isInteger(input.weapon) && input.weapon >= 0 && input.weapon < 10);
 }
