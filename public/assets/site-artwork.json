@@ -1,11 +1,11 @@
 {
   "background": {
     "path": "/assets/yuuka-kurisu-background.webp",
-    "method": "Generated and refined on the user-selected website with Playwright; WebP format conversion only",
+    "method": "Previous generated wallpaper edited on the user-selected website using Playwright to reveal softly lit facial features; WebP format conversion only",
     "website": "https://l0veyou.com/chat",
     "websiteModelLabel": "GPT Image 2",
     "promptPath": "/assets/site-background-prompt.txt",
-    "sourceImageSha256": "0332374e16c756555e6641021cf053044a67ec67e749566b1ba95ad214bb52bc",
+    "sourceImageSha256": "310cead175866da1c51c6e3c8f51ec93d6b8361b9a5ba313b281d631cf9cb301",
     "sourceDimensions": [
       1536,
       864
@@ -14,32 +14,32 @@
       1536,
       864
     ],
-    "outputBytes": 49256,
-    "composition": "Clear flat-color bust portraits with visible faces, Yuuka halo and mechanical clips, blue and red ties; responsive CSS side placement on desktop and portrait banner on narrow screens",
+    "outputBytes": 95940,
+    "composition": "Head-and-shoulders cyber portraits with softly lit, readable faces, calm expressions and loose straight jackets, no waist or legs: Yuuka left with a dark metallic tilted halo and inset cyan detail, Kurisu right; cyan/violet and magenta/amber edge light, fine circuits, dark central negative space. Responsive CSS places the portraits beside desktop content and in a scrolling banner on smaller screens.",
     "sources": [
       {
-        "subject": "Hayase Yuuka / Blue Archive",
-        "source": "https://raw.githubusercontent.com/SchaleDB/SchaleDB/main/images/student/portrait/13010.webp",
+        "subject": "Hayase Yuuka / Blue Archive character art",
+        "source": "https://schaledb.com/images/student/portrait/13010.webp",
         "sha256": "bc5e4a65be975bd652b6055adac49c2838bd87f4aadc12db1e18673ff382751b"
-      },
-      {
-        "subject": "Makise Kurisu / STEINS;GATE",
-        "source": "https://steinsgate.jp/sgflash/img/chara2_l.png",
-        "sha256": "988a60f8bd772edac2fc1622de64f9748c2a04cac5d220913fd5a088c663689a"
       }
     ],
-    "sha256": "ab32bd65bd67de823c07ebd86e3bd0f6a48cd83c034ad0a733dbf0b759bd2b51",
+    "sha256": "c4664251bc05f5af08830e709bf0cffb40c298604d0163b7a380a2da3b80aca1",
+    "generationUrl": "https://d1ptb5b3fy36g3.cloudfront.net/aichat/anonymous/sa0/20261022/ps1/prod/65b3fa28-75df-4278-8c56-bccbc501d0c9/cb329882-209d-4017-8958-a82d2cb9999b.png",
     "generationInputs": [
       {
-        "role": "Character identity reference board",
-        "sha256": "b249fa4a018bde65a27c9617b239a77c336a3c6f017c36edd96af1f19176453b"
+        "role": "Text prompt requesting visible, softly lit facial features and preserving the portrait composition and halo",
+        "path": "/assets/site-background-prompt.txt"
+      },
+      {
+        "role": "Previous generated head-and-shoulders wallpaper; uploaded through the website as the editing reference",
+        "sha256": "6dd95661f6ab3abb66d73eddd4de0c5bd4ccf007995030ffe0c4b828c463f210",
+        "source": "https://d1ptb5b3fy36g3.cloudfront.net/aichat/anonymous/sa0/20261022/ps1/prod/55c1149c-13bf-4b16-bb23-b02224c931aa/84470930-1534-4d64-86fc-bfcdf6087cfc.png"
       }
     ],
     "postProcessing": {
-      "method": "WebP format conversion only, quality 91; CSS placement and masks",
-      "generatedSourceSha256": "0332374e16c756555e6641021cf053044a67ec67e749566b1ba95ad214bb52bc"
-    },
-    "generationUrl": "https://d1ptb5b3fy36g3.cloudfront.net/aichat/anonymous/sa0/20261022/ps1/prod/6edf5a9a-5ddc-497e-9b41-77d2b342f6c6/4624aef9-b7fb-4cfb-abee-089ef83266e0.png"
+      "method": "WebP format conversion only, quality 90",
+      "generatedSourceSha256": "310cead175866da1c51c6e3c8f51ec93d6b8361b9a5ba313b281d631cf9cb301"
+    }
   },
   "covers": [
     {

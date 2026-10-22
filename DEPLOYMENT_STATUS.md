@@ -1,5 +1,11 @@
 **ArcadeOnline 公网部署记录 · 2026-10-22**
 
+2026-10-22 23:51（北京时间）科技风清晰面部背景已部署到 `https://223.109.141.251/`。当前发布目录 `/opt/arcade-online/releases/20261022154927-1590253`，上一版 `/opt/arcade-online/releases/20261022102257-1537139` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261022-soft-faces-c4664251/release`。发布包 SHA256 `ff3ce45b3d4108e16e5a27dda1baa33bc23df3fa433377b4c7fe75e0f3f094c3`，15.5 MiB，4466 个文件校验通过。应用、Caddy、coturn 均 active，健康检查通过。本条记录在发布包生成及部署完成后补充。
+
+背景通过用户指定网站 `https://l0veyou.com/chat` 的 `GPT Image 2` 使用 Playwright 迭代生成。最终为早濑优香与牧濑红莉栖的头肩像、清晰五官和柔和补光，服装与下缘逐渐融入暗色背景；优香光环依据角色立绘校正为倾斜黑色环体与内嵌蓝线。中央保留暗色留白，左右采用蓝紫及红橙科技光线。图片仅转换为 WebP，1536×864、95940 字节，SHA256 `c4664251bc05f5af08830e709bf0cffb40c298604d0163b7a380a2da3b80aca1`；提示词与生成来源见 `public/assets/site-background-prompt.txt`、`public/assets/site-artwork.json`。桌面两侧展示人物，窄屏在内容上方展示；页面、样式和背景缓存版本统一更新为 `soft-faces-20261022`。
+
+本地类型检查、构建与发布校验通过。公网首页、共享样式、游戏房间页、背景、提示词、来源清单、游戏目录和浏览器游戏包共八项文件 SHA256 与工作区一致；公网 Playwright 验证 1920、1600、1280、1060、700、390、320px 宽度，八张游戏卡片可用、没有横向溢出或脚本/资源错误，并查看桌面与手机截图。公网健康、八款游戏素材与 WebSocket 入房探针通过。证据：`artifacts/soft-faces-public-hashes.json`、`artifacts/background-public-preview/checks.json` 及同目录截图。
+
 2026-10-22 18:19（北京时间）清晰平面角色背景已上线，实现提交 `6920207`，当前发布目录 `/opt/arcade-online/releases/20261022102257-1537139`，上一版 `/opt/arcade-online/releases/20261022071341-1507760` 可回滚。发布包 SHA256 `09251bef4206424867debe7e8d5fe803c6ceda9341597dadb9b10e357e90e6d5`，15.4 MiB，4466 个文件校验通过。应用、Caddy、coturn 均 active，服务健康与八款游戏入房探针通过。
 
 背景继续通过用户选定的 `https://l0veyou.com/chat` 使用 Playwright 生成、迭代。新版为可辨认五官、发饰、光环与服装配色的平面胸像，1536×864 WebP、49256 字节；只转换图片格式，尺寸和图形不作二次缩小。CSS 分别展示两侧人物并柔化边缘；宽屏为大厅预留两侧空间，1100px 及以下将人物展示在内容上方。已用 Playwright 查看公网 1600、1280、390px 截图，无横向溢出；提示词与来源已更新。证据：`artifacts/background-review/`、`artifacts/flat-clear-public-hashes.json`、`artifacts/authority-deployment-results.json`。服务器发布目录时间存在偏差，以部署工具时间为准。

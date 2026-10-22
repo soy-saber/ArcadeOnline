@@ -2,37 +2,38 @@ html {
   scrollbar-gutter: stable;
 }
 body {
-  background: #101222;
+  background: #070b18;
 }
 body::before {
-  background: url('/assets/yuuka-kurisu-background.webp?v=flat-clear-20261022') center top / 100% auto no-repeat;
+  background: url('/assets/yuuka-kurisu-background.webp?v=soft-faces-20261022') center top / 100% auto no-repeat;
 }
 .lobby-page {
-  --portrait-width: clamp(160px, calc((100vw - 1120px) / 2 - 20px), 260px);
-  --portrait-sheet: calc(var(--portrait-width) * 3.4);
+  position: relative;
+  --portrait-width: clamp(180px, calc((100vw - 1120px) / 2 - 16px), 320px);
+  --portrait-sheet: calc(var(--portrait-width) * 4);
 }
 .lobby-page::before,
 .lobby-page::after {
   content: "";
   position: fixed;
-  inset: 120px auto auto 0;
+  inset: clamp(90px, 14vh, 160px) auto auto 0;
   width: var(--portrait-width);
-  height: calc(var(--portrait-sheet) * .48);
+  height: calc(var(--portrait-sheet) * .5625);
   pointer-events: none;
   z-index: 0;
-  background: url('/assets/yuuka-kurisu-background.webp?v=flat-clear-20261022') left top / var(--portrait-sheet) auto no-repeat;
-  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 65%, transparent 92%), linear-gradient(to right, #000 84%, transparent);
+  background: url('/assets/yuuka-kurisu-background.webp?v=soft-faces-20261022') left top / var(--portrait-sheet) auto no-repeat;
+  mask-image: linear-gradient(to bottom, transparent, #000 6%, #000 75%, transparent), linear-gradient(to right, #000 90%, transparent);
   mask-composite: intersect;
 }
 .lobby-page::after {
   left: auto;
   right: 0;
   background-position: right top;
-  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 65%, transparent 92%), linear-gradient(to left, #000 84%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 6%, #000 75%, transparent), linear-gradient(to left, #000 90%, transparent);
 }
 header.topbar {
-  background: rgba(12, 15, 28, .78);
-  border-bottom-color: rgba(177, 166, 224, .25);
+  background: rgba(7, 11, 24, .84);
+  border-bottom-color: rgba(100, 161, 239, .28);
 }
 .lobby-shell {
   padding-bottom: 48px;
@@ -42,9 +43,9 @@ header.topbar {
 }
 .lobby-heading {
   padding: 28px;
-  border: 1px solid rgba(178, 170, 222, .2);
+  border: 1px solid rgba(113, 153, 220, .24);
   border-radius: 12px;
-  background: rgba(13, 18, 34, .82);
+  background: rgba(9, 15, 32, .84);
   backdrop-filter: blur(16px);
 }
 .library-tools {
@@ -52,9 +53,9 @@ header.topbar {
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px;
-  border: 1px solid rgba(178, 170, 222, .18);
+  border: 1px solid rgba(113, 153, 220, .2);
   border-radius: 10px;
-  background: rgba(13, 18, 34, .86);
+  background: rgba(9, 15, 32, .88);
   backdrop-filter: blur(12px);
 }
 .segmented {
@@ -71,7 +72,7 @@ header.topbar {
 }
 .segmented button.active {
   color: #f2efff;
-  background: #514578;
+  background: #354771;
 }
 .compact-field {
   flex: 1 1 170px;
@@ -87,17 +88,17 @@ header.topbar {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid rgba(178, 170, 222, .26);
+  border: 1px solid rgba(113, 153, 220, .26);
   border-radius: 12px;
-  background: rgba(14, 19, 34, .94);
+  background: rgba(10, 16, 32, .94);
   box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
 }
 .empty-library {
   grid-column: 1 / -1;
 }
 .game-card:hover {
-  border-color: #9b8dc4;
-  box-shadow: 0 12px 30px rgba(15, 10, 35, .36);
+  border-color: #71a9d8;
+  box-shadow: 0 12px 30px rgba(20, 48, 96, .3);
 }
 .game-cover {
   flex: 0 0 auto;
@@ -147,20 +148,16 @@ header.topbar {
 .login-stage {
   border-radius: 14px;
   background: transparent;
-}
-.login-backdrop {
-  display: block;
-}
-.login-backdrop img {
-  filter: none;
-  object-fit: cover;
+  border-color: rgba(113, 153, 220, .12);
 }
 .login-stage::after {
   background: rgba(9, 12, 24, .2);
 }
 .login-card {
   border-radius: 12px;
-  background: rgba(13, 18, 34, .9);
+  background: rgba(9, 15, 32, .9);
+  border-color: rgba(113, 153, 220, .3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
 }
 .authority-page .panel {
   background: rgba(13, 21, 29, .94);
@@ -169,22 +166,25 @@ header.topbar {
   .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 1100px) {
-  .lobby-page { --portrait-sheet: clamp(540px, 75vw, 720px); }
+  .lobby-page { --portrait-sheet: clamp(640px, 100vw, 880px); }
   .lobby-page::before,
   .lobby-page::after {
+    position: absolute;
     top: 64px;
     width: 50%;
-    height: calc(var(--portrait-sheet) * .44);
-    background-position-y: -32px;
-    mask-image: linear-gradient(to bottom, #000 65%, transparent 96%);
+    height: calc(var(--portrait-sheet) * .5625);
+    mask-image: linear-gradient(to bottom, #000 72%, transparent);
   }
   .lobby-library {
     width: calc(100% - 48px);
-    padding-top: calc(var(--portrait-sheet) * .44 + 12px);
+    padding-top: calc(var(--portrait-sheet) * .48 + 12px);
   }
   .login-stage {
-    margin-top: calc(var(--portrait-sheet) * .44 + 12px);
-    min-height: 430px;
+    margin-top: calc(var(--portrait-sheet) * .48 + 12px);
+    min-height: 0;
+    padding: 24px 0 40px;
+    border: 0;
+    box-shadow: none;
   }
 }
 @media (max-width: 700px) {
