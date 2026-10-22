@@ -4,7 +4,7 @@ ArcadeOnline 提供八款实时联机游戏，比赛由 Node.js 模拟，浏览�
 
 **试玩与当前进展（2026-10-22）**
 
-大厅整理：八款游戏都有本地 WebP 封面，提供体育竞技、休闲对战、动作射击、合作冒险分类；桌面与手机布局、搜索、旧链接跳转已验证。早濑优香与牧濑红莉栖背景通过用户选定网站生成，按优香原图纠正三角黑蓝机械发夹、双侧扎发和细长光环。最终图、来源校验和完整提示词见 `public/assets/yuuka-kurisu-background.webp`、`site-artwork.json`、`site-background-prompt.txt`。公网发布状态以 [部署记录](DEPLOYMENT_STATUS.md) 为准。
+大厅整理：八款游戏都有本地 WebP 封面，提供体育竞技、休闲对战、动作射击、合作冒险分类。分类与搜索复用卡片，预留滚动条空间，避免布局和滚动位置跳变；四种屏幕宽度已验证。背景通过用户选定网站生成，改为低对比蓝紫/琥珀色彩轮廓，仅保留优香发饰、光环与红莉栖长发、时钟的抽象暗示，不含面部或服装细节。1280×720 WebP 为 6558 字节，较上一张减少约 95%。最终图、来源校验和完整提示词见 `public/assets/yuuka-kurisu-background.webp`、`site-artwork.json`、`site-background-prompt.txt`。公网发布状态以 [部署记录](DEPLOYMENT_STATUS.md) 为准。
 
 现有八款游戏资源均有独立服务器权威入口，包括坦克、Boxhead、小斗士、泡泡堂2、枪战和森林冰火人。新版本支持完整/增量同步、全屏准备、个人准备状态保留、自动续局及对战游戏的跨局击杀战绩；泡泡堂五种场景、泡泡堂2十八张地图、冰火人三十二关已导入。入口与重建范围见 [完整目录](EXPANDED_GAMES.md) 和 [平台说明](SERVER_AUTHORITY.md)。八款入口及本次泡泡堂2击杀模式更新已部署，版本和校验记录见 [部署记录](DEPLOYMENT_STATUS.md)。
 
@@ -85,7 +85,7 @@ npm run package:linux
 
 `artifacts/`、`node_modules/` 和 `.env` 不进入 Git。逆向中间文件、临时运维工具和测试产物需要另行传递；运行素材位于 `public/authority/assets/` 与 `public/expanded/`。正常构建不需要 Python、Java 或 FFDec，仅重新导出素材时需要这些工具。
 
-`scripts/prepare-site-assets.py` 默认只更新来源清单并保留已选背景；替换背景时显式传入 `--background`、`--prompt`、`--model`，使用 Pillow 转换 WebP。生成网站只通过用户指定的已登录浏览器访问，认证资料与临时下载地址不进入仓库。
+`scripts/prepare-site-assets.py` 默认只更新来源清单并保留已选背景；替换背景时显式传入 `--background`、`--prompt`、`--model`，使用 Pillow 转换 WebP，默认最长宽度 1280、质量 78；`--composition` 记录当前构图。生成网站只通过用户指定的已登录浏览器访问，认证资料与临时下载地址不进入仓库。
 
 **部署与下一步**
 

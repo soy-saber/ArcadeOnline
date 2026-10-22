@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0a0f10">
 <title>ArcadeOnline - 童年游戏联机平台</title>
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/theme.css">
-<link rel="preload" as="image" href="/assets/yuuka-kurisu-background.webp">
+<link rel="stylesheet" href="/theme.css?v=outline-20261022">
+<link rel="preload" as="image" href="/assets/yuuka-kurisu-background.webp?v=outline-20261022">
 </head>
 <body class="lobby-page">
 <header class="topbar">
@@ -46,11 +46,11 @@
 
     <div class="library-tools" aria-label="游戏筛选">
       <div class="segmented" id="game-filters" role="group" aria-label="游戏类型">
-        <button type="button" class="active" data-filter="all">全部</button>
-        <button type="button" data-filter="sports">体育竞技</button>
-        <button type="button" data-filter="party">休闲对战</button>
-        <button type="button" data-filter="action">动作射击</button>
-        <button type="button" data-filter="adventure">合作冒险</button>
+        <button type="button" class="active" data-filter="all" aria-pressed="true">全部</button>
+        <button type="button" data-filter="sports" aria-pressed="false">体育竞技</button>
+        <button type="button" data-filter="party" aria-pressed="false">休闲对战</button>
+        <button type="button" data-filter="action" aria-pressed="false">动作射击</button>
+        <button type="button" data-filter="adventure" aria-pressed="false">合作冒险</button>
       </div>
       <label class="compact-field search-field">
         <span>搜索</span>
@@ -68,10 +68,11 @@
       <button type="button" id="recent-game"></button>
     </div>
 
-    <div class="game-grid" id="game-grid" aria-live="polite"></div>
-    <div class="empty-library" id="empty-library" hidden>
-      <strong>没有找到游戏</strong>
-      <span>换个名称或分类再看看。</span>
+    <div class="game-grid" id="game-grid" aria-live="polite">
+      <div class="empty-library" id="empty-library" hidden>
+        <strong>没有找到游戏</strong>
+        <span>换个名称或分类再看看。</span>
+      </div>
     </div>
   </section>
 </main>
@@ -92,6 +93,7 @@
   const filterButtons = Array.from(document.querySelectorAll("#game-filters button"));
   let allGames = [];
   let activeFilter = "all";
+  const gameCards = new Map();
 
   if (arcadeName()) showLobby();
   else nameInput.focus();
@@ -140,11 +142,22 @@
       return categoryMatches && (!query || haystack.includes(query));
     });
     const grid = document.getElementById("game-grid");
-    grid.replaceChildren();
+    // Keep enough space below the current viewport to avoid scroll clamping.
+    const gridTop = grid.getBoundingClientRect().top + window.scrollY;
+    grid.style.minHeight = Math.max(0, window.scrollY + window.innerHeight - gridTop - 48) + "px";
+    const visibleIds = new Set(games.map((game) => game.id));
 
-    for (const game of games) {
+    for (const game of allGames) {
+      const existing = gameCards.get(game.id);
+      if (existing) {
+        existing.hidden = !visibleIds.has(game.id);
+        existing.querySelectorAll("a").forEach((link) => { link.href = gameHref(game); });
+        existing.querySelector(".selected-room").textContent = "房间：" + normalizedRoom(game);
+        continue;
+      }
       const article = make("article", "game-card");
       article.dataset.gameId = game.id;
+      article.hidden = !visibleIds.has(game.id);
 
       const coverLink = make("a", "game-cover");
       coverLink.href = gameHref(game);
@@ -154,6 +167,8 @@
       image.alt = game.title + "游戏画面";
       image.loading = "lazy";
       image.decoding = "async";
+      image.width = 800;
+      image.height = 500;
       coverLink.appendChild(image);
       const coverMeta = make("div", "cover-meta");
       coverMeta.append(make("span", "source-tag", "经典游戏"));
@@ -179,6 +194,7 @@
       body.append(eyebrow, title, description, footer);
       article.append(coverLink, body);
       grid.appendChild(article);
+      gameCards.set(game.id, article);
     }
 
     document.getElementById("empty-library").hidden = games.length > 0;
@@ -231,7 +247,10 @@
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       activeFilter = button.dataset.filter;
-      filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+      filterButtons.forEach((item) => {
+        item.classList.toggle("active", item === button);
+        item.setAttribute("aria-pressed", String(item === button));
+      });
       renderGames();
     });
   });

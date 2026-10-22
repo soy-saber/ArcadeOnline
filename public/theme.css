@@ -1,8 +1,11 @@
+html {
+  scrollbar-gutter: stable;
+}
 body {
   background: #101222;
 }
 body::before {
-  background: linear-gradient(180deg, rgba(9, 12, 24, .12), rgba(9, 12, 24, .35)), url('/assets/yuuka-kurisu-background.webp') center top / cover no-repeat;
+  background: linear-gradient(180deg, rgba(9, 12, 24, .12), rgba(9, 12, 24, .35)), url('/assets/yuuka-kurisu-background.webp?v=outline-20261022') center top / cover no-repeat;
 }
 header.topbar {
   background: rgba(12, 15, 28, .78);
@@ -35,6 +38,8 @@ header.topbar {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  height: auto;
+  min-height: 38px;
   border: 0;
   background: transparent;
 }
@@ -51,6 +56,8 @@ header.topbar {
 .game-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
+  align-items: start;
+  overflow-anchor: none;
 }
 .game-card {
   display: flex;
@@ -62,11 +69,15 @@ header.topbar {
   background: rgba(14, 19, 34, .94);
   box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
 }
+.empty-library {
+  grid-column: 1 / -1;
+}
 .game-card:hover {
   border-color: #9b8dc4;
   box-shadow: 0 12px 30px rgba(15, 10, 35, .36);
 }
 .game-cover {
+  flex: 0 0 auto;
   min-height: 0;
   width: 100%;
   aspect-ratio: 16 / 10;

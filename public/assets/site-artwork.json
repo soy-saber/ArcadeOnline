@@ -5,12 +5,17 @@
     "website": "https://l0veyou.com/chat",
     "websiteModelLabel": "GPT Image 2",
     "promptPath": "/assets/site-background-prompt.txt",
-    "sourceImageSha256": "9b65e5f4b61a5b13b8c9ef0818c8b6fd0fb8cbcd4a2f6ee7f6ec4b71d5ba3118",
+    "sourceImageSha256": "1c6d8cedb2f2b6c62569e33cddc2553d9aeb76d0a8461567a7f77dddf19922b1",
     "sourceDimensions": [
-      1360,
-      768
+      1536,
+      864
     ],
-    "composition": "Yuuka left with black/blue mechanical hair accessories and elliptical halo; Kurisu right with clock/circuit motifs; violet/amber night backdrop and dark central space",
+    "outputDimensions": [
+      1280,
+      720
+    ],
+    "outputBytes": 6558,
+    "composition": "Minimal low-contrast violet and amber hair contours at the edges; elliptical halo and clock arc; no face or costume details; quiet dark central space",
     "sources": [
       {
         "subject": "Hayase Yuuka / Blue Archive",
@@ -23,14 +28,7 @@
         "sha256": "988a60f8bd772edac2fc1622de64f9748c2a04cac5d220913fd5a088c663689a"
       }
     ],
-    "sha256": "798c0eeac91beb2e13c2067135ae1efcdc28030dbb2351a21f0d3f6eecbefff6",
-    "generationInputs": [
-      {
-        "role": "Character identity reference",
-        "subject": "Hayase Yuuka",
-        "sha256": "79e3a0d1b720e18ed97b416f318d878e97c89bf13496bed264b9a3f750011f1a"
-      }
-    ]
+    "sha256": "60781337c52f1239cfb7957e1051580a05bffe76bdf7462f79ed522fa4180756"
   },
   "covers": [
     {
