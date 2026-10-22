@@ -1,5 +1,11 @@
 **ArcadeOnline 公网部署记录 · 2026-10-22**
 
+2026-10-22 15:10（北京时间）分类布局与轻量轮廓背景更新已上线。实现提交 `e976cd2047b8fd0aec3f4e6d2b84aae22fddbf33`，当前 `/opt/arcade-online/releases/20261022071341-1507760`，上一版 `/opt/arcade-online/releases/20261022061214-1497942` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261022-070944-authority/release`。包 SHA256 `a5aeeb7721a22bbedf4dc663ebc184911e3189e2e46f5b8ef723459d997238e2`，15.4 MiB，4466 文件校验、类型检查、构建哈希及三服务健康全部通过。部署工具记录 `2026-10-22T07:10:07Z`，服务器目录时间仍有时钟偏差。
+
+分类/搜索由重建列表改为复用卡片显隐，预留滚动条空间和当前视口所需列表高度，固定封面比例，避免滚动位置钳制和重新加载。筛选按钮可自然换行，空搜索提示直接显示在列表顶部。本地与公网大厅 E2E 验证 1600、1060、700、390px 宽度下所有分类的数量、筛选栏位置/尺寸、卡片高度、滚动位置与 DOM 保留，空搜索提示可见，手机无横向溢出；八款原名、封面、旧房间跳转和旧资源 404 仍通过。公网健康与八款 WSS 入房通过。
+
+背景按用户要求通过原选定的 Playwright 生图网站（标签 `GPT Image 2`）重新生成，改为低对比蓝紫/琥珀轮廓、细椭圆光环和时钟圆弧，无面部或服装细节，中央大留白。1280×720 WebP 为 6558 字节，较旧图 124964 字节减少约 95%；来源与完整提示词见 `public/assets/site-artwork.json`、`public/assets/site-background-prompt.txt`。页面、样式、房间、背景、提示词、来源清单、游戏包和目录公网哈希与发布包完全一致。证据 `artifacts/outline-public-hashes.json`、`artifacts/lobby-public-e2e/results.json`、`artifacts/authority-deployment-results.json`。本次仅调整大厅与共享背景，沿用既有游戏逻辑；下方为前次发布记录。
+
 2026-10-22 大厅与服务器版更新已部署到 `https://223.109.141.251/`。当前应用 `/opt/arcade-online/releases/20261022061214-1497942`，上一版 `/opt/arcade-online/releases/20261021085137-1293425` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261022-060818-authority/release`。发布包 SHA256 `35ac02d7b24f7147a4e2a939ca5d10ecf06ce359a0b52c66772c597837193d48`，15.5 MiB，4466 个文件与构建哈希在本地及服务器全部通过校验。包内代码/素材与实现提交 `0fc6390a7c3b2409e39bce75207aff666d058a3d` 一致；本条现场记录在部署后另行提交，不反向修改已发布包的校验。部署工具记录 `2026-10-22T06:08:45Z`（北京时间 14:08:45），服务器目录时间有时钟偏差，不能当作本地精确时间。
 
 网站只展示八款服务器联机游戏，标题恢复原名，八张 WebP 封面为实际游戏画面。Flash 串流与浏览器房主网页、旧执行资源及原始 SWF 已退出网站/发布包；旧房间 URL 保留房间名并跳转对应服务器版。羽毛球素材和音效位于 `public/authority/assets/`。早濑优香与牧濑红莉栖最终背景通过用户指定的 Playwright 和已登录网站生成（网站模型标签 `GPT Image 2`），直接参考优香原图，已核对黑蓝三角机械发夹、双侧扎发和细长光环。WebP SHA256 `798c0eeac91beb2e13c2067135ae1efcdc28030dbb2351a21f0d3f6eecbefff6`；完整提示词与来源清单位于 `public/assets/site-background-prompt.txt`、`public/assets/site-artwork.json`。浏览器认证、临时下载地址和未选生成图不进入 Git 或发布包。
