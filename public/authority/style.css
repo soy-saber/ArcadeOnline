@@ -43,7 +43,7 @@
 .touch-controls button:active { background: #527450; }.bomb-button { padding: 18px 22px; min-height: 60px; font-size: 16px !important; }
 .authority-metrics { margin-top: 22px; max-width: 480px; background: #173632; border-color: #34564f; padding: 16px; font-size: 12px; }
 .authority-metrics dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.authority-metrics dd { margin: 0; }
-.fullscreen-exit { display: none; }
+.fullscreen-tools { display: none; }
 .battle-records { margin-top: 16px; padding: 16px; background: #173632; border-color: #34564f; }
 .battle-records .seat-heading h2 { font-size: 16px; }
 .battle-records .seat-heading > span { font-size: 11px; color: #a7c0b9; }
@@ -52,29 +52,72 @@
 .battle-records th, .battle-records td { text-align: center; padding: 9px 5px; border-bottom: 1px solid #34554e; }
 .battle-records th:first-child, .battle-records td:first-child { text-align: left; max-width: 120px; overflow-wrap: anywhere; }
 .battle-records tr.mine { background: #284a43; }
-#fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { background: #10272b; width: 100%; height: 100%; padding: 44px 18px 16px; box-sizing: border-box; overflow: auto; align-items: start; grid-template-columns: minmax(0, 1fr) 310px; gap: 18px; }
-#fullscreen-room.fullscreen-fallback { position: fixed; inset: 0; z-index: 1000; }
-#fullscreen-room:fullscreen .fullscreen-exit, #fullscreen-room.fullscreen-fallback .fullscreen-exit { display: block; position: absolute; top: 5px; right: 18px; z-index: 2; }
-#fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { width: auto; max-width: 100%; max-height: calc(100dvh - 230px); margin: auto; }
-#fullscreen-room:fullscreen #native-stage, #fullscreen-room.fullscreen-fallback #native-stage { border: 0; }
 [hidden] { display: none !important; }
-@media (min-width: 1000px) and (pointer: fine) { .touch-controls { display: none; } #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { max-height: calc(100dvh - 145px); } }
+@media (hover: hover) and (pointer: fine) { .touch-controls { display: none; } }
 @media (max-width: 850px) {
   .authority-page .room-shell { padding: 12px 12px 24px; }
   .authority-statusbar { align-items: start; gap: 8px; }.status-cluster { gap: 8px; }.status-cluster span { gap: 3px; }.status-cluster small { font-size: 10px; }
   .status-actions { gap: 8px; flex-shrink: 0; } #my-name { display: none; }
   #fullscreen-room { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .stage-caption { font-size: 11px; }.seats-panel { padding: 14px; }
-  #fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { grid-template-columns: minmax(0, 1fr); padding: 42px 12px 12px; gap: 12px; height: 100dvh; }
-  #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { width: 100%; max-height: 45dvh; object-fit: contain; }
-  #fullscreen-room:fullscreen .seat-row, #fullscreen-room.fullscreen-fallback .seat-row { min-height: 45px; padding: 6px; margin-bottom: 6px; }
-  #fullscreen-room:fullscreen .seats-panel, #fullscreen-room.fullscreen-fallback .seats-panel { padding: 10px; }
 }
-@media (max-width: 950px) and (orientation: landscape) {
-  #fullscreen-room:fullscreen, #fullscreen-room.fullscreen-fallback { grid-template-columns: minmax(0, 1fr) 260px; gap: 10px; }
-  #fullscreen-room:fullscreen #game-canvas, #fullscreen-room.fullscreen-fallback #game-canvas { max-height: calc(100dvh - 125px); }
-  #fullscreen-room:fullscreen .stage-caption, #fullscreen-room.fullscreen-fallback .stage-caption,
-  #fullscreen-room:fullscreen .weapon-status, #fullscreen-room.fullscreen-fallback .weapon-status { display: none; }
-  #fullscreen-room:fullscreen .direction-pad, #fullscreen-room.fullscreen-fallback .direction-pad { grid-template: repeat(2, 30px) / repeat(3, 38px); }
-  #fullscreen-room:fullscreen .bomb-button, #fullscreen-room.fullscreen-fallback .bomb-button { min-height: 46px; padding: 10px 12px; }
+html.game-fullscreen { scrollbar-gutter: auto; overflow: hidden; }
+body.game-fullscreen { overflow: hidden; }
+body.game-fullscreen .room-shell { z-index: 100; }
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+  width: 100vw;
+  height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+  background: #020509;
+}
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) .stage-column { width: 100%; max-width: none; height: 100%; }
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) #native-stage {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: #020509;
+}
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) #game-canvas {
+  width: min(100vw, calc(100dvh * var(--game-aspect)));
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) :is(.room-controls, .stage-caption, .weapon-status) { display: none !important; }
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) .fullscreen-tools {
+  display: flex;
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 4;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid #ffffff26;
+  border-radius: 8px;
+  background: #071019c4;
+}
+.fullscreen-tools .authority-ready { width: auto; min-width: 76px; margin: 0; }
+.authority-page .fullscreen-tools .fullscreen-exit { width: 36px; padding: 4px; font: 22px/24px system-ui; }
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) .touch-controls {
+  position: absolute;
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 3;
+  margin: 0;
+  pointer-events: none;
+}
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) .touch-controls button {
+  pointer-events: auto;
+  background: #173632bf;
+  border-color: #ffffff59;
 }

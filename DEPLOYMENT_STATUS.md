@@ -1,4 +1,10 @@
-**ArcadeOnline 公网部署记录 · 2026-10-22**
+**ArcadeOnline 公网部署记录 · 2026-10-23**
+
+2026-10-23 00:56（北京时间）游戏全屏布局修复已上线。当前发布目录 `/opt/arcade-online/releases/20261022165439-1600829`，上一版 `/opt/arcade-online/releases/20261022154927-1590253` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261023-fullscreen-511fa7d2/release`。发布包 SHA256 `511fa7d252769f1403e89da6cd5cd3a212053911e0f0c434d8cac74eb69852c5`，15.5 MiB，4466 个文件校验通过，应用、Caddy、coturn 均 active。此记录在发布包生成及部署完成后补充。
+
+全屏解除共享旧样式的 568px 宽度上限，以及侧栏、说明和触屏控制对画布高度的挤占；画布按原始宽高比最大化并居中，不裁剪或拉伸。全屏隐藏房间侧栏、战绩和设置，仅浮动显示准备与小型退出按钮；未入座时可一键选择空位并准备，按钮操作后键盘焦点回到游戏。触屏方向/攻击按钮覆盖在画面下方，不缩小画布。不支持原生全屏时使用同样的页面全屏布局，退出按钮和 Esc 均恢复普通房间。房间页的脚本与样式缓存版本更新为 `immersive-fullscreen-20261023`。
+
+本地类型检查、构建及发布校验通过；新增 `npm run test:fullscreen:e2e` 在本地与公网验证全部八款游戏的最大画布尺寸、居中和比例、精简按钮、入座准备、取消下一局准备、退出恢复，另验证 390×844 与 844×390 触屏模拟下的页面全屏和真实触摸攻击输入。既有服务器 E2E 通过四人准备/恢复、权威操作、羽毛球自然结算与自动续局；扩展 E2E 通过僵尸危机3及 Q版泡泡堂2的四人联机与模式切换。公网九项页面/样式/脚本/素材文件 SHA256 与工作区一致，健康、八款素材及 WebSocket 入房探针通过。证据：`artifacts/fullscreen-public-hashes.json`、`artifacts/fullscreen-e2e/results.json`、`artifacts/fullscreen-public-e2e/results.json` 及同目录桌面和触屏截图。浏览器验收来自同一台设备，不代表真实跨设备延迟测试。
 
 2026-10-22 23:51（北京时间）科技风清晰面部背景已部署到 `https://223.109.141.251/`。当前发布目录 `/opt/arcade-online/releases/20261022154927-1590253`，上一版 `/opt/arcade-online/releases/20261022102257-1537139` 保留可回滚；上传目录 `/home/zkh/arcade-deploy-20261022-soft-faces-c4664251/release`。发布包 SHA256 `ff3ce45b3d4108e16e5a27dda1baa33bc23df3fa433377b4c7fe75e0f3f094c3`，15.5 MiB，4466 个文件校验通过。应用、Caddy、coturn 均 active，健康检查通过。本条记录在发布包生成及部署完成后补充。
 

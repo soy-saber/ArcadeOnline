@@ -74,6 +74,7 @@ function start(): void {
     el<HTMLSelectElement>("game-loadout").parentElement!.hidden = true;
     el("sound-toggle").parentElement!.hidden = true;
   }
+  canvas.style.setProperty("--game-aspect", String(canvas.width / canvas.height));
   const mapSelect = el<HTMLSelectElement>("game-map");
   const modeSelect = el<HTMLSelectElement>("game-mode");
   if (adapter?.modes) {
@@ -167,10 +168,21 @@ function start(): void {
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-seat]")) button.onclick = () => {
     const requested = Number(button.dataset.seat); net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested }); button.blur();
   };
-  el<HTMLButtonElement>("start-game").onclick = () => {
-    if (seat) { const mine = net.room.members.find((member) => member.id === net.id); net.control({ t: "ready", ready: !mine?.ready }); }
-    el("start-game").blur();
-  };
+  function toggleReady(autoSit = false): void {
+    if (!net.connected) return;
+    if (seat) {
+      const mine = net.room.members.find((member) => member.id === net.id);
+      net.control({ t: "ready", ready: !mine?.ready });
+    } else if (autoSit) {
+      const available = Object.keys(net.room.seats).map(Number).find(number => !net.room.seats[number]);
+      if (!available) return;
+      net.control({ t: "sit", seat: available });
+      net.control({ t: "ready", ready: true });
+    }
+    canvas.focus({ preventScroll: true });
+  }
+  el<HTMLButtonElement>("start-game").onclick = () => toggleReady();
+  el<HTMLButtonElement>("fullscreen-ready").onclick = () => toggleReady(true);
   for (const key of ["map", "mode", "loadout"] as const) el<HTMLSelectElement>(`game-${key}`).onchange = () => {
     if (net.isController) net.control({ t: "authOptions", map: mapSelect.value, ...(adapter?.modes ? { gameMode: modeSelect.value } : {}), loadout: el<HTMLSelectElement>("game-loadout").value });
   };
@@ -190,13 +202,30 @@ function start(): void {
   el<HTMLInputElement>("sound-volume").oninput = (event) => { volume = Number((event.target as HTMLInputElement).value); localStorage.setItem("arcade_native_volume", String(volume)); soundUi(); };
   soundUi();
   const fullscreen = el("fullscreen-room");
+  function fullscreenUi(): void {
+    const active = !!document.fullscreenElement || fullscreen.classList.contains("fullscreen-fallback");
+    document.documentElement.classList.toggle("game-fullscreen", active);
+    document.body.classList.toggle("game-fullscreen", active);
+    el("fullscreen-stage").textContent = active ? "退出全屏" : "全屏";
+    clearInput();
+    canvas.focus({ preventScroll: true });
+  }
+  async function exitFullscreen(): Promise<void> {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    fullscreen.classList.remove("fullscreen-fallback");
+    fullscreenUi();
+  }
   el("fullscreen-stage").onclick = async () => {
-    try { if (document.fullscreenElement) await document.exitFullscreen(); else await fullscreen.requestFullscreen(); }
-    catch { fullscreen.classList.toggle("fullscreen-fallback"); }
-    el("fullscreen-stage").blur();
+    if (document.fullscreenElement || fullscreen.classList.contains("fullscreen-fallback")) { await exitFullscreen(); return; }
+    try { await fullscreen.requestFullscreen(); }
+    catch { fullscreen.classList.add("fullscreen-fallback"); }
+    fullscreenUi();
   };
-  el("exit-fullscreen").onclick = async () => { if (document.fullscreenElement) await document.exitFullscreen(); fullscreen.classList.remove("fullscreen-fallback"); };
-  document.addEventListener("fullscreenchange", () => el("fullscreen-stage").textContent = document.fullscreenElement ? "退出全屏" : "全屏");
+  el("exit-fullscreen").onclick = exitFullscreen;
+  document.addEventListener("fullscreenchange", fullscreenUi);
+  window.addEventListener("keydown", event => {
+    if (event.code === "Escape" && fullscreen.classList.contains("fullscreen-fallback")) void exitFullscreen();
+  });
   function updateUi(): void {
     const state = net.authority, mine = net.room.members.find((member) => member.id === net.id);
     el("conn-badge").textContent = net.connected ? "已连接" : "连接中";
@@ -231,6 +260,12 @@ function start(): void {
       }
     }
     ready.textContent = mine?.ready ? "取消准备" : "准备";
+    ready.setAttribute("aria-pressed", String(!!mine?.ready));
+    const fullscreenReady = el<HTMLButtonElement>("fullscreen-ready");
+    const hasOpenSeat = Object.values(net.room.seats).some(id => !id);
+    fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
+    fullscreenReady.textContent = seat ? ready.textContent : hasOpenSeat ? "入座并准备" : "席位已满";
+    fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
     if (state && isBomb(state)) {
       mapSelect.value = state.options.map; el<HTMLSelectElement>("game-loadout").value = state.options.loadout;
       const player = seat ? state.players[seat - 1] : null;

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10272b">
   <title>在线联机 - ArcadeOnline</title>
   <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/authority/style.css">
+  <link rel="stylesheet" href="/authority/style.css?v=immersive-fullscreen-20261023">
 <link rel="stylesheet" href="/theme.css?v=soft-faces-20261022">
   <script src="/arcade.js"></script>
 </head>
@@ -21,7 +21,10 @@
       <div class="status-actions"><span id="my-name"></span><button id="fullscreen-stage" class="btn ghost compact">全屏</button></div>
     </div>
     <div id="fullscreen-room">
-      <button id="exit-fullscreen" class="btn fullscreen-exit" aria-label="退出全屏">退出全屏</button>
+      <div class="fullscreen-tools">
+        <button id="fullscreen-ready" class="btn authority-ready" type="button" disabled>准备</button>
+        <button id="exit-fullscreen" class="btn fullscreen-exit" type="button" aria-label="退出全屏" title="退出全屏">×</button>
+      </div>
       <section class="stage-column">
         <div id="native-stage"><canvas id="game-canvas" tabindex="0" aria-label="联机游戏画面"></canvas></div>
         <div class="stage-caption"><span id="controls-guide">WASD / 方向键移动，空格 / 回车攻击。躲开爆炸，收集道具。</span><div class="sound-controls"><button id="sound-toggle" class="topbar-action" type="button" aria-pressed="true">音效：开</button><label for="sound-volume">音量 <input id="sound-volume" type="range" min="0" max="100" value="24"><span id="sound-volume-value">24%</span></label></div></div>
@@ -51,6 +54,6 @@
     </div>
     <details class="panel authority-metrics"><summary>连接诊断</summary><dl><dt>最近状态更新</dt><dd id="metrics-age">等待同步</dd><dt>本地输入到绘制</dt><dd id="metrics-predict">操作后采样</dd><dt>收发数据</dt><dd id="metrics-bandwidth">—</dd></dl></details>
   </main>
-  <script src="/authority/game.js"></script>
+  <script src="/authority/game.js?v=immersive-fullscreen-20261023"></script>
 </body>
 </html>

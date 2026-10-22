@@ -1,7 +1,7 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "b515b761fe6862443813c2a8cd8f408b67d508d006032bcde3b5ddb4738c28fc",
+    "public/authority/game.js": "1ccecbd7b1d79101b640b4066923eb97fa2cc4c6445641b7e580c9574f094dc4",
     "runtime/authority.cjs": "b2fb9a5f5220d45134d8fd5fc016992bd0c633379c7f60371d020b56d81dc823",
     "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
     "src/badminton/view.ts": "5daaad77c77d5f7ec7afad171cbb33c534c1a189ad5e397f29dad64cab7a1de8",
@@ -9,7 +9,7 @@
     "src/authority/bomb-view.ts": "f8cf9b4e30632e4410d3ce1c950a94cfbf33cc99e198857ae39c416f7d9911cd",
     "src/authority/client.ts": "f93a4bcfec1ca2a30cf61779c4cb9eaeb8b9dd2f0c48831dfa2354fe6cc8d596",
     "src/authority/engine.ts": "90ce5e690621e9518960d9b24b5063c4e55034312aa1c8b13b2c845c1e34a954",
-    "src/authority/main.ts": "d7ddbc42bc97ab30d6b12669161ed1e2e6509534e6284081d98cc44930f2d927",
+    "src/authority/main.ts": "2f124dce75e5bdbbd8f3449f2f7b5316665f26d6d2df34de668a6f571a11f35a",
     "src/authority/maps.ts": "a76f8903f1a71004e81d3ed215d9a48fb190c11c86a7f5f4b3c3b7adae40e4d3",
     "src/authority/nameplates.ts": "2b34a4ff64ba4420befcd6c700fa66150e7ce00c2c969d4fea4a5353e5314109",
     "src/authority/presentation.ts": "bd107d674dac566ab6f57efcb1bcabbe13a3c20fd2f51f6408ff7062a09866e9",

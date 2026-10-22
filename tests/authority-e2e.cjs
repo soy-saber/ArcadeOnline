@@ -47,11 +47,10 @@ const ready = (page, value) => page.evaluate((next) => window.__authorityTest.ne
   await p1.waitForFunction(() => document.fullscreenElement?.id === "fullscreen-room" || document.getElementById("fullscreen-room").classList.contains("fullscreen-fallback"));
   assert.equal(await p1.evaluate(() => {
     const stage = document.getElementById("fullscreen-room");
-    return ["game-canvas", "start-game", "seat-1"].every((id) => stage.contains(document.getElementById(id))) && !!stage.querySelector(".touch-controls");
+    return ["game-canvas", "fullscreen-ready"].every((id) => stage.contains(document.getElementById(id))) && getComputedStyle(stage.querySelector(".room-controls")).display === "none";
   }), true);
-  await p1.click('[data-seat="1"]'); await p2.click('[data-seat="2"]'); await p3.click('[data-seat="3"]');
+  await p1.click("#fullscreen-ready"); await p2.click('[data-seat="2"]'); await p3.click('[data-seat="3"]');
   await p1.waitForFunction(() => window.__authorityTest.network.room.members.filter((m) => m.seat).length === 3);
-  await p1.click("#start-game");
   await p1.waitForFunction(() => window.__authorityTest.network.room.members.some((m) => m.seat === 1 && m.ready));
   await p3.click('[data-seat="3"]');
   await p1.waitForFunction(() => !window.__authorityTest.network.room.members.some((m) => m.seat === 3));
@@ -88,7 +87,7 @@ const ready = (page, value) => page.evaluate((next) => window.__authorityTest.ne
   assert.equal(await p1.evaluate(() => window.__authorityTest.network.room.hostId), null);
   await p1.waitForFunction(() => document.querySelectorAll("#records-body tr").length === 4);
   assert.equal(await p1.evaluate(() => document.getElementById("fullscreen-room").contains(document.getElementById("battle-records"))), true);
-  results.push("Fullscreen seats/ready, retained readiness, original map options, four human seats");
+  results.push("Fullscreen quick sit/ready without sidebar, retained readiness, original map options, four human seats");
 
   const cdp = await p1.createCDPSession(); await cdp.send("Debugger.enable");
   const beforeFreeze = (await state(p2)).authority.tick;
@@ -119,7 +118,7 @@ const ready = (page, value) => page.evaluate((next) => window.__authorityTest.ne
     return records.length === 4 && records.reduce((n, record) => n + record.deaths, 0) >= 2 &&
       records.every((record) => Number.isInteger(record.kills) && record.kills >= 0);
   }), true);
-  results.push("Room scoreboard shows server-confirmed deaths and stays inside fullscreen");
+  results.push("Room scoreboard shows server-confirmed deaths in the normal room view");
 
   await p4.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
   await p4.evaluate(() => window.scrollTo(0, 0)); await wait(200);
@@ -127,8 +126,7 @@ const ready = (page, value) => page.evaluate((next) => window.__authorityTest.ne
   await p4.screenshot({ path: path.join(output, "bomb-mobile.png"), fullPage: true });
   await p4.click("#fullscreen-stage");
   await p4.waitForFunction(() => document.fullscreenElement?.id === "fullscreen-room" || document.getElementById("fullscreen-room").classList.contains("fullscreen-fallback"));
-  await p4.$eval("#start-game", (button) => button.scrollIntoView());
-  assert.equal(await p4.$eval("#start-game", (button) => { const rect = button.getBoundingClientRect(); return rect.top >= 0 && rect.bottom <= innerHeight && !button.disabled; }), true);
+  assert.equal(await p4.$eval("#fullscreen-ready", (button) => { const rect = button.getBoundingClientRect(); return rect.width > 0 && rect.top >= 0 && rect.bottom <= innerHeight && !button.disabled; }), true);
   await p4.screenshot({ path: path.join(output, "bomb-fullscreen-ready.png") });
   await p4.click("#exit-fullscreen");
 

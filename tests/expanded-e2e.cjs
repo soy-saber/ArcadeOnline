@@ -27,9 +27,6 @@ let browser;
       await page.waitForFunction(() => window.__authorityTest?.authority, { timeout: 10000 });
     }
     const [a, b] = pages;
-    await a.click("#fullscreen-stage");
-    await a.waitForFunction(() => document.fullscreenElement || document.querySelector(".fullscreen-fallback"));
-    assert(await a.evaluate(() => ["game-canvas", "start-game", "seat-1", "battle-records"].every(id => document.getElementById("fullscreen-room").contains(document.getElementById(id)))));
     await a.click('[data-seat="1"]'); await b.click(`[data-seat="${seat}"]`);
     if (fourPlayers) { await pages[2].click('[data-seat="2"]'); await pages[3].click('[data-seat="3"]'); }
     await a.waitForFunction(count => window.__authorityTest.network.room.members.filter(m => m.seat).length === count, {}, pages.length);
@@ -39,10 +36,13 @@ let browser;
       await a.select('#game-mode','kill');await a.waitForFunction(()=>window.__authorityTest.network.room.auth.options.gameMode==='kill');
       await a.select('#game-map','beach-two');await b.waitForFunction(()=>window.__authorityTest.authority.mapId==='beach-two'&&window.__authorityTest.authority.mode==='kill');
     }
+    await a.click("#fullscreen-stage");
+    await a.waitForFunction(() => document.fullscreenElement || document.querySelector(".fullscreen-fallback"));
+    assert(await a.evaluate(() => document.getElementById("fullscreen-room").contains(document.getElementById("fullscreen-ready")) && getComputedStyle(document.querySelector(".room-controls")).display === "none"));
     for (let i = 0; i < pages.length; i++) {
       const expectedSeat = i === 0 ? 1 : i === 1 ? seat : i;
       await pages[i].waitForFunction(seat => window.__authorityTest.seat === seat, {}, expectedSeat);
-      await pages[i].click('#start-game');
+      await pages[i].click(i === 0 ? '#fullscreen-ready' : '#start-game');
       await pages[i].waitForFunction(() => window.__authorityTest.network.room.members.find(m => m.id === window.__authorityTest.network.id)?.ready);
     }
     await Promise.all(pages.map(page => page.waitForFunction(() => window.__authorityTest.authority.phase === "playing")));

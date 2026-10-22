@@ -3737,6 +3737,7 @@
       el("game-loadout").parentElement.hidden = true;
       el("sound-toggle").parentElement.hidden = true;
     }
+    canvas.style.setProperty("--game-aspect", String(canvas.width / canvas.height));
     const mapSelect = el("game-map");
     const modeSelect = el("game-mode");
     if (adapter7?.modes) {
@@ -3916,13 +3917,21 @@
       net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested });
       button.blur();
     };
-    el("start-game").onclick = () => {
+    function toggleReady(autoSit = false) {
+      if (!net.connected) return;
       if (seat) {
         const mine = net.room.members.find((member) => member.id === net.id);
         net.control({ t: "ready", ready: !mine?.ready });
+      } else if (autoSit) {
+        const available = Object.keys(net.room.seats).map(Number).find((number) => !net.room.seats[number]);
+        if (!available) return;
+        net.control({ t: "sit", seat: available });
+        net.control({ t: "ready", ready: true });
       }
-      el("start-game").blur();
-    };
+      canvas.focus({ preventScroll: true });
+    }
+    el("start-game").onclick = () => toggleReady();
+    el("fullscreen-ready").onclick = () => toggleReady(true);
     for (const key of ["map", "mode", "loadout"]) el(`game-${key}`).onchange = () => {
       if (net.isController) net.control({ t: "authOptions", map: mapSelect.value, ...adapter7?.modes ? { gameMode: modeSelect.value } : {}, loadout: el("game-loadout").value });
     };
@@ -3967,20 +3976,36 @@
     };
     soundUi();
     const fullscreen = el("fullscreen-room");
-    el("fullscreen-stage").onclick = async () => {
-      try {
-        if (document.fullscreenElement) await document.exitFullscreen();
-        else await fullscreen.requestFullscreen();
-      } catch {
-        fullscreen.classList.toggle("fullscreen-fallback");
-      }
-      el("fullscreen-stage").blur();
-    };
-    el("exit-fullscreen").onclick = async () => {
+    function fullscreenUi() {
+      const active = !!document.fullscreenElement || fullscreen.classList.contains("fullscreen-fallback");
+      document.documentElement.classList.toggle("game-fullscreen", active);
+      document.body.classList.toggle("game-fullscreen", active);
+      el("fullscreen-stage").textContent = active ? "\u9000\u51FA\u5168\u5C4F" : "\u5168\u5C4F";
+      clearInput();
+      canvas.focus({ preventScroll: true });
+    }
+    async function exitFullscreen() {
       if (document.fullscreenElement) await document.exitFullscreen();
       fullscreen.classList.remove("fullscreen-fallback");
+      fullscreenUi();
+    }
+    el("fullscreen-stage").onclick = async () => {
+      if (document.fullscreenElement || fullscreen.classList.contains("fullscreen-fallback")) {
+        await exitFullscreen();
+        return;
+      }
+      try {
+        await fullscreen.requestFullscreen();
+      } catch {
+        fullscreen.classList.add("fullscreen-fallback");
+      }
+      fullscreenUi();
     };
-    document.addEventListener("fullscreenchange", () => el("fullscreen-stage").textContent = document.fullscreenElement ? "\u9000\u51FA\u5168\u5C4F" : "\u5168\u5C4F");
+    el("exit-fullscreen").onclick = exitFullscreen;
+    document.addEventListener("fullscreenchange", fullscreenUi);
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Escape" && fullscreen.classList.contains("fullscreen-fallback")) void exitFullscreen();
+    });
     function updateUi() {
       const state = net.authority, mine = net.room.members.find((member) => member.id === net.id);
       el("conn-badge").textContent = net.connected ? "\u5DF2\u8FDE\u63A5" : "\u8FDE\u63A5\u4E2D";
@@ -4025,6 +4050,12 @@
         }
       }
       ready.textContent = mine?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
+      ready.setAttribute("aria-pressed", String(!!mine?.ready));
+      const fullscreenReady = el("fullscreen-ready");
+      const hasOpenSeat = Object.values(net.room.seats).some((id) => !id);
+      fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
+      fullscreenReady.textContent = seat ? ready.textContent : hasOpenSeat ? "\u5165\u5EA7\u5E76\u51C6\u5907" : "\u5E2D\u4F4D\u5DF2\u6EE1";
+      fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
       if (state && isBomb(state)) {
         mapSelect.value = state.options.map;
         el("game-loadout").value = state.options.loadout;

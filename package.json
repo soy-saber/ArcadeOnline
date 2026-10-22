@@ -15,6 +15,7 @@
     "test:deploy": "node --test tests/deploy.test.cjs",
     "test:authority": "node --test tests/authority-protocol.test.cjs tests/authority-engine.test.cjs tests/authority-relay.test.cjs tests/authority-presentation.test.cjs tests/authority-records.test.cjs tests/authority-mechanics.test.cjs tests/original-maps.test.cjs",
     "test:authority:e2e": "node tests/authority-e2e.cjs",
+    "test:fullscreen:e2e": "node tests/fullscreen-e2e.cjs",
     "test:authority:weapons:e2e": "node tests/authority-weapons-e2e.cjs",
     "test:expanded": "node --test tests/expanded-*.test.cjs",
     "test:expanded:e2e": "node tests/expanded-e2e.cjs",
