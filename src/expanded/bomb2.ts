@@ -3,6 +3,8 @@ import type { Input, State, Adapter } from './types';
 import { MAPS } from './bomb2-maps';
 import { BRICKS } from './bomb2-art';
 import { KILL_ART } from './bomb2-kill-art';
+import { drawPlayerStatus, weaponBadge } from '../authority/player-status';
+import { BOMB2_CANVAS_WIDTH, bomb2Weapon, bomb2Status } from './bomb2-status';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
 const SPAWNS = [[1,1],[15,1],[1,13],[15,13]];
@@ -80,7 +82,7 @@ function place(s:State,p:any,kind='normal',x=p.x,y=p.y):boolean {
 }
 function take(s:State,p:any):void {
   const cell=index(p.x,p.y),item=s.items[cell];if(!item)return;s.items[cell]=0;
-  if(item===1)p.capacity=Math.min(8,p.capacity+1);else if(item===2)p.range=Math.min(10,p.range+1);else if(item===3)p.speed=Math.max(4,p.speed-1);
+  if(item===1)p.capacity=Math.min(8,p.capacity+1);else if(item===2)p.range=Math.min(10,p.range+1);else if(item===3)p.speed=Math.max(6,p.speed-1);
   else if(item===4)p.life=Math.min(5,p.life+1);else if(item===6)p.kick=true;else if(item===7)p.invulnerable=HZ*10;else if(item===22)p.shield=true;
   else if(item===9){p.points++;s.scores[p.seat-1]=p.points;}
   else if(item>=11&&item<=14){p.vehicle=item;p.vehicleUntil=s.tick+HZ*15;p.shield=true;}
@@ -99,9 +101,8 @@ function hit(s:State,p:any,owner:number):void {
   if(s.mode==='arcade')p.life--;p.deaths++;p.diedAt=s.tick;p.killedBy=owner;p.moveDir=-1;p.progress=0;
   if(p.life<=0){p.alive=false;p.respawnAt=0;}else p.respawnAt=s.tick+(s.mode==='kill'?RESPAWN_TICKS:HZ);
   p.attack=null;p.actionLock=0;
-  if(s.mode==='kill'){
-    dropWeapons(s,p);p.weaponStock=[];p.weapon=0;p.ammo=0;p.speed=8;p.moveTicks=8;p.capacity=1;p.range=1;p.kick=false;p.shield=false;p.vehicle=0;p.vehicleUntil=0;p.invulnerable=0;
-  }
+  if(s.mode==='kill')dropWeapons(s,p);
+  p.weaponStock=[];p.weapon=0;p.ammo=0;p.speed=8;p.moveTicks=8;p.capacity=1;p.range=1;p.kick=false;p.shield=false;p.vehicle=0;p.vehicleUntil=0;p.invulnerable=0;
   const killer=s.players.find(q=>q.seat===owner);
   if(killer&&owner!==p.seat){killer.kills++;if(s.mode==='kill'){killer.points++;s.scores[owner-1]=killer.points;}}
   else if(s.mode==='kill'&&owner===p.seat&&p.points>0){p.points--;s.scores[p.seat-1]=p.points;}
@@ -117,7 +118,7 @@ function useWeapon(s:State,p:any):void {
   }else{
     if(s.shots.length>=64||s.effects.length>=64)return;
     p.actionLock=WEAPON_LOCK[kind];
-    p.attack={kind,dir:p.dir,x:p.x,y:p.y,born:s.tick,at:s.tick+(kind===20?12:kind===21?1:WEAPON_LOCK[kind])};
+    p.attack={kind,dir:p.dir,x:p.x,y:p.y,born:s.tick,at:s.tick+(kind===20?12:kind===21?1:WEAPON_LOCK[kind]),remaining:p.weapon?Math.max(0,p.ammo-1):-1};
   }
   if(p.weapon&&--p.ammo<=0)p.weapon=0;
 }
@@ -183,9 +184,9 @@ export function step(s:State,inputs:Input[]):void {
       if(p.actionLock>0||p.attack){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
       else if(p.moveDir<0){
         const dir=direction(input);if(dir>=0)p.dir=dir;
-        if(input.attack>p.lastAttack){p.lastAttack=input.attack;if(s.mode==='kill')useWeapon(s,p);else place(s,p);}
+        if(input.attack>p.lastAttack){p.lastAttack=input.attack;if(s.mode==='kill'||p.weapon||s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat))useWeapon(s,p);else place(s,p);}
         if(input.alt>p.lastAlt){p.lastAlt=input.alt;useWeapon(s,p);}
-      }else if(s.mode!=='kill'&&input.attack>p.lastAttack){p.lastAttack=input.attack;place(s,p);}
+      }else if(s.mode!=='kill'&&!p.weapon&&!s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat)&&input.attack>p.lastAttack){p.lastAttack=input.attack;place(s,p);}
     }
     if(p.moveDir<0&&input&&p.actionLock===0&&!p.attack){const dir=direction(input);if(dir>=0){p.dir=dir;const [dx,dy]=DIRS[dir],x=p.x+dx,y=p.y+dy;
       const bomb=s.bombs.find((b:any)=>b.x===x&&b.y===y);if(bomb&&p.kick&&passable(s,x+dx,y+dy)){bomb.slide=dir;bomb.x+=dx;bomb.y+=dy;}
@@ -274,7 +275,7 @@ function timeline(ctx:CanvasRenderingContext2D,name:string,frame:number,x:number
   ctx.drawImage(img,n*meta.w,0,meta.w,meta.h,x+(feet?-meta.w/2:meta.x),y+(feet?-meta.feet:meta.y),meta.w,meta.h);return true;
 }
 export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):void {
-  const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,600,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,600,550);
+  const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,BOMB2_CANVAS_WIDTH,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,BOMB2_CANVAS_WIDTH,550);
   ctx.fillStyle='#fff';ctx.font='bold 21px system-ui';ctx.fillText('泡泡堂 2',24,32);if(!s)return;
   ctx.font='15px system-ui';ctx.fillText(`${THEMES[s.theme]} · ${['生存','击杀 10','金币 10','占地 50'][MODES.indexOf(s.mode)]}`,180,31);ctx.fillText(`${Math.max(0,Math.ceil((ROUND_TICKS-s.tick)/HZ))} 秒`,500,31);
   draw(ctx,'background-'+s.theme,left,top,WIDTH*cell,HEIGHT*cell);
@@ -317,17 +318,16 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     if(p.vehicle===12||p.vehicle===13||p.vehicle===14){draw(ctx,`vehicle-${p.seat-1}-${p.vehicle===12?'bulldozer':p.vehicle===13?'car':'frog'}-${['left','up','right','down'][p.dir]}`,x-20,y-42,40,42);}
     else if(img.complete&&img.naturalWidth){const h=37,w=width/img.naturalHeight*h;ctx.drawImage(img,(p.moveDir<0?0:Math.floor(s.tick/2)%frames)*width,0,width,img.naturalHeight,x-w/2,y-h,w,h);}
     ctx.globalAlpha=1;ctx.strokeStyle=p.seat===seat?'#fff':'#353352';ctx.lineWidth=2;if(p.shield||p.seat===seat){ctx.beginPath();ctx.ellipse(x,y-13,17,23,0,0,Math.PI*2);ctx.stroke();}
-    ctx.fillStyle='#fff';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText(s.mode==='kill'?`P${p.seat} ${p.points}/10`:`P${p.seat} ♥${p.life}`,x,y-40);
-    if(s.mode==='kill'||p.weapon){ctx.font='bold 10px system-ui';ctx.fillStyle='#fff2be';ctx.fillText(weaponLabel(s,p),x,y-66);}
+    const equipped=bomb2Weapon(s,p);if(equipped)weaponBadge(ctx,equipped,x,y-43,15);
     if(p.attack){const names:Record<number,string>={15:'hammer',16:'launcher',19:'shotgun',20:'laser-ready'};
       const name=names[p.attack.kind];if(name){const [dx,dy]=DIRS[p.attack.dir];timeline(ctx,name+(p.attack.kind===20?'':'-'+['left','up','right','down'][p.attack.dir]),s.tick-p.attack.born,x+dx*10,y-17+dy*10);}
     }
   }
-  ctx.textAlign='left';ctx.font='11px system-ui';for(const p of s.players){ctx.fillStyle=['','#72c3ff','#ffb6dc','#ffdf73','#9fe68d'][p.seat];ctx.fillText(s.mode==='kill'?`P${p.seat} ${p.points}/10  ${weaponLabel(s,p)}`:`P${p.seat} ${p.points}分 ♥${p.life}  ${p.weapon?LABELS[p.weapon]+'×'+p.ammo:'弹'+p.capacity+' 威力'+p.range}`,12+(p.seat-1)*148,541,140);}
+  drawPlayerStatus(ctx,bomb2Status(s),600,top,BOMB2_CANVAS_WIDTH-600,450,seat);
   if(s.phase!=='playing'){ctx.fillStyle='#17162fd9';ctx.fillRect(45,180,510,170);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 30px system-ui';ctx.fillText(s.phase==='waiting'?'准备开局':s.winner===null?'平局':`P${s.winner} 获胜`,300,255);ctx.font='16px system-ui';ctx.fillText(s.phase==='waiting'?'至少两人入座并准备':s.mode==='kill'?s.players.map(p=>`P${p.seat} ${p.points}分`).join('  '):'本局结束，准备下一局',300,292);ctx.textAlign='left';}
 }
-export const adapter:Adapter={id:'9109-server',title:'Q版泡泡堂2',seats:4,hz:HZ,width:600,height:550,create,step,valid,render,
-  controls:'方向键 / WASD 移动；空格放炸弹；J / Shift 使用武器或引爆遥控弹',
+export const adapter:Adapter={id:'9109-server',title:'Q版泡泡堂2',seats:4,hz:HZ,width:BOMB2_CANVAS_WIDTH,height:550,create,step,valid,render,
+  controls:'方向键 / WASD 移动；空格使用持有武器，无武器时放炸弹；J / Shift 也可使用武器或引爆遥控弹。',
   maps:MAPS.map(m=>({id:m.id,label:`${THEMES[m.theme]} ${['one','two','three'].indexOf(m.id.split('-')[1])+1}`})),
   modes:[{id:'arcade',label:'生存',description:'初始 3 条命，最后存活者获胜。'},
     {id:'kill',label:'击杀',description:'先得 10 分获胜，自杀扣 1 分；无限复活，基础锤子可反复使用。'},

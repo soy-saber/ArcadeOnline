@@ -54,7 +54,7 @@ test('grenades bounce and retain their fuse; rockets explode on contact',()=>{
 });
 test('barrel chains settle once; mines arm and charge packs require a second trigger',()=>{
  const s=arena(),p=s.players[0];p.dir=0;s.barrels=[{id:901,x:p.x+60,y:p.y,kind:'barrel',hp:1,owner:0,armed:0,exploded:false},{id:902,x:p.x+100,y:p.y,kind:'barrel',hp:60,owner:0,armed:0,exploded:false}];s.zombies=[zombie(903,p.x+125,p.y,100)];a.step(s,[input(1,{attack:1})]);assert.equal(s.barrels.length,0);assert.equal(p.kills,1);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);tick(s,1);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);
- const mine=arena(),m=equip(mine,6);m.dir=0;a.step(mine,[input(1,{attack:1})]);const item=mine.barrels[0];mine.zombies=[zombie(904,item.x,item.y)];tick(mine,1);assert.equal(mine.barrels.length,1);tick(mine,20);assert.equal(mine.barrels.length,0);
+ const mine=arena(),m=equip(mine,6);m.dir=0;a.step(mine,[input(1,{attack:1})]);const item=mine.barrels[0];mine.zombies=[zombie(904,item.x,item.y)];tick(mine,1);assert.equal(mine.barrels.length,1);assert.equal(item.detonateAt,mine.tick+50);tick(mine,49);assert.equal(mine.barrels.length,1);tick(mine,1);assert.equal(mine.barrels.length,0);
  const pack=arena(),q=equip(pack,8);q.dir=0;a.step(pack,[input(1,{attack:1})]);assert.equal(pack.barrels[0].kind,'chargepack');const ammo=q.ammo;tick(pack,3,[input(1,{attack:1})]);assert.equal(pack.barrels.length,1);a.step(pack,[input(2,{attack:2})]);assert.equal(pack.barrels.length,0);assert.equal(q.ammo,ammo);
 });
 test('native wall collision, enemy fireballs and pickups affect the authoritative state',()=>{
@@ -77,7 +77,7 @@ test('survival continues beyond six waves and twelve minutes with native wave co
  s.tick=25*60*12-1;tick(s);assert.equal(s.phase,'playing');
 });
 test('shared camera and nameplates contain all four separated humans on every native room',()=>{
- for(const map of data.maps){const s=a.create(1,true,[1,2,3,4],1,map.id);const corners=[[64,128],[map.width-64,128],[64,map.height-64],[map.width-64,map.height-64]];s.players.forEach((p,i)=>{p.x=corners[i][0];p.y=corners[i][1];});const c=world.camera(s),anchors=nameAnchors(s,1280,800);for(const [i,p]of s.players.entries()){const x=c.x+p.x*c.scale,y=c.y+p.y*c.scale;assert(x>=0&&x<=1280,map.id);assert(y>=84&&y<=800,map.id);assert(Math.abs(anchors[i].x-x)<1);assert(Math.abs(anchors[i].y-(c.y+(p.y-70)*c.scale))<1);}assert(c.visibleWidth>=Math.min(1152,map.width));}
+ for(const map of data.maps){const s=a.create(1,true,[1,2,3,4],1,map.id);const corners=[[64,128],[map.width-64,128],[64,map.height-64],[map.width-64,map.height-64]];s.players.forEach((p,i)=>{p.x=corners[i][0];p.y=corners[i][1];});const c=world.camera(s),anchors=nameAnchors(s,1280,800);for(const [i,p]of s.players.entries()){const x=c.x+p.x*c.scale,y=c.y+p.y*c.scale;assert(x>=0&&x<=1280,map.id);assert(y>=84&&y<=800,map.id);assert(Math.abs(anchors[i].x-x)<1);assert(Math.abs(anchors[i].y-(c.y+(p.y-87)*c.scale))<1);}assert(c.visibleWidth>=Math.min(1152,map.width));}
 });
 test('P3/P4 have independent monotonic input, shot ownership and death statistics',()=>{
  const s=arena();a.step(s,[input(1),input(2),input(8,{attack:1}),input(9,{attack:1})]);assert(s.bullets.some(b=>b.owner===3));assert(s.bullets.some(b=>b.owner===4));assert.deepEqual(s.ack,[1,2,8,9]);const p=s.players[3];p.hp=-1;tick(s);assert.equal(p.deaths,1);assert.equal(p.killedBy,0);assert(a.valid(s));

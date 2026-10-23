@@ -1,5 +1,5 @@
 .authority-page { background: #10272b; color: #e9f0e9; }
-.authority-page .room-shell { max-width: 1370px; margin: 0 auto; padding: 18px 24px 36px; }
+.authority-page .room-shell { width: min(calc(100% - 24px), 1370px); max-width: 1370px; margin: 0 auto; padding: 18px 24px 36px; }
 .authority-statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 16px; }
 .status-cluster, .status-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
 .status-cluster span { display: flex; gap: 6px; align-items: baseline; }
@@ -7,10 +7,11 @@
 .status-cluster b { font-size: 12px; }
 #fullscreen-room { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; position: relative; }
 .stage-column, .room-controls { min-width: 0; }
+.authority-page .stage-column { max-width: none; }
 #native-stage { background: #10272b; border: 1px solid #375852; border-radius: 16px; overflow: hidden; position: relative; }
 .player-nameplates { position: absolute; pointer-events: none; }
-.player-nameplate { position: absolute; transform: translate(-50%, 0); max-width: 130px; padding: 2px 5px; border-radius: 4px; background: #10272be8; color: #fff; font: 600 12px/16px system-ui; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-.player-nameplate.mine { color: #fff2a0; box-shadow: 0 0 0 1px #d6c77c; }
+.player-nameplate { position: absolute; transform: translate(-50%, 0); max-width: var(--name-width,86px); padding: 0 var(--name-pad,2px); border-radius: 2px; background: #10272b80; color: #fff; font: 500 var(--name-font,10px)/var(--name-line,12px) system-ui; text-shadow: 0 1px 2px #000; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.player-nameplate.mine { color: #fff2a0; }
 #game-canvas { width: 100%; height: auto; display: block; outline: none; }
 .stage-caption { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: 12px; color: #c3d5ca; padding: 12px 0 4px; flex-wrap: wrap; }
 .sound-controls { display: flex; gap: 12px; align-items: center; }

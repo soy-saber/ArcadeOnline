@@ -207,11 +207,11 @@ export class AuthorityEngine {
           // The badminton core retains held input when a lower sequence is
           // supplied. Neutralize using the current sequence after reconnect.
           const current = match.state.inputs?.[seat - 1] || empty;
-          return adapter ? { ...current, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
+          return adapter ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
         }
         if (now - remote.at <= 250) return remote.input;
         expireAction(room, seat, remote.input);
-        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
+        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
       });
       if (adapter) {
         const game = match.state as ExpandedState;

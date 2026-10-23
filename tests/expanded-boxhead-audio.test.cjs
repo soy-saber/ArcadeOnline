@@ -11,3 +11,9 @@ test('original audio events play once, honor volume/mute and do not replay snaps
  a.setVolume(.5);s.round=2;s.soundId=5;s.sounds=[{id:5,tick:20,name:'Effect.Explosion.wav'}];a.confirm(s);assert.equal(heard.length,1);
  s.soundId=6;s.sounds=[{id:6,tick:20,name:'Effect.Explosion.wav'}];a.confirm(s);assert.equal(heard.length,2);
 });
+test('native zombie ambience returns with a new horde and stops between waves or when muted',()=>{
+ const heard=[],stopped=[];global.Audio=class {constructor(src){this.src=src;}play(){heard.push(this);return Promise.resolve();}pause(){stopped.push(this.src);}};
+ const s=a.create(20,true,[1,2],1);a.setSound(true);a.setVolume(.4);a.confirm(s);s.zombies=[{x:100,y:100}];s.tick=150;a.confirm(s);assert(heard.at(-1).src.includes('creature-zombie-ambience-'));assert(heard.at(-1).volume>0&&heard.at(-1).volume<.4);const count=heard.length;
+ s.zombies=[];s.tick=151;a.confirm(s);assert(stopped.length>0);
+ s.zombies=[{x:100,y:100}];s.tick=301;a.confirm(s);assert.equal(heard.length,count+1);a.setSound(false);assert(stopped.length>1);s.tick=451;a.confirm(s);assert.equal(heard.length,count+1);
+});

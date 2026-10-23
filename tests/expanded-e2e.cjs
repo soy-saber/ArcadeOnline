@@ -74,7 +74,7 @@ let browser;
     }
     await b.keyboard.down("Space"); await wait(["fbw_forest-server", "137953-server"].includes(game.id) ? 80 : 400); await b.keyboard.up("Space");
     await a.waitForFunction(seat => window.__authorityTest.authority.players.find(p => p.seat === seat)?.lastAttack > 0, { timeout: 5000 }, seat);
-    if (["50737-server", "97734-server"].includes(game.id)) {
+    if (game.id === '97734-server') {
       assert(await b.evaluate(seat => window.__authorityTest.authority.players.find(p => p.seat === seat).lastAttack > 1, seat), "held fire repeats");
     }
     if (game.id === '9109-server' && await a.evaluate(()=>window.__authorityTest.authority.mode==='arcade')) {

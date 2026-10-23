@@ -1,0 +1,24 @@
+'use strict';
+// Isolated test process. This IPC fixture is never included in a release.
+const path=require('node:path'),root=path.resolve(__dirname,'../..'),{AuthorityEngine}=require(path.join(root,'runtime/authority.cjs'));
+const rooms=new Map(),onRoom=AuthorityEngine.prototype.onRoom;
+AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return onRoom.call(this,room);};
+process.on('message',m=>{try{
+ const room=rooms.get(m.room),s=room?.auth?.state;if(!s||s.phase!=='playing')throw new Error('Test round not playing');
+ if(m.action==='pickup'){
+   s.board.fill(0);s.bombs=[];s.flames.fill(0);if(s.tiles)s.tiles.fill(0);
+   const [p,q]=s.players;if(p.actionLock||p.attack||p.moveDir>=0)throw new Error('Player action not recovered');p.x=3;p.y=4;q.x=11;q.y=8;
+   s.items.fill(s.gameId?0:null);s.items[4*('gameId'in s?17:15)+4]=m.kind;
+ }else if(m.action==='zombies'){
+   s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];
+   const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;
+   s.zombies=Array.from({length:4},()=>({id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99}));
+ }else if(m.action==='friendly'){
+   if(s.zombies.length)throw new Error('Enemies must be defeated through real attacks first');const [p,q]=s.players;if(p.invul||q.invul)throw new Error('Spawn protection still active');
+   p.x=144;p.y=272;p.dir=0;q.x=204;q.y=272;
+ }else if(m.action==='next-wave'){
+   if(s.zombies.length)throw new Error('Wave is not cleared');s.spawnLeft=0;s.devilLeft=0;
+ }else throw new Error('Unknown fixture action');
+ process.send({id:m.id,ok:true});
+}catch(e){process.send({id:m.id,error:e.message});}});
+require(path.join(root,'server.js'));

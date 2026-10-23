@@ -32,14 +32,17 @@ function start(): void {
   let seat: number | null = null, round = -1, seq = 0, bomb = 0, jump = 0, hit = 0;
   let held: Input | null = null, lastHitAt = 0, lastFrameAt = performance.now();
   let selectedWeapon: number | undefined;
+  let weaponStep = 1;
+  let cancelledAttack = 0;
   let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
   let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
   const keys = new Map<string, number>();
   const bombDirections: Record<string, BombInput["dir"]> = { KeyA: 0, ArrowLeft: 0, KeyW: 1, ArrowUp: 1, KeyD: 2, ArrowRight: 2, KeyS: 3, ArrowDown: 3 };
   const tank = adapter?.id === "137953-server", bomb2 = adapter?.id === "9109-server", shooters = adapter?.id === "50737-server" || adapter?.id === "97734-server";
-  const actions = badminton ? ["KeyS", "ArrowDown", "Space", "Enter"] : adapter ? ["Space", "Enter", "KeyE", ...(tank || bomb2 ? [] : ["KeyJ", "KeyZ"])] : ["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"];
-  const jumps = adapter ? ["KeyK", "KeyX", ...(tank || bomb2 ? ["KeyJ", "ShiftLeft", "ShiftRight"] : [])] : ["KeyW", "ArrowUp"];
+  const boxhead = adapter?.id === '50737-server';
+  const actions = badminton ? ["KeyS", "ArrowDown", "Space", "Enter"] : adapter ? ["Space", "Enter", ...(boxhead?[]:["KeyE"]), ...(tank || bomb2 ? [] : ["KeyJ", "KeyZ"])] : ["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"];
+  const jumps = adapter ? ["KeyK", "KeyX", ...(boxhead?["KeyQ","KeyE"]:[]), ...(tank || bomb2 ? ["KeyJ", "ShiftLeft", "ShiftRight"] : [])] : ["KeyW", "ArrowUp"];
   let sound = localStorage.getItem("arcade_native_sound") !== "off";
   let volume = Math.max(0, Math.min(100, Number(localStorage.getItem("arcade_native_volume") ?? 24)));
   if (!Number.isFinite(volume)) volume = 24;
@@ -84,9 +87,9 @@ function start(): void {
   }
   for (const map of adapter?.maps || ORIGINAL_MAPS) { const option = document.createElement("option"); option.value = map.id; option.textContent = map.label; mapSelect.append(option); }
   function notice(message: string): void { el("connection-note").textContent = message; }
-  function clearInput(): void { keys.clear(); held = null; presentation.clearPrediction(); }
+  function clearInput(): void { if(boxhead&&actions.some(code=>keys.has(code)))cancelledAttack=bomb;keys.clear(); held = null; presentation.clearPrediction(); }
   function resetRound(next: number): void {
-    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; clearInput();
+    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; cancelledAttack=0;clearInput();
   }
   function alignCounters(state: State): void {
     if (!seat) return;
@@ -129,10 +132,10 @@ function start(): void {
     }
   }
   function currentInput(now: number): Input {
-    if (adapter && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
+    if (adapter && !boxhead && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
     if (adapter) return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"),
       up: keys.has("KeyW") || keys.has("ArrowUp"), down: keys.has("KeyS") || keys.has("ArrowDown"), attack: bomb, alt: jump,
-      ...(adapter.id === "50737-server" && selectedWeapon !== undefined ? {weapon:selectedWeapon} : {}) };
+      ...(boxhead ? {trigger:actions.some(code=>keys.has(code)),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
       if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) { hit++; lastHitAt = now; }
       return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"), jump, hit };
@@ -151,7 +154,7 @@ function start(): void {
     if (!seat || net.authority?.phase !== "playing" || keys.has(code)) return;
     const now = performance.now(); keys.set(code, now); inputAt = now;
     if (actions.includes(code)) { if (badminton) { hit++; lastHitAt = now; play("whoosh"); } else { bomb++; lastHitAt = now; } }
-    if ((badminton || adapter) && jumps.includes(code)) { jump++; selectedWeapon=undefined; }
+    if ((badminton || adapter) && jumps.includes(code)) { jump++; selectedWeapon=undefined; weaponStep=code==='KeyQ'?-1:1; }
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {

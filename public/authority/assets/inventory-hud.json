@@ -1,0 +1,187 @@
+{
+  "sources": [
+    {
+      "path": "games/3881/game.swf",
+      "sha256": "a2b4cc65115e4b6eb813962d80e91f1e65746a91f27e91d5e86fa1963ed5b54d",
+      "symbols": [
+        294,
+        528
+      ]
+    },
+    {
+      "path": "games/9109/game.swf",
+      "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+      "embeddedSha256": "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+      "symbols": [
+        3463
+      ]
+    }
+  ],
+  "method": "JPEXS static sprite export; transparent bounds crop; original inventory HUD artwork, no generated replacement graphics",
+  "assets": [
+    {
+      "path": "public/authority/assets/hud-portrait-1.png",
+      "sha256": "c1331452a51a8d6d372806893abac87f04bee817a7e683604480db5ec7e7979b",
+      "sourceFrame": "1.png",
+      "crop": [
+        9,
+        12,
+        54,
+        48
+      ]
+    },
+    {
+      "path": "public/authority/assets/hud-portrait-2.png",
+      "sha256": "341eb837e39ad4976c3f1a38031389f259e1da1e24cfe294f8f2be1b3a76ac5d",
+      "sourceFrame": "2.png",
+      "crop": [
+        9,
+        12,
+        54,
+        48
+      ]
+    },
+    {
+      "path": "public/authority/assets/hud-portrait-3.png",
+      "sha256": "85c49e2b3f628b3312f4c02003e299f68292355789c84d3fc13d5827d50102c1",
+      "sourceFrame": "3.png",
+      "crop": [
+        9,
+        12,
+        54,
+        48
+      ]
+    },
+    {
+      "path": "public/authority/assets/hud-portrait-4.png",
+      "sha256": "b5701c3896a414ebafad283e274eef446a88f6aefff60e8899f6d4ddbde0ea07",
+      "sourceFrame": "4.png",
+      "crop": [
+        9,
+        12,
+        54,
+        48
+      ]
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-life.png",
+      "sha256": "018713759d52c0f177f01596144dc79af2a00ce13283de9654875bc773e4bc8c",
+      "sourceFrame": "1.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-push.png",
+      "sha256": "1039845ea8d6c6dd5cb03a0b79e766be6c1c1f89cc1bcb848eb0274a73dbf6e0",
+      "sourceFrame": "2.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-bomb.png",
+      "sha256": "d61db657d2daf64791951d2875ad096a1b6a8dadf402440ce03aca8b5daf5715",
+      "sourceFrame": "3.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-shield.png",
+      "sha256": "9504aa31d81e2c7c3236220ec98497cb362a13d2855270a4d7ad5e74d8bf4426",
+      "sourceFrame": "4.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-range.png",
+      "sha256": "a6975f89c532e4c445e94cfbd50b1e180990a9d456820e1b4ae335d1cb670b8f",
+      "sourceFrame": "5.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-speed.png",
+      "sha256": "505e865bed62526f2eaa4f9b83f289bfa81f401d237d63ce19b8d7628a3d7c4b",
+      "sourceFrame": "6.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-rocket.png",
+      "sha256": "48b1b7393a968288c48613e35c32828d0bd49131ca20896a8149c07e330d6b2f",
+      "sourceFrame": "7.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-mine.png",
+      "sha256": "5e525e01b373667bdc7574048866e8b47fbd3266fc65c70ba9ea94d4c52bc2ee",
+      "sourceFrame": "8.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-grenade.png",
+      "sha256": "12a40d5337b3138249e4eeb8a7a6618e1bc1ba28634436b9d755b8dd7797272b",
+      "sourceFrame": "9.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-gas.png",
+      "sha256": "6ce2edf44d67a33795d08d7b1f15a5817eb6deb2bd2dce302badac1b8801bab7",
+      "sourceFrame": "10.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-ice.png",
+      "sha256": "f55273240d32589f05c9f95f9b73bbdd06cc20aaec609552b37e0bdec7c8d3d0",
+      "sourceFrame": "11.png",
+      "crop": null
+    },
+    {
+      "path": "public/authority/assets/hud-weapon-fire.png",
+      "sha256": "1598f49d28f92445631fbc633035764790c7026fc2243bc8dbcdaf77def4593a",
+      "sourceFrame": "12.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-15.png",
+      "sha256": "dcf6f2163b70eaa34a74b55db338dadb61b138895d309d271a201e419bd69e57",
+      "sourceFrame": "1.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-16.png",
+      "sha256": "ebf908abadf4d87e03df9780cd9013c55fbe2d69fa3ccf1123b7dd1f09c5927b",
+      "sourceFrame": "3.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-17.png",
+      "sha256": "c250471be69a7015d67f135c6ae2bb20e5fde48f87f5dd9b5dd792ff69e87c12",
+      "sourceFrame": "8.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-18.png",
+      "sha256": "b07c3902205d8150633f5b1993de450fa331291a7c5645db1d7773ae51b56867",
+      "sourceFrame": "6.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-19.png",
+      "sha256": "3ea183e4982adc9524bf70eea657eda4b7d37775116a967f7f3e0328335dc169",
+      "sourceFrame": "4.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-20.png",
+      "sha256": "5afe957e4e8ad6fd434fac4bf70e81d2503eb684480eba31f4801b4864fdfc55",
+      "sourceFrame": "7.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-21.png",
+      "sha256": "865bc91b68b1ec46ce56122dce4a3caf0b5311f408708e18a4d42a14e195c098",
+      "sourceFrame": "5.png",
+      "crop": null
+    },
+    {
+      "path": "public/expanded/assets/bomb2/hud-weapon-remote-trigger.png",
+      "sha256": "4220a7e4ca6825a731b12ec2e22009d7547693bcb7d4cdb9834ad29d660346cc",
+      "sourceFrame": "9.png",
+      "crop": null
+    }
+  ]
+}

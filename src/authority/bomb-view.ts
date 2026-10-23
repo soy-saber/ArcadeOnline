@@ -1,5 +1,7 @@
 import { GameState, HZ, WIDTH, HEIGHT, ROUND_TICKS, position, index, WEAPONS, ITEM_LABELS, visibleSpecials } from "./bomb-core";
 import { ORIGINAL_MAPS, BRICK_RASTER_ORIGIN, originalMap } from "./maps";
+import { drawPlayerStatus, weaponBadge } from './player-status';
+import { BOMB_CANVAS_WIDTH, BOMB_FIELD_WIDTH, bombWeapon, bombStatus, bombBadgeAnchor } from './bomb-status';
 
 const CELL = 44, LEFT = 28, TOP = 66;
 export class GameView {
@@ -19,7 +21,7 @@ export class GameView {
   private finishedRound = 0;
   private finishedAt = 0;
   constructor(readonly canvas: HTMLCanvasElement) {
-    canvas.width = LEFT * 2 + WIDTH * CELL;
+    canvas.width = BOMB_CANVAS_WIDTH;
     canvas.height = TOP + HEIGHT * CELL + 28;
     this.ctx = canvas.getContext("2d", { alpha: false })!;
     for (const name of ["floor", "crate", "wall", "bomb", "mine", "gas", "grenade", "fx-fire", "fx-ice", "fx-blast", "fx-death",
@@ -114,7 +116,7 @@ export class GameView {
     if (theme && visual) draws.push({ depth: 6 * WIDTH + (WIDTH - 6), draw: () => this.mapBrick(visual.landmark, 6, 5) });
     ctx.textAlign = "right"; ctx.font = "600 18px system-ui";
     const seconds = Math.max(0, Math.ceil((ROUND_TICKS - state.tick) / HZ));
-    ctx.fillText(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`, this.canvas.width - LEFT, 39);
+    ctx.fillText(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`, BOMB_FIELD_WIDTH - LEFT, 39);
     for (let y = 0; y < HEIGHT; y++) for (let x = 0; x < WIDTH; x++) {
       const px = LEFT + x * CELL, py = TOP + y * CELL, cell = index(x, y);
       ctx.fillStyle = (x + y) % 2 ? "#b2c9a6" : "#bdd3b0"; ctx.fillRect(px, py, CELL, CELL);
@@ -195,29 +197,22 @@ export class GameView {
       ctx.globalAlpha = 1;
       if (player.frozen) { ctx.fillStyle = "#92dcff99"; ctx.fillRect(x - 15, y - 38, 30, 38); }
       if (player.slow) { ctx.strokeStyle = "#a97be3"; ctx.lineWidth = 3; ctx.strokeRect(x - 17, y - 5, 34, 5); }
-      ctx.font = "bold 11px system-ui"; ctx.textAlign = "center"; ctx.fillStyle = "#173534";
-      ctx.fillText(`P${player.seat}${player.life > 1 ? ` ♥${player.life}` : ""}`, x, y - CELL - 8);
       } });
     }
     for (const { draw } of draws.sort((a, b) => a.depth - b.depth)) draw();
     if (state.phase === "playing") for (const player of state.players) {
       if (!player.alive || !player.weapon || player.ammo <= 0) continue;
-      const pos = position(player), x = LEFT + (pos.x + .5) * CELL, y = TOP + (pos.y + 1) * CELL;
-      const label = `${ITEM_LABELS[player.weapon]} ×${player.ammo}`;
-      ctx.save(); ctx.font = "bold 12px system-ui"; ctx.textAlign = "center";
-      const width = ctx.measureText(label).width + 28;
-      ctx.fillStyle = "#10272be8"; ctx.fillRect(x - width / 2, y - CELL - 45, width, 20);
-      this.sprite(`item-${player.weapon}`, x - width / 2 + 10, y - CELL - 27, 16, 16);
-      ctx.fillStyle = "#fff2b0"; ctx.fillText(label, x + 9, y - CELL - 30); ctx.restore();
+      const anchor=bombBadgeAnchor(player),weapon=bombWeapon(player);if(weapon)weaponBadge(ctx,weapon,anchor.x,anchor.y,18);
     }
     if (state.phase !== "playing") {
       ctx.fillStyle = "#10272bd9"; ctx.fillRect(LEFT, TOP, WIDTH * CELL, HEIGHT * CELL);
       ctx.textAlign = "center"; ctx.fillStyle = "#fff5dc"; ctx.font = "bold 32px system-ui";
       const winner = !state.winner ? "平局" : state.options.mode === "coop" ? state.winner === 1 ? "合作队伍获胜" : "电脑队伍获胜" : `P${state.winner} 获胜`;
-      ctx.fillText(state.phase === "waiting" ? "准备开局" : winner, this.canvas.width / 2, this.canvas.height / 2 - 12);
+      ctx.fillText(state.phase === "waiting" ? "准备开局" : winner, BOMB_FIELD_WIDTH / 2, this.canvas.height / 2 - 12);
       ctx.font = "17px system-ui"; ctx.fillStyle = "#c3d5ca";
       if (state.phase === "finished" && state.round !== this.finishedRound) { this.finishedRound = state.round; this.finishedAt = now; }
-      ctx.fillText(state.phase === "waiting" ? "至少两人入座，全员准备后开局" : `下一局将在 ${Math.max(0, Math.ceil((3000 - (now - this.finishedAt)) / 1000))} 秒后自动开始`, this.canvas.width / 2, this.canvas.height / 2 + 24);
+      ctx.fillText(state.phase === "waiting" ? "至少两人入座，全员准备后开局" : `下一局将在 ${Math.max(0, Math.ceil((3000 - (now - this.finishedAt)) / 1000))} 秒后自动开始`, BOMB_FIELD_WIDTH / 2, this.canvas.height / 2 + 24);
     }
+    drawPlayerStatus(ctx,bombStatus(state),BOMB_FIELD_WIDTH,TOP,this.canvas.width-BOMB_FIELD_WIDTH,HEIGHT*CELL,seat);
   }
 }

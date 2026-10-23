@@ -62,6 +62,8 @@ export function weaponStats(s: State, index: number) {
   const base = WEAPONS[index], props: Record<string,boolean> = {};
   for (const u of data.upgrades) if (u.threshold <= s.peakCombo && (u.mClassID === 'CThing_Weapon_'+base.classId || u.mClassID === 'CThing_Object_'+base.classId)) props[u.mProp] = true;
   return {...base, damage:base.damage*(props.FatalDamage?10:props.QuadDamage?4:props.DoubleDamage?2:1),
+    auto:base.id==='uzi'||!!props.FastFire||!!props.RapidFire,
+    onRelease:base.id==='grenade',
     rate:props.RapidFire?Math.max(2,Math.round(base.rate/4)):base.rate,
     ammo:props.InfinateAmmo?-1:base.ammo*(props.QuadAmmo?4:props.DoubleAmmo?2:1),
     range:props.InfinateRange?100:base.range*(props.LongShot?1.5:1),

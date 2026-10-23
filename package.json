@@ -20,6 +20,7 @@
     "test:expanded": "node --test tests/expanded-*.test.cjs",
     "test:expanded:e2e": "node tests/expanded-e2e.cjs",
     "test:boxhead:assets:e2e": "node tests/expanded-boxhead-assets-e2e.cjs",
+    "test:fidelity:e2e": "node scripts/build-native.cjs && node tests/fidelity-e2e.cjs",
     "test:expanded:kill:e2e": "node scripts/build-native.cjs && node tests/expanded-kill-e2e.cjs",
     "test:lobby:e2e": "node tests/lobby-e2e.cjs",
     "package:linux": "node scripts/package-linux.cjs",
