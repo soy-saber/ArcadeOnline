@@ -1,5 +1,13 @@
 **ArcadeOnline 公网部署记录 · 2026-10-23**
 
+2026-10-23 19:42（北京时间）三款优先游戏的原作规则与 HUD 修正已部署至 `https://223.109.141.251/`，实现提交 `83c3877`。当前发布目录 `/opt/arcade-online/releases/20261023114211-1794632`，上一版 `/opt/arcade-online/releases/20261022181006-1613521` 保留可回滚。上传目录 `/home/zkh/arcade-deploy-20261023-fidelity-075c607a/release`；包 SHA256 `075c607a04ff27c88c901070761dfd6153814e754d395f9bf8a7e04e889081cd`，20.2 MiB，4698 文件及构建来源校验通过。应用、Caddy、coturn 均 active，健康检查通过。本条为部署后补充记录。
+
+僵尸危机3补回友伤与爆炸自伤、Q/E 双向切枪、死亡/复活清空非手枪弹药、单发/自动/手雷松开投掷区别、人物附近剩余弹药、原版下一波声音与僵尸环境音、地雷触发倒计时；地图静态层按原作缓存位图。泡泡堂1/2补回原 SWF 武器图标与头顶次数、右侧四人状态面板；泡泡堂2四模式优先使用所持武器、死亡清空装备及原版速度强化上限。普通窗口与全屏统一缩放图标，姓名缩小并避让；保留用户指定的手套/特殊武器间隔、陷阱可见规则、四人权威架构及僵尸大视野。逐项来源及仍有近似的范围见 [FIDELITY_AUDIT.md](FIDELITY_AUDIT.md)，不据此宣称全部游戏已完整还原。
+
+本地类型检查、构建及发布校验通过，单元测试 144/144、部署测试 5/5 通过。真实 Chrome 专项通过泡泡堂1六种/泡泡堂2七种特殊武器实际拾取与使用、头顶和面板原版图标/次数一致；僵尸以原始 100 HP 敌人实际击杀解锁 UZI，真实 Q/E、不射击切换、持续友伤击倒、自然复活空库存及自然清场后的第二波音效均通过。全部 178 张僵尸贴图、26 声音及 18 地图解码与四人视野检查通过。证据：`artifacts/fidelity-e2e/results.json`、`artifacts/boxhead-original/results.json`、`artifacts/fidelity-unit-tests.log`。
+
+公网健康、八款目录/资源和 WSS 入房探针通过；33 个本轮 HUD/封面/目录/页面/样式/浏览器包文件 SHA256 与发布内容一致，见 `artifacts/fidelity-public-hashes.json`。公网八款全屏及两种触屏方向回归通过；僵尸危机3和泡泡堂2的四人准备、真实移动/攻击、完整/增量同步、恢复、换图与继续开局通过；泡泡堂1姓名/武器次数、冰箭恢复与陷阱仅拥有者可见回归通过。证据：`artifacts/fullscreen-public-e2e/results.json`、`artifacts/expanded-public-e2e/results.json`、`artifacts/authority-weapons-public-e2e/results.json`。浏览器均来自同一设备；本轮未重复测试跨地点设备或 TURN 实际中继。
+
 2026-10-23 僵尸危机3 原版补齐已部署至 `https://223.109.141.251/`，实现提交 `b593464`。当前发布目录 `/opt/arcade-online/releases/20261022181006-1613521`，上一版 `/opt/arcade-online/releases/20261022165439-1600829` 保留可回滚。上传目录 `/home/zkh/arcade-deploy-20261023-boxhead-93de2e3a/release`；包 SHA256 `93de2e3aa1d9b824c26e362a8af49251ce09cf3b76294bb77a7a373b7e2fced4`，20.2 MiB，4669 文件及构建来源哈希校验通过，应用/Caddy/coturn active，健康检查通过。本条为部署后补充记录。
 
 `50737-server` 导入 18 张原版地图、四人外观及僵尸/恶魔的 78 组贴图动作、原版物件/特效与 26 音频；服务器实现十种武器、58 条连击升级、持续生存、队友复活、迷宫寻路和共享缩放视野。替换此前两张自制地图、五枪、三命和六波目标；切换武器保留弹药。画布 1280×800，常规世界视野至少宽 1152 像素，小图整体显示，队友分散时继续扩大范围。来源和仍有近似的行为见 [BOXHEAD_RECONSTRUCTION.md](BOXHEAD_RECONSTRUCTION.md)。原始 SWF 未改写。
