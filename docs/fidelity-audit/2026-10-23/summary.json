@@ -1,0 +1,612 @@
+{
+  "auditDate": "2026-10-23",
+  "sourceCommit": "ecf9e37c34e666e2f0441b045e3125af3af907eb",
+  "browserRecordedAt": "2026-10-23T12:51:37.077Z",
+  "sourceChecksRecordedAt": "2026-10-23T12:51:55.160Z",
+  "scope": "all selectable map previews and two-player real-input smoke, not complete original runtime parity or full-level routes",
+  "gameCount": 8,
+  "mapPreviewCount": 83,
+  "browserErrors": [],
+  "assetChecks": {
+    "checked": 4148,
+    "mismatches": []
+  },
+  "sourceChecks": {
+    "checked": 38,
+    "mismatches": []
+  },
+  "games": [
+    {
+      "id": "3881-server",
+      "title": "Q版泡泡堂",
+      "maps": [
+        {
+          "id": "forest",
+          "label": "森林"
+        },
+        {
+          "id": "desert",
+          "label": "沙漠"
+        },
+        {
+          "id": "city",
+          "label": "城市"
+        },
+        {
+          "id": "treasure",
+          "label": "藏宝"
+        },
+        {
+          "id": "candy",
+          "label": "糖果屋"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 5,
+      "phase": "playing",
+      "players": 4,
+      "canvas": [
+        892,
+        666
+      ],
+      "audioControlVisible": true,
+      "observedAudio": [
+        "/authority/assets/place.mp3"
+      ],
+      "screenshot": "3881-server.png"
+    },
+    {
+      "id": "46923-server",
+      "title": "火柴人打羽毛球",
+      "maps": [],
+      "modes": [],
+      "previewsChecked": 0,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        1100,
+        800
+      ],
+      "audioControlVisible": true,
+      "observedAudio": [
+        "/authority/assets/badminton-whoosh.mp3",
+        "/authority/assets/badminton-hit.mp3"
+      ],
+      "screenshot": "46923-server.png"
+    },
+    {
+      "id": "137953-server",
+      "title": "坦克动荡2",
+      "maps": [
+        {
+          "id": "random",
+          "label": "原版随机迷宫"
+        },
+        {
+          "id": "compact",
+          "label": "小型迷宫"
+        },
+        {
+          "id": "large",
+          "label": "大型迷宫"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 3,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        712,
+        490
+      ],
+      "audioControlVisible": false,
+      "observedAudio": [],
+      "screenshot": "137953-server.png"
+    },
+    {
+      "id": "50737-server",
+      "title": "僵尸危机3",
+      "maps": [
+        {
+          "id": "original-01",
+          "label": "01 · BOXY"
+        },
+        {
+          "id": "original-02",
+          "label": "02 · BUTTONS"
+        },
+        {
+          "id": "original-03",
+          "label": "03 · MAZEY"
+        },
+        {
+          "id": "original-04",
+          "label": "04 · GLADIATOR"
+        },
+        {
+          "id": "original-05",
+          "label": "05 · STRIP"
+        },
+        {
+          "id": "original-06",
+          "label": "06 · TIGHT"
+        },
+        {
+          "id": "original-07",
+          "label": "07 · COLUMNS"
+        },
+        {
+          "id": "original-08",
+          "label": "08 · CASTLE"
+        },
+        {
+          "id": "original-09",
+          "label": "09 · BIG BOXY"
+        },
+        {
+          "id": "original-10",
+          "label": "10 · RECTY"
+        },
+        {
+          "id": "original-11",
+          "label": "11 · PATCHY"
+        },
+        {
+          "id": "original-12",
+          "label": "12 · FOREST BOX"
+        },
+        {
+          "id": "original-13",
+          "label": "13 · TIGHT 2"
+        },
+        {
+          "id": "original-14",
+          "label": "14 · MASSIVE"
+        },
+        {
+          "id": "original-15",
+          "label": "15 · THIN LINE"
+        },
+        {
+          "id": "original-16",
+          "label": "16 · 4 CASTLES"
+        },
+        {
+          "id": "original-17",
+          "label": "17 · THE STRIPS"
+        },
+        {
+          "id": "original-18",
+          "label": "18 · BIG ONE"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 18,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        1280,
+        800
+      ],
+      "audioControlVisible": true,
+      "observedAudio": [
+        "/expanded/assets/boxhead/weapon-pistol-fire.mp3"
+      ],
+      "screenshot": "50737-server.png"
+    },
+    {
+      "id": "6232-server",
+      "title": "疯狂小人战斗",
+      "maps": [
+        {
+          "id": "Rooftop",
+          "label": "屋顶"
+        },
+        {
+          "id": "Mogadishu",
+          "label": "城市"
+        },
+        {
+          "id": "B52",
+          "label": "轰炸机"
+        },
+        {
+          "id": "Space",
+          "label": "太空"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 4,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        1000,
+        650
+      ],
+      "audioControlVisible": false,
+      "observedAudio": [],
+      "screenshot": "6232-server.png"
+    },
+    {
+      "id": "9109-server",
+      "title": "Q版泡泡堂2",
+      "maps": [
+        {
+          "id": "mine-one",
+          "label": "矿洞 1"
+        },
+        {
+          "id": "mine-two",
+          "label": "矿洞 2"
+        },
+        {
+          "id": "mine-three",
+          "label": "矿洞 3"
+        },
+        {
+          "id": "beach-one",
+          "label": "海滩 1"
+        },
+        {
+          "id": "beach-two",
+          "label": "海滩 2"
+        },
+        {
+          "id": "beach-three",
+          "label": "海滩 3"
+        },
+        {
+          "id": "snow-one",
+          "label": "冰雪 1"
+        },
+        {
+          "id": "snow-two",
+          "label": "冰雪 2"
+        },
+        {
+          "id": "snow-three",
+          "label": "冰雪 3"
+        },
+        {
+          "id": "disce-two",
+          "label": "迪斯科 2"
+        },
+        {
+          "id": "disce-three",
+          "label": "迪斯科 3"
+        },
+        {
+          "id": "disce-one",
+          "label": "迪斯科 1"
+        },
+        {
+          "id": "factory-two",
+          "label": "工厂 2"
+        },
+        {
+          "id": "factory-one",
+          "label": "工厂 1"
+        },
+        {
+          "id": "factory-three",
+          "label": "工厂 3"
+        },
+        {
+          "id": "center-three",
+          "label": "城市 3"
+        },
+        {
+          "id": "center-two",
+          "label": "城市 2"
+        },
+        {
+          "id": "center-one",
+          "label": "城市 1"
+        }
+      ],
+      "modes": [
+        {
+          "id": "arcade",
+          "label": "生存"
+        },
+        {
+          "id": "kill",
+          "label": "击杀"
+        },
+        {
+          "id": "collect",
+          "label": "金币"
+        },
+        {
+          "id": "color",
+          "label": "占地"
+        }
+      ],
+      "previewsChecked": 18,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        754,
+        550
+      ],
+      "audioControlVisible": false,
+      "observedAudio": [],
+      "screenshot": "9109-server.png"
+    },
+    {
+      "id": "97734-server",
+      "title": "混乱大枪战2",
+      "maps": [
+        {
+          "id": "1838",
+          "label": "Classic"
+        },
+        {
+          "id": "1872",
+          "label": "Twin Towers"
+        },
+        {
+          "id": "1875",
+          "label": "Crossfire"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 3,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        900,
+        600
+      ],
+      "audioControlVisible": false,
+      "observedAudio": [],
+      "screenshot": "97734-server.png"
+    },
+    {
+      "id": "fbw_forest-server",
+      "title": "森林冰火人",
+      "maps": [
+        {
+          "id": "forest_01",
+          "label": "森林神殿 1"
+        },
+        {
+          "id": "forest_02",
+          "label": "森林神殿 2"
+        },
+        {
+          "id": "forest_03",
+          "label": "森林神殿 3"
+        },
+        {
+          "id": "forest_04",
+          "label": "森林神殿 4"
+        },
+        {
+          "id": "forest_05",
+          "label": "森林神殿 5"
+        },
+        {
+          "id": "forest_06",
+          "label": "森林神殿 6"
+        },
+        {
+          "id": "forest_07",
+          "label": "森林神殿 7"
+        },
+        {
+          "id": "forest_08",
+          "label": "森林神殿 8"
+        },
+        {
+          "id": "forest_09",
+          "label": "森林神殿 9"
+        },
+        {
+          "id": "forest_10",
+          "label": "森林神殿 10"
+        },
+        {
+          "id": "forest_11",
+          "label": "森林神殿 11"
+        },
+        {
+          "id": "forest_12",
+          "label": "森林神殿 12"
+        },
+        {
+          "id": "forest_13",
+          "label": "森林神殿 13"
+        },
+        {
+          "id": "forest_14",
+          "label": "森林神殿 14"
+        },
+        {
+          "id": "forest_15",
+          "label": "森林神殿 15"
+        },
+        {
+          "id": "forest_16",
+          "label": "森林神殿 16"
+        },
+        {
+          "id": "forest_17",
+          "label": "森林神殿 17"
+        },
+        {
+          "id": "forest_18",
+          "label": "森林神殿 18"
+        },
+        {
+          "id": "forest_19",
+          "label": "森林神殿 19"
+        },
+        {
+          "id": "forest_20",
+          "label": "森林神殿 20"
+        },
+        {
+          "id": "forest_21",
+          "label": "森林神殿 21"
+        },
+        {
+          "id": "forest_22",
+          "label": "森林神殿 22"
+        },
+        {
+          "id": "forest_23",
+          "label": "森林神殿 23"
+        },
+        {
+          "id": "forest_24",
+          "label": "森林神殿 24"
+        },
+        {
+          "id": "forest_25",
+          "label": "森林神殿 25"
+        },
+        {
+          "id": "forest_26",
+          "label": "森林神殿 26"
+        },
+        {
+          "id": "forest_27",
+          "label": "森林神殿 27"
+        },
+        {
+          "id": "forest_28",
+          "label": "森林神殿 28"
+        },
+        {
+          "id": "forest_29",
+          "label": "森林神殿 29"
+        },
+        {
+          "id": "forest_30",
+          "label": "森林神殿 30"
+        },
+        {
+          "id": "forest_31",
+          "label": "森林神殿 31"
+        },
+        {
+          "id": "forest_32",
+          "label": "森林神殿 32"
+        }
+      ],
+      "modes": [],
+      "previewsChecked": 32,
+      "phase": "playing",
+      "players": 2,
+      "canvas": [
+        1248,
+        928
+      ],
+      "audioControlVisible": false,
+      "observedAudio": [],
+      "screenshot": "fbw_forest-server.png"
+    }
+  ],
+  "gunmayhem": {
+    "sourceGetgunSymbolCount": 86,
+    "nativeGunFamilies": 4,
+    "nativeMaps": 3
+  },
+  "forestMissingAtlasMappings": [
+    {
+      "type": "wind",
+      "requestedFrame": "wind0000",
+      "exists": false,
+      "instances": 24,
+      "levels": [
+        "forest_03",
+        "forest_09",
+        "forest_14",
+        "forest_20",
+        "forest_21",
+        "forest_22",
+        "forest_25",
+        "forest_26",
+        "forest_27",
+        "forest_28"
+      ],
+      "actualAtlasFrames": [
+        "wind_base0000",
+        "wind_base0001",
+        "wind_base0002",
+        "wind_base0003",
+        "wind_base_light_off0000",
+        "wind_base_light_on0000",
+        "wind_effect0000",
+        "wind_effect0001"
+      ]
+    },
+    {
+      "type": "roman",
+      "requestedFrame": "roman0000",
+      "exists": false,
+      "instances": 3,
+      "levels": [
+        "forest_14",
+        "forest_24"
+      ],
+      "actualAtlasFrames": [
+        "roman_bar0000",
+        "roman_base0000",
+        "roman_center0000",
+        "roman_end0000"
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "gameId": "3881-server",
+      "file": "3881-server.png",
+      "bytes": 602866,
+      "sha256": "2f32395c34e2cc09fbc7c2f4a91eef71290c4bbef7d1d377e2029f3a60655caa"
+    },
+    {
+      "gameId": "46923-server",
+      "file": "46923-server.png",
+      "bytes": 806213,
+      "sha256": "2149f0266712b58f930664eae4fb1fd8903b2716103567442789931dd231159d"
+    },
+    {
+      "gameId": "137953-server",
+      "file": "137953-server.png",
+      "bytes": 51888,
+      "sha256": "2d5aa696c2ebabcbb2979727e988cf8b3b084c9c7f12aa990799047e46762510"
+    },
+    {
+      "gameId": "50737-server",
+      "file": "50737-server.png",
+      "bytes": 68739,
+      "sha256": "edfb6c5eae197b034e84fe195b088f8cfcddda4236d21bb21f52578a95b62e57"
+    },
+    {
+      "gameId": "6232-server",
+      "file": "6232-server.png",
+      "bytes": 48560,
+      "sha256": "c8ad94aad5e13db30546df4feb6de3f83c56574f94b34bc628ba3fd4c2a67755"
+    },
+    {
+      "gameId": "9109-server",
+      "file": "9109-server.png",
+      "bytes": 531002,
+      "sha256": "377c78057a2a0a1b11fd4000fd39e1e54ba0f87b72bee3de45a06b70f41a2ba0"
+    },
+    {
+      "gameId": "97734-server",
+      "file": "97734-server.png",
+      "bytes": 58455,
+      "sha256": "107304ae86d77acbd826366179077796c03a1fd570ee18a473d6913b3eed2a7b"
+    },
+    {
+      "gameId": "fbw_forest-server",
+      "file": "fbw_forest-server.png",
+      "bytes": 241154,
+      "sha256": "b8d915701debe463137c3a27682cc9a1a7e1dcd421d3e352bcc6f4ae367daa6b"
+    }
+  ]
+}
