@@ -1,5 +1,7 @@
 # Shooter server reconstructions
 
+**2026-10-23 full audit:** [ALL_GAMES_FIDELITY_AUDIT.md](ALL_GAMES_FIDELITY_AUDIT.md) records the current Gun Mayhem gaps: three rescaled collision layouts with procedural scenery, four native gun families versus 86 distinct gun symbols referenced by the source `getgun` branches, a static player image and no audio playback. The source custom-menu code treats map selectors 22/23 as random choices (ranges 1–9 / 1–21); the older “22-map” wording below is not an exact count of authored maps. The symbol count includes variants and is not a claim that every symbol is obtainable in ordinary play.
+
 **2026-10-23 Boxhead replacement:** the `50737-server` implementation described below has been superseded by 18 original rooms, textured native character animations, ten weapons, original multiplier upgrades, endless survival, original audio and an expanded shared camera. See [BOXHEAD_RECONSTRUCTION.md](BOXHEAD_RECONSTRUCTION.md) for current behavior, extraction evidence, tests and remaining approximations. The old Boxhead sections below are historical implementation notes; the Gun Mayhem section remains applicable.
 
 The native adapters `50737-server` and `97734-server` run simulation in Node, send authoritative snapshots, and lazily draw original extracted art in Canvas. No SWF runtime, creator-stream, client hit reports or client world-state writes are involved. Raw SWFs were preserved.
