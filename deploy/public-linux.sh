@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Public deployment on Ubuntu 24.04 / Debian 12 or newer, with systemd.
+# Public deployment on Ubuntu 22.04+ / Debian 12+, with systemd.
 # Example: sudo env PUBLIC_IP=203.0.113.10 bash deploy/public-linux.sh
 ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 die() { printf '[arcade-online] %s\n' "$*" >&2; exit 1; }
@@ -29,14 +29,28 @@ fi
 
 bash "$ROOT_DIR/deploy-linux.sh" deploy
 apt-get update
+had_caddy_config=0
+if [[ -e /etc/caddy/Caddyfile ]]; then had_caddy_config=1; fi
+temp_dir="$(mktemp -d)"
+trap 'rm -rf -- "$temp_dir"' EXIT
+# Ubuntu 22.04 images may not have Caddy in their enabled distribution repos.
+# Use the official signed stable repository only when no candidate is available.
+# https://caddyserver.com/docs/install#debian-ubuntu-raspbian
+if ! apt-cache show caddy >/dev/null 2>&1; then
+  DEBIAN_FRONTEND=noninteractive apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl gpg
+  curl -fsSL --retry 3 https://dl.cloudsmith.io/public/caddy/stable/gpg.key -o "$temp_dir/caddy-key.asc"
+  gpg --batch --yes --dearmor -o "$temp_dir/caddy-key.gpg" "$temp_dir/caddy-key.asc"
+  curl -fsSL --retry 3 https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt -o "$temp_dir/caddy-stable.list"
+  install -m 0644 "$temp_dir/caddy-key.gpg" /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  install -m 0644 "$temp_dir/caddy-stable.list" /etc/apt/sources.list.d/caddy-stable.list
+  apt-get update
+fi
 DEBIAN_FRONTEND=noninteractive apt-get install -y caddy coturn openssl
 # Ubuntu's bundled Caddy predates IP certificate profiles. Keep the distro user
 # and systemd unit, but select a checksummed upstream binary in a drop-in.
 CADDY_VERSION=2.11.7
 case "$(uname -m)" in x86_64|amd64) caddy_arch=amd64 ;; aarch64|arm64) caddy_arch=arm64 ;; *) die "Public installer requires x86_64 or arm64." ;; esac
 caddy_dir="/opt/arcade-online/caddy/$CADDY_VERSION"
-temp_dir="$(mktemp -d)"
-trap 'rm -rf -- "$temp_dir"' EXIT
 if [[ ! -x "$caddy_dir/caddy" ]]; then
   archive="caddy_${CADDY_VERSION}_linux_${caddy_arch}.tar.gz"
   url="https://github.com/caddyserver/caddy/releases/download/v$CADDY_VERSION"
@@ -87,6 +101,11 @@ restore_configuration() {
 }
 trap 'restore_configuration' ERR
 install -m 0644 "$temp_dir/arcade-online.caddy" /etc/caddy/arcade-online.caddy
+if (( had_caddy_config == 0 )); then
+  # A fresh package installs a :80 welcome page. Let automatic HTTPS handle
+  # redirects instead; configurations that existed before installation stay.
+  printf '# ArcadeOnline public site\n' > /etc/caddy/Caddyfile
+fi
 /opt/arcade-online/node/bin/node "$ROOT_DIR/deploy/configure-caddy.cjs" /etc/caddy/Caddyfile "${ARCADE_DOMAIN:-$PUBLIC_IP}"
 "$caddy_dir/caddy" validate --config /etc/caddy/Caddyfile --adapter caddyfile
 install -d -m 0755 /etc/systemd/system/caddy.service.d

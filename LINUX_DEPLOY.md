@@ -48,7 +48,7 @@ sudo ufw allow 3478/udp
 sudo ufw allow 49160:49260/udp
 ```
 
-脚本部署三项 systemd 服务：`arcade-online`、`caddy`、`coturn`，启用开机启动。Node 固定为 22.23.3，Caddy 固定为 2.11.7，分别校验官方 SHA256 与 SHA512。Caddy 使用发行版提供的服务用户和 systemd 单元，通过独立 drop-in 选择新版可执行文件，避免 Ubuntu 内置旧版本不支持证书 profile。
+脚本部署三项 systemd 服务：`arcade-online`、`caddy`、`coturn`，启用开机启动。Node 固定为 22.23.3，Caddy 固定为 2.11.7，分别校验官方 SHA256 与 SHA512。Caddy 使用软件包提供的服务用户和 systemd 单元，通过独立 drop-in 选择新版可执行文件，避免 Ubuntu 内置旧版本不支持证书 profile。Ubuntu 22.04 等默认软件源找不到 Caddy 时，安装脚本按 [Caddy 官方指引](https://caddyserver.com/docs/install#debian-ubuntu-raspbian) 添加签名的 stable APT 软件源后安装。
 
 浏览器访问 `https://你的公网IP/`。IP 证书通过 Let's Encrypt 的 `shortlived` profile 申请，由 Caddy 自动续期，服务器需持续在线，80/443 在续期时也必须可达。当前部署已验证真实 IP 证书签发、Ubuntu 服务启动和可信 HTTPS/WSS；**真实 TURN 链路与一次实际自动续期仍待验收**。新部署也需逐项检查，不能把“安装服务成功”当作“证书已签发”。
 
