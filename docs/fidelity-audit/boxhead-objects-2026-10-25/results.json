@@ -1,0 +1,544 @@
+{
+  "at": "2026-10-24T18:28:42.000Z",
+  "earned": {
+    "kills": 56,
+    "peakCombo": 55,
+    "stock": [
+      10,
+      10
+    ]
+  },
+  "multiplePackPlacement": true,
+  "nativeSlowAndFastAnimation": true,
+  "nativeFloorLayer": true,
+  "lastAmmoDetonator": true,
+  "additiveFeedbackPixels": [
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 1
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 1
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    }
+  ],
+  "recovery": {
+    "request": {
+      "tick": 810,
+      "full": 10,
+      "packs": [
+        {
+          "id": 480,
+          "x": 176,
+          "y": 272,
+          "kind": "chargepack",
+          "hp": 60,
+          "damage": 150,
+          "owner": 1,
+          "exploded": false,
+          "armed": 706,
+          "detonateAt": 0,
+          "animation": 1.1600000000000017,
+          "detonating": true,
+          "detonateCounter": 1.5,
+          "queueAt": 812
+        },
+        {
+          "id": 482,
+          "x": 272,
+          "y": 272,
+          "kind": "chargepack",
+          "hp": 60,
+          "damage": 150,
+          "owner": 1,
+          "exploded": false,
+          "armed": 745,
+          "detonateAt": 0,
+          "animation": 1.600000000000001,
+          "detonating": true,
+          "detonateCounter": 1.5,
+          "queueAt": 812
+        }
+      ]
+    },
+    "recovery": {
+      "tick": 810,
+      "packs": [
+        {
+          "id": 480,
+          "queueAt": 812,
+          "preserved": true
+        },
+        {
+          "id": 482,
+          "queueAt": 812,
+          "preserved": true
+        }
+      ]
+    },
+    "feedback": {
+      "tick": 814,
+      "brightness": 0.6000000000000001,
+      "shakeY": 15
+    }
+  },
+  "final": {
+    "players": [
+      {
+        "seat": 1,
+        "alive": true,
+        "ammo": 0
+      },
+      {
+        "seat": 2,
+        "alive": true,
+        "ammo": 9
+      }
+    ],
+    "remaining": [
+      {
+        "owner": 2,
+        "detonating": false
+      }
+    ],
+    "draws": [
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 897
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 900
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 900
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 901
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 901
+      }
+    ],
+    "placementCues": 11,
+    "detonateCues": 10
+  },
+  "errors": []
+}

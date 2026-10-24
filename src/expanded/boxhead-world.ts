@@ -55,7 +55,7 @@ export function camera(s: State, width = WIDTH, height = HEIGHT) {
   const viewW=width/scale, viewH=areaH/scale;
   const cx=viewW>=map.width ? map.width/2 : Math.max(viewW/2,Math.min(map.width-viewW/2,(minX+maxX)/2));
   const cy=viewH>=map.height ? map.height/2 : Math.max(viewH/2,Math.min(map.height-viewH/2,(minY+maxY)/2));
-  return {scale,x:width/2-cx*scale,y:HUD+areaH/2-cy*scale,visibleWidth:viewW,visibleHeight:viewH};
+  return {scale,x:width/2-cx*scale,y:HUD+areaH/2-(cy+(s.shakeY??0))*scale,visibleWidth:viewW,visibleHeight:viewH};
 }
 
 export function weaponStats(s: State, index: number) {

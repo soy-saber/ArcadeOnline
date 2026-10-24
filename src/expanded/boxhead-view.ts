@@ -2,6 +2,7 @@ import data from './boxhead-data.json';
 import type { State } from './types';
 import { WIDTH, HEIGHT, HUD, WEAPONS, camera, room } from './boxhead-world';
 import { explosionFrame } from './boxhead-explosions';
+import { drawBrightness } from './boxhead-feedback';
 
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
@@ -48,12 +49,13 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   if(floorBitmap)c.drawImage(floorBitmap,0,0,map.width,map.height);
   else{c.fillStyle='#c6c5bd';c.fillRect(0,0,map.width,map.height);}
   for(const e of s.effects)if(['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){c.globalAlpha=Math.min(1,e.life/60);sprite(c,e.kind,e.x,e.y);c.globalAlpha=1;}
+  for(const b of s.barrels)if(b.kind==='mine'||b.kind==='chargepack')sprite(c,b.kind==='mine'?'Object.Mine':'Object.ChargePack',b.x,b.y,b.animation);
   for(const corpse of s.corpses){const age=s.tick-corpse.deadAt;person(c,corpse.character,age<15?'dying':'dead',corpse,s.tick,age);}
   for(const p of s.players.filter(p=>!p.alive))person(c,p.character,s.tick-p.deadAt<15?'dying':'dead',p,s.tick,s.tick-p.deadAt);
   for(const p of s.pickups)if(p.life>50||s.tick%6<3)sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
-  const entities=[...s.barrels.map((b:any)=>({...b,entity:'object'})),...s.zombies.map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
+  const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
-    if(p.entity==='object'){sprite(c,p.kind==='barrel'?'Object.Barrel':p.kind==='wall'?'Object.Wall':p.kind==='mine'?'Object.Mine':'Object.ChargePack',p.x,p.y,p.detonateAt?s.tick%2:s.tick%20<10?0:1);continue;}
+    if(p.entity==='object'){sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y,0);continue;}
     if(p.entity==='human'){
       const gun=WEAPONS[p.weapon],action=s.tick-p.hitAt<5?'hitfront':(gun.pose?gun.pose+'-':'')+(p.moving?'walk':'stand');
       c.globalAlpha=p.invul>0&&s.tick%4<2?.55:1;person(c,p.character,action,p,s.tick);c.globalAlpha=1;
@@ -72,6 +74,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   if(coverBitmap)c.drawImage(coverBitmap,0,0,map.width,map.height);
   for(const p of s.players.filter(p=>p.alive))health(c,p,seat);
   c.restore();
+  drawBrightness(c,s.brightness,WIDTH,HEIGHT,HUD);
   c.fillStyle='#242823';c.fillRect(0,0,WIDTH,HUD);c.fillStyle='#ecebdf';c.font='bold 20px monospace';c.textAlign='left';
   c.fillText(`BOXHEAD 2PLAY  ·  第 ${s.wave||1} 波`,20,28);
   c.fillStyle='#dddac3';c.font='17px monospace';c.fillText(`SCORE ${s.score.toLocaleString()}   ×${s.combo}`,430,28);

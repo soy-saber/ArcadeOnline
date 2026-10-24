@@ -1,0 +1,60 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{fork}=require('child_process'),puppeteer=require('puppeteer-core');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/boxhead-objects-e2e'),port=47000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],pending=new Map(),wait=ms=>new Promise(r=>setTimeout(r,ms));let browser,id=0;
+const server=fork(path.join(__dirname,'fixtures/fidelity-server.cjs'),[],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});server.stderr.on('data',d=>errors.push(d.toString()));server.on('message',m=>{const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve();}});
+function fixture(room,action,extra={}){return new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});server.send({id:key,room,action,...extra});setTimeout(()=>{if(pending.delete(key))reject(Error('Fixture timeout'));},5000).unref();});}
+async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
+async function move(p,key,predicate){await focus(p);await p.keyboard.down(key);await p.waitForFunction(predicate);await p.keyboard.up(key);}
+async function select(p,key,index,seat=1){await focus(p);await p.keyboard.press(key);await p.waitForFunction((index,seat)=>window.__authorityTest.authority.players.find(p=>p.seat===seat).weapon===index,{},index,seat);}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='objects-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<2;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(15000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
+  await p.evaluateOnNewDocument(i=>{localStorage.setItem('arcade_name','Object P'+(i+1));localStorage.setItem('arcade_native_sound','on');window.__draws=[];window.__renderOrder=[];window.__sounds=[];window.__feedbackPixels=[];
+   const draw=CanvasRenderingContext2D.prototype.drawImage,fill=CanvasRenderingContext2D.prototype.fillRect,play=HTMLMediaElement.prototype.play;
+   CanvasRenderingContext2D.prototype.fillRect=function(...args){if(this.canvas.id==='game-canvas'&&args[0]===0&&args[1]===0&&args[2]===1280&&args[3]===800)window.__renderOrder=[];
+    const feedback=this.canvas.id==='game-canvas'&&this.globalCompositeOperation==='lighter'&&args[0]===0&&args[1]===84;
+    const before=feedback?[...this.getImageData(8,92,1,1).data]:null,hud=feedback?[...this.getImageData(8,8,1,1).data]:null,alpha=this.globalAlpha,result=fill.apply(this,args);
+    if(feedback){window.__feedbackPixels.push({before,after:[...this.getImageData(8,92,1,1).data],hudBefore:hud,hudAfter:[...this.getImageData(8,8,1,1).data],alpha});if(window.__feedbackPixels.length>100)window.__feedbackPixels.shift();}return result;};
+   CanvasRenderingContext2D.prototype.drawImage=function(...args){if(this.canvas.id==='game-canvas'&&args[0]?.src){const name=args[0].src.split('/').pop();window.__renderOrder.push(name);if(name==='object-chargepack.png'){window.__draws.push({name,args:args.slice(1),tick:window.__authorityTest?.authority.tick});if(window.__draws.length>2000)window.__draws.splice(0,500);}}return draw.apply(this,args);};
+   HTMLMediaElement.prototype.play=function(){window.__sounds.push(this.src);return play.call(this);};
+  },i);
+  await p.goto(`${base}/authority-room.html?game=50737-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);
+ }
+ const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await fixture(room,'boxhead-horde');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].x===144);await focus(a);
+ for(let n=0;n<16;n++){await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await a.keyboard.press('Space');await a.waitForFunction(n=>window.__authorityTest.authority.players[0].lastAttack>=n,{},n+1);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===4);
+ for(let group=1;group<=13;group++){
+  await fixture(room,'boxhead-horde');await select(a,'Digit2',1);await a.keyboard.down('Space');const target=(group+1)*4,deadline=Date.now()+10000;
+  while(Date.now()<deadline){const s=await a.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,weapon:s.players[0].weapon,alive:s.players[0].alive};});assert(s.alive);if(s.kills>=target)break;if(s.weapon!==1)await select(a,'Digit2',1);await wait(80);}
+  await a.keyboard.up('Space');await a.waitForFunction(target=>window.__authorityTest.authority.players[0].kills===target,{},target);console.log('Natural kills: '+target);
+ }
+ await b.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=55);const earned=await a.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,peakCombo:s.peakCombo,stock:s.players.map(p=>p.inventory[8])};});assert.equal(earned.kills,56);
+ await fixture(room,'boxhead-objects-scene');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.length===0&&window.__authorityTest.authority.players[1].x===544);
+ await select(a,'Digit9',8);await a.keyboard.press('Space');await a.waitForFunction(()=>window.__authorityTest.authority.barrels.filter(b=>b.kind==='chargepack'&&b.owner===1).length===1);
+ await select(b,'Digit9',8,2);await b.keyboard.press('Space');await b.waitForFunction(()=>window.__authorityTest.authority.barrels.some(b=>b.kind==='chargepack'&&b.owner===2));
+ await move(a,'ArrowRight',()=>window.__authorityTest.authority.players[0].x>=230);await select(a,'Digit9',8);await a.keyboard.press('Space');await a.waitForFunction(()=>window.__authorityTest.authority.barrels.filter(b=>b.owner===1).length===2);
+ await move(a,'ArrowDown',()=>window.__authorityTest.authority.players[0].y>=400);await move(a,'ArrowLeft',()=>window.__authorityTest.authority.players[0].x<=144);
+ await b.waitForFunction(()=>window.__draws.some(d=>d.args[0]===0)&&window.__draws.some(d=>d.args[0]===28));
+ assert(await b.evaluate(()=>{const pack=window.__renderOrder.indexOf('object-chargepack.png'),human=window.__renderOrder.findIndex(name=>/^swat-|^bond-/.test(name));return pack>=0&&human>pack;}));await screenshot(b,'multiple-owned-packs.png');
+ await b.evaluate(()=>{window.__watch={};const net=window.__authorityTest.network,original=net.onSnapshot;net.onSnapshot=function(s,...args){original.call(this,s,...args);const w=window.__watch;if(s.brightness>0&&s.shakeY!==0&&!w.feedback)w.feedback={tick:s.tick,brightness:s.brightness,shakeY:s.shakeY};
+  if(!w.request&&s.barrels.some(b=>b.kind==='chargepack'&&b.owner===1&&b.detonateCounter!==null)){
+   const before=this.resyncs,candidate={tick:s.tick,full:this.fullUpdates,packs:s.barrels.filter(b=>b.owner===1).map(b=>({...b,queueAt:s.tick+Math.ceil(b.detonateCounter)}))};this.requestFull();if(this.resyncs>before)w.request=candidate;
+  }else if(w.request&&!w.recovery&&this.fullUpdates>w.request.full){w.recovery={tick:s.tick,packs:w.request.packs.map(b=>{const p=s.barrels.find(p=>p.id===b.id),queued=s.explosions.find(e=>e.owner===b.owner&&e.x===b.x&&e.y===b.y&&e.born===b.queueAt),active=s.effects.find(e=>e.kind==='Effect.Explosion'&&e.x===b.x&&e.y===b.y&&e.born===b.queueAt+1);return {id:b.id,queueAt:b.queueAt,preserved:p?p.owner===b.owner&&p.damage===b.damage&&Math.abs(p.animation-(b.animation+(s.tick-w.request.tick))%2)<1e-12&&p.detonateCounter===b.detonateCounter-(s.tick-w.request.tick):!!queued||!!active};})};}
+ };});
+ const before=await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo);await focus(a);await a.keyboard.press('Space');await b.waitForFunction(()=>window.__watch.recovery);await a.waitForFunction(()=>!window.__authorityTest.authority.barrels.some(b=>b.owner===1));assert.equal(await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo),before);
+ await b.waitForFunction(()=>window.__watch.feedback);const recovery=await b.evaluate(()=>window.__watch);assert.equal(recovery.request.packs.length,2);assert(recovery.recovery.packs.every(p=>p.preserved));assert(await b.evaluate(()=>window.__authorityTest.authority.barrels.some(b=>b.owner===2&&!b.detonating)));
+ for(let i=0;i<before;i++){
+  await fixture(room,'boxhead-pack-pose',{index:i});await select(a,'Digit9',8);await a.keyboard.press('Space');await a.waitForFunction(n=>window.__authorityTest.authority.players[0].inventory[8]===n,{},before-i-1);
+ }
+ await fixture(room,'boxhead-pack-pose',{index:8});await select(a,'Digit1',0);await select(a,'Digit9',8);assert.equal(await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo),0);await screenshot(a,'last-ammo-detonator.png');
+ await a.keyboard.press('Space');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].weapon===0&&!window.__authorityTest.authority.barrels.some(b=>b.owner===1));await b.waitForFunction(()=>window.__authorityTest.authority.players[0].weapon===0);
+ const final=await b.evaluate(()=>({players:window.__authorityTest.authority.players.map(p=>({seat:p.seat,alive:p.alive,ammo:p.inventory[8]})),remaining:window.__authorityTest.authority.barrels.map(b=>({owner:b.owner,detonating:b.detonating})),draws:window.__draws.slice(-20),placementCues:window.__sounds.filter(s=>s.endsWith('/weapon-mine-place.mp3')).length,detonateCues:window.__sounds.filter(s=>s.endsWith('/object-mine-detonate.mp3')).length}));
+ const pixels=await b.evaluate(()=>window.__feedbackPixels);assert(pixels.length>0);for(const p of pixels){assert.deepEqual(p.hudBefore,p.hudAfter);for(let i=0;i<3;i++)assert(Math.abs(p.after[i]-Math.min(255,p.before[i]+255*p.alpha))<=1,'additive native RGB offset');}
+ assert(final.players.every(p=>p.alive));assert.deepEqual(final.remaining,[{owner:2,detonating:false}]);assert.equal(final.players[0].ammo,0);assert(final.draws.every(d=>d.args[2]===28&&d.args[3]===26&&d.args[6]===28&&d.args[7]===26));assert.equal(final.placementCues,11);assert.equal(final.detonateCues,10);assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),earned,multiplePackPlacement:true,nativeSlowAndFastAnimation:true,nativeFloorLayer:true,lastAmmoDetonator:true,additiveFeedbackPixels:pixels.slice(0,6),recovery,final,errors},null,2));console.log('Natural unlock, multiple packs, owner isolation, last-ammo detonation, feedback pixels and live full recovery passed.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),watch:window.__watch})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();});

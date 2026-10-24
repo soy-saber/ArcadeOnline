@@ -1,5 +1,7 @@
 **ArcadeOnline 公网部署记录 · 2026-10-25**
 
+后续本地进展：僵尸危机3遥控包三回调起爆/多包/最后一发、原动画/音效/地面层，以及震屏/RGB亮度已补正；262单测和真实双人/四人回归通过，见 [本地证据](docs/fidelity-audit/boxhead-objects-2026-10-25/README.md)。本批尚未部署，当前公网仍为下方 `84c75ae`，不能把本地验证写成公网结果。
+
 ## 当前腾讯云发布：84c75ae
 
 2026-10-25 01:30（北京时间）已将僵尸危机3强化爆炸/集束弹/手雷补正 `84c75ae` 发布至 **https://43.142.142.215/**。发布包50.7MiB、4960文件，SHA256 `0dc30f331f25193e75ca0fe63092dd0fcc53fca674738f0911d548b7a58e72f1`；发布清单与构建来源校验通过。当前目录 `/opt/arcade-online/releases/20261024173002-88743`，上一版 `/opt/arcade-online/releases/20261024164249-77619`；上传目录 `/root/arcade-deploy-20261025-boxhead-0dc30f33/release`。应用/Caddy/coturn均active/enabled，健康检查正常。

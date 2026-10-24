@@ -21,6 +21,7 @@
     "test:expanded:e2e": "node tests/expanded-e2e.cjs",
     "test:boxhead:assets:e2e": "node tests/expanded-boxhead-assets-e2e.cjs",
     "test:boxhead:explosions:e2e": "node scripts/build-native.cjs && node tests/boxhead-explosions-e2e.cjs",
+    "test:boxhead:objects:e2e": "node scripts/build-native.cjs && node tests/boxhead-objects-e2e.cjs",
     "test:fidelity:e2e": "node scripts/build-native.cjs && node tests/fidelity-e2e.cjs",
     "test:bomb:restoration:e2e": "node scripts/build-native.cjs && node tests/bomb-restoration-e2e.cjs",
     "test:bomb:motion:e2e": "node scripts/build-native.cjs && node tests/bomb2-motion-e2e.cjs",

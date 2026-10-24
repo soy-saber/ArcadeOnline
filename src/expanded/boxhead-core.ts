@@ -2,6 +2,8 @@ import data from './boxhead-data.json';
 import { EMPTY_INPUT, validInput, type Input, type State } from './types';
 import { MAPS, WEAPONS, CHARACTERS, CELL, room, solid, blocked, move, openPosition, lineClear, weaponStats } from './boxhead-world';
 import { queueExplosion, processExplosions, validExplosions, type Explosion } from './boxhead-explosions';
+import { ownedPacks, weaponEmpty, selectWeapon, stepExplosiveObjects, validExplosiveObject } from './boxhead-objects';
+import { explosionFeedback, stepFeedback } from './boxhead-feedback';
 
 export const ID = '50737-server';
 export function random(s: State): number { s.rng=(Math.imul(s.rng,1664525)+1013904223)>>>0;return s.rng/4294967296; }
@@ -20,7 +22,7 @@ function accept(s: State,p: any,candidate: unknown): Input {
 export function create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string): State {
   const map=MAPS.find(m=>m.id===mapId)||MAPS[0];
   const s: State={gameId:ID,round,tick:0,phase:playing?'playing':'waiting',winner:null,ack:[0,0,0,0],inputs:Array.from({length:4},()=>({...EMPTY_INPUT})),rng:seed>>>0,mapId:map.id,
-    players:[],zombies:[],bullets:[],barrels:[],pickups:[],effects:[],explosions:[],corpses:[],sounds:[],soundId:0,wave:0,spawnLeft:0,devilLeft:0,nextSpawn:0,nextDevil:0,waveReady:1,nextId:0,score:0,combo:1,peakCombo:1,comboUntil:75,message:'',messageUntil:0};
+    players:[],zombies:[],bullets:[],barrels:[],pickups:[],effects:[],explosions:[],corpses:[],sounds:[],soundId:0,shakeY:0,brightness:playing?1:0,wave:0,spawnLeft:0,devilLeft:0,nextSpawn:0,nextDevil:0,waveReady:1,nextId:0,score:0,combo:1,peakCombo:1,comboUntil:75,message:'',messageUntil:0};
   for(const b of map.barrels) s.barrels.push({id:++s.nextId,...b,kind:'barrel',hp:1,damage:100,owner:0,exploded:false,armed:0});
   for(const b of map.walls) s.barrels.push({id:++s.nextId,...b,kind:'wall',hp:100,owner:0,exploded:false,armed:0});
   for(const b of map.pickups) s.pickups.push({id:++s.nextId,...b,life:250});
@@ -29,7 +31,7 @@ export function create(round: number, playing: boolean, seats: number[], seed: n
   for(const seat of [...new Set(seats)].filter(n=>Number.isInteger(n)&&n>=1&&n<=4).sort()) {
     const spawn=spawns[s.players.length]||primary, pos=openPosition(s,spawn.x,spawn.y,s.players);
     s.players.push({seat,x:pos.x,y:pos.y,dir:spawn.dir,character:CHARACTERS[seat-1],hp:200,alive:true,lives:1,respawn:0,kills:0,deaths:0,killedBy:0,
-      weapon:0,unlocked:[true,...Array(9).fill(false)],inventory:WEAPONS.map((w,i)=>i===0?w.ammo:0),ammo:-1,cooldown:0,invul:200,lastAttack:0,lastAlt:0,moving:false,fireAt:-99,hitAt:-99,deadAt:0,triggerDown:false,triggerAt:0});
+      weapon:0,unlocked:[true,...Array(9).fill(false)],inventory:WEAPONS.map((w,i)=>i===0?w.ammo:0),ammo:-1,cooldown:0,chargeDetonate:false,invul:200,lastAttack:0,lastAlt:0,moving:false,fireAt:-99,hitAt:-99,deadAt:0,triggerDown:false,triggerAt:0});
   }
   return s;
 }
@@ -55,6 +57,7 @@ function hurt(s: State,p: any,amount: number,owner=0): void {
 }
 function explode(s: State,e:Explosion): void {
   const {x,y,damage:amount,owner}=e;
+  explosionFeedback(s);
   const radius=(2+Math.max(amount-100,0)*.005)*32;
   effect(s,'Effect.Explosion',x,y,8,{scale:1,born:s.tick,z:e.z});effect(s,'Effect.ScorchMark',x,y,500);sound(s,'Effect.Explosion.wav');
   const amountAt=(target:any)=>{const fraction=Math.hypot(target.x-x,target.y-y)/radius;return fraction>1?0:amount*(fraction>.75?.5:fraction>.5?.75:1);};
@@ -75,16 +78,19 @@ function shot(s: State,p: any,angle: number,amount: number,range: number,pierce:
 }
 function fire(s: State,p: any): void {
   const gun=weaponStats(s,p.weapon);
-  if(gun.id==='chargepack') {
-    const packs=s.barrels.filter((b:any)=>b.kind==='chargepack'&&b.owner===p.seat&&b.hp>0);
-    if(packs.length){for(const b of packs)b.hp=0;p.cooldown=6;return;}
+  if(gun.id==='chargepack'&&p.chargeDetonate) {
+    for(const b of ownedPacks(s,p.seat))b.detonating=true;
+    p.chargeDetonate=false;return;
   }
   if(p.inventory[p.weapon]===0) {p.weapon=0;p.ammo=-1;return;}
   if(['barrel','fakewall','mine','chargepack'].includes(gun.id)) {
+    // The native charge-pack placement cue precedes its occupancy check.
+    if(gun.id==='chargepack')sound(s,'Weapon.Mine.Place.wav');
     const x=Math.floor((p.x+Math.cos(p.dir)*34)/CELL)*CELL+16,y=Math.floor((p.y+Math.sin(p.dir)*34)/CELL)*CELL+16;
     if(blocked(s,x,y,12)||s.players.some(q=>q.alive&&Math.hypot(q.x-x,q.y-y)<24)||s.barrels.some((b:any)=>b.hp>0&&Math.hypot(b.x-x,b.y-y)<22))return;
-    s.barrels.push({id:++s.nextId,x,y,kind:gun.id==='fakewall'?'wall':gun.id,hp:gun.id==='barrel'?1:gun.id==='fakewall'?100:60,damage:gun.damage,owner:p.seat,exploded:false,armed:s.tick,detonateAt:0});
-    sound(s,gun.id==='mine'?'Weapon.Mine.Place.wav':'Object.Barrel.Place.wav');
+    s.barrels.push({id:++s.nextId,x,y,kind:gun.id==='fakewall'?'wall':gun.id,hp:gun.id==='barrel'?1:gun.id==='fakewall'?100:60,damage:gun.damage,owner:p.seat,exploded:false,armed:s.tick,detonateAt:0,animation:0,detonating:false,detonateCounter:null});
+    if(gun.id==='chargepack')p.chargeDetonate=true;
+    else sound(s,gun.id==='mine'?'Weapon.Mine.Place.wav':'Object.Barrel.Place.wav');
   } else if(gun.id==='grenade'||gun.id==='rocket') {
     const speed=gun.id==='grenade'?Math.min(.75,Math.max(.25,(s.tick-p.triggerAt)/25)) * 32:16;
     s.bullets.push({id:++s.nextId,x:p.x+Math.cos(p.dir)*20,y:p.y+Math.sin(p.dir)*20,z:gun.id==='grenade'?40:18,vz:gun.id==='grenade'?speed*.5:0,vx:Math.cos(p.dir)*speed,vy:Math.sin(p.dir)*speed,owner:p.seat,weapon:p.weapon,damage:gun.damage,life:gun.id==='grenade'?60:100,bang:gun.bang,cluster:gun.cluster,born:s.tick});
@@ -104,7 +110,7 @@ function upgrade(s: State): void {
     s.message=u.mName;s.messageUntil=s.tick+90;
     if(u.mClassID==='CThing_Creature_Player') {
       const index=WEAPONS.findIndex(w=>w.id===u.mValue);
-      if(index>=0)for(const p of s.players) {p.unlocked[index]=true;if(p.alive){p.inventory[index]=weaponStats(s,index).ammo;p.weapon=index;p.ammo=p.inventory[index];}}
+      if(index>=0)for(const p of s.players) {p.unlocked[index]=true;if(p.alive){p.inventory[index]=weaponStats(s,index).ammo;selectWeapon(s,p,index);}}
     } else if(['DoubleAmmo','QuadAmmo','InfinateAmmo'].includes(u.mProp)) {
       const index=WEAPONS.findIndex(w=>'CThing_Weapon_'+w.classId===u.mClassID);
       if(index>=0)for(const p of s.players)if(p.alive){p.inventory[index]=weaponStats(s,index).ammo;p.ammo=p.inventory[p.weapon];}
@@ -186,10 +192,10 @@ export function step(s: State,inputs: Input[]): void {
     if(p.moving){p.dir=Math.atan2(dy,dx);move(s,p,dx*5.12,dy*5.12);}
     if(p.hp>0)p.hp=Math.min(200,p.hp+200/(25*30));
     if(alt){
-      if(input.weapon!==undefined){if(p.unlocked[input.weapon]&&p.inventory[input.weapon]!==0)p.weapon=input.weapon;}
-      else for(let i=1;i<=10;i++){const index=(p.weapon+i*(input.weaponStep??1)+10)%10;if(p.unlocked[index]&&p.inventory[index]!==0){p.weapon=index;break;}}
-      p.ammo=p.inventory[p.weapon];
+      if(input.weapon!==undefined){if(p.unlocked[input.weapon]&&!weaponEmpty(s,p,input.weapon))selectWeapon(s,p,input.weapon);}
+      else for(let i=1;i<=10;i++){const index=(p.weapon+i*(input.weaponStep??1)+10)%10;if(p.unlocked[index]&&!weaponEmpty(s,p,index)){selectWeapon(s,p,index);break;}}
     }
+    if(weaponEmpty(s,p,p.weapon))selectWeapon(s,p,0);
     const gun=weaponStats(s,p.weapon);
     // A complete tap can happen between two network samples. The press counter
     // preserves it even when the latest held state is already released.
@@ -200,10 +206,7 @@ export function step(s: State,inputs: Input[]): void {
   if(s.spawnLeft>0&&s.tick>=s.nextSpawn&&s.zombies.filter((z:any)=>!z.devil&&z.hp>0).length<Math.min(10+5*(s.wave-1),60)){spawnEnemy(s,false);s.spawnLeft--;s.nextSpawn=s.tick+Math.max(25-(s.wave-1),1);}
   if(s.devilLeft>0&&s.tick>=s.nextDevil&&s.zombies.filter((z:any)=>z.devil&&z.hp>0).length<Math.min(1+(s.wave-2)*.3,5)){spawnEnemy(s,true);s.devilLeft--;s.nextDevil=s.tick+Math.max(250-(s.wave-1),25);}
   projectiles(s);processExplosions(s,random,e=>explode(s,e));enemies(s);
-  for(const b of s.barrels)if(b.kind==='mine'&&b.hp>0){
-    if(!b.detonateAt&&s.tick>=b.armed&&s.zombies.some((z:any)=>z.hp>0&&Math.hypot(z.x-b.x,z.y-b.y)<27)){b.detonateAt=s.tick+50;sound(s,'Object.Mine.Detonate.wav');}
-    if(b.detonateAt&&s.tick>=b.detonateAt)b.hp=0;
-  }
+  stepExplosiveObjects(s,sound);
   for(const b of s.barrels)if(b.hp<=0&&!b.exploded){b.exploded=true;if(b.kind!=='wall'){
     const index=b.kind==='mine'?6:b.kind==='chargepack'?8:3,gun=weaponStats(s,index);
     // Native objects retain construction damage; object flags refresh on hit.
@@ -224,11 +227,12 @@ export function step(s: State,inputs: Input[]): void {
     else if(available.length){const i=available[Math.floor(random(s)*available.length)];p.inventory[i]=weaponStats(s,i).ammo;p.ammo=p.inventory[p.weapon];}
     item.life=0;sound(s,'Object.Pickup.wav');}item.life--;}
   s.pickups=s.pickups.filter((i:any)=>i.life>0);
-  for(const p of s.players)if(p.alive&&p.hp<=0){p.hp=0;p.alive=false;p.deaths++;p.respawn=125;p.deadAt=s.tick;p.weapon=0;p.ammo=-1;p.inventory=WEAPONS.map((_,i)=>i===0?-1:0);p.triggerDown=false;p.cooldown=0;sound(s,'Creature.Player.Scream.1.wav');}
+  for(const p of s.players)if(p.alive&&p.hp<=0){p.hp=0;p.alive=false;p.deaths++;p.respawn=125;p.deadAt=s.tick;p.weapon=0;p.ammo=-1;p.inventory=WEAPONS.map((_,i)=>i===0?-1:0);p.triggerDown=false;p.chargeDetonate=false;p.cooldown=0;sound(s,'Creature.Player.Scream.1.wav');}
   if(s.players.length&&!s.players.some(p=>p.alive)){s.phase='finished';s.winner=0;sound(s,'World.End.wav');}
   if(s.spawnLeft===0&&s.devilLeft===0&&s.zombies.length===0&&!s.waveReady)s.waveReady=s.tick+65;
   // Bound purely visual history; authoritative combat entities remain intact.
   s.effects=s.effects.slice(-180);s.sounds=s.sounds.slice(-40);s.corpses=s.corpses.slice(-60);
+  stepFeedback(s);
 }
 
 function nums(v:any,keys:string[]):boolean{return !!v&&keys.every(k=>Number.isFinite(v[k]));}
@@ -236,13 +240,13 @@ export function valid(value: unknown): value is State {
   if(!value||typeof value!=='object')return false;const s=value as State;
   return s.gameId===ID&&Number.isSafeInteger(s.tick)&&s.tick>=0&&Number.isSafeInteger(s.round)&&['waiting','playing','finished'].includes(s.phase)&&[null,0].includes(s.winner)&&MAPS.some(m=>m.id===s.mapId)&&
     Array.isArray(s.ack)&&s.ack.length===4&&s.ack.every(n=>Number.isSafeInteger(n)&&n>=0)&&Array.isArray(s.inputs)&&s.inputs.length===4&&s.inputs.every(validInput)&&
-    Array.isArray(s.players)&&s.players.length<=4&&new Set(s.players.map(p=>p?.seat)).size===s.players.length&&s.players.every(p=>[1,2,3,4].includes(p?.seat)&&typeof p.alive==='boolean'&&typeof p.triggerDown==='boolean'&&CHARACTERS.includes(p.character)&&nums(p,['x','y','dir','hp','lives','respawn','kills','deaths','killedBy','lastAttack','lastAlt','cooldown','invul','ammo','fireAt','hitAt','deadAt','triggerAt'])&&Number.isInteger(p.weapon)&&p.weapon>=0&&p.weapon<10&&Array.isArray(p.inventory)&&p.inventory.length===10&&p.inventory.every((v:any)=>Number.isSafeInteger(v)&&v>=-1)&&p.ammo===p.inventory[p.weapon]&&Array.isArray(p.unlocked)&&p.unlocked.length===10&&p.unlocked.every((v:any)=>typeof v==='boolean'))&&
+    Array.isArray(s.players)&&s.players.length<=4&&new Set(s.players.map(p=>p?.seat)).size===s.players.length&&s.players.every(p=>[1,2,3,4].includes(p?.seat)&&typeof p.alive==='boolean'&&typeof p.triggerDown==='boolean'&&typeof p.chargeDetonate==='boolean'&&CHARACTERS.includes(p.character)&&nums(p,['x','y','dir','hp','lives','respawn','kills','deaths','killedBy','lastAttack','lastAlt','cooldown','invul','ammo','fireAt','hitAt','deadAt','triggerAt'])&&Number.isInteger(p.weapon)&&p.weapon>=0&&p.weapon<10&&Array.isArray(p.inventory)&&p.inventory.length===10&&p.inventory.every((v:any)=>Number.isSafeInteger(v)&&v>=-1)&&p.ammo===p.inventory[p.weapon]&&Array.isArray(p.unlocked)&&p.unlocked.length===10&&p.unlocked.every((v:any)=>typeof v==='boolean'))&&
     ['zombies','bullets','barrels','pickups','effects','corpses'].every(k=>Array.isArray(s[k])&&s[k].length<1500&&s[k].every((e:any)=>nums(e,['x','y'])))&&
     validExplosions(s)&&s.zombies.every((z:any)=>nums(z,['id','hp','dir','attack','owner','hitAt','attackAt'])&&typeof z.devil==='boolean')&&s.bullets.every((b:any)=>nums(b,['id','vx','vy','damage','weapon','owner','life'])&&
       (b.weapon!==4&&b.weapon!==7||nums(b,['z','vz'])&&b.z>=0&&[0,1,2].includes(b.bang)&&typeof b.cluster==='boolean'&&(b.clusterShell===undefined||typeof b.clusterShell==='boolean'))&&
       (b.born===undefined||Number.isSafeInteger(b.born)&&b.born>=0&&b.born<=s.tick))&&
-    s.barrels.every((b:any)=>nums(b,['id','hp','owner','armed'])&&['barrel','wall','mine','chargepack'].includes(b.kind)&&typeof b.exploded==='boolean'&&(b.damage===undefined||Number.isFinite(b.damage)&&b.damage>0))&&s.pickups.every((p:any)=>nums(p,['id','life']))&&s.effects.every((e:any)=>nums(e,['life','total'])&&typeof e.kind==='string'&&
+    s.barrels.every((b:any)=>nums(b,['id','hp','owner','armed'])&&['barrel','wall','mine','chargepack'].includes(b.kind)&&typeof b.exploded==='boolean'&&validExplosiveObject(b)&&(b.damage===undefined||Number.isFinite(b.damage)&&b.damage>0))&&s.pickups.every((p:any)=>nums(p,['id','life']))&&s.effects.every((e:any)=>nums(e,['life','total'])&&typeof e.kind==='string'&&
       (e.kind!=='Effect.Explosion'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick&&Number.isFinite(e.z)&&e.z>=0&&e.scale===1))&&s.corpses.every((e:any)=>nums(e,['dir','deadAt'])&&['zombie','devil'].includes(e.character))&&
     Array.isArray(s.sounds)&&s.sounds.length<=40&&s.sounds.every((e:any)=>nums(e,['id','tick'])&&Object.prototype.hasOwnProperty.call(data.audio,e.name))&&
-    nums(s,['rng','wave','spawnLeft','devilLeft','nextSpawn','nextDevil','waveReady','nextId','score','combo','peakCombo','comboUntil','soundId','messageUntil'])&&typeof s.message==='string';
+    nums(s,['rng','wave','spawnLeft','devilLeft','nextSpawn','nextDevil','waveReady','nextId','score','combo','peakCombo','comboUntil','soundId','messageUntil','shakeY','brightness'])&&Math.abs(s.shakeY)<=32&&s.brightness>=0&&s.brightness<=1&&typeof s.message==='string';
 }

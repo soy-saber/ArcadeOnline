@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-24T18:33:32.689284+00:00",
+  "baseline": "04a0b41",
+  "swfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/Weapon/CThing_Weapon_ChargePack": "f18c019958ad79e94d22b966123111d4f6fea0730a4a46cde8b94ff43fa2fdcc",
+    "Thing/Object/CThing_Object_ChargePack": "c02b18da3a7d458671deabd2708b9d5ea19bba7963a2030b799a414c7468ca72",
+    "Thing/Object/CThing_Object_Mine": "859ba08ff12517ff7c9f76e247ff4856b6fc2321d54b4180192f0d551bd8b128",
+    "Thing/Weapon/CThing_Weapon_Mine": "260b43292dd4852681fed5308ba6423bf5395c6d86708b4cf06902f48d790efc",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip_Animation": "170799518ff80397a21e73f67e23dcece0d50020378573e3d2770356918c2da1",
+    "World/CWorld": "acbc9bcbd52bc1bfa12c62708e9c1949e71e7453dc480957201a6f548d15522f",
+    "scidd/Draw/CColor": "4d9633e0e675bebaea1c94081f2e4a09b8d7ab14534ac941d7ca666fa4b54856",
+    "Thing/Effect/CThing_Effect_Explosion": "22cedb97e9124974343d9ecc3849ef711b7ed14163a2b443b39604a5e9044dce",
+    "Thing/Object/CThing_Object_Wall": "237e9b7ec5e9de32924931f8643c5b7196a4124af8b7499a7616d43e7e16fa9a",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a"
+  },
+  "nativeAssets": {
+    "object-chargepack.png": "f08f599f742288010524f1284f8e4dabfa2985addbd3424f18b8b3bdd0abed64",
+    "object-mine.png": "46a1d4b9adaef86a9ab3960b3225858a5298a08bd3e8225ad781eb769a1273c9"
+  },
+  "restored": {
+    "chargeCounter": "25/10 predecrement:1.5,.5,then-.5 -> enqueue; following tick initializes effect",
+    "chargeReset": "SelectWeapon including same weapon calls Reset; if finite ammo remains then placement mode; zero ammo with owned packs selects detonation mode; trigger operates only on own packs",
+    "chargeAmmo": "Placement consumes one; detonation consumes none; WeaponEmpty false while owned packs remain; after they disappear auto-switch to pistol",
+    "selectReset": "Reselect clears fire waiting; no ammunition refill",
+    "objectAnimation": "Clone0; normal callback+.04 mod2; trigger callback advances normal then+1; subsequent detonation callbacks+1",
+    "floor": "Mine and charge use native SortFloor assets before characters",
+    "sound": "Charge placement uses Weapon.Mine.Place before occupancy check; each starting pack plays Object.Mine.Detonate once; full recovery does not replay",
+    "shake": "Each blast addsY30 if existing magnitude<32; after tick multiply-.5 and clear length<.1; shared camera/nameplates use same offset",
+    "brightness": "Initialize playing1/lobby0; blast sets1; subtract.2 after tick until abs<.2 then0; RGB+255*brightness; HUD drawn afterward"
+  },
+  "remaining": [
+    "Whole AS2 collection order and affect queues",
+    "Mine original creature reservation-cell trigger, pending native AI/navigation restoration; current radius trigger retained",
+    "Model gun position and exact placement cell occupancy/radius growth",
+    "Wall native1000HP/ten damage frames/five-callback fade/smoke remains to restore; previously100HP approximation still present",
+    "Character/difficulty/modes/flow, full weapons/player/AI/HUD details in BOXHEAD_RESTORATION_PLAN.md"
+  ],
+  "inferenceLimits": "Feedback integrated at authoritative25Hz rather than mutating on browser RAF. Full original VM order and all quality settings are not reproduced. Pixel checks cover additive RGB samples, not whole-frame Flash equivalence."
+}

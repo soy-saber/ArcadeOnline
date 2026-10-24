@@ -97,7 +97,7 @@ test('map barrels keep damage 100 and one-hit life; placed barrel damage is capt
 });
 
 test('explosion damage does not detonate mines or charge packs lacking native affect flags',()=>{
- const s=arena();s.barrels=[{id:++s.nextId,x:320,y:272,kind:'mine',hp:60,owner:1,armed:0,exploded:false},{id:++s.nextId,x:336,y:272,kind:'chargepack',hp:60,owner:1,armed:0,exploded:false}];explosions.queueExplosion(s,320,272,250,1);ticks(s);assert.equal(s.barrels.length,2);assert(s.barrels.every(b=>b.hp===60));
+ const s=arena();s.barrels=[{id:++s.nextId,x:320,y:272,kind:'mine',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateAt:0},{id:++s.nextId,x:336,y:272,kind:'chargepack',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateCounter:null}];explosions.queueExplosion(s,320,272,250,1);ticks(s);assert.equal(s.barrels.length,2);assert(s.barrels.every(b=>b.hp===60));assert(a.valid(s));
 });
 
 test('snapshot validation rejects corrupt delayed explosion and native projectile metadata',()=>{
