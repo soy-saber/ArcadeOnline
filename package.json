@@ -27,6 +27,7 @@
     "test:bomb:blasts:e2e": "node scripts/build-native.cjs && node tests/bomb2-blasts-e2e.cjs",
     "test:bomb:landforms:e2e": "node scripts/build-native.cjs && node tests/bomb2-landforms-e2e.cjs",
     "test:bomb:vehicles:e2e": "node scripts/build-native.cjs && node tests/bomb2-vehicles-e2e.cjs",
+    "test:bomb:protection:e2e": "node scripts/build-native.cjs && node tests/bomb2-protection-e2e.cjs",
     "test:expanded:kill:e2e": "node scripts/build-native.cjs && node tests/expanded-kill-e2e.cjs",
     "test:lobby:e2e": "node tests/lobby-e2e.cjs",
     "package:linux": "node scripts/package-linux.cjs",

@@ -1,0 +1,42 @@
+{
+  "realBrowserKills": 10,
+  "naturalRespawns": 9,
+  "automaticRematch": true,
+  "mode": "kill",
+  "map": "beach-two",
+  "records": [
+    {
+      "id": "38cb9a16-ac88-4da0-9350-1dc14e53c1ce",
+      "name": "Kill P1",
+      "kills": 10,
+      "deaths": 0,
+      "wins": 1,
+      "rounds": 1
+    },
+    {
+      "id": "23be2a1c-0c7f-4ce6-9ebf-dd0af4e2ec73",
+      "name": "Kill P3",
+      "kills": 0,
+      "deaths": 0,
+      "wins": 0,
+      "rounds": 1
+    },
+    {
+      "id": "baedf4f6-608d-48a2-8d4c-36131f0b21b5",
+      "name": "Kill P4",
+      "kills": 0,
+      "deaths": 0,
+      "wins": 0,
+      "rounds": 1
+    },
+    {
+      "id": "f6acbf6c-4631-45fc-b5f7-11fbad975b1b",
+      "name": "Kill P2",
+      "kills": 0,
+      "deaths": 10,
+      "wins": 0,
+      "rounds": 1
+    }
+  ],
+  "errors": []
+}

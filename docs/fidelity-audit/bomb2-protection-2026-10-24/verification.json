@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-24T14:19:48.928Z",
+  "scope": "Local source and two independent Chrome contexts on one Windows workstation; no new public deployment",
+  "tests": {
+    "unit": {
+      "passed": 219,
+      "failed": 0
+    },
+    "deploy": {
+      "passed": 5,
+      "failed": 0
+    },
+    "typecheck": true
+  },
+  "browser": {
+    "nativeProtection": "tests/bomb2-protection-e2e.cjs",
+    "vehicleRegression": "tests/bomb2-vehicles-e2e.cjs",
+    "landformRegression": "tests/bomb2-landforms-e2e.cjs",
+    "twoBombGamesOriginalAudio": "tests/bomb-restoration-e2e.cjs",
+    "fourPlayerTenKillsAndNaturalRespawns": "tests/expanded-kill-e2e.cjs"
+  },
+  "build": {
+    "browser": "f41acaa33c88acf45def3403a2f5035fd732aae0c1b65c790779791399810655",
+    "authority": "762bd19c33ba8fe11822ecd26f86bc84f6126af804efa665b9114ac319e7be3c"
+  },
+  "publicDeployment": {
+    "origin": "https://43.142.142.215",
+    "newWorkDeployed": false,
+    "blocker": "SSH TCP 22 timed out on this workstation; website HTTPS/WSS and 136 previous-release file hashes passed"
+  },
+  "limitations": [
+    "CPU gradient uses source parameters and preserves alpha; exact Flash raster rounding has not been proven",
+    "Nested robot foot variants and complete hand/weapon attachment remain",
+    "Rare overlapping duplicate callbacks, full campaign/menu/AI flow, overlapping flames, projectile geometry, row layers and drops remain"
+  ]
+}

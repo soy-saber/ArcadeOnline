@@ -17,6 +17,9 @@ import {enterLandform,advanceLandform,jumpSprite,heroHead,travelAlpha,sandFrame,
 import LAND_ART from './bomb2-landform-art.json';
 import VEHICLE_ART from './bomb2-vehicle-art.json';
 import {mount,stashWeapon,startWreck,startCrush,startFrogJump,advanceRide,updateRideAnimation,rideSprite,validRides} from './bomb2-vehicles';
+import PROTECTION_ART from './bomb2-protection-art.json';
+import {SHORT_PROTECTION_TICKS,POWER_TICKS,beginProtection,clearProtection,collectInvincibility,advanceProtections,bodyAlpha,nativeHero,introSprite,shieldVisible,validProtections,resetBody,updateBody} from './bomb2-protection';
+import {filteredFrame} from './bomb2-gradient';
 import {stopWalking,walkingPosition} from './bomb2-walking';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
@@ -24,7 +27,7 @@ const SPAWNS = [[1,1],[15,1],[1,13],[15,13]];
 export const PROP_POOLS:Record<string,number[]>=RULES.pools;
 export const KILL_PROPS = PROP_POOLS.kill;
 export const MODES = ['arcade','kill','collect','color'];
-export const RESPAWN_TICKS = 64, RESPAWN_PROTECTION_TICKS = 80;
+export const RESPAWN_TICKS = 64, RESPAWN_PROTECTION_TICKS = SHORT_PROTECTION_TICKS;
 export const WEAPON_USES:Record<number,number> = {15:2,16:2,17:1,18:1,19:2,20:2,21:2};
 // Original sprite frame counts: hammer 25, launcher 14, shotgun 8,
 // laser warmup 12 + 11 active ticks, flamethrower's nested fire_Play 24.
@@ -87,7 +90,7 @@ export function create(round:number,playing:boolean,seats:number[],seed:number,m
   }
   if(mode==='collect')for(let i=0;i<5;i++)spawnCoin(s);
   s.sandLights=s.hazards.map(()=>0);
-  for(const p of s.players){p.invulnerable=RESPAWN_PROTECTION_TICKS;p.travel=null;p.sandCell=-1;p.rideMotion=null;p.rideAnim=null;p.pendingWeapon=null;syncWalking(p);}
+  for(const p of s.players){p.travel=null;p.sandCell=-1;p.rideMotion=null;p.rideAnim=null;p.pendingWeapon=null;p.guard=null;p.aura=null;p.heroAnim=null;beginProtection(s,p);syncWalking(p);}
   return s;
 }
 function spawnCoin(s:State):void {
@@ -155,12 +158,11 @@ function take(s:State,p:any):void {
   const cell=index(p.x,p.y),item=s.items[cell];if(!item)return;s.items[cell]=0;
   sound(s,'pickup');
   if(item===1)p.capacity=Math.min(9,p.capacity+1);else if(item===2)p.range=Math.min(5,p.range+1);else if(item===3)p.speed=Math.max(6,p.speed-1);
-  else if(item===4)p.life=Math.min(255,p.life+1);else if(item===6)p.kick=true;else if(item===7)p.invulnerable=HZ*10;else if(item===22)p.shield=true;
+  else if(item===4)p.life=Math.min(255,p.life+1);else if(item===6)p.kick=true;else if(item===7){if(collectInvincibility(s,p))sound(s,'invincible');}else if(item===22){p.shield=true;resetBody(p);}
   else if(item===9){p.points++;s.scores[p.seat-1]=p.points;}
   else if(item>=11&&item<=14){mount(s,p,item);sound(s,item===12?'bulldozer':item===13?'car':item===14?'frog':'pickup');}
   else if(p.vehicle)stashWeapon(p,item,WEAPON_USES[item]||2);
   else {p.weapon=item;p.ammo=WEAPON_USES[item]||2;p.weaponStock.push(item);p.weaponStock=p.weaponStock.slice(-32);}
-  if(item===7)sound(s,'invincible');
 }
 function dropWeapons(s:State,p:any):void {
   for(let n=0;n<2&&p.weaponStock.length;n++){
@@ -171,12 +173,13 @@ function dropWeapons(s:State,p:any):void {
 }
 function hit(s:State,p:any,owner:number):void {
   if(!p.alive||p.respawnAt>s.tick||p.invulnerable>0)return;
-  if(p.vehicle){if(!startWreck(s,p)){p.vehicle=0;p.vehicleUntil=0;}p.moveDir=-1;p.progress=0;p.invulnerable=RESPAWN_PROTECTION_TICKS;return;}
-  if(p.shield){p.shield=false;p.invulnerable=RESPAWN_PROTECTION_TICKS;sound(s,'shield');return;}
+  if(p.vehicle){if(!startWreck(s,p)){p.vehicle=0;p.vehicleUntil=0;}p.moveDir=-1;p.progress=0;beginProtection(s,p);return;}
+  if(p.shield){p.shield=false;beginProtection(s,p);sound(s,'shield');return;}
   if(s.mode==='arcade')p.life--;p.deaths++;p.diedAt=s.tick;p.killedBy=owner;p.moveDir=-1;p.progress=0;
   if(p.life<=0){p.alive=false;p.respawnAt=0;}else p.respawnAt=s.tick+RESPAWN_TICKS;
   sound(s,'dead');
   p.travel=null;p.sandCell=-1;p.rideMotion=null;p.rideAnim=null;p.pendingWeapon=null;
+  clearProtection(p);resetBody(p);
   p.attack=null;p.actionLock=0;
   dropWeapons(s,p);
   if(s.mode==='collect'){
@@ -263,8 +266,7 @@ export function step(s:State,inputs:Input[]):void {
   for(const p of s.players){
     const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
     if(!p.alive)continue;
-    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];relocate(p,x,y);p.respawnAt=0;p.invulnerable=RESPAWN_PROTECTION_TICKS;}
-    if(p.invulnerable>0)p.invulnerable--;
+    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];relocate(p,x,y);p.respawnAt=0;resetBody(p);beginProtection(s,p);}
     if(p.actionLock>0)p.actionLock--;
     syncWalking(p);
     const dir=input?direction(input):-1;
@@ -295,6 +297,7 @@ export function step(s:State,inputs:Input[]):void {
     }
     }
     updateRideAnimation(s,p,dir);
+    updateBody(s,p,dir);
     if(s.mode==='color'&&!p.respawnAt&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
     if(s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
   }
@@ -335,6 +338,7 @@ export function step(s:State,inputs:Input[]):void {
   }
   if(s.mode==='collect'&&s.tick%COIN_INTERVAL===0)spawnCoin(s);
   finishCrates(s);
+  advanceProtections(s,(victim,owner)=>hit(s,victim,owner));
   if(s.mode==='color')for(const p of s.players){p.points=s.colors.filter((v:number)=>v===p.seat).length;s.scores[p.seat-1]=p.points;}
   const alive=s.players.filter(p=>p.alive),target=s.mode==='color'?50:s.mode==='arcade'?Infinity:10;
   const reached=s.players.filter(p=>p.points>=target);
@@ -356,7 +360,7 @@ export function valid(value:unknown):value is State {
   if(!int(s.soundId,0,1e9)||!int(s.musicTrack,1,4)||!Array.isArray(s.sounds)||s.sounds.length>64||!s.sounds.every((e:any,i:number)=>e&&int(e.id,1,s.soundId)&&(i===0||e.id>s.sounds[i-1].id)&&(e.name==='result'||Object.prototype.hasOwnProperty.call(SOUND_FILES,e.name)))||
     !Array.isArray(s.vehiclePool)||s.vehiclePool.length!==(s.mode==='kill'?0:2)||new Set(s.vehiclePool).size!==s.vehiclePool.length||!s.vehiclePool.every((v:any)=>(s.theme==='disce'?[12,13]:[12,13,14]).includes(v))||!int(s.vehiclesLeft,0,4))return false;
   if(!Array.isArray(s.crateBursts)||s.crateBursts.length>255||!s.crateBursts.every((b:any)=>b&&int(b.cell,0,254)&&int(b.born,0,s.tick)&&b.at===b.born+BRICK_BURST.frames))return false;
-  if(!Array.isArray(s.players)||s.players.length>4||new Set(s.players.map(p=>p?.seat)).size!==s.players.length||!s.players.every(p=>p&&int(p.seat,1,4)&&int(p.x,0,16)&&int(p.y,0,14)&&typeof p.alive==='boolean'&&int(p.life,0,255)&&int(p.dir,0,3)&&int(p.moveDir,-1,3)&&int(p.progress,0,19)&&int(p.moveTicks,3,20)&&p.progress<p.moveTicks&&int(p.speed,4,8)&&int(p.capacity,1,9)&&int(p.range,1,10)&&int(p.lastAttack,0,1e9)&&int(p.lastAlt,0,1e9)&&int(p.invulnerable,0,HZ*10)&&int(p.weapon,0,22)&&int(p.ammo,0,3)&&int(p.respawnAt,0,ROUND_TICKS+RESPAWN_TICKS)&&int(p.teleportUntil,0,ROUND_TICKS+HZ)&&int(p.points,0,255)&&int(p.kills,0,1000)&&int(p.deaths,0,1000)&&int(p.killedBy,0,4)&&int(p.vehicle,0,14)&&int(p.vehicleUntil,0,ROUND_TICKS+HZ*15)&&typeof p.kick==='boolean'&&typeof p.shield==='boolean'))return false;
+  if(!Array.isArray(s.players)||s.players.length>4||new Set(s.players.map(p=>p?.seat)).size!==s.players.length||!s.players.every(p=>p&&int(p.seat,1,4)&&int(p.x,0,16)&&int(p.y,0,14)&&typeof p.alive==='boolean'&&int(p.life,0,255)&&int(p.dir,0,3)&&int(p.moveDir,-1,3)&&int(p.progress,0,19)&&int(p.moveTicks,3,20)&&p.progress<p.moveTicks&&int(p.speed,4,8)&&int(p.capacity,1,9)&&int(p.range,1,10)&&int(p.lastAttack,0,1e9)&&int(p.lastAlt,0,1e9)&&int(p.invulnerable,0,POWER_TICKS)&&int(p.weapon,0,22)&&int(p.ammo,0,3)&&int(p.respawnAt,0,ROUND_TICKS+RESPAWN_TICKS)&&int(p.teleportUntil,0,ROUND_TICKS+HZ)&&int(p.points,0,255)&&int(p.kills,0,1000)&&int(p.deaths,0,1000)&&int(p.killedBy,0,4)&&int(p.vehicle,0,14)&&int(p.vehicleUntil,0,ROUND_TICKS+HZ*15)&&typeof p.kick==='boolean'&&typeof p.shield==='boolean'))return false;
   if(s.winner!==null&&!s.players.some(p=>p.seat===s.winner))return false;
   for(const [key,max] of [['board',2],['tiles',59],['items',22],['flames',ROUND_TICKS+16],['owners',4],['colors',4]] as const)if(!Array.isArray(s[key])||s[key].length!==255||!s[key].every((v:any)=>int(v,0,max)))return false;
   if(!Array.isArray(s.ack)||s.ack.length!==4||!s.ack.every((n:any)=>int(n,0,1e9))||!Array.isArray(s.scores)||s.scores.length!==4||!s.scores.every((n:any)=>int(n,0,1000)))return false;
@@ -364,6 +368,7 @@ export function valid(value:unknown):value is State {
   if(!validBlasts(s))return false;
   if(!validLandforms(s))return false;
   if(!validRides(s))return false;
+  if(!validProtections(s))return false;
   if(Array.isArray(s.bombs)&&s.bombs.some((b:any)=>b&&(b.walking&&!validWalking(b)||b.born!==undefined&&!int(b.born,0,s.tick))))return false;
   if(!Array.isArray(s.bombs)||s.bombs.length>36||!s.bombs.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&int(b.x,0,16)&&int(b.y,0,14)&&int(b.range,1,10)&&['normal','remote','mine','thrown'].includes(b.kind)&&int(b.slide,-1,3)&&int(b.explodeAt,0,ROUND_TICKS+REMOTE_FUSE)&&int(b.armedAt,0,ROUND_TICKS+20)))return false;
   if(!Array.isArray(s.shots)||s.shots.length>64||!s.shots.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&Number.isFinite(b.x)&&b.x>=0&&b.x<=17&&Number.isFinite(b.y)&&b.y>=0&&b.y<=15&&Number.isFinite(b.vx)&&Math.abs(b.vx)<=1&&Number.isFinite(b.vy)&&Math.abs(b.vy)<=1&&[16,19].includes(b.kind)&&int(b.until,0,ROUND_TICKS+HZ*4)))return false;
@@ -377,6 +382,7 @@ export function valid(value:unknown):value is State {
 const images=new Map<string,HTMLImageElement>();
 let combatPreload=false;
 let vehiclePreload=false;
+let protectionPreload=false;
 let landPreloadMap='';
 function asset(name:string):HTMLImageElement {let img=images.get(name);if(!img){img=new Image();img.src='/expanded/assets/bomb2/'+name+'.png';images.set(name,img);}return img;}
 function draw(ctx:CanvasRenderingContext2D,name:string,x:number,y:number,w:number,h:number):boolean {const img=asset(name);if(img.complete&&img.naturalWidth){ctx.drawImage(img,x,y,w,h);return true;}return false;}
@@ -394,6 +400,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,BOMB2_CANVAS_WIDTH,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,BOMB2_CANVAS_WIDTH,550);
   ctx.fillStyle='#fff';ctx.font='bold 21px system-ui';ctx.fillText('泡泡堂 2',24,32);if(!s)return;
   if(!combatPreload){for(const name of Object.keys(BOMB_ART.timelines))asset('native-bomb-'+name);for(const name of Object.keys(FLAME_ART.timelines))asset('native-flame-'+name);combatPreload=true;}
+  if(!protectionPreload){for(const name of Object.keys(PROTECTION_ART.timelines))asset('native-'+name);protectionPreload=true;}
   if(!vehiclePreload&&s.mode!=='kill'){for(const name of Object.keys(VEHICLE_ART.timelines))asset('native-'+name);vehiclePreload=true;}
   if(landPreloadMap!==s.mapId){for(const name of Object.keys(LAND_ART.timelines))if(name.startsWith('jump-')?s.hazards.some((h:any)=>h.kind==='SpringBoard'):s.hazards.some((h:any)=>h.kind==='QuickSand'))asset('native-'+name);landPreloadMap=s.mapId;}
   ctx.font='15px system-ui';ctx.fillText(`${THEMES[s.theme]} · ${['生存','击杀 10','金币 10','占地 50'][MODES.indexOf(s.mode)]}`,180,31);ctx.fillText(`${Math.max(0,Math.ceil((ROUND_TICKS-s.tick)/HZ))} 秒`,500,31);
@@ -451,12 +458,15 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     ctx.globalAlpha=1;
     if(!p.alive||p.respawnAt>s.tick){if(p.deaths>0&&s.tick-p.diedAt<RESPAWN_TICKS)timeline(ctx,'dead-'+(p.character-1),s.tick-p.diedAt,left+(p.x+.5)*cell,top+(p.y+1)*cell,true);continue;}
     const pos=walkingPosition(p),x=left+(pos.x+.5)*cell,y=top+(pos.y+1)*cell;
-    const img=asset(`hero-${p.character-1}-${['left','up','right','down'][p.dir]}`),frames=24,width=img.naturalWidth/frames,jump=jumpSprite(p,s.tick);
-    ctx.globalAlpha=(p.invulnerable>0&&s.tick%6<3?.5:1)*travelAlpha(p);
-    if(jump)landTimeline(ctx,jump.name.replace(/^native-/,''),jump.frame,left+pos.x*cell,top+pos.y*cell);
-    else if(p.vehicle===12||p.vehicle===13||p.vehicle===14){const sprite=rideSprite(p)!;const img=asset(sprite.name),m=sprite.meta;if(img.complete&&img.naturalWidth)ctx.drawImage(img,sprite.frame*m.w,0,m.w,m.h,left+pos.x*cell+m.x,top+pos.y*cell+m.y,m.w,m.h);}
-    else if(img.complete&&img.naturalWidth){const h=37,w=width/img.naturalHeight*h;ctx.drawImage(img,(p.moveDir<0?0:s.tick%frames)*width,0,width,img.naturalHeight,x-w/2,y-h,w,h);}
-    ctx.strokeStyle='#353352';ctx.lineWidth=2;if(!jump&&!p.vehicle&&p.shield){ctx.beginPath();ctx.ellipse(x,y-13,17,23,0,0,Math.PI*2);ctx.stroke();}
+    const sprite=jumpSprite(p,s.tick)||rideSprite(p)||nativeHero(p,s.tick),img=asset(sprite.name),m=sprite.meta;
+    ctx.globalAlpha=bodyAlpha(p)*travelAlpha(p);
+    if(img.complete&&img.naturalWidth){
+      if(p.aura?.glow)ctx.drawImage(filteredFrame(img,sprite.name,sprite.frame,m.w,m.h,p.aura.glow),left+pos.x*cell+m.x,top+pos.y*cell+m.y);
+      else ctx.drawImage(img,sprite.frame*m.w,0,m.w,m.h,left+pos.x*cell+m.x,top+pos.y*cell+m.y,m.w,m.h);
+    }
+    ctx.globalAlpha=travelAlpha(p);
+    if(shieldVisible(p)){const shield=PROTECTION_ART.timelines.shield;draw(ctx,'native-shield',left+pos.x*cell+shield.x,top+pos.y*cell+shield.y,shield.w,shield.h);}
+    const intro=introSprite(p);if(intro){const img=asset(intro.name),m=intro.meta;if(img.complete&&img.naturalWidth)ctx.drawImage(img,intro.frame*m.w,0,m.w,m.h,left+pos.x*cell+m.x,top+pos.y*cell+m.y,m.w,m.h);}
     const equipped=bomb2Weapon(s,p);if(equipped)weaponBadge(ctx,equipped,x,top+pos.y*cell+heroHead(p,s.tick)-6,15);
     if(p.attack){const names:Record<number,string>={15:'hammer',16:'launcher',19:'shotgun',20:'laser-ready'};
       const name=names[p.attack.kind];if(name){const [dx,dy]=DIRS[p.attack.dir];timeline(ctx,name+(p.attack.kind===20?'':'-'+['left','up','right','down'][p.attack.dir]),s.tick-p.attack.born,x+dx*10,y-17+dy*10);}

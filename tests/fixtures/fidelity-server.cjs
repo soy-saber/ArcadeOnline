@@ -42,6 +42,13 @@ process.on('message',m=>{try{
    const [p,q]=s.players;pose(p,5,5);pose(q,m.action==='flame-chain'?6:m.action==='mine-blast'?6:12,m.action==='flame-chain'?5:m.action==='mine-blast'?6:10);
    if(m.action==='flame-chain'){s.board[3*17+5]=2;s.tiles[3*17+5]=11;s.board[2*17+5]=2;s.tiles[2*17+5]=11;}
    if(m.action==='mine-blast'){s.board[4*17+4]=2;s.tiles[4*17+4]=11;s.board[4*17+6]=1;s.tiles[4*17+6]=12;}
+ }else if(['protection-hit','protection-contact'].includes(m.action)){
+   if(s.gameId!=='9109-server'||s.mapId!=='mine-one')throw Error('Expected original mine map');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');
+   const [p,q]=s.players;
+   if(m.action==='protection-hit'&&!p.shield)throw Error('Shield must be collected through actual pickup');
+   if(m.action==='protection-contact'&&p.aura?.phase!=='active')throw Error('Power intro must finish naturally');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.blasts=[];s.flames.fill(0);pose(p,5,5);pose(q,6,5);
  }else if(['vehicle-frog','vehicle-crush','vehicle-hit'].includes(m.action)){
    if(s.gameId!=='9109-server'||s.mapId!=='mine-one')throw Error('Expected original mine map');
    if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');

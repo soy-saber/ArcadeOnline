@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "game": "3881-server",
+      "sourceCharacterSelection": true,
+      "easyShield": true,
+      "realPickupRange": 3,
+      "originalColouredBlast": true,
+      "crateBlocksArm": true,
+      "musicAndExplosion": true
+    },
+    {
+      "game": "9109-server",
+      "sourceCharacterSelection": true,
+      "realCoinsCollected": 9,
+      "deathDrops": 4,
+      "retainedCoins": 5,
+      "naturalRevive": true,
+      "musicAndCombatSounds": true,
+      "muteAndSnapshotReplay": true,
+      "fullscreen": true
+    }
+  ],
+  "errors": []
+}

@@ -61,7 +61,7 @@ test('laser warmup, fixed-wall shielding, direct scoring and immunity prevent re
 test('death drops at most two restored pickups, resets inventory, keeps score and discards dead-period attacks',()=>{
   const s=arena(),p=s.players[0],q=s.players[1];p.weapon=19;p.ammo=1;p.weaponStock=[16,19,20];p.points=3;p.speed=4;p.range=5;p.capacity=5;s.flames[core.index(p.x,p.y)]=s.tick+2;s.owners[core.index(p.x,p.y)]=q.seat;
   tick(s);const until=p.respawnAt;assert.equal(until,s.tick+64);assert.equal(p.points,3);assert.equal(p.weapon,0);assert.equal(p.speed,8);assert.equal(p.range,1);assert.equal(p.capacity,1);assert.equal(s.items.filter(Boolean).length,2);assert.deepEqual(p.weaponStock,[]);
-  while(s.tick<until)tick(s,input(20,8,{alt:9}));assert.equal(p.x,1);assert.equal(p.y,1);assert.equal(p.invulnerable,79);assert.equal(p.lastAttack,8);assert.equal(p.lastAlt,9);assert.equal(p.attack,null);assert.equal(q.points,1);
+  while(s.tick<until)tick(s,input(20,8,{alt:9}));assert.equal(p.x,1);assert.equal(p.y,1);assert.equal(p.invulnerable,82);assert.equal(p.lastAttack,8);assert.equal(p.lastAlt,9);assert.equal(p.attack,null);assert.equal(q.points,1);
   s.flames[core.index(p.x,p.y)]=s.tick+10;tick(s,input(21,8));assert.equal(p.deaths,1);
 });
 test('ten real hammer kills settle the round once; suicide penalty cannot go below zero; timeout ranks ties',()=>{
@@ -88,11 +88,11 @@ test('engine runs ten real attacks with natural respawns, counts totals once and
   const engine=new AuthorityEngine(()=>{}),room={gameId:a.id,seats:{1:'a',2:'b',3:'c',4:'d'},members:new Map(['a','b','c','d'].map((id,i)=>[id,{id,name:id,seat:i+1,ready:false,ws:null}]))};
   engine.onRoom(room);assert(engine.options(room,room.members.get('a'),{map:'beach-two',gameMode:'kill'}));room.members.forEach(p=>p.ready=true);engine.onRoom(room);
   const s=room.auth.state,round=s.round;s.board.fill(0);s.tiles.fill(0);
-  let now=room.auth.clock;const pump=(n)=>{for(let t=0;t<n;t++)engine.pump(room,now+=25);};pump(80);
+  let now=room.auth.clock;const pump=(n)=>{for(let t=0;t<n;t++)engine.pump(room,now+=25);};pump(82);
   for(let n=1;n<=10;n++){
     const p=s.players[0],q=s.players[1];assert.equal(q.respawnAt,0);assert.equal(q.invulnerable,0);p.x=3;p.y=3;p.dir=2;q.x=4;q.y=3;
     engine.input(room,room.members.get('a'),{round,serverTime:now,input:input(n,n)},now);pump(26);assert.equal(p.points,n);assert.equal(q.deaths,n);
-    if(n<10){pump(144);assert.equal(q.respawnAt,0);assert.equal(q.invulnerable,0);}
+    if(n<10){pump(146);assert.equal(q.respawnAt,0);assert.equal(q.invulnerable,0);}
   }
   assert.equal(s.phase,'finished');assert.equal(s.winner,1);let records=engine.info(room).records;
   assert.deepEqual(records.find(r=>r.id==='a'),{id:'a',name:'a',kills:10,deaths:0,wins:1,rounds:1});assert.equal(records.find(r=>r.id==='b').deaths,10);

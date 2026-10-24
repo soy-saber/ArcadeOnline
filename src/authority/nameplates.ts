@@ -6,6 +6,7 @@ import { BOMB_FIELD_WIDTH } from './bomb-status';
 import { BOMB2_FIELD_WIDTH, bomb2Weapon } from '../expanded/bomb2-status';
 import {walkingPosition} from '../expanded/bomb2-walking';
 import {heroHead,travelAlpha} from '../expanded/bomb2-landforms';
+import {protectionHead} from '../expanded/bomb2-protection';
 
 interface Anchor { seat: number; x: number; y: number; alpha?:number }
 export function nameAnchors(state: State, width: number, height: number): Anchor[] {
@@ -18,7 +19,7 @@ export function nameAnchors(state: State, width: number, height: number): Anchor
         else { x *= 2; y = Math.max(108, y - 96) * 2; }
       } else if (state.gameId === "9109-server") {
         const pos=walkingPosition(p);
-        x = 45 + (pos.x + .5) * 30; y = 66 + pos.y*30 + heroHead(p,state.tick)-16-(bomb2Weapon(state,p)?19:0);
+        x = 45 + (pos.x + .5) * 30; y = 66 + pos.y*30 + Math.min(protectionHead(p),heroHead(p,state.tick)-(bomb2Weapon(state,p)?19:0))-16;
       } else if (state.gameId === "137953-server") {
         const scale = Math.min(680 / (state.width * 50), 365 / (state.height * 50));
         x = (712 - state.width * 50 * scale) / 2 + p.x * scale;

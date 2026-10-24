@@ -2,6 +2,7 @@ import type {State} from './types';
 import ART from './bomb2-landform-art.json';
 import {syncWalking,relocate,moveActor} from './bomb2-movement';
 import {rideHead} from './bomb2-vehicles';
+import {pauseAura,resumeAura,nativeHero,resetBody} from './bomb2-protection';
 const DIRS=[[-1,0],[0,-1],[1,0],[0,1]],DIRECTION_NAMES=['left','up','right','down'];
 export type Travel={kind:'spring';born:number;dir:number;targetX:number;targetY:number;stepX:number;stepY:number}|{kind:'sand';born:number;source:number;target:number;alpha:number};
 export function enterLandform(s:State,p:any):void {
@@ -10,6 +11,7 @@ export function enterLandform(s:State,p:any):void {
   const index=s.hazards.findIndex((h:any)=>h.x===p.x&&h.y===p.y),h=s.hazards[index];if(!h)return;
   if(h.kind==='QuickSand'&&h.target!==undefined&&p.sandCell!==cell){
     p.sandCell=cell;p.travel={kind:'sand',born:s.tick,source:index,target:h.target,alpha:1};p.moveDir=-1;
+    pauseAura(p);
     s.sandLights[h.target]=s.tick;advanceLandform(s,p);
   }else if(h.kind==='SpringBoard'&&!p.vehicle){
     const [dx,dy]=DIRS[p.dir],targetX=p.x+dx*ART.rules.springCells,targetY=p.y+dy*ART.rules.springCells;
@@ -23,6 +25,7 @@ export function advanceLandform(s:State,p:any):void {
   if(t.kind==='sand'){
     if(t.alpha<ART.rules.sandTransferAlpha){
       const target=s.hazards[t.target],vx=b.vx,vy=b.vy;relocate(p,target.x,target.y);p.walking.vx=vx;p.walking.vy=vy;p.dir=3;p.sandCell=target.y*17+target.x;p.travel=null;
+      resetBody(p);resumeAura(p);
       moveActor(s,p,-1,()=>{});
     }else t.alpha-=ART.rules.sandAlphaStep;
     return;
@@ -39,7 +42,7 @@ export function jumpSprite(p:any,tick:number){
   const key=`jump-${p.character-1}-${DIRECTION_NAMES[t.dir]}` as keyof typeof ART.timelines,meta=ART.timelines[key],frame=Math.min(meta.frames-1,Math.max(0,tick-t.born));
   return {name:'native-'+key,meta,frame};
 }
-export function heroHead(p:any,tick:number):number {const sprite=jumpSprite(p,tick);return sprite?sprite.meta.y+(sprite.meta.bounds[sprite.frame]?.[1]??0):rideHead(p)??-7;}
+export function heroHead(p:any,tick:number):number {const sprite=jumpSprite(p,tick)||(!p.vehicle?nativeHero(p,tick):null);return sprite?sprite.meta.y+(sprite.meta.bounds[sprite.frame]?.[1]??0):rideHead(p)??-7;}
 export function travelAlpha(p:any):number {return p.travel?.kind==='sand'?p.travel.alpha:1;}
 export function sandFrame(tick:number):number {return tick===0?0:ART.rules.sandLoopStart-1+(tick-1)%(ART.rules.sandLoopEnd-ART.rules.sandLoopStart+1);}
 export function validLandforms(s:State):boolean {

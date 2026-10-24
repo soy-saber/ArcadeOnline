@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-24T14:16:05.886Z",
+  "results": [
+    {
+      "case": "shield-and-power",
+      "characters": [
+        4,
+        3
+      ],
+      "nativeAssetsBeforeReady": 18,
+      "shield": {
+        "width": 12,
+        "height": 17,
+        "oneHitConsumed": true,
+        "noDeath": true,
+        "guardRecovery": {
+          "kind": "guard",
+          "born": 150,
+          "requestedAt": 151,
+          "full": 6,
+          "recoveredAt": 151,
+          "survived": true
+        }
+      },
+      "intro": {
+        "noEarlyImmunity": true,
+        "originalThirtyFrameSheet": true,
+        "recovery": {
+          "kind": "intro",
+          "born": 252,
+          "requestedAt": 253,
+          "full": 7,
+          "recoveredAt": 253,
+          "survived": true
+        }
+      },
+      "power": {
+        "innerGradientDrawn": true,
+        "realContactKill": 1,
+        "victimLives": 2,
+        "worksOnNativeVehicle": true
+      },
+      "sound": true
+    },
+    {
+      "case": "spring",
+      "nativeFilteredJump": true,
+      "shieldStockRetained": true
+    },
+    {
+      "case": "sand-and-fullscreen",
+      "powerPausedDuringTransfer": true,
+      "powerTimeRetained": true,
+      "vehicleAndShieldStockRetained": true,
+      "recovery": {
+        "kind": "sand",
+        "born": 181,
+        "requestedAt": 203,
+        "full": 18,
+        "recoveredAt": 203,
+        "survived": true
+      },
+      "pausedAge": 20,
+      "exitAge": 21,
+      "elapsedTicks": 9
+    }
+  ],
+  "errors": []
+}
