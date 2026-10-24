@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "acf2b576119cb5c57b826ff621fc2a038a3caad2307884cd080f9e20290bf450",
-    "runtime/authority.cjs": "6c24111512c6b0284fa404cd441cee273b2f8b66cc429ada4f76aeae6eaecdeb",
+    "public/authority/game.js": "1faa1c7d4011384d4f358d78d72db22861dde23dda56b5293983a1a31fbcaede",
+    "runtime/authority.cjs": "ee3fc1a83722ef15102318b46242a3a9bfabacfd7e88319428800f155e0f4ed7",
     "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
     "src/badminton/view.ts": "5daaad77c77d5f7ec7afad171cbb33c534c1a189ad5e397f29dad64cab7a1de8",
     "src/authority/bomb-core.ts": "367eb3e3b89f59fc7e5e0b5a7e05f739f4958a62f9ea9d6635f319e56a1db186",
@@ -34,7 +34,7 @@
     "src/expanded/bomb2-sound.ts": "bdeba56ca609769f63838d34747b592d9a9b788df4c835022e6ecf5a224494f4",
     "src/expanded/bomb2-status.ts": "b038fd8fbb657db2a84942e835cd662b47a6d7481b35a1314f2f380ee1ac7db1",
     "src/expanded/bomb2-walking.ts": "c9f78ba9ab9fff47ee19e9fda28a41ec5fb90723be454fe0aa7d0c496e8d33a7",
-    "src/expanded/bomb2.ts": "28aef9789a7521c15da987acf2628ada1612fffca6e2a493a1193f86a147260f",
+    "src/expanded/bomb2.ts": "edf4cc55dddb691cc6bad4860e78d896010949dda83d406d8a7a3870030a884a",
     "src/expanded/boxhead-core.ts": "ffd966b61bca8bf32b8b8808215ced14d31983aaf4103b7c79f61d38c7858ff0",
     "src/expanded/boxhead-data.json": "a474a5109ec76910b35ccf91a176d9f5a7be66a6dee738912e0e4cd9dbed3710",
     "src/expanded/boxhead-view.ts": "4eba8e77a058c5b1ba8ac630ba7bf613de835bc9ed986670747dfa00235bcbce",

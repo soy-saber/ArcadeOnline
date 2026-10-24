@@ -3204,7 +3204,7 @@ function valid2(value) {
   return Array.isArray(s.hazards) && s.hazards.length === map.hazards.length && s.hazards.every((h, i) => JSON.stringify(h) === JSON.stringify(map.hazards[i]));
 }
 var images = /* @__PURE__ */ new Map();
-var flamePreload = false;
+var combatPreload = false;
 function asset2(name) {
   let img2 = images.get(name);
   if (!img2) {
@@ -3240,9 +3240,10 @@ function render2(canvas, s, seat) {
   ctx.font = "bold 21px system-ui";
   ctx.fillText("\u6CE1\u6CE1\u5802 2", 24, 32);
   if (!s) return;
-  if (!flamePreload) {
+  if (!combatPreload) {
+    for (const name of Object.keys(bomb2_bomb_art_default.timelines)) asset2("native-bomb-" + name);
     for (const name of Object.keys(bomb2_blast_art_default.timelines)) asset2("native-flame-" + name);
-    flamePreload = true;
+    combatPreload = true;
   }
   ctx.font = "15px system-ui";
   ctx.fillText(`${THEMES[s.theme]} \xB7 ${["\u751F\u5B58", "\u51FB\u6740 10", "\u91D1\u5E01 10", "\u5360\u5730 50"][MODES.indexOf(s.mode)]}`, 180, 31);

@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-24T05:20:31.080Z",
+  "at": "2026-10-24T05:32:47.556Z",
   "results": [
     {
       "case": "normal",
@@ -17,6 +17,7 @@
       ],
       "nativeTransforms": true,
       "nativeDimensions": true,
+      "nativeBombAndFlameAssetsBeforeReady": true,
       "snapshotRecovery": true
     },
     {

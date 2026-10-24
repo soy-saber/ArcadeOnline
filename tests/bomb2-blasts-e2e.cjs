@@ -28,6 +28,7 @@ async function escape(p){await p.keyboard.down('ArrowLeft');await p.waitForFunct
  const [a,b]=pages,room='flames-'+Date.now().toString(36).slice(-6),results=[];
  for(const [i,p]of pages.entries()){await p.goto(`${base}/authority-room.html?game=9109-server&room=${room}&debug=1`);await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(i=>window.__authorityTest.seat===i,{},i+1);}
  await a.select('#game-map','beach-one');await b.waitForFunction(()=>window.__authorityTest.authority.mapId==='beach-one');
+ await a.waitForFunction(()=>['native-bomb-normal','native-bomb-remote','native-bomb-mine','native-flame-center','native-flame-middle','native-flame-end','native-flame-mine-center'].every(name=>performance.getEntriesByType('resource').some(r=>r.name.endsWith('/'+name+'.png'))));
  for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id).ready);}
  await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing'&&window.__authorityTest.authority.players.every(p=>!p.invulnerable));
  for(const range of [2,3]){
@@ -41,7 +42,7 @@ async function escape(p){await p.keyboard.down('ArrowLeft');await p.waitForFunct
  const draws=await a.evaluate(()=>window.__nativeFlames),art=require('../src/expanded/bomb2-blast-art.json');
  for(const t of normal.tiles){const selector=art.selectors.normal[t.frame-1],m=selector.matrix,expected=[m[0],m[1],m[2],m[3],45+normal.px+(t.x-normal.x)*30+m[4],66+normal.py+(t.y-normal.y)*30+m[5]];assert(draws.some(d=>d.name==='native-flame-'+selector.timeline+'.png'&&d.matrix.every((v,i)=>Math.abs(v-expected[i])<.001)),'source selector transform '+t.frame);}
  assert(draws.every(d=>d.w===d.destW&&d.h===d.destH));await a.waitForFunction(()=>window.__authorityTest.authority.blasts.length===0);assert(await a.evaluate(()=>window.__authorityTest.authority.players.every(p=>p.deaths===0)));
- results.push({case:'normal',realRangePickups:2,sourceSelectors:[1,2,3,4,5,6,7,8,9],nativeTransforms:true,nativeDimensions:true,snapshotRecovery:true});
+ results.push({case:'normal',realRangePickups:2,sourceSelectors:[1,2,3,4,5,6,7,8,9],nativeTransforms:true,nativeDimensions:true,nativeBombAndFlameAssetsBeforeReady:true,snapshotRecovery:true});
  await a.click('#fullscreen-stage');await a.waitForFunction(()=>document.fullscreenElement||document.querySelector('.fullscreen-fallback'));
  await scene(room,'flame-chain',pages);await focus(b);await b.keyboard.press('Space');await b.waitForFunction(()=>window.__authorityTest.authority.bombs.some(b=>b.owner===2));await b.keyboard.down('ArrowDown');await b.waitForFunction(()=>window.__authorityTest.authority.players[1].y>=8);await b.keyboard.up('ArrowDown');await stopped(b,1);
  await focus(a);await a.keyboard.press('Space');await escape(a);await a.waitForFunction(()=>window.__authorityTest.authority.blasts.length===2);

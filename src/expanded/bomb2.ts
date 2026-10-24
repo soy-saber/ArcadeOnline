@@ -360,7 +360,7 @@ export function valid(value:unknown):value is State {
   return Array.isArray(s.hazards)&&s.hazards.length===map.hazards.length&&s.hazards.every((h:any,i:number)=>JSON.stringify(h)===JSON.stringify(map.hazards[i]));
 }
 const images=new Map<string,HTMLImageElement>();
-let flamePreload=false;
+let combatPreload=false;
 function asset(name:string):HTMLImageElement {let img=images.get(name);if(!img){img=new Image();img.src='/expanded/assets/bomb2/'+name+'.png';images.set(name,img);}return img;}
 function draw(ctx:CanvasRenderingContext2D,name:string,x:number,y:number,w:number,h:number):boolean {const img=asset(name);if(img.complete&&img.naturalWidth){ctx.drawImage(img,x,y,w,h);return true;}return false;}
 function timeline(ctx:CanvasRenderingContext2D,name:string,frame:number,x:number,y:number,feet=false):boolean {
@@ -372,7 +372,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   localSeat=seat;
   const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,BOMB2_CANVAS_WIDTH,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,BOMB2_CANVAS_WIDTH,550);
   ctx.fillStyle='#fff';ctx.font='bold 21px system-ui';ctx.fillText('泡泡堂 2',24,32);if(!s)return;
-  if(!flamePreload){for(const name of Object.keys(FLAME_ART.timelines))asset('native-flame-'+name);flamePreload=true;}
+  if(!combatPreload){for(const name of Object.keys(BOMB_ART.timelines))asset('native-bomb-'+name);for(const name of Object.keys(FLAME_ART.timelines))asset('native-flame-'+name);combatPreload=true;}
   ctx.font='15px system-ui';ctx.fillText(`${THEMES[s.theme]} · ${['生存','击杀 10','金币 10','占地 50'][MODES.indexOf(s.mode)]}`,180,31);ctx.fillText(`${Math.max(0,Math.ceil((ROUND_TICKS-s.tick)/HZ))} 秒`,500,31);
   draw(ctx,'background-'+s.theme,left,top,WIDTH*cell,HEIGHT*cell);
   for(const burst of s.crateBursts){
