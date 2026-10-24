@@ -32,7 +32,7 @@ ArcadeOnline 提供八款实时联机游戏，比赛由 Node.js 模拟，浏览�
 
 Q版泡泡堂2现可独立选择生存、击杀、金币、占地四种模式与十八张原作地图，共 72 种组合。击杀模式优先完善：无限基础锤子、原作武器次数与释放动画、地雷离开后感应、激光遇障碍停止、死亡掉落与复活保护；先得 10 分获胜，自杀扣分最低为 0，结束后保留准备与战绩自动续局。四浏览器已完成真实按键 10 次击杀、自然复活及续局验证。其他模式的原作细节与音效仍需继续完善，见 [重建说明](TANK_BOMB2_RECONSTRUCTION.md)。
 
-[打开游戏平台](https://223.109.141.251/) · [Q版泡泡堂](https://223.109.141.251/authority-room.html?game=3881-server&room=demo) · [火柴人打羽毛球](https://223.109.141.251/authority-room.html?game=46923-server&room=demo)
+[打开游戏平台](https://43.142.142.215/) · [Q版泡泡堂](https://43.142.142.215/authority-room.html?game=3881-server&room=demo) · [火柴人打羽毛球](https://43.142.142.215/authority-room.html?game=46923-server&room=demo)
 
 2026-10-22 分类稳定布局与轻量轮廓背景已发布；公网四种屏幕宽度的大厅验证通过。当前实现提交为 `e976cd2`，现场版本和回滚目录见部署记录。前次两个四人游戏、炸弹人武器专项已通过，真实跨设备体验仍待验收。
 
@@ -109,7 +109,7 @@ npm run package:linux
 
 **部署与下一步**
 
-通用安装入口为 `deploy/public-linux.sh`。当前服务器实际使用 Ubuntu 26.04.1，应用监听 `127.0.0.1:18088`，由 Caddy 在 443 提供 HTTPS；原有 8000 端口业务保留。以 [部署记录](DEPLOYMENT_STATUS.md) 的现场参数为准。
+通用安装入口为 `deploy/public-linux.sh`。新腾讯云入口为 `43.142.142.215`，系统 Ubuntu 22.04.5，2核/约4GB内存；应用监听 `127.0.0.1:8000`，由 Caddy 在443提供可信HTTPS/WSS，HTTP自动跳转HTTPS。软件包与服务开机启动均已配置；公网校验、版本与回滚目录见 [部署记录](DEPLOYMENT_STATUS.md)。
 
 下一步继续完善金币/占地原作细节与扩展游戏音效，开展两地真实设备试玩、P50/P95 测量、触屏兼容性和运维回滚验收。当前服务器联机使用 WSS，旧 WebRTC/TURN 历史待办不影响当前链路。完整任务见 [TODO](AGENT_HANDOFF_TODO.md)。
 

@@ -1,8 +1,8 @@
 # ArcadeOnline Linux 部署
 
-部署支持带 systemd 的 Linux；当前现场为 **Ubuntu 26.04.1 LTS，仅公网 IPv4，无需域名**。不依赖 Docker、数据库或 Redis。Node.js 运行八款游戏的服务器模拟，浏览器发送输入并绘制确认状态，通过 WSS 联机。建议至少 1 核 1GB 内存，实际承载量仍需实机压测。
+部署支持带 systemd 的 Linux；新增腾讯云现场为 **Ubuntu 22.04.5 LTS，2核/约4GB内存，仅公网IPv4，无需域名**。不依赖 Docker、数据库或 Redis。Node.js 运行八款游戏的服务器模拟，浏览器发送输入并绘制确认状态，通过 WSS 联机。建议至少 1 核 1GB 内存，实际承载量仍需实机压测。
 
-实际部署：`https://223.109.141.251/`，应用监听 `127.0.0.1:18088`（8000 已有其他服务）。可信 HTTPS、WSS 入房和服务器状态同步已通过；现场版本、校验与证据见 `DEPLOYMENT_STATUS.md`。当前服务器游戏不依赖 TURN，下方 TURN 配置保留供旧 WebRTC 部署追溯，未验收的 TURN 端口不阻塞当前 WSS 游戏。
+新站：`https://43.142.142.215/`，应用监听 `127.0.0.1:8000`，云侧需要开放TCP80/443。可信HTTPS、WSS入房和服务器状态同步已通过；现场版本、校验与证据见 `DEPLOYMENT_STATUS.md`。原站 `223.109.141.251` 的Ubuntu26.04.1/18088端口记录保留于部署历史。当前服务器游戏不依赖 TURN，下方 TURN 配置保留供旧 WebRTC 部署追溯，未验收的 TURN 端口不阻塞当前 WSS 游戏。
 
 仅 IP 且经过 NAT 时，部署会在 Caddy 全局选项中设置 `default_sni` 为公网 IP，以便未发送 SNI 的浏览器选择正确证书；若已有其他站点的不同 `default_sni`，安装会停止并恢复配置，要求人工整合。依据：[Caddy 全局 default_sni](https://caddyserver.com/docs/caddyfile/options#default-sni)。
 

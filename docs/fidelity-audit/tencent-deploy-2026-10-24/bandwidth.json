@@ -1,0 +1,385 @@
+{
+  "at": "2026-10-24T13:01:34.769Z",
+  "origin": "https://43.142.142.215",
+  "asset": "/authority/game.js",
+  "sha256": "a8ba04fc6770f0284aa76cd0f41f77f1e73e582a4133b40e128fb4c7c90942a2",
+  "method": {
+    "direction": "server to this Windows machine",
+    "protocol": "HTTPS over IPv4 / HTTP 1.1",
+    "proxy": false,
+    "tlsVerification": true,
+    "compression": "identity",
+    "singleConnection": "three runs, four sequential downloads each, one kept-alive connection",
+    "parallel": "four connections, four sequential downloads per connection",
+    "units": "Mbps = 1000000 bits/second; MB/s = 1000000 bytes/second",
+    "scope": "Application payload throughput on this route at this time, including request delays. Not a contractual link rate, upload test or concurrent-player capacity test."
+  },
+  "warmup": {
+    "bytes": 1342571,
+    "elapsedMs": 1494.05,
+    "mbps": 7.19,
+    "MBps": 0.9,
+    "firstByteMs": 101.36,
+    "connectMs": 34.17,
+    "tlsMs": 68.12,
+    "reusedSocket": false,
+    "httpVersion": "1.1"
+  },
+  "sequential": [
+    {
+      "workers": 1,
+      "requestsPerWorker": 4,
+      "bytes": 5370284,
+      "elapsedMs": 8901.57,
+      "mbps": 4.83,
+      "MBps": 0.6,
+      "samples": [
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2229.23,
+          "mbps": 4.82,
+          "MBps": 0.6,
+          "firstByteMs": 29.96,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2280.52,
+          "mbps": 4.71,
+          "MBps": 0.59,
+          "firstByteMs": 30.77,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2120.18,
+          "mbps": 5.07,
+          "MBps": 0.63,
+          "firstByteMs": 29.65,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2270.72,
+          "mbps": 4.73,
+          "MBps": 0.59,
+          "firstByteMs": 32.67,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        }
+      ]
+    },
+    {
+      "workers": 1,
+      "requestsPerWorker": 4,
+      "bytes": 5370284,
+      "elapsedMs": 8962.24,
+      "mbps": 4.79,
+      "MBps": 0.6,
+      "samples": [
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2177.7,
+          "mbps": 4.93,
+          "MBps": 0.62,
+          "firstByteMs": 29.83,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2286.92,
+          "mbps": 4.7,
+          "MBps": 0.59,
+          "firstByteMs": 31.42,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2558.19,
+          "mbps": 4.2,
+          "MBps": 0.52,
+          "firstByteMs": 31.04,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 1938.23,
+          "mbps": 5.54,
+          "MBps": 0.69,
+          "firstByteMs": 72.03,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        }
+      ]
+    },
+    {
+      "workers": 1,
+      "requestsPerWorker": 4,
+      "bytes": 5370284,
+      "elapsedMs": 8937.64,
+      "mbps": 4.81,
+      "MBps": 0.6,
+      "samples": [
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2161.78,
+          "mbps": 4.97,
+          "MBps": 0.62,
+          "firstByteMs": 32.91,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2230.37,
+          "mbps": 4.82,
+          "MBps": 0.6,
+          "firstByteMs": 31,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2269.31,
+          "mbps": 4.73,
+          "MBps": 0.59,
+          "firstByteMs": 30.76,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        },
+        {
+          "bytes": 1342571,
+          "elapsedMs": 2275.37,
+          "mbps": 4.72,
+          "MBps": 0.59,
+          "firstByteMs": 30.11,
+          "connectMs": null,
+          "tlsMs": null,
+          "reusedSocket": true,
+          "httpVersion": "1.1"
+        }
+      ]
+    }
+  ],
+  "concurrent": {
+    "workers": 4,
+    "requestsPerWorker": 4,
+    "bytes": 21481136,
+    "elapsedMs": 37227.18,
+    "mbps": 4.62,
+    "MBps": 0.58,
+    "samples": [
+      {
+        "bytes": 1342571,
+        "elapsedMs": 7461.77,
+        "mbps": 1.44,
+        "MBps": 0.18,
+        "firstByteMs": 114.56,
+        "connectMs": 39.23,
+        "tlsMs": 84.01,
+        "reusedSocket": false,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 9037.86,
+        "mbps": 1.19,
+        "MBps": 0.15,
+        "firstByteMs": 389.86,
+        "connectMs": 42.18,
+        "tlsMs": 80.32,
+        "reusedSocket": false,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 10599.68,
+        "mbps": 1.01,
+        "MBps": 0.13,
+        "firstByteMs": 130.95,
+        "connectMs": 40.13,
+        "tlsMs": 98.12,
+        "reusedSocket": false,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 6035.95,
+        "mbps": 1.78,
+        "MBps": 0.22,
+        "firstByteMs": 33.98,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 14878.47,
+        "mbps": 0.72,
+        "MBps": 0.09,
+        "firstByteMs": 143.76,
+        "connectMs": 38.07,
+        "tlsMs": 108.34,
+        "reusedSocket": false,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 5407.77,
+        "mbps": 1.99,
+        "MBps": 0.25,
+        "firstByteMs": 32.72,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 11051.02,
+        "mbps": 0.97,
+        "MBps": 0.12,
+        "firstByteMs": 35.83,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 14209.97,
+        "mbps": 0.76,
+        "MBps": 0.09,
+        "firstByteMs": 32.18,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 8973.95,
+        "mbps": 1.2,
+        "MBps": 0.15,
+        "firstByteMs": 32.81,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 5049.12,
+        "mbps": 2.13,
+        "MBps": 0.27,
+        "firstByteMs": 28.99,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 6478.09,
+        "mbps": 1.66,
+        "MBps": 0.21,
+        "firstByteMs": 30.17,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 5856.29,
+        "mbps": 1.83,
+        "MBps": 0.23,
+        "firstByteMs": 29.94,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 3702.84,
+        "mbps": 2.9,
+        "MBps": 0.36,
+        "firstByteMs": 31.13,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 6513.4,
+        "mbps": 1.65,
+        "MBps": 0.21,
+        "firstByteMs": 30.65,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 11126.71,
+        "mbps": 0.97,
+        "MBps": 0.12,
+        "firstByteMs": 30.38,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      },
+      {
+        "bytes": 1342571,
+        "elapsedMs": 2239.18,
+        "mbps": 4.8,
+        "MBps": 0.6,
+        "firstByteMs": 31.15,
+        "connectMs": null,
+        "tlsMs": null,
+        "reusedSocket": true,
+        "httpVersion": "1.1"
+      }
+    ]
+  },
+  "summary": {
+    "singleConnectionMedianMbps": 4.81,
+    "singleConnectionMinMbps": 4.79,
+    "singleConnectionMaxMbps": 4.83,
+    "fourConnectionAggregateMbps": 4.62,
+    "totalDownloadedBytes": 38934559
+  }
+}

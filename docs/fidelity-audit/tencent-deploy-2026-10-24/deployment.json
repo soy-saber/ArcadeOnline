@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-24T13:03:26.600Z",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "ff890ed",
+  "archiveSha256": "3a6de2089dcbb74e5616c025116671a265f8d9b9d9c306c3861a145cbed17397",
+  "releaseFiles": 4873,
+  "current": "/opt/arcade-online/releases/20261024123551-20573",
+  "previous": "/opt/arcade-online/releases/20261024122906-17307",
+  "os": "Ubuntu 22.04.5 LTS",
+  "cpuCores": 2,
+  "ramGiB": 3.6,
+  "applicationAddress": "127.0.0.1:8000",
+  "services": [
+    "arcade-online",
+    "caddy",
+    "coturn"
+  ],
+  "servicesActive": true,
+  "servicesEnabled": true,
+  "node": "22.23.3",
+  "caddy": "2.11.7",
+  "caddySource": "Official signed stable APT package; installed binary verified against dpkg file checksums and copied to the pinned runtime",
+  "caddySha256": "678ade3bfc088749c81a681adc603333ee0bb023b6a6cfe3c0f58bef8ff854e9",
+  "httpRedirect": {
+    "status": 308,
+    "location": "https://43.142.142.215/"
+  },
+  "tls": {
+    "authorized": true,
+    "protocol": "TLSv1.3",
+    "subjectAltName": "IP Address:43.142.142.215",
+    "issuer": {
+      "C": "US",
+      "O": "Let's Encrypt",
+      "CN": "YE2"
+    },
+    "validFrom": "Oct 24 11:37:35 2026 GMT",
+    "validTo": "Oct 31 03:37:34 2026 GMT",
+    "health": {
+      "status": "ok",
+      "rooms": 52
+    }
+  },
+  "build": {
+    "browser": "a8ba04fc6770f0284aa76cd0f41f77f1e73e582a4133b40e128fb4c7c90942a2",
+    "server": "36ab269249663e68c3d7a563acea5ecfb8b3e01c9d571fdcfd93a0f2c103935e"
+  },
+  "publicHashes": 136,
+  "publicProbe": "Eight games, covers, background, retired routes, temporary TURN credentials and WebSocket room joins passed",
+  "browserChecks": {
+    "bombGames": [
+      "3881-server",
+      "9109-server"
+    ],
+    "fourPlayerGames": [
+      "50737-server",
+      "9109-server"
+    ],
+    "fullscreenCases": 10,
+    "fullscreenHarness": {
+      "gpu": false,
+      "audio": "off",
+      "navigationWait": "domcontentloaded plus actual authoritative state",
+      "navigationTimeoutMs": 30000,
+      "actionTimeoutMs": 10000
+    },
+    "scope": "Browsers on one Windows machine; game/layout/input assertions unchanged. Independent Bomb It tests verify original audio with sound enabled."
+  },
+  "tests": {
+    "unit": 208,
+    "deploy": 5
+  },
+  "bandwidth": {
+    "singleConnectionMedianMbps": 4.81,
+    "singleConnectionMinMbps": 4.79,
+    "singleConnectionMaxMbps": 4.83,
+    "fourConnectionAggregateMbps": 4.62,
+    "totalDownloadedBytes": 38934559
+  }
+}

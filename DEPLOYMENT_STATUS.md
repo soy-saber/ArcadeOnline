@@ -1,5 +1,40 @@
 **ArcadeOnline 公网部署记录 · 2026-10-24**
 
+## 新腾讯云服务器：43.142.142.215
+
+2026-10-24 20:35（北京时间）已在用户新购腾讯云服务器完成安装，来源 `ff890ed`，入口 **https://43.142.142.215/**。系统Ubuntu22.04.5/x86_64，2核、约4GB内存、60GB磁盘，私网地址10.0.0.17。当前应用目录 `/opt/arcade-online/releases/20261024123551-20573`，上一应用版本 `/opt/arcade-online/releases/20261024122906-17307`；上传目录 `/root/arcade-deploy-20261024-3a6de208/release`。包SHA256 `3a6de2089dcbb74e5616c025116671a265f8d9b9d9c306c3861a145cbed17397`，37.4MiB、4873文件及构建来源校验通过。本条与公网证据在安装后补入，README入口已更新到新站。
+
+### 安装与网络
+
+- 应用以 `arcade-online` 用户运行，仅监听 `127.0.0.1:8000`；Caddy在80/443提供跳转、HTTPS和WSS，coturn已配置；三服务均active/enabled。Node22.23.3，Caddy2.11.7，NAT地址由安装脚本检测。
+- Ubuntu22.04默认源没有Caddy，已修复公网安装脚本：仅在缺少软件包时添加官方签名stable APT源；全新安装清理默认欢迎页，保留既有自定义站点。5部署测试、类型检查/构建及208单测通过。参考 [Caddy官方安装说明](https://caddyserver.com/docs/install#debian-ubuntu-raspbian)。
+- GitHub tar包下载较慢，本次复用官方签名APT源已安装的**同版本2.11.7**。核对版本与dpkg文件校验后复制至固定运行目录，源/目标二进制SHA256均为 `678ade3bfc088749c81a681adc603333ee0bb023b6a6cfe3c0f58bef8ff854e9`；本次该二进制的信任来自签名APT包，不冒称重新完成tar包SHA512下载校验。先前慢下载已结束。
+- Let's Encrypt短期IP证书已实际签发，SAN为43.142.142.215，issuer YE2；有效期UTC2026-10-24 11:37:35至2026-10-31 03:37:34，由Caddy管理续期。Windows客户端已验证TLS1.3及证书信任；HTTP返回308跳转到HTTPS。续期仍需要80/443保持开放。
+- 初始公网443超时：服务器本机可信HTTPS正常、主机UFW未启用且过滤策略未阻断443，从本机和原服务器两条路径均无法连接。用户在腾讯云控制台放行后，80/443均可连接，约31ms TCP建立；随后公网验证通过。SSH密码及连接凭据仅从桌面文件/内存读取，未进入仓库、发布包或本记录。
+
+### 公网验收
+
+- 八款资源、封面、背景、旧入口关闭、临时TURN凭据与真实WebSocket入房探针通过；136个公网文件SHA256与发布内容一致，见 [文件校验](docs/fidelity-audit/tencent-deploy-2026-10-24/public-hashes.json)。服务器本机HTTP和可信HTTPS健康检查、三服务开机启动、应用监听范围及版本来源见 [部署状态证据](docs/fidelity-audit/tencent-deploy-2026-10-24/deployment.json)。TURN实际公网中继数据路径未据此宣称通过；当前游戏使用WSS。
+- 两款泡泡堂公网双浏览器选角色3/4、简单护盾、准备、真实放弹、原声音/音乐与完整恢复去重通过；泡泡堂2连续位移/远端像素、原炸弹/火焰、48载具图准备前加载和自然8秒传送带2→4通过。火焰请求86、恢复88、结束101，完整恢复仍保留原组。见 [双人过程](docs/fidelity-audit/tencent-deploy-2026-10-24/bomb-results.json)、[泡泡堂1](docs/fidelity-audit/tencent-deploy-2026-10-24/bomb1-public.png)、[泡泡堂2](docs/fidelity-audit/tencent-deploy-2026-10-24/bomb2-public.png)。
+- 僵尸危机3、泡泡堂2实际四人准备、移动/攻击、完整/增量同步、恢复、换图与再次开局通过，见 [四人结果](docs/fidelity-audit/tencent-deploy-2026-10-24/four-player-results.json)。
+- 八款全屏最大化、全屏入座/准备/取消、姓名避让与退出恢复，以及两种触屏方向的降级全屏/真实攻击通过，共10场景，见 [全屏与触控结果](docs/fidelity-audit/tencent-deploy-2026-10-24/fullscreen-results.json)。最初测试曾发生10/30秒导航及单次取消准备等待超时；最终以DOM解析和实际权威状态作为就绪条件，布局专项静音、固定页焦点并禁用本机headless GPU后通过，导航限时30秒，操作限时仍10秒，生产页面与布局/输入断言未修改。未据此断言先前超时根因；音效另由开启声音的双人专项验证。浏览器均来自同一Windows工作机，不等于跨设备/跨地区试玩。
+
+### 新服务器公网下载吞吐
+
+21:01使用与原站相同的固定29次GET方法：服务器→当前Windows工作机，IPv4/HTTPS/HTTP1.1，证书校验开启、未设置应用层代理、未压缩 `/authority/game.js`，每次长度和SHA256核对。测速在上传和浏览器下载检查结束后执行，总下载38,934,559字节（38.93MB）。
+
+| 测量 | 有效载荷吞吐 |
+| --- | --- |
+| 单连接三轮 | 4.83、4.79、4.81 Mbps |
+| 单连接中位数 | **4.81 Mbps，约0.60 MB/s** |
+| 四连接合计 | **4.62 Mbps，约0.58 MB/s** |
+
+结果只描述当时服务器到本机这条路径，包含请求等待，不能判定套餐额定带宽或游戏并发容量。完整逐请求时间/方法见 [原始测速](docs/fidelity-audit/tencent-deploy-2026-10-24/bandwidth.json)。复现：`node scripts/check-public-bandwidth.cjs https://43.142.142.215 artifacts/tencent-bandwidth.json`。
+
+公网浏览器包SHA256 `a8ba04fc6770f0284aa76cd0f41f77f1e73e582a4133b40e128fb4c7c90942a2`，服务器运行包 `36ab269249663e68c3d7a563acea5ecfb8b3e01c9d571fdcfd93a0f2c103935e`，与本地构建来源一致。游戏还原工作的已知近似项仍按原审计/修复报告记录，本次部署验收不表示完整原作还原已完成。
+
+## 原服务器发布历史
+
 2026-10-24 19:25（北京时间）按用户要求重新打包并更新公网，发布来源 `6065e1d`，包含泡泡堂1手套六版本追溯记录；仓库提供历史复现与有界公网测速脚本。当前目录 `/opt/arcade-online/releases/20261024112531-2029282`，上一版 `/opt/arcade-online/releases/20261024110251-2024747` 保留可回滚。上传目录 `/home/zkh/arcade-deploy-20261024-refresh-b26d250b`，发布包SHA256 `b26d250b1f6e78da6686e33fd3cd9fad4d5d7bfc7a33ce50e5b190ac74c78f2d`，37.3MiB，4871文件及构建来源校验通过。208单测、5部署测试、类型检查/构建通过，应用/Caddy/coturn active、健康检查正常。公网八款资源/封面/入口及WebSocket入房探针通过，136文件SHA256一致，见 [发布文件校验](docs/fidelity-audit/redeploy-bandwidth-2026-10-24/public-hashes.json)。本条与测速记录在部署后补入。
 
 19:27完成公网下载吞吐测量：服务器 `223.109.141.251:443` → 当前Windows工作机，使用IPv4、HTTP/1.1、正常TLS校验，不配置应用层代理；请求未压缩 `/authority/game.js`，每次1,342,571字节，全部响应核对长度与SHA256。结束部署上传和其他检查下载后，先预热一次，再以同一keep-alive连接做三轮、每轮四次顺序下载，最后四连接各下载四次；总下载38,934,559字节（38.93MB）。

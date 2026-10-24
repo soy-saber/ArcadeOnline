@@ -1,0 +1,254 @@
+{
+  "base": "https://43.142.142.215",
+  "results": [
+    {
+      "game": "3881-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        130.328125,
+        0,
+        1339.328125,
+        999.984375
+      ],
+      "aspect": 1.3393393393393394,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "46923-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        112.5,
+        0,
+        1375,
+        1000
+      ],
+      "aspect": 1.375,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "137953-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        73.46875,
+        0,
+        1453.046875,
+        999.984375
+      ],
+      "aspect": 1.453061224489796,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "50737-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        0,
+        0,
+        1600,
+        1000
+      ],
+      "aspect": 1.6,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "6232-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        30.765625,
+        0,
+        1538.453125,
+        999.984375
+      ],
+      "aspect": 1.5384615384615385,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "9109-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        114.546875,
+        0,
+        1370.90625,
+        999.984375
+      ],
+      "aspect": 1.3709090909090909,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "97734-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        50,
+        0,
+        1500,
+        1000
+      ],
+      "aspect": 1.5,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "game": "fbw_forest-server",
+      "nativeFullscreen": true,
+      "quickReady": true,
+      "viewport": [
+        1600,
+        1000
+      ],
+      "canvas": [
+        127.59375,
+        0,
+        1344.8125,
+        999.984375
+      ],
+      "aspect": 1.3448275862068966,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "none",
+      "buttons": [
+        "exit-fullscreen",
+        "fullscreen-ready"
+      ],
+      "fits": true
+    },
+    {
+      "fallback": true,
+      "touchAttack": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        0,
+        276.40625,
+        390,
+        291.1875
+      ],
+      "aspect": 1.3393393393393394,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "flex",
+      "buttons": [
+        "fullscreen-ready",
+        "exit-fullscreen",
+        "touch-up",
+        "KeyA",
+        "touch-down",
+        "KeyD",
+        "attack-button"
+      ],
+      "fits": true
+    },
+    {
+      "fallback": true,
+      "touchAttack": true,
+      "viewport": [
+        844,
+        390
+      ],
+      "canvas": [
+        160.828125,
+        0,
+        522.328125,
+        389.984375
+      ],
+      "aspect": 1.3393393393393394,
+      "sidebar": "none",
+      "caption": "none",
+      "touch": "flex",
+      "buttons": [
+        "fullscreen-ready",
+        "exit-fullscreen",
+        "touch-up",
+        "KeyA",
+        "touch-down",
+        "KeyD",
+        "attack-button"
+      ],
+      "fits": true
+    }
+  ],
+  "errors": []
+}
