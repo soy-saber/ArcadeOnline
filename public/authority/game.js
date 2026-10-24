@@ -1453,6 +1453,284 @@
     return [1, 3, 2, 4][conveyorDirection(h, tick)] || h.dir;
   }
 
+  // src/expanded/bomb2-blast-art.json
+  var bomb2_blast_art_default = {
+    source: "games/9109/game.swf",
+    sha256: "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+    payloadSha256: "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+    timelines: {
+      center: {
+        symbol: 2945,
+        frames: 19,
+        w: 58,
+        h: 58,
+        x: -13.85,
+        y: -13.85,
+        path: "public/expanded/assets/bomb2/native-flame-center.png",
+        sha256: "3d9c5b1e98722bdfad747b09eaf386763c6eeeb771b71512ee2c1c7557d18b1b"
+      },
+      middle: {
+        symbol: 2952,
+        frames: 18,
+        w: 37,
+        h: 41,
+        x: -3.4,
+        y: -1.65,
+        path: "public/expanded/assets/bomb2/native-flame-middle.png",
+        sha256: "f8f51df6ada1e8fb8b03dc0180ebc48d8f0698ea55cebd50975c6dd994c81107"
+      },
+      end: {
+        symbol: 2957,
+        frames: 18,
+        w: 37,
+        h: 31,
+        x: -3.35,
+        y: -0,
+        path: "public/expanded/assets/bomb2/native-flame-end.png",
+        sha256: "3f2e31339643e216795393a2a2b524b176bbedf10e461060aba20e1379c1f862"
+      },
+      "mine-center": {
+        symbol: 2959,
+        frames: 19,
+        w: 144,
+        h: 144,
+        x: -57.05,
+        y: -57.05,
+        path: "public/expanded/assets/bomb2/native-flame-mine-center.png",
+        sha256: "e90d7d8ce1cf1f390509b55092d186d89c7f4b61186e3fcabf76539b1ca7cfe2"
+      }
+    },
+    selectors: {
+      normal: [
+        {
+          timeline: "center",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            0,
+            1,
+            -1,
+            0,
+            30,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            0,
+            1,
+            -1,
+            0,
+            30,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            0,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            0,
+            -1,
+            1,
+            0,
+            0,
+            30
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            1,
+            0,
+            0,
+            -1,
+            0,
+            30
+          ]
+        }
+      ],
+      mine: [
+        {
+          timeline: "mine-center",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            0,
+            1,
+            -1,
+            0,
+            30,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            0,
+            1,
+            -1,
+            0,
+            30,
+            0
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            0,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            0,
+            -1,
+            1,
+            0,
+            0,
+            30
+          ]
+        },
+        {
+          timeline: "middle",
+          matrix: [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          timeline: "end",
+          matrix: [
+            1,
+            0,
+            0,
+            -1,
+            0,
+            30
+          ]
+        }
+      ]
+    },
+    sourceClasses: {
+      "actionSprite/Bomb": "f25510058ceb4bd8be2cf81108f05385db824adf4b18e2153e62fce64712b3ed",
+      "actionSprite/MineBomb": "5f3cbf5cf6c2ad77ad25ccd105b47520004c1a86ce9b77b4650dd8de1be3d2e4",
+      "actionSprite/LauncherBomb": "f82fdec6e6e26e7987599440a2a43ba992464bf2b2e0553037bab086fd3d7dcf",
+      "actionSprite/Control": "0ad454e65a1d1867f01306184a5f262e731c99bfdfd66477262eca0a39a82be1",
+      "bomb_it_Edition_04_fla/exp2_300": "df9d97d84704ca589df2efd484b5bc81ca9974a46f85b0ca5fc7aba4a90820f5",
+      "bomb_it_Edition_04_fla/exp3_301": "bd00baa9322fd34ae4306f17893e2a7b27099dd24661c3f938563c6dbf3bc615",
+      "bomb_it_Edition_04_fla/exp1_302": "fe2c9af400e29135df14c697f1098ab1a19d2b68c16e320542954272955b5eef",
+      "bomb_it_Edition_04_fla/exp2_1_304": "3925221f9715ed7abc42bd778ba1655057b5f72361166ed699f8edfaf80b7fc8"
+    },
+    lifetimeTicks: 16
+  };
+
+  // src/expanded/bomb2-blasts.ts
+  var BLAST_TICKS = bomb2_blast_art_default.lifetimeTicks;
+  function burningBombAt(s, x, y, solidOnly = false) {
+    return s.blasts.find((b) => b.blocking && (!solidOnly || b.kind !== "mine") && b.until > s.tick && b.x === x && b.y === y);
+  }
+  function blastSprite(kind, frame, age) {
+    const selector = bomb2_blast_art_default.selectors[kind][frame - 1], meta = bomb2_blast_art_default.timelines[selector.timeline];
+    return { name: "native-flame-" + selector.timeline, meta, matrix: selector.matrix, frame: Math.max(0, Math.min(meta.frames - 1, Math.floor(age))) };
+  }
+  function validBlasts(s) {
+    const int = (v, min, max) => Number.isSafeInteger(v) && v >= min && v <= max;
+    return Array.isArray(s.blasts) && s.blasts.length <= 64 && new Set(s.blasts.map((b) => b?.id)).size === s.blasts.length && s.blasts.every((b) => b && int(b.id, 1, s.nextId - 1) && s.players.some((p) => p.seat === b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && Number.isFinite(b.px) && b.px >= 0 && b.px <= 480 && Number.isFinite(b.py) && b.py >= 0 && b.py <= 420 && int(b.born, 0, s.tick) && b.until === b.born + BLAST_TICKS && b.until > s.tick && ["normal", "mine"].includes(b.kind) && typeof b.blocking === "boolean" && Array.isArray(b.tiles) && b.tiles.length >= 1 && b.tiles.length <= 41 && new Set(b.tiles.map((t) => t && t.x + "," + t.y)).size === b.tiles.length && b.tiles.every((t) => t && int(t.x, 0, 16) && int(t.y, 0, 14) && int(t.frame, 1, 9)) && b.tiles[0].x === b.x && b.tiles[0].y === b.y && b.tiles[0].frame === 1);
+  }
+
   // src/expanded/bomb2-movement.ts
   var dirs = [[-1, 0], [0, -1], [1, 0], [0, 1]];
   function syncWalking(p) {
@@ -1496,13 +1774,15 @@
         const cell = s.board[y * 17 + x];
         if (cell === 1 || cell === 2 && actor?.vehicle !== 11) return false;
         if (s.bombs.some((b) => b !== ignore && b.slide < 0 && b.x === x && b.y === y && b.kind !== "mine")) return false;
+        if (burningBombAt(s, x, y, true)) return false;
         if ((actor?.vehicle === 12 || actor?.vehicle === 13) && s.hazards.some((h) => h.kind === "SpringBoard" && h.x === x && h.y === y)) return false;
         return !tram || Math.floor((tram.x + 15) / CELL2) !== x || Math.floor((tram.y + 15) / CELL2) !== y;
       },
       item(x, y) {
         if (tram && Math.floor((tram.x + 15) / CELL2) === x && Math.floor((tram.y + 15) / CELL2) === y) return tram;
         const bomb = s.bombs.find((b) => b !== ignore && b.slide < 0 && b.kind !== "mine" && b.x === x && b.y === y);
-        return bomb ? syncWalking(bomb) : { x: x * CELL2, y: y * CELL2, w: CELL2, h: CELL2, blocked: false };
+        const blast2 = burningBombAt(s, x, y, true);
+        return bomb ? syncWalking(bomb) : blast2 ? { x: blast2.px, y: blast2.py, w: CELL2, h: CELL2, blocked: false } : { x: x * CELL2, y: y * CELL2, w: CELL2, h: CELL2, blocked: false };
       }
     };
   }
@@ -1653,6 +1933,7 @@
       owners: Array(255).fill(0),
       colors: Array(255).fill(0),
       bombs: [],
+      blasts: [],
       shots: [],
       effects: [],
       hazards: map.hazards.map((h) => ({ ...h })),
@@ -1727,7 +2008,7 @@
   }
   function passable(s, x, y) {
     const rail = s.hazards.filter((h) => h.kind === "Rail"), tram = rail.length ? rail[Math.floor(s.tram) % rail.length] : null;
-    return inside(x, y) && s.board[index2(x, y)] === 0 && !s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y) && !(tram && tram.x === x && tram.y === y);
+    return inside(x, y) && s.board[index2(x, y)] === 0 && !s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y) && !burningBombAt(s, x, y) && !(tram && tram.x === x && tram.y === y);
   }
   function breakCrate(s, cell) {
     if (s.board[cell] !== 2) return;
@@ -1736,9 +2017,9 @@
     s.crateBursts.push({ cell, born: s.tick, at: s.tick + bomb2_brick_default.frames });
   }
   function finishCrates(s) {
-    for (const burst of s.crateBursts) {
-      if (burst.at > s.tick) continue;
-      const cell = burst.cell;
+    for (const burst2 of s.crateBursts) {
+      if (burst2.at > s.tick) continue;
+      const cell = burst2.cell;
       if (s.board[cell] || s.items[cell]) continue;
       const pool = [...PROP_POOLS[s.mode], ...s.vehiclesLeft > 0 ? s.vehiclePool : []];
       if (s.items.filter((item) => item !== 0).length < 32 && random2(s) < 0.6) {
@@ -1749,17 +2030,47 @@
     }
     s.crateBursts = s.crateBursts.filter((b) => b.at > s.tick);
   }
-  function ignite(s, x, y, owner) {
-    if (!inside(x, y) || s.board[index2(x, y)] === 1) return;
+  function ignite(s, x, y, owner, diagonal = false) {
+    if (!inside(x, y) || s.board[index2(x, y)] === 1 && !diagonal) return;
     const cell = index2(x, y);
     if (s.flames[cell] <= s.tick) s.owners[cell] = owner;
-    s.flames[cell] = s.tick + 16;
+    s.flames[cell] = s.tick + BLAST_TICKS;
     if (s.board[cell] === 2) breakCrate(s, cell);
     else s.items[cell] = 0;
     for (const b of s.bombs) if (b.slide < 0 && b.x === x && b.y === y) b.explodeAt = Math.min(b.explodeAt, s.tick);
   }
+  function burst(s, b, exploded, blocking = true) {
+    const position2 = walkingPosition(b), blast2 = { id: s.nextId++, owner: b.owner, x: b.x, y: b.y, px: position2.x * 30, py: position2.y * 30, born: s.tick, until: s.tick + BLAST_TICKS, kind: b.kind === "mine" ? "mine" : "normal", blocking, tiles: [{ x: b.x, y: b.y, frame: 1 }] };
+    ignite(s, b.x, b.y, b.owner);
+    const arms = [{ dx: 0, dy: -1, mid: 2, end: 3 }, { dx: 0, dy: 1, mid: 8, end: 9 }, { dx: -1, dy: 0, mid: 6, end: 7 }, { dx: 1, dy: 0, mid: 4, end: 5 }], active = arms.map(() => true);
+    const rail = s.hazards.filter((h) => h.kind === "Rail"), tram = rail[Math.floor(s.tram) % rail.length];
+    for (let distance = 1; distance <= b.range; distance++) for (let a = 0; a < arms.length; a++) {
+      if (!active[a]) continue;
+      const arm = arms[a], x = b.x + arm.dx * distance, y = b.y + arm.dy * distance;
+      if (!inside(x, y) || s.board[index2(x, y)] === 1) {
+        active[a] = false;
+        continue;
+      }
+      const other = s.bombs.find((q) => q !== b && q.slide < 0 && q.x === x && q.y === y);
+      if (other) {
+        if (!exploded.has(other.id)) other.explodeAt = Math.min(other.explodeAt, s.tick);
+        active[a] = false;
+        continue;
+      }
+      if (burningBombAt(s, x, y) || tram && tram.x === x && tram.y === y) {
+        active[a] = false;
+        continue;
+      }
+      const crate = s.board[index2(x, y)] === 2;
+      blast2.tiles.push({ x, y, frame: distance === b.range ? arm.end : arm.mid });
+      ignite(s, x, y, b.owner);
+      if (crate) active[a] = false;
+    }
+    if (b.kind === "mine") for (const dx of [-1, 1]) for (const dy of [-1, 1]) ignite(s, b.x + dx, b.y + dy, b.owner, true);
+    s.blasts.push(blast2);
+  }
   function place(s, p, kind = "normal", x = p.x, y = p.y) {
-    if (!inside(x, y) || s.board[index2(x, y)] || s.bombs.length >= 36 || s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y) || s.bombs.filter((b) => b.owner === p.seat).length >= p.capacity) return false;
+    if (!inside(x, y) || s.board[index2(x, y)] || burningBombAt(s, x, y) || s.bombs.length >= 36 || s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y) || s.bombs.filter((b) => b.owner === p.seat).length >= p.capacity) return false;
     s.bombs.push({ id: s.nextId++, owner: p.seat, x, y, range: kind === "mine" ? 2 : p.range, kind, explodeAt: kind === "normal" ? s.tick + FUSE : kind === "thrown" ? s.tick + 25 : ROUND_TICKS3 + FUSE, armedAt: kind === "mine" ? ROUND_TICKS3 + 20 : s.tick + 20, slide: -1 });
     if (kind === "remote") s.bombs[s.bombs.length - 1].explodeAt = s.tick + REMOTE_FUSE;
     s.bombs[s.bombs.length - 1].born = s.tick;
@@ -1922,7 +2233,7 @@
         if (kind === 20) for (let d = 1; d < Math.max(WIDTH3, HEIGHT3); d++) {
           const tx = x + dx * d, ty = y + dy * d;
           if (!inside(tx, ty) || s.board[index2(tx, ty)] === 1) break;
-          const cell = index2(tx, ty), blocked2 = s.board[cell] === 2 || s.bombs.some((b) => b.slide < 0 && b.x === tx && b.y === ty);
+          const cell = index2(tx, ty), blocked2 = s.board[cell] === 2 || burningBombAt(s, tx, ty) || s.bombs.some((b) => b.slide < 0 && b.x === tx && b.y === ty);
           effect2.cells.push(cell);
           if (blocked2) break;
         }
@@ -1975,6 +2286,7 @@
   function step2(s, inputs) {
     if (s.phase !== "playing") return;
     s.tick++;
+    s.blasts = s.blasts.filter((b) => b.until > s.tick);
     const rails = s.hazards.filter((h) => h.kind === "Rail");
     if (rails.length) s.tram = (s.tram + 1 / 30) % rails.length;
     for (const p of s.players) {
@@ -2053,11 +2365,10 @@
         shot2.y += shot2.vy / 4;
         const x = Math.floor(shot2.x), y = Math.floor(shot2.y);
         if (!inside(x, y)) return false;
-        if (s.board[index2(x, y)] || s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y)) {
+        if (s.board[index2(x, y)] || burningBombAt(s, x, y) || s.bombs.some((b) => b.slide < 0 && b.x === x && b.y === y)) {
           if (shot2.kind === 16) {
             const tx = s.board[index2(x, y)] === 1 ? oldX : x, ty = s.board[index2(x, y)] === 1 ? oldY : y;
-            ignite(s, tx, ty, shot2.owner);
-            for (const [dx, dy] of DIRS) ignite(s, tx + dx, ty + dy, shot2.owner);
+            burst(s, { x: tx, y: ty, owner: shot2.owner, range: 1, kind: "normal" }, /* @__PURE__ */ new Set(), false);
           } else {
             breakCrate(s, index2(x, y));
             for (const b of s.bombs) if (b.slide < 0 && b.x === x && b.y === y) b.explodeAt = s.tick;
@@ -2069,10 +2380,8 @@
           return p2.alive && !p2.respawnAt && p2.seat !== shot2.owner && Math.hypot(pos.x + 0.5 - shot2.x, pos.y + 0.5 - shot2.y) < 0.4;
         });
         if (p) {
-          if (shot2.kind === 16) {
-            ignite(s, x, y, shot2.owner);
-            for (const [dx, dy] of DIRS) ignite(s, x + dx, y + dy, shot2.owner);
-          } else hit(s, p, shot2.owner);
+          if (shot2.kind === 16) burst(s, { x, y, owner: shot2.owner, range: 1, kind: "normal" }, /* @__PURE__ */ new Set(), false);
+          else hit(s, p, shot2.owner);
           return false;
         }
       }
@@ -2084,15 +2393,7 @@
       if (!b) break;
       exploded.add(b.id);
       sound(s, "explode");
-      ignite(s, b.x, b.y, b.owner);
-      for (const [dx, dy] of DIRS) for (let distance = 1; distance <= b.range; distance++) {
-        const x = b.x + dx * distance, y = b.y + dy * distance;
-        if (!inside(x, y) || s.board[index2(x, y)] === 1) break;
-        const crate = s.board[index2(x, y)] === 2;
-        ignite(s, x, y, b.owner);
-        if (crate) break;
-      }
-      if (b.kind === "mine") for (const dx of [-1, 1]) for (const dy of [-1, 1]) ignite(s, b.x + dx, b.y + dy, b.owner);
+      burst(s, b, exploded);
     }
     s.bombs = s.bombs.filter((b) => !exploded.has(b.id));
     for (const p of s.players) if (p.alive && !p.respawnAt && s.flames[index2(p.x, p.y)] > s.tick) hit(s, p, s.owners[index2(p.x, p.y)]);
@@ -2137,6 +2438,7 @@
     for (const [key, max] of [["board", 2], ["tiles", 59], ["items", 22], ["flames", ROUND_TICKS3 + 16], ["owners", 4], ["colors", 4]]) if (!Array.isArray(s[key]) || s[key].length !== 255 || !s[key].every((v) => int(v, 0, max))) return false;
     if (!Array.isArray(s.ack) || s.ack.length !== 4 || !s.ack.every((n) => int(n, 0, 1e9)) || !Array.isArray(s.scores) || s.scores.length !== 4 || !s.scores.every((n) => int(n, 0, 1e3))) return false;
     const owns = (owner) => s.players.some((p) => p.seat === owner);
+    if (!validBlasts(s)) return false;
     if (Array.isArray(s.bombs) && s.bombs.some((b) => b && (b.walking && !validWalking(b) || b.born !== void 0 && !int(b.born, 0, s.tick)))) return false;
     if (!Array.isArray(s.bombs) || s.bombs.length > 36 || !s.bombs.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && int(b.range, 1, 10) && ["normal", "remote", "mine", "thrown"].includes(b.kind) && int(b.slide, -1, 3) && int(b.explodeAt, 0, ROUND_TICKS3 + REMOTE_FUSE) && int(b.armedAt, 0, ROUND_TICKS3 + 20))) return false;
     if (!Array.isArray(s.shots) || s.shots.length > 64 || !s.shots.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && Number.isFinite(b.x) && b.x >= 0 && b.x <= 17 && Number.isFinite(b.y) && b.y >= 0 && b.y <= 15 && Number.isFinite(b.vx) && Math.abs(b.vx) <= 1 && Number.isFinite(b.vy) && Math.abs(b.vy) <= 1 && [16, 19].includes(b.kind) && int(b.until, 0, ROUND_TICKS3 + HZ4 * 4))) return false;
@@ -2147,6 +2449,7 @@
     return Array.isArray(s.hazards) && s.hazards.length === map.hazards.length && s.hazards.every((h, i) => JSON.stringify(h) === JSON.stringify(map.hazards[i]));
   }
   var images = /* @__PURE__ */ new Map();
+  var flamePreload = false;
   function asset2(name) {
     let img2 = images.get(name);
     if (!img2) {
@@ -2182,15 +2485,19 @@
     ctx.font = "bold 21px system-ui";
     ctx.fillText("\u6CE1\u6CE1\u5802 2", 24, 32);
     if (!s) return;
+    if (!flamePreload) {
+      for (const name of Object.keys(bomb2_blast_art_default.timelines)) asset2("native-flame-" + name);
+      flamePreload = true;
+    }
     ctx.font = "15px system-ui";
     ctx.fillText(`${THEMES[s.theme]} \xB7 ${["\u751F\u5B58", "\u51FB\u6740 10", "\u91D1\u5E01 10", "\u5360\u5730 50"][MODES.indexOf(s.mode)]}`, 180, 31);
     ctx.fillText(`${Math.max(0, Math.ceil((ROUND_TICKS3 - s.tick) / HZ4))} \u79D2`, 500, 31);
     draw(ctx, "background-" + s.theme, left, top, WIDTH3 * cell, HEIGHT3 * cell);
-    for (const burst of s.crateBursts) {
+    for (const burst2 of s.crateBursts) {
       const im = asset2("brick-burst");
       if (im.complete && im.naturalWidth) {
-        const frame = Math.min(bomb2_brick_default.frames - 1, s.tick - burst.born);
-        ctx.drawImage(im, frame * bomb2_brick_default.w, 0, bomb2_brick_default.w, bomb2_brick_default.h, left + (burst.cell % WIDTH3 + 0.5) * cell - bomb2_brick_default.w / 2, top + (Math.floor(burst.cell / WIDTH3) + 1) * cell - bomb2_brick_default.h, bomb2_brick_default.w, bomb2_brick_default.h);
+        const frame = Math.min(bomb2_brick_default.frames - 1, s.tick - burst2.born);
+        ctx.drawImage(im, frame * bomb2_brick_default.w, 0, bomb2_brick_default.w, bomb2_brick_default.h, left + (burst2.cell % WIDTH3 + 0.5) * cell - bomb2_brick_default.w / 2, top + (Math.floor(burst2.cell / WIDTH3) + 1) * cell - bomb2_brick_default.h, bomb2_brick_default.w, bomb2_brick_default.h);
       }
     }
     for (const h of s.hazards) {
@@ -2213,11 +2520,16 @@
         if (b?.w) draw(ctx, "brick-" + s.tiles[i], px + b.x, py + b.y, b.w, b.h);
       }
       if (s.items[i]) draw(ctx, "prop-" + s.items[i], px + 3, py + 3, cell - 6, cell - 6);
-      if (s.flames[i] > s.tick) {
-        ctx.fillStyle = "#ffba38bf";
-        ctx.fillRect(px + 2, py + 2, cell - 4, cell - 4);
-        draw(ctx, "blast-" + (s.tick % 9 + 1), px, py, cell, cell);
-      }
+    }
+    for (const blast2 of s.blasts) for (const tile of blast2.tiles) {
+      const sprite3 = blastSprite(blast2.kind, tile.frame, s.tick - blast2.born), img2 = asset2(sprite3.name), m = sprite3.meta;
+      if (!img2.complete || !img2.naturalWidth) continue;
+      const [a, b, c, d, tx, ty] = sprite3.matrix;
+      ctx.save();
+      ctx.translate(left + blast2.px + (tile.x - blast2.x) * cell, top + blast2.py + (tile.y - blast2.y) * cell);
+      ctx.transform(a, b, c, d, tx, ty);
+      ctx.drawImage(img2, sprite3.frame * m.w, 0, m.w, m.h, m.x, m.y, m.w, m.h);
+      ctx.restore();
     }
     for (const b of s.bombs) {
       const pos = walkingPosition(b), kind = b.kind === "remote" ? "remote" : b.kind === "mine" ? "mine" : "normal", meta = bomb2_bomb_art_default.timelines[kind], img2 = asset2("native-bomb-" + kind);

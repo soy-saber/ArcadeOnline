@@ -2,6 +2,7 @@ import type {State} from './types';
 import {CELL,moveRight,moveLeft,moveUp,moveDown,type MotionMap,type MovingBody} from './bomb2-motion';
 import {walkingAt,moveWalking,stopWalking,type Walking} from './bomb2-walking';
 import {conveyorDirection,CONVEYOR_SPEED,KICK_SPEED} from './bomb2-conveyor';
+import {burningBombAt} from './bomb2-blasts';
 const dirs=[[-1,0],[0,-1],[1,0],[0,1]];
 export function syncWalking(p:any):Walking {
   // Grid relocations (spawn, sand, spring) also relocate the continuous body.
@@ -34,13 +35,15 @@ function motionMap(s:State,actor:any,ignore:any,onHit?:(x:number,y:number)=>void
       if(x<0||x>=17||y<0||y>=15)return false;
       const cell=s.board[y*17+x];if(cell===1||cell===2&&actor?.vehicle!==11)return false;
       if(s.bombs.some((b:any)=>b!==ignore&&b.slide<0&&b.x===x&&b.y===y&&b.kind!=='mine'))return false;
+      if(burningBombAt(s,x,y,true))return false;
       if((actor?.vehicle===12||actor?.vehicle===13)&&s.hazards.some((h:any)=>h.kind==='SpringBoard'&&h.x===x&&h.y===y))return false;
       return !tram||Math.floor((tram.x+15)/CELL)!==x||Math.floor((tram.y+15)/CELL)!==y;
     },
     item(x,y){
       if(tram&&Math.floor((tram.x+15)/CELL)===x&&Math.floor((tram.y+15)/CELL)===y)return tram;
       const bomb=s.bombs.find((b:any)=>b!==ignore&&b.slide<0&&b.kind!=='mine'&&b.x===x&&b.y===y);
-      return bomb?syncWalking(bomb):{x:x*CELL,y:y*CELL,w:CELL,h:CELL,blocked:false};
+      const blast=burningBombAt(s,x,y,true);
+      return bomb?syncWalking(bomb):blast?{x:blast.px,y:blast.py,w:CELL,h:CELL,blocked:false}:{x:x*CELL,y:y*CELL,w:CELL,h:CELL,blocked:false};
     }
   };
 }

@@ -677,6 +677,22 @@
       "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
     },
     {
+      "path": "native-flame-center.png",
+      "sha256": "3d9c5b1e98722bdfad747b09eaf386763c6eeeb771b71512ee2c1c7557d18b1b"
+    },
+    {
+      "path": "native-flame-end.png",
+      "sha256": "3f2e31339643e216795393a2a2b524b176bbedf10e461060aba20e1379c1f862"
+    },
+    {
+      "path": "native-flame-middle.png",
+      "sha256": "f8f51df6ada1e8fb8b03dc0180ebc48d8f0698ea55cebd50975c6dd994c81107"
+    },
+    {
+      "path": "native-flame-mine-center.png",
+      "sha256": "e90d7d8ce1cf1f390509b55092d186d89c7f4b61186e3fcabf76539b1ca7cfe2"
+    },
+    {
       "path": "original/images/1005.png",
       "sha256": "5ed020ca0f73d5c3e64ae1e232eb67a2de6e5ee2b3922e2615000845f481a9dd"
     },
@@ -15653,5 +15669,267 @@
         "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
       }
     }
+  },
+  "blastTimelines": {
+    "source": "games/9109/game.swf",
+    "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+    "payloadSha256": "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+    "timelines": {
+      "center": {
+        "symbol": 2945,
+        "frames": 19,
+        "w": 58,
+        "h": 58,
+        "x": -13.85,
+        "y": -13.85,
+        "path": "public/expanded/assets/bomb2/native-flame-center.png",
+        "sha256": "3d9c5b1e98722bdfad747b09eaf386763c6eeeb771b71512ee2c1c7557d18b1b"
+      },
+      "middle": {
+        "symbol": 2952,
+        "frames": 18,
+        "w": 37,
+        "h": 41,
+        "x": -3.4,
+        "y": -1.65,
+        "path": "public/expanded/assets/bomb2/native-flame-middle.png",
+        "sha256": "f8f51df6ada1e8fb8b03dc0180ebc48d8f0698ea55cebd50975c6dd994c81107"
+      },
+      "end": {
+        "symbol": 2957,
+        "frames": 18,
+        "w": 37,
+        "h": 31,
+        "x": -3.35,
+        "y": -0.0,
+        "path": "public/expanded/assets/bomb2/native-flame-end.png",
+        "sha256": "3f2e31339643e216795393a2a2b524b176bbedf10e461060aba20e1379c1f862"
+      },
+      "mine-center": {
+        "symbol": 2959,
+        "frames": 19,
+        "w": 144,
+        "h": 144,
+        "x": -57.05,
+        "y": -57.05,
+        "path": "public/expanded/assets/bomb2/native-flame-mine-center.png",
+        "sha256": "e90d7d8ce1cf1f390509b55092d186d89c7f4b61186e3fcabf76539b1ca7cfe2"
+      }
+    },
+    "selectors": {
+      "normal": [
+        {
+          "timeline": "center",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            0.0,
+            1.0,
+            -1.0,
+            0.0,
+            30.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            0.0,
+            1.0,
+            -1.0,
+            0.0,
+            30.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            0.0,
+            -1.0,
+            1.0,
+            0.0,
+            0.0,
+            30.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            30.0
+          ]
+        }
+      ],
+      "mine": [
+        {
+          "timeline": "mine-center",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            0.0,
+            1.0,
+            -1.0,
+            0.0,
+            30.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            0.0,
+            1.0,
+            -1.0,
+            0.0,
+            30.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            0.0,
+            -1.0,
+            1.0,
+            0.0,
+            0.0,
+            30.0
+          ]
+        },
+        {
+          "timeline": "middle",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "timeline": "end",
+          "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            30.0
+          ]
+        }
+      ]
+    },
+    "sourceClasses": {
+      "actionSprite/Bomb": "f25510058ceb4bd8be2cf81108f05385db824adf4b18e2153e62fce64712b3ed",
+      "actionSprite/MineBomb": "5f3cbf5cf6c2ad77ad25ccd105b47520004c1a86ce9b77b4650dd8de1be3d2e4",
+      "actionSprite/LauncherBomb": "f82fdec6e6e26e7987599440a2a43ba992464bf2b2e0553037bab086fd3d7dcf",
+      "actionSprite/Control": "0ad454e65a1d1867f01306184a5f262e731c99bfdfd66477262eca0a39a82be1",
+      "bomb_it_Edition_04_fla/exp2_300": "df9d97d84704ca589df2efd484b5bc81ca9974a46f85b0ca5fc7aba4a90820f5",
+      "bomb_it_Edition_04_fla/exp3_301": "bd00baa9322fd34ae4306f17893e2a7b27099dd24661c3f938563c6dbf3bc615",
+      "bomb_it_Edition_04_fla/exp1_302": "fe2c9af400e29135df14c697f1098ab1a19d2b68c16e320542954272955b5eef",
+      "bomb_it_Edition_04_fla/exp2_1_304": "3925221f9715ed7abc42bd778ba1655057b5f72361166ed699f8edfaf80b7fc8"
+    },
+    "lifetimeTicks": 16
   }
 }

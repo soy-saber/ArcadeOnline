@@ -6,6 +6,7 @@ function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:
 AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return onRoom.call(this,room);};
 process.on('message',m=>{try{
  const room=rooms.get(m.room),s=room?.auth?.state;if(!s||s.phase!=='playing')throw new Error('Test round not playing');
+ if(s.gameId==='9109-server'&&['pickup','coin-duel','motion','conveyor','kick','flame-cross','flame-chain','mine-blast'].includes(m.action))s.blasts=[];
  if(m.action==='pickup'){
    s.board.fill(0);s.bombs=[];s.flames.fill(0);if(s.tiles)s.tiles.fill(0);
    const [p,q]=s.players;if(p.actionLock||p.attack||p.moveDir>=0)throw new Error('Player action not recovered');pose(p,3,4);pose(q,11,8);
@@ -31,6 +32,13 @@ process.on('message',m=>{try{
    const [p,q]=s.players;
    if(m.action==='conveyor'){pose(p,3,4);pose(q,15,13);}
    else {pose(p,4,6);pose(q,6,6);s.board[6*17+9]=1;s.tiles[6*17+9]=41;}
+ }else if(['flame-cross','flame-chain','mine-blast'].includes(m.action)){
+   if(s.gameId!=='9109-server'||s.mapId!=='beach-one')throw Error('Expected original beach map');
+   if(s.players.some(p=>p.actionLock||p.attack||p.respawnAt))throw Error('Players must recover naturally first');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.flames.fill(0);
+   const [p,q]=s.players;pose(p,5,5);pose(q,m.action==='flame-chain'?6:m.action==='mine-blast'?6:12,m.action==='flame-chain'?5:m.action==='mine-blast'?6:10);
+   if(m.action==='flame-chain'){s.board[3*17+5]=2;s.tiles[3*17+5]=11;s.board[2*17+5]=2;s.tiles[2*17+5]=11;}
+   if(m.action==='mine-blast'){s.board[4*17+4]=2;s.tiles[4*17+4]=11;s.board[4*17+6]=1;s.tiles[4*17+6]=12;}
  }else if(m.action==='blast'){
    if(s.gameId)throw Error('Expected first Bomb It');
    if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');

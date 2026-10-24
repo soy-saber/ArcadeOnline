@@ -11,6 +11,8 @@ import { audio, sound, SOUND_FILES } from './bomb2-sound';
 import {moveActor,moveBomb,syncWalking,relocate,validWalking} from './bomb2-movement';
 import {conveyorFrame,REMOTE_FUSE} from './bomb2-conveyor';
 import BOMB_ART from './bomb2-bomb-art.json';
+import FLAME_ART from './bomb2-blast-art.json';
+import {BLAST_TICKS,burningBombAt,blastSprite,validBlasts,type Blast} from './bomb2-blasts';
 import {stopWalking,walkingPosition} from './bomb2-walking';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
@@ -49,7 +51,7 @@ export function create(round:number,playing:boolean,seats:number[],seed:number,m
   const mode=MODES.includes(selectedMode)?selectedMode:'arcade';
   const map=MAPS.find(m=>m.id===selectedMap)||MAPS[(round-1)%MAPS.length];
   const s:State={gameId:'9109-server',version:1,round,tick:0,phase:playing?'playing':'waiting',winner:null,ack:[0,0,0,0],rng:(seed>>>0)||1,
-    mode,mapId:map.id,theme:map.theme,board:Array(255).fill(0),tiles:Array(255).fill(0),items:Array(255).fill(0),flames:Array(255).fill(0),owners:Array(255).fill(0),colors:Array(255).fill(0),bombs:[],shots:[],effects:[],hazards:map.hazards.map(h=>({...h})),nextId:1,scores:[0,0,0,0],players:[],tram:0,soundId:0,sounds:[],musicTrack:1,vehiclePool:[],vehiclesLeft:4};
+    mode,mapId:map.id,theme:map.theme,board:Array(255).fill(0),tiles:Array(255).fill(0),items:Array(255).fill(0),flames:Array(255).fill(0),owners:Array(255).fill(0),colors:Array(255).fill(0),bombs:[],blasts:[],shots:[],effects:[],hazards:map.hazards.map(h=>({...h})),nextId:1,scores:[0,0,0,0],players:[],tram:0,soundId:0,sounds:[],musicTrack:1,vehiclePool:[],vehiclesLeft:4};
   s.musicTrack=1+Math.floor(random(s)*4);
   s.difficulty=settings?.difficulty||'normal';s.crateOffset=Math.floor(random(s)*3);
   s.crateBursts=[];
@@ -87,7 +89,7 @@ function spawnCoin(s:State):void {
 }
 function passable(s:State,x:number,y:number):boolean {
   const rail=s.hazards.filter((h:any)=>h.kind==='Rail'),tram=rail.length?rail[Math.floor(s.tram)%rail.length]:null;
-  return inside(x,y)&&s.board[index(x,y)]===0&&!s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)&&!(tram&&tram.x===x&&tram.y===y);
+  return inside(x,y)&&s.board[index(x,y)]===0&&!s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)&&!burningBombAt(s,x,y)&&!(tram&&tram.x===x&&tram.y===y);
 }
 function breakCrate(s:State,cell:number):void {
   if(s.board[cell]!==2)return;s.board[cell]=0;s.tiles[cell]=0;
@@ -106,14 +108,35 @@ function finishCrates(s:State):void {
   }
   s.crateBursts=s.crateBursts.filter((b:any)=>b.at>s.tick);
 }
-function ignite(s:State,x:number,y:number,owner:number):void {
-  if(!inside(x,y)||s.board[index(x,y)]===1)return;
-  const cell=index(x,y);if(s.flames[cell]<=s.tick)s.owners[cell]=owner;s.flames[cell]=s.tick+16;
+function ignite(s:State,x:number,y:number,owner:number,diagonal=false):void {
+  if(!inside(x,y)||s.board[index(x,y)]===1&&!diagonal)return;
+  const cell=index(x,y);if(s.flames[cell]<=s.tick)s.owners[cell]=owner;s.flames[cell]=s.tick+BLAST_TICKS;
   if(s.board[cell]===2)breakCrate(s,cell);else s.items[cell]=0;
   for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=Math.min(b.explodeAt,s.tick);
 }
+function burst(s:State,b:any,exploded:Set<number>,blocking=true):void {
+  const position=walkingPosition(b),blast:Blast={id:s.nextId++,owner:b.owner,x:b.x,y:b.y,px:position.x*30,py:position.y*30,born:s.tick,until:s.tick+BLAST_TICKS,kind:b.kind==='mine'?'mine':'normal',blocking,tiles:[{x:b.x,y:b.y,frame:1}]};
+  ignite(s,b.x,b.y,b.owner);
+  // Bomb.blast visits up/down/left/right once at each distance. A box or
+  // registered bomb ends that arm; only empty cells and breakable boxes
+  // receive its own flame art. The chained bomb supplies its own centre.
+  const arms=[{dx:0,dy:-1,mid:2,end:3},{dx:0,dy:1,mid:8,end:9},{dx:-1,dy:0,mid:6,end:7},{dx:1,dy:0,mid:4,end:5}],active=arms.map(()=>true);
+  const rail=s.hazards.filter((h:any)=>h.kind==='Rail'),tram=rail[Math.floor(s.tram)%rail.length];
+  for(let distance=1;distance<=b.range;distance++)for(let a=0;a<arms.length;a++){
+    if(!active[a])continue;const arm=arms[a],x=b.x+arm.dx*distance,y=b.y+arm.dy*distance;
+    if(!inside(x,y)||s.board[index(x,y)]===1){active[a]=false;continue;}
+    const other=s.bombs.find((q:any)=>q!==b&&q.slide<0&&q.x===x&&q.y===y);
+    if(other){if(!exploded.has(other.id))other.explodeAt=Math.min(other.explodeAt,s.tick);active[a]=false;continue;}
+    if(burningBombAt(s,x,y)||tram&&tram.x===x&&tram.y===y){active[a]=false;continue;}
+    const crate=s.board[index(x,y)]===2;
+    blast.tiles.push({x,y,frame:distance===b.range?arm.end:arm.mid});ignite(s,x,y,b.owner);
+    if(crate)active[a]=false;
+  }
+  if(b.kind==='mine')for(const dx of [-1,1])for(const dy of [-1,1])ignite(s,b.x+dx,b.y+dy,b.owner,true);
+  s.blasts.push(blast);
+}
 function place(s:State,p:any,kind='normal',x=p.x,y=p.y):boolean {
-  if(!inside(x,y)||s.board[index(x,y)]||s.bombs.length>=36||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
+  if(!inside(x,y)||s.board[index(x,y)]||burningBombAt(s,x,y)||s.bombs.length>=36||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
   s.bombs.push({id:s.nextId++,owner:p.seat,x,y,range:kind==='mine'?2:p.range,kind,explodeAt:kind==='normal'?s.tick+FUSE:kind==='thrown'?s.tick+25:ROUND_TICKS+FUSE,armedAt:kind==='mine'?ROUND_TICKS+20:s.tick+20,slide:-1});
   if(kind==='remote')s.bombs[s.bombs.length-1].explodeAt=s.tick+REMOTE_FUSE;
   s.bombs[s.bombs.length-1].born=s.tick;
@@ -201,7 +224,7 @@ function updateAttacks(s:State):void {
       // even after destruction; later animation frames cannot extend it.
       if(kind===20)for(let d=1;d<Math.max(WIDTH,HEIGHT);d++){
         const tx=x+dx*d,ty=y+dy*d;if(!inside(tx,ty)||s.board[index(tx,ty)]===1)break;
-        const cell=index(tx,ty),blocked=s.board[cell]===2||s.bombs.some((b:any)=>b.slide<0&&b.x===tx&&b.y===ty);
+        const cell=index(tx,ty),blocked=s.board[cell]===2||burningBombAt(s,tx,ty)||s.bombs.some((b:any)=>b.slide<0&&b.x===tx&&b.y===ty);
         effect.cells.push(cell);if(blocked)break;
       }
       s.effects.push(effect);
@@ -231,6 +254,7 @@ function hazards(s:State,p:any):void {
 }
 export function step(s:State,inputs:Input[]):void {
   if(s.phase!=='playing')return;s.tick++;
+  s.blasts=s.blasts.filter((b:Blast)=>b.until>s.tick);
   const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length)s.tram=(s.tram+1/30)%rails.length;
   for(const p of s.players){
     const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
@@ -276,23 +300,18 @@ export function step(s:State,inputs:Input[]):void {
     for(let k=0;k<4;k++){
       const oldX=Math.floor(shot.x),oldY=Math.floor(shot.y);
       shot.x+=shot.vx/4;shot.y+=shot.vy/4;const x=Math.floor(shot.x),y=Math.floor(shot.y);
-      if(!inside(x,y))return false;if(s.board[index(x,y)]||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)){
-        if(shot.kind===16){const tx=s.board[index(x,y)]===1?oldX:x,ty=s.board[index(x,y)]===1?oldY:y;ignite(s,tx,ty,shot.owner);for(const [dx,dy]of DIRS)ignite(s,tx+dx,ty+dy,shot.owner);}
+      if(!inside(x,y))return false;if(s.board[index(x,y)]||burningBombAt(s,x,y)||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)){
+        if(shot.kind===16){const tx=s.board[index(x,y)]===1?oldX:x,ty=s.board[index(x,y)]===1?oldY:y;burst(s,{x:tx,y:ty,owner:shot.owner,range:1,kind:'normal'},new Set(),false);}
         else {breakCrate(s,index(x,y));for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=s.tick;}
         return false;
       }
       const p=s.players.find(p=>{const pos=walkingPosition(p);return p.alive&&!p.respawnAt&&p.seat!==shot.owner&&Math.hypot(pos.x+.5-shot.x,pos.y+.5-shot.y)<.4;});
-      if(p){if(shot.kind===16){ignite(s,x,y,shot.owner);for(const [dx,dy]of DIRS)ignite(s,x+dx,y+dy,shot.owner);}else hit(s,p,shot.owner);return false;}
+      if(p){if(shot.kind===16)burst(s,{x,y,owner:shot.owner,range:1,kind:'normal'},new Set(),false);else hit(s,p,shot.owner);return false;}
     }return shot.until>s.tick;
   });
   const exploded=new Set<number>();
   for(let cycle=0;cycle<36;cycle++){
-    const b=s.bombs.find((b:any)=>b.slide<0&&b.explodeAt<=s.tick&&!exploded.has(b.id));if(!b)break;exploded.add(b.id);sound(s,'explode');ignite(s,b.x,b.y,b.owner);
-    for(const [dx,dy] of DIRS)for(let distance=1;distance<=b.range;distance++){
-      const x=b.x+dx*distance,y=b.y+dy*distance;if(!inside(x,y)||s.board[index(x,y)]===1)break;
-      const crate=s.board[index(x,y)]===2;ignite(s,x,y,b.owner);if(crate)break;
-    }
-    if(b.kind==='mine')for(const dx of [-1,1])for(const dy of [-1,1])ignite(s,b.x+dx,b.y+dy,b.owner);
+    const b=s.bombs.find((b:any)=>b.slide<0&&b.explodeAt<=s.tick&&!exploded.has(b.id));if(!b)break;exploded.add(b.id);sound(s,'explode');burst(s,b,exploded);
   }
   s.bombs=s.bombs.filter((b:any)=>!exploded.has(b.id));
   for(const p of s.players)if(p.alive&&!p.respawnAt&&s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
@@ -329,6 +348,7 @@ export function valid(value:unknown):value is State {
   for(const [key,max] of [['board',2],['tiles',59],['items',22],['flames',ROUND_TICKS+16],['owners',4],['colors',4]] as const)if(!Array.isArray(s[key])||s[key].length!==255||!s[key].every((v:any)=>int(v,0,max)))return false;
   if(!Array.isArray(s.ack)||s.ack.length!==4||!s.ack.every((n:any)=>int(n,0,1e9))||!Array.isArray(s.scores)||s.scores.length!==4||!s.scores.every((n:any)=>int(n,0,1000)))return false;
   const owns=(owner:any)=>s.players.some(p=>p.seat===owner);
+  if(!validBlasts(s))return false;
   if(Array.isArray(s.bombs)&&s.bombs.some((b:any)=>b&&(b.walking&&!validWalking(b)||b.born!==undefined&&!int(b.born,0,s.tick))))return false;
   if(!Array.isArray(s.bombs)||s.bombs.length>36||!s.bombs.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&int(b.x,0,16)&&int(b.y,0,14)&&int(b.range,1,10)&&['normal','remote','mine','thrown'].includes(b.kind)&&int(b.slide,-1,3)&&int(b.explodeAt,0,ROUND_TICKS+REMOTE_FUSE)&&int(b.armedAt,0,ROUND_TICKS+20)))return false;
   if(!Array.isArray(s.shots)||s.shots.length>64||!s.shots.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&Number.isFinite(b.x)&&b.x>=0&&b.x<=17&&Number.isFinite(b.y)&&b.y>=0&&b.y<=15&&Number.isFinite(b.vx)&&Math.abs(b.vx)<=1&&Number.isFinite(b.vy)&&Math.abs(b.vy)<=1&&[16,19].includes(b.kind)&&int(b.until,0,ROUND_TICKS+HZ*4)))return false;
@@ -340,6 +360,7 @@ export function valid(value:unknown):value is State {
   return Array.isArray(s.hazards)&&s.hazards.length===map.hazards.length&&s.hazards.every((h:any,i:number)=>JSON.stringify(h)===JSON.stringify(map.hazards[i]));
 }
 const images=new Map<string,HTMLImageElement>();
+let flamePreload=false;
 function asset(name:string):HTMLImageElement {let img=images.get(name);if(!img){img=new Image();img.src='/expanded/assets/bomb2/'+name+'.png';images.set(name,img);}return img;}
 function draw(ctx:CanvasRenderingContext2D,name:string,x:number,y:number,w:number,h:number):boolean {const img=asset(name);if(img.complete&&img.naturalWidth){ctx.drawImage(img,x,y,w,h);return true;}return false;}
 function timeline(ctx:CanvasRenderingContext2D,name:string,frame:number,x:number,y:number,feet=false):boolean {
@@ -351,6 +372,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   localSeat=seat;
   const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,BOMB2_CANVAS_WIDTH,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,BOMB2_CANVAS_WIDTH,550);
   ctx.fillStyle='#fff';ctx.font='bold 21px system-ui';ctx.fillText('泡泡堂 2',24,32);if(!s)return;
+  if(!flamePreload){for(const name of Object.keys(FLAME_ART.timelines))asset('native-flame-'+name);flamePreload=true;}
   ctx.font='15px system-ui';ctx.fillText(`${THEMES[s.theme]} · ${['生存','击杀 10','金币 10','占地 50'][MODES.indexOf(s.mode)]}`,180,31);ctx.fillText(`${Math.max(0,Math.ceil((ROUND_TICKS-s.tick)/HZ))} 秒`,500,31);
   draw(ctx,'background-'+s.theme,left,top,WIDTH*cell,HEIGHT*cell);
   for(const burst of s.crateBursts){
@@ -372,7 +394,12 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     if(s.colors[i]){ctx.fillStyle=territoryColor(s,s.colors[i]);ctx.fillRect(px,py,cell,cell);}
     if(s.board[i]&&s.tiles[i]){const b=BRICKS[s.tiles[i]];if(b?.w)draw(ctx,'brick-'+s.tiles[i],px+b.x,py+b.y,b.w,b.h);}
     if(s.items[i])draw(ctx,'prop-'+s.items[i],px+3,py+3,cell-6,cell-6);
-    if(s.flames[i]>s.tick){ctx.fillStyle='#ffba38bf';ctx.fillRect(px+2,py+2,cell-4,cell-4);draw(ctx,'blast-'+(s.tick%9+1),px,py,cell,cell);}
+  }
+  for(const blast of s.blasts)for(const tile of blast.tiles){
+    const sprite=blastSprite(blast.kind,tile.frame,s.tick-blast.born),img=asset(sprite.name),m=sprite.meta;
+    if(!img.complete||!img.naturalWidth)continue;
+    const [a,b,c,d,tx,ty]=sprite.matrix;ctx.save();ctx.translate(left+blast.px+(tile.x-blast.x)*cell,top+blast.py+(tile.y-blast.y)*cell);ctx.transform(a,b,c,d,tx,ty);
+    ctx.drawImage(img,sprite.frame*m.w,0,m.w,m.h,m.x,m.y,m.w,m.h);ctx.restore();
   }
   for(const b of s.bombs){
     const pos=walkingPosition(b),kind=b.kind==='remote'?'remote':b.kind==='mine'?'mine':'normal',meta=BOMB_ART.timelines[kind],img=asset('native-bomb-'+kind);

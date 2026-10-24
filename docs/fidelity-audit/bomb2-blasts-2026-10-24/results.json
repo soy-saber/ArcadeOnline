@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-24T05:20:31.080Z",
+  "results": [
+    {
+      "case": "normal",
+      "realRangePickups": 2,
+      "sourceSelectors": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "nativeTransforms": true,
+      "nativeDimensions": true,
+      "snapshotRecovery": true
+    },
+    {
+      "case": "chain",
+      "twoRealNormalBombs": true,
+      "crateStopsRay": true,
+      "blockedCrateRetainsMiddleFrame": true,
+      "parentStopsAtOtherBomb": true,
+      "shortBombSuppliesOwnCentre": true,
+      "fullscreen": true
+    },
+    {
+      "case": "mine",
+      "actualPickupAndPlacement": true,
+      "ownerLeavesThenRetriggers": true,
+      "diagonalVictim": true,
+      "allFourDiagonalCells": true,
+      "diagonalCrateDestroyed": true,
+      "fixedWallPreserved": true,
+      "nativeWideCentre": true
+    }
+  ],
+  "errors": []
+}
