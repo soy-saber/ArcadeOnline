@@ -7,7 +7,7 @@ AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return
 process.on('message',m=>{try{
  const room=rooms.get(m.room),s=room?.auth?.state;if(!s||s.phase!=='playing')throw new Error('Test round not playing');
  if(s.gameId==='9109-server'&&['pickup','coin-duel','motion','conveyor','kick','flame-cross','flame-chain','mine-blast'].includes(m.action)){
-   if(s.players.some(p=>p.travel))throw Error('Landform travel must finish naturally first');
+   if(s.players.some(p=>p.travel||p.rideMotion))throw Error('Landform and vehicle motion must finish naturally first');
    s.blasts=[];
  }
  if(m.action==='pickup'){
@@ -42,9 +42,16 @@ process.on('message',m=>{try{
    const [p,q]=s.players;pose(p,5,5);pose(q,m.action==='flame-chain'?6:m.action==='mine-blast'?6:12,m.action==='flame-chain'?5:m.action==='mine-blast'?6:10);
    if(m.action==='flame-chain'){s.board[3*17+5]=2;s.tiles[3*17+5]=11;s.board[2*17+5]=2;s.tiles[2*17+5]=11;}
    if(m.action==='mine-blast'){s.board[4*17+4]=2;s.tiles[4*17+4]=11;s.board[4*17+6]=1;s.tiles[4*17+6]=12;}
+ }else if(['vehicle-frog','vehicle-crush','vehicle-hit'].includes(m.action)){
+   if(s.gameId!=='9109-server'||s.mapId!=='mine-one')throw Error('Expected original mine map');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');
+   const [p,q]=s.players;if(m.action==='vehicle-frog'&&p.vehicle!==14||m.action==='vehicle-crush'&&p.vehicle!==12||m.action==='vehicle-hit'&&!p.vehicle)throw Error('Vehicle must be acquired through real pickup');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.blasts=[];s.flames.fill(0);
+   if(m.action==='vehicle-hit'){pose(p,5,5);pose(q,6,5);}
+   else{pose(p,3,4);pose(q,11,8);s.board[4*17+4]=m.action==='vehicle-frog'?1:2;s.tiles[4*17+4]=m.action==='vehicle-frog'?7:1;s.items[4*17+5]=2;}
  }else if(m.action==='landform-spring'||m.action==='landform-sand'){
    if(s.gameId!=='9109-server'||s.mapId!==(m.action==='landform-spring'?'disce-one':'beach-one'))throw Error('Expected original landform map');
-   if(s.players.some(p=>p.travel||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');
    s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.blasts=[];s.flames.fill(0);
    const h=s.hazards.find(h=>h.kind===(m.action==='landform-spring'?'SpringBoard':'QuickSand')),[p,q]=s.players;pose(p,h.x-1,h.y);pose(q,10,8);
    if(m.action==='landform-spring'){s.items[h.y*17+h.x]=19;s.board[h.y*17+h.x+1]=1;s.tiles[h.y*17+h.x+1]=37;s.items[h.y*17+h.x+2]=2;}

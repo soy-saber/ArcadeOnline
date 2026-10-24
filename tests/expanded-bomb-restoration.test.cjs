@@ -42,8 +42,8 @@ test('Bomb It 2 death clears only the defeated player territory; springs and qui
 });
 test('Bomb It 2 vehicles last until hit, preserve separate shields, and frogs can cross one obstacle',()=>{
   const s=arena2('arcade'),p=s.players[0];p.vehicle=13;p.shield=true;step2(s,601);assert.equal(p.vehicle,13);
-  s.flames[two.index(p.x,p.y)]=s.tick+3;s.owners[two.index(p.x,p.y)]=2;step2(s);assert.equal(p.vehicle,0);assert(p.shield);assert.equal(p.deaths,0);assert(p.invulnerable>0);
-  const t=arena2('arcade'),q=t.players[0];q.vehicle=14;q.x=3;q.y=3;t.board[two.index(4,3)]=1;step2(t,1,input(1,{right:true}));assert.equal(q.x,5);assert.equal(q.y,3);assert(two.valid(t));
+  s.flames[two.index(p.x,p.y)]=s.tick+3;s.owners[two.index(p.x,p.y)]=2;step2(s);assert.equal(p.vehicle,13);assert.equal(p.rideMotion.kind,'wreck');assert(p.shield);assert.equal(p.deaths,0);assert(p.invulnerable>0);step2(s,20);assert.equal(p.vehicle,0);
+  const t=arena2('arcade'),q=t.players[0];q.vehicle=14;q.x=3;q.y=3;t.board[two.index(4,3)]=1;step2(t,1,input(1,{right:true}));assert.equal(q.rideMotion.kind,'frog');assert.equal(q.x,3);for(let n=0;n<30&&q.rideMotion;n++)step2(t);assert.equal(q.x,5);assert.equal(q.y,3);assert.equal(q.teleportUntil,0);assert(two.valid(t));
 });
 test('Bomb It 2 original property weights, vehicle choices and full five-frame crate palette are restored',()=>{
   const weights=a=>a.reduce((r,n)=>(r[n]=(r[n]||0)+1,r),{});assert.equal(weights(two.PROP_POOLS.arcade)[2],24);assert.equal(weights(two.PROP_POOLS.arcade)[1],24);assert.equal(weights(two.PROP_POOLS.arcade)[3],12);assert(!two.PROP_POOLS.collect.includes(4));

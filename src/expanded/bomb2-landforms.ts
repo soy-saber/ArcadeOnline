@@ -1,6 +1,7 @@
 import type {State} from './types';
 import ART from './bomb2-landform-art.json';
 import {syncWalking,relocate,moveActor} from './bomb2-movement';
+import {rideHead} from './bomb2-vehicles';
 const DIRS=[[-1,0],[0,-1],[1,0],[0,1]],DIRECTION_NAMES=['left','up','right','down'];
 export type Travel={kind:'spring';born:number;dir:number;targetX:number;targetY:number;stepX:number;stepY:number}|{kind:'sand';born:number;source:number;target:number;alpha:number};
 export function enterLandform(s:State,p:any):void {
@@ -38,7 +39,7 @@ export function jumpSprite(p:any,tick:number){
   const key=`jump-${p.character-1}-${DIRECTION_NAMES[t.dir]}` as keyof typeof ART.timelines,meta=ART.timelines[key],frame=Math.min(meta.frames-1,Math.max(0,tick-t.born));
   return {name:'native-'+key,meta,frame};
 }
-export function heroHead(p:any,tick:number):number {const sprite=jumpSprite(p,tick);return sprite?sprite.meta.y+(sprite.meta.bounds[sprite.frame]?.[1]??0):-7;}
+export function heroHead(p:any,tick:number):number {const sprite=jumpSprite(p,tick);return sprite?sprite.meta.y+(sprite.meta.bounds[sprite.frame]?.[1]??0):rideHead(p)??-7;}
 export function travelAlpha(p:any):number {return p.travel?.kind==='sand'?p.travel.alpha:1;}
 export function sandFrame(tick:number):number {return tick===0?0:ART.rules.sandLoopStart-1+(tick-1)%(ART.rules.sandLoopEnd-ART.rules.sandLoopStart+1);}
 export function validLandforms(s:State):boolean {

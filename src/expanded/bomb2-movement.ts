@@ -3,6 +3,7 @@ import {CELL,moveRight,moveLeft,moveUp,moveDown,type MotionMap,type MovingBody} 
 import {walkingAt,moveWalking,stopWalking,type Walking} from './bomb2-walking';
 import {conveyorDirection,CONVEYOR_SPEED,KICK_SPEED} from './bomb2-conveyor';
 import {burningBombAt} from './bomb2-blasts';
+import VEHICLES from './bomb2-vehicle-art.json';
 const dirs=[[-1,0],[0,-1],[1,0],[0,1]];
 export function syncWalking(p:any):Walking {
   // Grid relocations (spawn, sand, spring) also relocate the continuous body.
@@ -10,6 +11,13 @@ export function syncWalking(p:any):Walking {
   return p.walking;
 }
 export function relocate(p:any,x:number,y:number):void {p.x=x;p.y=y;p.walking=walkingAt(x,y);p.progress=0;p.moveDir=-1;}
+export function conveyActor(s:State,p:any):void {
+  const body=syncWalking(p);if(p.vehicle!==11)convey(s,body,motionMap(s,p,p),true);register(p,body);
+}
+export function coastActor(s:State,p:any):void {
+  const body=syncWalking(p),ice=s.hazards.some((h:any)=>h.kind==='IceFace'&&h.x===p.x&&h.y===p.y);
+  moveWalking(body,motionMap(s,p,p),-1,0,ice?.8:.6);register(p,body);
+}
 function tramBody(s:State):MovingBody|null {
   const rail=s.hazards.filter((h:any)=>h.kind==='Rail');if(!rail.length)return null;
   const n=Math.floor(s.tram),f=s.tram-n,a=rail[n%rail.length],b=rail[(n+1)%rail.length];
@@ -18,12 +26,12 @@ function tramBody(s:State):MovingBody|null {
 export function moveActor(s:State,p:any,direction:number,onHit:(x:number,y:number)=>void):void {
   const body=syncWalking(p),map=motionMap(s,p,p,onHit);
   const ice=p.vehicle!==11&&s.hazards.some((h:any)=>h.kind==='IceFace'&&h.x===p.x&&h.y===p.y);
-  const velocity=p.vehicle===12?1:p.vehicle===13?2.2:p.vehicle?1.5:1.5+(8-p.speed)*.3;
+  const velocity=p.vehicle===12?VEHICLES.rules.bulldozerVelocity:p.vehicle===13?VEHICLES.rules.carVelocity:p.vehicle===14?VEHICLES.rules.frogVelocity:p.vehicle?1.5:1.5+(8-p.speed)*.3;
   const oldX=body.x,oldY=body.y;
   if(p.actionLock>0||p.attack)stopWalking(body);
   else moveWalking(body,map,direction,velocity,ice?.8:.6);
-  if(p.walking!==body)return; // A frog collision relocated the actor.
-  if(p.vehicle!==11)convey(s,body,map,true);
+  if(p.walking!==body)return;
+  if(p.vehicle!==11&&p.rideMotion?.kind!=='frog')convey(s,body,map,true);
   register(p,body);
   p.moveDir=body.x===oldX&&body.y===oldY?-1:Math.abs(body.x-oldX)>Math.abs(body.y-oldY)?body.x<oldX?0:2:body.y<oldY?1:3;
   p.progress=0;
