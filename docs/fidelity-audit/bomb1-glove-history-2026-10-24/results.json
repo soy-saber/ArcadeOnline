@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-24T11:15:49.211Z",
+  "scenario": "One authoritative tick: P1 at (3,3) pushes the bomb at (4,3) right; P2 at (5,4) simultaneously attempts to push that bomb up. All code dependencies loaded from the corresponding Git revision.",
+  "results": [
+    {
+      "rev": "ae671a4",
+      "commit": "ae671a4ce664e67c7950b0c5c0ab5751275cce86",
+      "entry": "src/native/core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 2,
+        "slide": 1,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": null,
+      "pushSounds": null
+    },
+    {
+      "rev": "5acf9fd",
+      "commit": "5acf9fd79dcb4bae0c5012d85c8c50c96c230630",
+      "entry": "src/native/core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 2,
+        "slide": 1,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": null,
+      "pushSounds": null
+    },
+    {
+      "rev": "0fc6390",
+      "commit": "0fc6390a7c3b2409e39bce75207aff666d058a3d",
+      "entry": "src/authority/bomb-core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 2,
+        "slide": 1,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": 14,
+      "pushSounds": null
+    },
+    {
+      "rev": "99dc8a8^",
+      "commit": "71edde94d3cf7373cb9ff3c5f37635f5f923fabe",
+      "entry": "src/authority/bomb-core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 2,
+        "slide": 1,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": 14,
+      "pushSounds": 2
+    },
+    {
+      "rev": "99dc8a8",
+      "commit": "99dc8a8a8de3b5ba57778a317c87dfbbf11d2161",
+      "entry": "src/authority/bomb-core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 3,
+        "slide": 2,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": 0,
+      "pushSounds": 1
+    },
+    {
+      "rev": "HEAD",
+      "commit": "2243080f5ce9bb560dcb6e748029b53823d14c48",
+      "entry": "src/authority/bomb-core.ts",
+      "tick": 1,
+      "bomb": {
+        "x": 5,
+        "y": 3,
+        "slide": 2,
+        "slideTick": 0
+      },
+      "secondPlayerCooldown": 0,
+      "pushSounds": 1
+    }
+  ]
+}
