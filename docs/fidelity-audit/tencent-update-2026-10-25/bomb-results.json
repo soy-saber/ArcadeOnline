@@ -1,0 +1,58 @@
+{
+  "origin": "https://43.142.142.215",
+  "at": "2026-10-24T17:01:28.723Z",
+  "results": [
+    {
+      "game": "3881-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true
+    },
+    {
+      "game": "9109-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true,
+      "nativeShield12x17": true,
+      "nativeHeroDimensions": true,
+      "continuousMovement": true,
+      "remotePixelMovement": true,
+      "nativeBombArt": true,
+      "conveyorRotation": [
+        2,
+        4
+      ],
+      "nativeFlameCentreAndEnd": true,
+      "liveFlameGroupFullRecovery": true,
+      "nativeCombatAssetsBeforeReady": true,
+      "nativeVehicleAssetsBeforeReady": 48,
+      "flameRecovery": {
+        "id": 2,
+        "until": 117,
+        "footprint": [
+          222,
+          205,
+          223
+        ],
+        "delay": 0,
+        "requestedAt": 103,
+        "full": 14,
+        "recoveredAt": 104,
+        "survived": true
+      }
+    }
+  ],
+  "errors": []
+}

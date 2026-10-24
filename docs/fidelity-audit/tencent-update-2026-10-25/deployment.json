@@ -1,0 +1,74 @@
+{
+  "verifiedAt": "2026-10-24T17:07:05.079409+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "916cafe8b461658cc26f5698731e66f55362a6d8",
+  "archiveSha256": "bde46227da50b5a54578ea62b6a2668f4c84a712520a755c09074c644620b42d",
+  "releaseFileCount": 4937,
+  "current": "/opt/arcade-online/releases/20261024164249-77619",
+  "previous": "/opt/arcade-online/releases/20261024123551-20573",
+  "remoteUpload": "/root/arcade-deploy-20261025-bde46227/release",
+  "releaseManifestVerified": true,
+  "nativeBuildMatchesSource": true,
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "application": {
+    "user": "arcade-online",
+    "listen": "127.0.0.1:8000",
+    "loopbackHealth": "ok",
+    "trustedHttpsHealth": "ok"
+  },
+  "runtime": {
+    "node": "22.23.3",
+    "caddy": "2.11.7"
+  },
+  "certificate": {
+    "issuer": "Let's Encrypt YE2",
+    "san": "43.142.142.215",
+    "notBeforeUtc": "2026-10-24T11:37:35Z",
+    "notAfterUtc": "2026-10-31T03:37:34Z",
+    "trustedHttpsVerified": true
+  },
+  "browserSha256": "ca720f3b8ba364a66674e356a20c6e25facdc5e1c48fccadc9fb502897ed0174",
+  "runtimeSha256": "13f14520caf0549b6c1bb036dd58e1e095f15256eb70d1d08fb477231ab521de",
+  "publicProbe": {
+    "command": "node scripts/check-public.cjs https://43.142.142.215",
+    "result": "PASS https://43.142.142.215: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join."
+  },
+  "publicHashedFiles": 154,
+  "publicKeyboardGames": 8,
+  "publicBombGames": 2,
+  "browserEnvironment": {
+    "host": "one Windows workstation",
+    "browser": "installed Google Chrome",
+    "headless": true,
+    "disableGpu": true,
+    "navigationTimeoutMs": 60000,
+    "keyboardActionTimeoutMs": 15000,
+    "bombActionTimeoutMs": 20000
+  },
+  "scopeLimits": [
+    "TURN credentials checked; real relay data path not tested",
+    "No new bandwidth measurement",
+    "No new public four-player or fullscreen suite",
+    "Complex protection pickup/contact scenarios retain separately recorded local validation",
+    "Original-game fidelity remains incomplete"
+  ],
+  "initialAttemptFailures": [
+    "15-second navigation timeout",
+    "30-second resource download timeout",
+    "Polling missed short-lived current flame state; final test captures live full-recovery evidence in snapshot callbacks"
+  ],
+  "finalMethod": "Suites sequential; hash checks use two IPv4 HTTPS HTTP/1.1 keep-alive connections with identity encoding and 60-second inactivity limit. Final flame recovery asserts matching id, footprint and delay before original expiry. Production timers unchanged. Earlier timeout root cause unproven."
+}
