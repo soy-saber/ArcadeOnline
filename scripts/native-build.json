@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "ca720f3b8ba364a66674e356a20c6e25facdc5e1c48fccadc9fb502897ed0174",
-    "runtime/authority.cjs": "13f14520caf0549b6c1bb036dd58e1e095f15256eb70d1d08fb477231ab521de",
+    "public/authority/game.js": "ed8b45794873878eaee8c62fdcb4d4f0f49a9082edd83990e57b09a4e2ae2969",
+    "runtime/authority.cjs": "661203e688394721c9439441ae4347fe1b9559a4aea980c135032674f93abad5",
     "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
     "src/badminton/view.ts": "5daaad77c77d5f7ec7afad171cbb33c534c1a189ad5e397f29dad64cab7a1de8",
     "src/authority/bomb-core.ts": "367eb3e3b89f59fc7e5e0b5a7e05f739f4958a62f9ea9d6635f319e56a1db186",
@@ -43,9 +43,10 @@
     "src/expanded/bomb2-vehicles.ts": "17c9c2bf3f063c5f4f2dbad0fdd8342e09940214033928e0eb4338c9af99a33c",
     "src/expanded/bomb2-walking.ts": "c9f78ba9ab9fff47ee19e9fda28a41ec5fb90723be454fe0aa7d0c496e8d33a7",
     "src/expanded/bomb2.ts": "79d281cf9ebc2758ff9b3b4b967e156786ba1c3b8dac7881eab8887e8c7f18fa",
-    "src/expanded/boxhead-core.ts": "ffd966b61bca8bf32b8b8808215ced14d31983aaf4103b7c79f61d38c7858ff0",
+    "src/expanded/boxhead-core.ts": "93120e4b4bdda5c0353fbec0a98655a4ce0966ee4332ee6a6032344160675a7a",
     "src/expanded/boxhead-data.json": "a474a5109ec76910b35ccf91a176d9f5a7be66a6dee738912e0e4cd9dbed3710",
-    "src/expanded/boxhead-view.ts": "4eba8e77a058c5b1ba8ac630ba7bf613de835bc9ed986670747dfa00235bcbce",
+    "src/expanded/boxhead-explosions.ts": "4fb42f972141904a219460e0293ab43507c9907ddc4d2562a94c1bcaf1e20fd5",
+    "src/expanded/boxhead-view.ts": "0f12fb429fa1bee6b46c4b6af6694e4f170c8ee39a6f2fa257ffaa7f2853b5ca",
     "src/expanded/boxhead-world.ts": "6c6e3b8593a99224f5158d081fd200be77eed04110e01422d5a649213364a70e",
     "src/expanded/boxhead.ts": "f6a2805834e391bc4015974848108e2e2ef4049a19a5d08b78a28a7b896f3e75",
     "src/expanded/brawler-data.json": "7c6cce358fd766437199689ab03815c4173109f02faed8dd1fac62f5605c424b",

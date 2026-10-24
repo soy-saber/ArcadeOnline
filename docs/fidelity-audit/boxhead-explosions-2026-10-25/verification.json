@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-24T17:27:10.534029+00:00",
+  "scope": "local; deployment recorded separately",
+  "checks": {
+    "unit": {
+      "command": "npm test",
+      "passed": 248
+    },
+    "deployment": {
+      "command": "npm run test:deploy",
+      "passed": 5
+    },
+    "typecheck": "passed",
+    "nativeBuildMatchesSource": true,
+    "naturalUpgradeBrowser": "passed; kills44/peak45; 1 actual grenade; 4 shells/7 blast effects; live pending-child recovery",
+    "fourHumanBrowser": "passed; EXPANDED_GAME=50737-server node tests/expanded-e2e.cjs"
+  },
+  "fixtureLimits": "Only real native100HP zombies, scene objects and poses; clears prior scene objects. No grants of combo, kills, damage, inventory, immunity, fuse, delays or life. Normal original enemy AI and player input run. Fixtures excluded from releases."
+}

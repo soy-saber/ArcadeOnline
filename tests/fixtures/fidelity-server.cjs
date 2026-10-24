@@ -85,6 +85,14 @@ process.on('message',m=>{try{
    if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');
    s.board.fill(0);s.items.fill(null);s.bombs=[];s.specials=[];s.blasts=[];s.flames.fill(0);
    const [p,q]=s.players;p.x=5;p.y=5;q.x=11;q.y=9;s.board[4*15+5]=2;s.board[3*15+5]=2;
+ }else if(m.action==='boxhead-horde'||m.action==='boxhead-grenade-scene'){
+   if(s.gameId!=='50737-server'||s.mapId!=='original-01')throw Error('Expected native BOXY room');
+   if(s.zombies.length&&m.action==='boxhead-horde'&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
+   if(s.players.some(p=>!p.alive))throw Error('Players must remain alive');
+   if(m.action==='boxhead-grenade-scene'&&s.peakCombo<45)throw Error('Earn the native grenade upgrades through actual kills first');
+   s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];s.bullets=[];s.explosions=[];s.effects=[];
+   const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;
+   s.zombies=m.action==='boxhead-horde'?Array.from({length:4},()=>({id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})):[];
  }else if(m.action==='zombies'){
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;

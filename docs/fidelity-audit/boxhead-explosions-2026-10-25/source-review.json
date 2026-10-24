@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-24T17:27:10.527029+00:00",
+  "baseline": "561f0ff",
+  "swf": "games/50737/game.swf",
+  "swfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "classes": {
+    "Thing/Effect/CThing_Effect_Explosion": "22cedb97e9124974343d9ecc3849ef711b7ed14163a2b443b39604a5e9044dce",
+    "Thing/Shot/CThing_Shot_ClusterShell": "b166ce8f0db010fa0619ebd687b5f0ecabe2c7fba979f98ae835537762443c0b",
+    "Thing/Shot/CThing_Shot_Grenade": "03bfd84c088218e55c8459a2bee7966c4858f1391ec1aacf3e633ccf5f434451",
+    "Thing/Affect/CThing_Affect_Explosion": "84a842d933d7bac75f472982d9d5d79c3421011c34c380c3a8eb785dcac2df14",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "Thing/Object/CThing_Object_Barrel": "b822a0fa02c486ba7980b187d630c1227f05046b0dd09c482ca3745d051d81b8",
+    "Thing/Object/CThing_Object_Mine": "859ba08ff12517ff7c9f76e247ff4856b6fc2321d54b4180192f0d551bd8b128",
+    "Thing/Object/CThing_Object_ChargePack": "c02b18da3a7d458671deabd2708b9d5ea19bba7963a2030b799a414c7468ca72",
+    "Thing/Weapon/CThing_Weapon_Grenade": "0feee77cbaf902dfabd1d112aa069b904decf99212a8217bb9b8858e29ec470c",
+    "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "World/CUpgrades": "c1fc0dc277b6c4458de8cc25894c26eb7c98684fb4fc7a6d9e61fce13a03c2ca",
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip_Animation": "170799518ff80397a21e73f67e23dcece0d50020378573e3d2770356918c2da1"
+  },
+  "nativeAssets": {
+    "shot-clustershell.png": "62f0500243b510ae7979189ee16e35da161d9b4388a98683bfa3ba0102b699cd",
+    "shot-grenade.png": "d28b2714db5c34e73239c7c023dbc36190b9931e5be72b581065894d6fd5f83c",
+    "effect-explosion.png": "beffb44913509620fb75172f69f300bdaac64e3cc192551715cbd2276959eece"
+  },
+  "rules": {
+    "biggerBang": "2 or 3 same-damage plain child effects at distance32; angular jitter +/- step/8; delay2..5 pre-decrement callbacks; no recursive flags",
+    "cluster": "4 sectors with angle jitter +/-pi/8; life16..23; XYspeed1.6..3.2 px/callback; initial vertical16; inherited height/damage/owner; plain impacts",
+    "gravity": "1.92px/callback; predicted negative z reflects, halves whole delta, zeroes position height, then moves reflected delta; threshold <=1.92 zeroes vertical",
+    "animation": "18 frames; +2.5/callback including activation; displayed2,5,7,10,12,15,17,17 before removal; scale1",
+    "objects": "native map barrel HP1/damage100; placed damage captured at creation; object bang/cluster upgrades refresh on hit; mine/charge lack explosion affect flags"
+  },
+  "enumerationInference": {
+    "reference": "https://github.com/ruffle-rs/ruffle/blob/045db00b393aed22a462d29cb6c25efa26be90a0/core/src/avm1/activation.rs#L1047-L1075",
+    "finding": "AVM1 Enumerate/Enumerate2 push get_keys result onto stack before loop; newly added things begin next collection Process",
+    "limitation": "source inference, not Flash runtime trace; platform phases still group projectiles/effects/enemies/objects rather than reproducing whole AS2 object-key order"
+  },
+  "remaining": [
+    "Mapwho height-aware collision normals and continuous collisions",
+    "Source model gun-position registration",
+    "Whole object collection order and affect callbacks",
+    "World shake/brightness",
+    "Non-explosion action timing, hit displacement and AI",
+    "Charge pack original ~3 callbacks before creating effect",
+    "Character/difficulty selection and full native campaign/menu flow"
+  ]
+}

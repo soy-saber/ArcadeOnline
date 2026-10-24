@@ -1,6 +1,7 @@
 import data from './boxhead-data.json';
 import type { State } from './types';
 import { WIDTH, HEIGHT, HUD, WEAPONS, camera, room } from './boxhead-world';
+import { explosionFrame } from './boxhead-explosions';
 
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
@@ -62,10 +63,11 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const b of s.bullets){
     if(b.tx!==undefined){c.strokeStyle=b.weapon===9?'#9f80ef':'#f3f0cf';c.lineWidth=b.weapon===9?2:1;c.beginPath();c.moveTo(b.x,b.y-23);c.lineTo(b.tx,b.ty-23);c.stroke();}
     else if(b.owner<0)sprite(c,'Effect.FireBall',b.x,b.y-18,0,1,Math.atan2(b.vy,b.vx));
-    else sprite(c,b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y-(b.z||0),s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
+    else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y-(b.z||0),s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
   }
   for(const e of s.effects)if(!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){
-    const meta=(data.objects as any)[e.kind];sprite(c,e.kind,e.x,e.y,(1-e.life/e.total)*(meta?.frames||1),e.scale||1);
+    const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):(1-e.life/e.total)*(meta?.frames||1);
+    sprite(c,e.kind,e.x,e.y-(e.z||0),frame,e.scale||1);
   }
   if(coverBitmap)c.drawImage(coverBitmap,0,0,map.width,map.height);
   for(const p of s.players.filter(p=>p.alive))health(c,p,seat);
