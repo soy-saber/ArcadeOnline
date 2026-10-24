@@ -1,0 +1,31 @@
+{
+  "source": "games/9109/game.swf",
+  "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+  "conveyorTimerMs": 8000,
+  "conveyorSpeed": 1,
+  "kickSpeed": 7,
+  "remoteBlastTime": 800,
+  "classes": [
+    {
+      "name": "Transmittal",
+      "normalizedSourceSha256": "085776ee6c44f23cde6c25d1c00050ecf3486bd361f0c7df504fe0879d57fee0"
+    },
+    {
+      "name": "BombShoes",
+      "normalizedSourceSha256": "20922fb5af581737af379c0dad0886be1fae8a8a636d157d4e139adea2178f83"
+    },
+    {
+      "name": "Bomb",
+      "normalizedSourceSha256": "f25510058ceb4bd8be2cf81108f05385db824adf4b18e2153e62fce64712b3ed"
+    },
+    {
+      "name": "mapData/FactoryMapData",
+      "normalizedSourceSha256": "118a684eeccbb96ac6cb6391bcb6ea090dcf7a2d6e4c2edd28b9a3805cb5194d"
+    },
+    {
+      "name": "TelecontrolBomb",
+      "normalizedSourceSha256": "cb0a34c97fc9462ce7f166bb6a6fe1e6eaaa98367a75c3d4bd955e2650af937f"
+    }
+  ],
+  "method": "Static constant extraction; factory turn arrays imported separately by import-expanded-bomb2.py --maps-only."
+}

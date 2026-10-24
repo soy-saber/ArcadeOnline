@@ -8,7 +8,9 @@ import { BOMB2_CANVAS_WIDTH, bomb2Weapon, bomb2Status } from './bomb2-status';
 import RULES from './bomb2-rules.json';
 import BRICK_BURST from './bomb2-brick.json';
 import { audio, sound, SOUND_FILES } from './bomb2-sound';
-import {moveActor,syncWalking,relocate,validWalking} from './bomb2-movement';
+import {moveActor,moveBomb,syncWalking,relocate,validWalking} from './bomb2-movement';
+import {conveyorFrame,REMOTE_FUSE} from './bomb2-conveyor';
+import BOMB_ART from './bomb2-bomb-art.json';
 import {stopWalking,walkingPosition} from './bomb2-walking';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
@@ -85,7 +87,7 @@ function spawnCoin(s:State):void {
 }
 function passable(s:State,x:number,y:number):boolean {
   const rail=s.hazards.filter((h:any)=>h.kind==='Rail'),tram=rail.length?rail[Math.floor(s.tram)%rail.length]:null;
-  return inside(x,y)&&s.board[index(x,y)]===0&&!s.bombs.some((b:any)=>b.x===x&&b.y===y)&&!(tram&&tram.x===x&&tram.y===y);
+  return inside(x,y)&&s.board[index(x,y)]===0&&!s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)&&!(tram&&tram.x===x&&tram.y===y);
 }
 function breakCrate(s:State,cell:number):void {
   if(s.board[cell]!==2)return;s.board[cell]=0;s.tiles[cell]=0;
@@ -108,11 +110,14 @@ function ignite(s:State,x:number,y:number,owner:number):void {
   if(!inside(x,y)||s.board[index(x,y)]===1)return;
   const cell=index(x,y);if(s.flames[cell]<=s.tick)s.owners[cell]=owner;s.flames[cell]=s.tick+16;
   if(s.board[cell]===2)breakCrate(s,cell);else s.items[cell]=0;
-  for(const b of s.bombs)if(b.x===x&&b.y===y)b.explodeAt=Math.min(b.explodeAt,s.tick);
+  for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=Math.min(b.explodeAt,s.tick);
 }
 function place(s:State,p:any,kind='normal',x=p.x,y=p.y):boolean {
-  if(!inside(x,y)||s.board[index(x,y)]||s.bombs.length>=36||s.bombs.some((b:any)=>b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
+  if(!inside(x,y)||s.board[index(x,y)]||s.bombs.length>=36||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
   s.bombs.push({id:s.nextId++,owner:p.seat,x,y,range:kind==='mine'?2:p.range,kind,explodeAt:kind==='normal'?s.tick+FUSE:kind==='thrown'?s.tick+25:ROUND_TICKS+FUSE,armedAt:kind==='mine'?ROUND_TICKS+20:s.tick+20,slide:-1});
+  if(kind==='remote')s.bombs[s.bombs.length-1].explodeAt=s.tick+REMOTE_FUSE;
+  s.bombs[s.bombs.length-1].born=s.tick;
+  syncWalking(s.bombs[s.bombs.length-1]);
   sound(s,kind==='remote'?'remote':kind==='mine'?'mine':'place');
   return true;
 }
@@ -129,7 +134,7 @@ function take(s:State,p:any):void {
 function dropWeapons(s:State,p:any):void {
   for(let n=0;n<2&&p.weaponStock.length;n++){
     const item=p.weaponStock.splice(Math.floor(random(s)*p.weaponStock.length),1)[0];
-    const cells=s.board.map((v:number,i:number)=>v===0&&!s.items[i]&&!s.bombs.some((b:any)=>index(b.x,b.y)===i)&&Math.abs(i%WIDTH-p.x)+Math.abs(Math.floor(i/WIDTH)-p.y)<=2?i:-1).filter((i:number)=>i>=0);
+    const cells=s.board.map((v:number,i:number)=>v===0&&!s.items[i]&&!s.bombs.some((b:any)=>b.slide<0&&index(b.x,b.y)===i)&&Math.abs(i%WIDTH-p.x)+Math.abs(Math.floor(i/WIDTH)-p.y)<=2?i:-1).filter((i:number)=>i>=0);
     if(cells.length)s.items[cells[Math.floor(random(s)*cells.length)]]=item;
   }
 }
@@ -145,7 +150,7 @@ function hit(s:State,p:any,owner:number):void {
   if(s.mode==='collect'){
     const count=Math.floor(p.points/2);
     for(let n=0;n<count;n++){
-      const cells=s.board.map((v:number,i:number)=>v===0&&!s.items[i]&&!s.bombs.some((b:any)=>index(b.x,b.y)===i)&&Math.abs(i%WIDTH-p.x)+Math.abs(Math.floor(i/WIDTH)-p.y)<=2?i:-1).filter((i:number)=>i>=0);
+      const cells=s.board.map((v:number,i:number)=>v===0&&!s.items[i]&&!s.bombs.some((b:any)=>b.slide<0&&index(b.x,b.y)===i)&&Math.abs(i%WIDTH-p.x)+Math.abs(Math.floor(i/WIDTH)-p.y)<=2?i:-1).filter((i:number)=>i>=0);
       if(cells.length){s.items[cells[Math.floor(random(s)*cells.length)]]=9;p.points--;}
     }
     s.scores[p.seat-1]=p.points;
@@ -163,7 +168,7 @@ function useWeapon(s:State,p:any):void {
   if(p.actionLock>0||p.attack)return;
   stopWalking(syncWalking(p));p.moveDir=-1;
   const remote=s.bombs.filter((b:any)=>b.owner===p.seat&&b.kind==='remote');
-  if(remote.length){for(const b of remote)b.explodeAt=s.tick;return;}
+  if(remote.length){for(const b of remote){b.slide=-1;b.explodeAt=s.tick;}return;}
   const kind=p.weapon|| (s.mode==='kill'?15:0);if(!kind||p.weapon&&p.ammo<=0)return;
   if(kind===17||kind===18){
     if(!place(s,p,kind===17?'remote':'mine'))return;
@@ -184,7 +189,7 @@ function updateAttacks(s:State):void {
     if(kind===15){
       const tx=x+dx,ty=y+dy;
       if(inside(tx,ty)){const cell=index(tx,ty);if(s.board[cell]===2)breakCrate(s,cell);else if(s.board[cell]===0)s.items[cell]=0;
-        for(const b of s.bombs)if(b.x===tx&&b.y===ty)b.explodeAt=s.tick;
+        for(const b of s.bombs)if(b.slide<0&&b.x===tx&&b.y===ty)b.explodeAt=s.tick;
         for(const q of s.players)if(q.seat!==p.seat&&((q.x===tx&&q.y===ty)||(q.x===x&&q.y===y)))hit(s,q,p.seat);
       }
     }else if((kind===16||kind===19)&&s.shots.length<64){
@@ -196,7 +201,7 @@ function updateAttacks(s:State):void {
       // even after destruction; later animation frames cannot extend it.
       if(kind===20)for(let d=1;d<Math.max(WIDTH,HEIGHT);d++){
         const tx=x+dx*d,ty=y+dy*d;if(!inside(tx,ty)||s.board[index(tx,ty)]===1)break;
-        const cell=index(tx,ty),blocked=s.board[cell]===2||s.bombs.some((b:any)=>b.x===tx&&b.y===ty);
+        const cell=index(tx,ty),blocked=s.board[cell]===2||s.bombs.some((b:any)=>b.slide<0&&b.x===tx&&b.y===ty);
         effect.cells.push(cell);if(blocked)break;
       }
       s.effects.push(effect);
@@ -211,7 +216,7 @@ function updateAttacks(s:State):void {
       const x=cell%WIDTH,y=Math.floor(cell/WIDTH);
       if(effect.kind===21||effect.born===s.tick){
         if(s.board[cell]===2)breakCrate(s,cell);else s.items[cell]=0;
-        for(const b of s.bombs)if(b.x===x&&b.y===y)b.explodeAt=s.tick;
+        for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=s.tick;
       }
       for(const q of s.players)if(q.seat!==effect.owner&&q.x===x&&q.y===y)hit(s,q,effect.owner);
     }
@@ -245,7 +250,7 @@ export function step(s:State,inputs:Input[]):void {
     const oldX=p.x,oldY=p.y,dir=input?direction(input):-1;
     moveActor(s,p,dir,(x,y)=>{
       if(p.actionLock||p.attack||dir<0)return;const [dx,dy]=DIRS[dir];
-      const bomb=s.bombs.find((b:any)=>b.x===x&&b.y===y);if(bomb&&p.kick&&passable(s,x+dx,y+dy)){bomb.slide=dir;bomb.x+=dx;bomb.y+=dy;}
+      const bomb=s.bombs.find((b:any)=>b.slide<0&&b.x===x&&b.y===y);if(bomb&&p.kick&&!p.vehicle)bomb.slide=dir;
       if(p.vehicle===12&&inside(x,y)&&s.board[index(x,y)]===2){breakCrate(s,index(x,y));p.actionLock=12;stopWalking(p.walking);sound(s,'crush');}
       if(p.vehicle===14&&p.teleportUntil<=s.tick&&inside(x,y)&&!passable(s,x,y)&&passable(s,x+dx,y+dy)){
         // FrogProp crosses the blocked cell, landing one cell beyond it.
@@ -258,7 +263,8 @@ export function step(s:State,inputs:Input[]):void {
   }
   updateAttacks(s);
   for(const b of s.bombs){
-    if(b.slide>=0&&s.tick%3===0){const [dx,dy]=DIRS[b.slide];if(passable(s,b.x+dx,b.y+dy)){b.x+=dx;b.y+=dy;}else b.slide=-1;}
+    if(b.explodeAt>s.tick||b.slide>=0)moveBomb(s,b);
+    if(b.slide>=0)continue;
     if(b.kind==='mine'){
       const owner=s.players.find(p=>p.seat===b.owner);
       if(b.armedAt>s.tick&&(!owner||!owner.alive||owner.respawnAt||owner.x!==b.x||owner.y!==b.y))b.armedAt=s.tick;
@@ -270,9 +276,9 @@ export function step(s:State,inputs:Input[]):void {
     for(let k=0;k<4;k++){
       const oldX=Math.floor(shot.x),oldY=Math.floor(shot.y);
       shot.x+=shot.vx/4;shot.y+=shot.vy/4;const x=Math.floor(shot.x),y=Math.floor(shot.y);
-      if(!inside(x,y))return false;if(s.board[index(x,y)]||s.bombs.some((b:any)=>b.x===x&&b.y===y)){
+      if(!inside(x,y))return false;if(s.board[index(x,y)]||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)){
         if(shot.kind===16){const tx=s.board[index(x,y)]===1?oldX:x,ty=s.board[index(x,y)]===1?oldY:y;ignite(s,tx,ty,shot.owner);for(const [dx,dy]of DIRS)ignite(s,tx+dx,ty+dy,shot.owner);}
-        else {breakCrate(s,index(x,y));for(const b of s.bombs)if(b.x===x&&b.y===y)b.explodeAt=s.tick;}
+        else {breakCrate(s,index(x,y));for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=s.tick;}
         return false;
       }
       const p=s.players.find(p=>{const pos=walkingPosition(p);return p.alive&&!p.respawnAt&&p.seat!==shot.owner&&Math.hypot(pos.x+.5-shot.x,pos.y+.5-shot.y)<.4;});
@@ -281,7 +287,7 @@ export function step(s:State,inputs:Input[]):void {
   });
   const exploded=new Set<number>();
   for(let cycle=0;cycle<36;cycle++){
-    const b=s.bombs.find((b:any)=>b.explodeAt<=s.tick&&!exploded.has(b.id));if(!b)break;exploded.add(b.id);sound(s,'explode');ignite(s,b.x,b.y,b.owner);
+    const b=s.bombs.find((b:any)=>b.slide<0&&b.explodeAt<=s.tick&&!exploded.has(b.id));if(!b)break;exploded.add(b.id);sound(s,'explode');ignite(s,b.x,b.y,b.owner);
     for(const [dx,dy] of DIRS)for(let distance=1;distance<=b.range;distance++){
       const x=b.x+dx*distance,y=b.y+dy*distance;if(!inside(x,y)||s.board[index(x,y)]===1)break;
       const crate=s.board[index(x,y)]===2;ignite(s,x,y,b.owner);if(crate)break;
@@ -323,7 +329,8 @@ export function valid(value:unknown):value is State {
   for(const [key,max] of [['board',2],['tiles',59],['items',22],['flames',ROUND_TICKS+16],['owners',4],['colors',4]] as const)if(!Array.isArray(s[key])||s[key].length!==255||!s[key].every((v:any)=>int(v,0,max)))return false;
   if(!Array.isArray(s.ack)||s.ack.length!==4||!s.ack.every((n:any)=>int(n,0,1e9))||!Array.isArray(s.scores)||s.scores.length!==4||!s.scores.every((n:any)=>int(n,0,1000)))return false;
   const owns=(owner:any)=>s.players.some(p=>p.seat===owner);
-  if(!Array.isArray(s.bombs)||s.bombs.length>36||!s.bombs.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&int(b.x,0,16)&&int(b.y,0,14)&&int(b.range,1,10)&&['normal','remote','mine','thrown'].includes(b.kind)&&int(b.slide,-1,3)&&int(b.explodeAt,0,ROUND_TICKS+FUSE)&&int(b.armedAt,0,ROUND_TICKS+20)))return false;
+  if(Array.isArray(s.bombs)&&s.bombs.some((b:any)=>b&&(b.walking&&!validWalking(b)||b.born!==undefined&&!int(b.born,0,s.tick))))return false;
+  if(!Array.isArray(s.bombs)||s.bombs.length>36||!s.bombs.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&int(b.x,0,16)&&int(b.y,0,14)&&int(b.range,1,10)&&['normal','remote','mine','thrown'].includes(b.kind)&&int(b.slide,-1,3)&&int(b.explodeAt,0,ROUND_TICKS+REMOTE_FUSE)&&int(b.armedAt,0,ROUND_TICKS+20)))return false;
   if(!Array.isArray(s.shots)||s.shots.length>64||!s.shots.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&Number.isFinite(b.x)&&b.x>=0&&b.x<=17&&Number.isFinite(b.y)&&b.y>=0&&b.y<=15&&Number.isFinite(b.vx)&&Math.abs(b.vx)<=1&&Number.isFinite(b.vy)&&Math.abs(b.vy)<=1&&[16,19].includes(b.kind)&&int(b.until,0,ROUND_TICKS+HZ*4)))return false;
   if(!s.players.every(p=>int(p.actionLock,0,25)&&Array.isArray(p.weaponStock)&&p.weaponStock.length<=32&&p.weaponStock.every((kind:any)=>Object.prototype.hasOwnProperty.call(WEAPON_USES,kind))&&
     (p.attack===null||p.attack&&[15,16,19,20,21].includes(p.attack.kind)&&int(p.attack.dir,0,3)&&int(p.attack.x,0,16)&&int(p.attack.y,0,14)&&int(p.attack.born,0,s.tick)&&int(p.attack.at,p.attack.born,ROUND_TICKS+25))))return false;
@@ -354,7 +361,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   }
   for(const h of s.hazards){const px=left+h.x*cell,py=top+h.y*cell;
     if(h.kind==='QuickSand')draw(ctx,`quicksand-${h.dir}-1`,px,py,cell,cell);
-    else if(h.kind==='Transmittal')draw(ctx,'conveyor-'+h.dir,px,py,cell,cell);
+    else if(h.kind==='Transmittal')draw(ctx,'conveyor-'+conveyorFrame(h,s.tick),px,py,cell,cell);
     else if(h.kind==='Rail')draw(ctx,'rail-'+h.dir,px,py,cell,cell);
     else if(h.kind==='SpringBoard')draw(ctx,'brick-40',px,py,cell,cell);
     else if(h.kind==='IceFace')draw(ctx,'brick-30',px,py,cell,cell);
@@ -367,7 +374,10 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     if(s.items[i])draw(ctx,'prop-'+s.items[i],px+3,py+3,cell-6,cell-6);
     if(s.flames[i]>s.tick){ctx.fillStyle='#ffba38bf';ctx.fillRect(px+2,py+2,cell-4,cell-4);draw(ctx,'blast-'+(s.tick%9+1),px,py,cell,cell);}
   }
-  for(const b of s.bombs){draw(ctx,'bomb-'+(s.tick%4+1),left+b.x*cell+2,top+b.y*cell+2,cell-4,cell-4);if(b.kind!=='normal'){ctx.fillStyle=b.kind==='remote'?'#2ea5ff':'#ed5d55';ctx.fillRect(left+b.x*cell+10,top+b.y*cell+10,8,8);}}
+  for(const b of s.bombs){
+    const pos=walkingPosition(b),kind=b.kind==='remote'?'remote':b.kind==='mine'?'mine':'normal',meta=BOMB_ART.timelines[kind],img=asset('native-bomb-'+kind);
+    if(img.complete&&img.naturalWidth){const frame=Math.max(0,s.tick-(b.born??0))%meta.frames;ctx.drawImage(img,frame*meta.w,0,meta.w,meta.h,left+pos.x*cell+meta.x,top+pos.y*cell+meta.y,meta.w,meta.h);}
+  }
   for(const effect of s.effects){
     ctx.fillStyle=effect.kind===20?'#ff4aaa':'#ff9c27cc';
     if(effect.kind===21){

@@ -426,7 +426,7 @@ export function step(state: GameState, inputs: readonly Input[]): void {
       const [dx, dy] = DIRECTIONS[input.dir];
       const x = player.x + dx, y = player.y + dy;
       const pushed = state.bombs.find((bomb) => bomb.x === x && bomb.y === y);
-      if (pushed && player.push && player.pushCooldown === 0 && passable(state, x + dx, y + dy)) {
+      if (pushed && (pushed.slide === undefined || pushed.slide < 0) && pushed.explodeAt > state.tick && player.push && player.pushCooldown === 0 && passable(state, x + dx, y + dy)) {
         pushed.x += dx; pushed.y += dy; pushed.slide = input.dir; pushed.slideTick = 0;
         player.pushCooldown = PUSH_COOLDOWN_TICKS;
         emitSound(state,'push');

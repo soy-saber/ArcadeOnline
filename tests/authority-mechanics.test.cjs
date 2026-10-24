@@ -20,6 +20,36 @@ test("successful special weapons impose recovery, blocked attempts spend neither
   for(const weapon of core.WEAPONS){const s=arena(),p=s.players[0];p.weapon=weapon;p.ammo=2;tick(s,input(1,2,1));assert.equal(p.ammo,1,weapon);assert.equal(p.actionLock,core.SPECIAL_RECOVERY_TICKS,weapon);assert.equal(p.moveDir,-1);assert.equal(p.x,3);tick(s,input(2,2,2));assert.equal(p.ammo,1,weapon);assert.equal(p.lastBomb,2);assert.equal(p.moveDir,-1);}
   const s=arena(),p=s.players[0];p.weapon='ice';p.ammo=1;s.board[core.index(4,3)]=1;tick(s,input(1,2,1));assert.equal(p.actionLock,0);assert.equal(p.ammo,1);
 });
+
+test("gloves cannot redirect a bomb already pushed by another player, including the same server tick",()=>{
+  const s=arena(),[p,q]=s.players;p.push=q.push=true;q.x=5;q.y=4;
+  s.bombs=[{id:s.nextBomb++,x:4,y:3,owner:1,range:1,explodeAt:600}];
+  core.step(s,[input(1,2),input(1,1),core.EMPTY_INPUT,core.EMPTY_INPUT]);
+  const b=s.bombs[0];assert.deepEqual([b.x,b.y,b.slide,b.slideTick],[5,3,2,0]);
+  assert.equal(p.pushCooldown,14);assert.equal(q.pushCooldown,0);
+  assert.equal(s.sounds.filter(e=>e.name==='push').length,1);
+  core.step(s,[input(2),input(2,1),core.EMPTY_INPUT,core.EMPTY_INPUT]);
+  assert.deepEqual([b.x,b.y,b.slide,b.slideTick],[5,3,2,1]);assert.equal(q.pushCooldown,0);
+  core.step(s,[input(3),input(3,1),core.EMPTY_INPUT,core.EMPTY_INPUT]);
+  assert.deepEqual([b.x,b.y,b.slide],[6,3,2]);assert.equal(q.pushCooldown,0);assert(core.validState(s));
+});
+
+test("gloves refuse every moving bomb direction without resetting its movement or fuse",()=>{
+  const vectors=[[-1,0],[0,-1],[1,0],[0,1]];
+  for(let slide=0;slide<4;slide++)for(let approach=0;approach<4;approach++){
+    const s=arena(),p=s.players[0],[dx,dy]=vectors[approach];p.push=true;p.x=7-dx;p.y=6-dy;
+    s.bombs=[{id:s.nextBomb++,x:7,y:6,owner:2,range:1,explodeAt:600,slide,slideTick:0}];
+    tick(s,input(1,approach));const b=s.bombs[0];
+    assert.deepEqual([b.x,b.y,b.slide,b.slideTick,b.explodeAt],[7,6,slide,1,600]);assert.equal(p.pushCooldown,0);assert.equal(s.sounds.length,0);assert(core.validState(s));
+  }
+  const s=arena(),p=s.players[0];p.push=true;s.bombs=[{id:s.nextBomb++,x:4,y:3,owner:1,range:1,explodeAt:600,slide:-1,slideTick:0}];
+  tick(s,input(1,2));assert.equal(s.bombs[0].x,5);assert.equal(p.pushCooldown,14);
+  // The collision frame marks the moving bomb for explosion before players
+  // act. It must not become pushable during that same frame.
+  const end=arena(),q=end.players[0];q.push=true;q.x=4;q.y=4;q.invulnerable=60;
+  end.board[core.index(5,3)]=1;end.bombs=[{id:end.nextBomb++,x:4,y:3,owner:2,range:1,explodeAt:600,slide:2,slideTick:1}];
+  tick(end,input(1,1));assert.equal(end.bombs.length,0);assert.equal(q.pushCooldown,0);assert.deepEqual([end.blasts[0].x,end.blasts[0].y],[4,3]);assert.equal(end.sounds.filter(e=>e.name==='push').length,0);assert(core.validState(end));
+});
 test("short ice recovery prevents self-freezing in every direction and speed, including slow",()=>{
   for(const speed of [3,4,5,6,20])for(const dir of [0,1,2,3]){
     const s=arena(),p=s.players[0];p.weapon='ice';p.ammo=1;p.speed=speed===20?6:speed;p.slow=speed===20?600:0;tick(s,input(1,dir,1));const born=s.tick;

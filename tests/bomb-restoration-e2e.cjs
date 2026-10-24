@@ -6,7 +6,7 @@ const server=fork(path.join(__dirname,'fixtures/fidelity-server.cjs'),[],{cwd:ro
 server.on('message',m=>{const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve();}});
 function fixture(room,action,extra={}){return new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});server.send({id:key,room,action,...extra});setTimeout(()=>{if(pending.delete(key))reject(Error('IPC timeout'));},5000).unref();});}
 async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
-async function recovered(p){await p.waitForFunction(()=>window.__authorityTest.authority.players.every(p=>p.moveDir<0&&!p.actionLock&&!p.attack));}
+async function recovered(p){await p.waitForFunction(()=>{const s=window.__authorityTest.authority;return s.players.every(p=>p.moveDir<0&&!p.actionLock&&!p.attack)&&(!s.inputs||s.inputs.every(i=>i.dir<0));});}
 async function pickup(a,room,kind){await recovered(a);await fixture(room,'pickup',{kind});await a.waitForFunction(kind=>{const s=window.__authorityTest.authority;return s.players[0].x===3&&s.players[0].y===4&&s.items[4*(s.gameId?17:15)+4]===kind;},{},kind);await focus(a);await a.keyboard.down('ArrowRight');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].x===4);await a.keyboard.up('ArrowRight');await recovered(a);}
 (async()=>{
  for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}

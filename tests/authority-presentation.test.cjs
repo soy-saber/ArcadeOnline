@@ -94,3 +94,12 @@ test("Bomb It 2 remote interpolation keeps pixel poses and walking animation tog
   assert.equal(remote.walking.x,97.5);assert.equal(remote.x,3.25);assert.equal(remote.moveDir,2);
   assert.equal(frame.tick,4);assert.deepEqual(frame.board,state.board);assert.equal(state.players[1].walking.x,105);
 });
+
+test("Bomb It 2 moving bombs interpolate pixels without changing grid occupancy, fuse or authority",()=>{
+  const core=require(path.join(output,"bomb2.cjs")),state=core.create(1,true,[1,2],123,"factory-one"),presentation=new Presentation(()=>{});
+  state.board.fill(0);const input={seq:1,left:false,right:false,up:false,down:false,attack:1,alt:0};core.step(state,[input]);
+  const b=state.bombs[0];b.walking.x=90;b.walking.y=120;b.walking.gridX=b.x=3;b.walking.gridY=b.y=4;
+  presentation.receive(copy(state),1000,1);state.tick=4;b.walking.x=111;b.walking.gridX=b.x=4;
+  presentation.receive(copy(state),1100,100);const frame=presentation.render(140,1140,null,null,40),rendered=frame.bombs[0];
+  assert.equal(rendered.walking.x,100.5);assert.equal(rendered.x,4);assert.equal(rendered.explodeAt,b.explodeAt);assert.equal(b.walking.x,111);
+});

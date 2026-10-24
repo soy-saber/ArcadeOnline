@@ -98,6 +98,12 @@ export class Presentation {
           if ("moveDir" in player) { player.progress = 0; if(!player.walking)player.moveDir = -1; }
           if (Number.isFinite(a.angle) && Number.isFinite(b.angle)) player.angle = a.angle + Math.atan2(Math.sin(b.angle - a.angle), Math.cos(b.angle - a.angle)) * amount;
         }
+        if(next.gameId==='9109-server'&&'gameId' in before.state&&'gameId' in after.state)for(const bomb of next.bombs){
+          const a=before.state.bombs.find((b:any)=>b.id===bomb.id),b=after.state.bombs.find((b:any)=>b.id===bomb.id);
+          if(!a?.walking||!b?.walking||!bomb.walking)continue;
+          if(Math.hypot(b.walking.x-a.walking.x,b.walking.y-a.walking.y)>60)continue;
+          bomb.walking.x=mix(a.walking.x,b.walking.x,amount);bomb.walking.y=mix(a.walking.y,b.walking.y,amount);
+        }
       }
       if (adapter?.predict && seat && held && age <= PREDICTION_MS) {
         const entries = this.pending.filter((entry) => entry.at >= this.inputFloor && now - entry.at <= PREDICTION_MS);

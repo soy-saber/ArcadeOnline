@@ -561,6 +561,38 @@
       "sha256": "2beda1206896ca2e69347e1dd106add11afae4f39347c818f0803578f58e0d13"
     },
     {
+      "path": "hud-weapon-15.png",
+      "sha256": "dcf6f2163b70eaa34a74b55db338dadb61b138895d309d271a201e419bd69e57"
+    },
+    {
+      "path": "hud-weapon-16.png",
+      "sha256": "ebf908abadf4d87e03df9780cd9013c55fbe2d69fa3ccf1123b7dd1f09c5927b"
+    },
+    {
+      "path": "hud-weapon-17.png",
+      "sha256": "c250471be69a7015d67f135c6ae2bb20e5fde48f87f5dd9b5dd792ff69e87c12"
+    },
+    {
+      "path": "hud-weapon-18.png",
+      "sha256": "b07c3902205d8150633f5b1993de450fa331291a7c5645db1d7773ae51b56867"
+    },
+    {
+      "path": "hud-weapon-19.png",
+      "sha256": "3ea183e4982adc9524bf70eea657eda4b7d37775116a967f7f3e0328335dc169"
+    },
+    {
+      "path": "hud-weapon-20.png",
+      "sha256": "5afe957e4e8ad6fd434fac4bf70e81d2503eb684480eba31f4801b4864fdfc55"
+    },
+    {
+      "path": "hud-weapon-21.png",
+      "sha256": "865bc91b68b1ec46ce56122dce4a3caf0b5311f408708e18a4d42a14e195c098"
+    },
+    {
+      "path": "hud-weapon-remote-trigger.png",
+      "sha256": "4220a7e4ca6825a731b12ec2e22009d7547693bcb7d4cdb9834ad29d660346cc"
+    },
+    {
       "path": "kill-dead-0.png",
       "sha256": "48c6345cd5767e550c71181f228bfbb70c678db5617a425284456e9f512deae1"
     },
@@ -631,6 +663,18 @@
     {
       "path": "kill-shotgun-up.png",
       "sha256": "2a62542e20749b90215c0a8da8e85abef5d65167784589e3109201ab89e7fff0"
+    },
+    {
+      "path": "native-bomb-mine.png",
+      "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
+    },
+    {
+      "path": "native-bomb-normal.png",
+      "sha256": "359d580be71e7cf6e2fcecb899b3fa64f04af0be4a04d5fee4458f9fdfbd0d3b"
+    },
+    {
+      "path": "native-bomb-remote.png",
+      "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
     },
     {
       "path": "original/images/1005.png",
@@ -15571,6 +15615,43 @@
       "y": -40.5,
       "feet": 81,
       "symbol": 3323
+    }
+  },
+  "bombTimelines": {
+    "source": "games/9109/game.swf",
+    "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+    "payloadSha256": "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+    "timelines": {
+      "normal": {
+        "symbol": 2936,
+        "frames": 27,
+        "w": 34,
+        "h": 46,
+        "x": -3.0,
+        "y": -12.25,
+        "path": "public/expanded/assets/bomb2/native-bomb-normal.png",
+        "sha256": "359d580be71e7cf6e2fcecb899b3fa64f04af0be4a04d5fee4458f9fdfbd0d3b"
+      },
+      "remote": {
+        "symbol": 2995,
+        "frames": 27,
+        "w": 34,
+        "h": 45,
+        "x": -3.0,
+        "y": -11.8,
+        "path": "public/expanded/assets/bomb2/native-bomb-remote.png",
+        "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
+      },
+      "mine": {
+        "symbol": 2977,
+        "frames": 27,
+        "w": 28,
+        "h": 21,
+        "x": 0.95,
+        "y": 5.75,
+        "path": "public/expanded/assets/bomb2/native-bomb-mine.png",
+        "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
+      }
     }
   }
 }

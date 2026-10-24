@@ -2,7 +2,7 @@
 // Isolated test process. This IPC fixture is never included in a release.
 const path=require('node:path'),root=path.resolve(__dirname,'../..'),{AuthorityEngine}=require(path.join(root,'runtime/authority.cjs'));
 const rooms=new Map(),onRoom=AuthorityEngine.prototype.onRoom;
-function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:y*30,vx:0,vy:0,gridX:x,gridY:y,blocked:false});}
+function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:y*30,vx:0,vy:0,gridX:x,gridY:y,transX:0,transY:0,blocked:false});}
 AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return onRoom.call(this,room);};
 process.on('message',m=>{try{
  const room=rooms.get(m.room),s=room?.auth?.state;if(!s||s.phase!=='playing')throw new Error('Test round not playing');
@@ -24,6 +24,13 @@ process.on('message',m=>{try{
    else for(let y=2;y<12&&!start;y++)for(let x=2;x<12&&!start;x++)if(!s.hazards.some(h=>h.x>=x-1&&h.x<=x+3&&h.y>=y-1&&h.y<=y+1))start={x,y};
    if(!start)throw Error('Original map has no suitable motion lane');
    const [p,q]=s.players;pose(p,start.x,start.y);pose(q,15,13);
+ }else if(m.action==='conveyor'||m.action==='kick'){
+   if(s.gameId!=='9109-server'||s.mapId!=='factory-two')throw Error('Expected original factory map 2');
+   if(s.players.some(p=>p.actionLock||p.attack))throw Error('Players must recover naturally first');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.flames.fill(0);
+   const [p,q]=s.players;
+   if(m.action==='conveyor'){pose(p,3,4);pose(q,15,13);}
+   else {pose(p,4,6);pose(q,6,6);s.board[6*17+9]=1;s.tiles[6*17+9]=41;}
  }else if(m.action==='blast'){
    if(s.gameId)throw Error('Expected first Bomb It');
    if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');

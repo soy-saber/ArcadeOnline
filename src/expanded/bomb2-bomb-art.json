@@ -1,0 +1,37 @@
+{
+  "source": "games/9109/game.swf",
+  "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+  "payloadSha256": "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+  "timelines": {
+    "normal": {
+      "symbol": 2936,
+      "frames": 27,
+      "w": 34,
+      "h": 46,
+      "x": -3.0,
+      "y": -12.25,
+      "path": "public/expanded/assets/bomb2/native-bomb-normal.png",
+      "sha256": "359d580be71e7cf6e2fcecb899b3fa64f04af0be4a04d5fee4458f9fdfbd0d3b"
+    },
+    "remote": {
+      "symbol": 2995,
+      "frames": 27,
+      "w": 34,
+      "h": 45,
+      "x": -3.0,
+      "y": -11.8,
+      "path": "public/expanded/assets/bomb2/native-bomb-remote.png",
+      "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
+    },
+    "mine": {
+      "symbol": 2977,
+      "frames": 27,
+      "w": 28,
+      "h": 21,
+      "x": 0.95,
+      "y": 5.75,
+      "path": "public/expanded/assets/bomb2/native-bomb-mine.png",
+      "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
+    }
+  }
+}

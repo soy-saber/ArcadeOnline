@@ -1,6 +1,6 @@
 import {CELL,moveRight,moveLeft,moveUp,moveDown,type MotionBody,type MotionMap} from './bomb2-motion';
-export interface Walking extends MotionBody {vx:number;vy:number;gridX:number;gridY:number}
-export function walkingAt(x:number,y:number):Walking {return{x:x*CELL,y:y*CELL,w:CELL,h:CELL,vx:0,vy:0,blocked:false,gridX:x,gridY:y};}
+export interface Walking extends MotionBody {vx:number;vy:number;gridX:number;gridY:number;transX:number;transY:number}
+export function walkingAt(x:number,y:number):Walking {return{x:x*CELL,y:y*CELL,w:CELL,h:CELL,vx:0,vy:0,blocked:false,gridX:x,gridY:y,transX:0,transY:0};}
 export function stopWalking(body:Walking):void {body.vx=0;body.vy=0;body.blocked=false;}
 export function moveWalking(body:Walking,map:MotionMap,direction:number,velocity:number,resistance:number):void {
   body.blocked=false;
