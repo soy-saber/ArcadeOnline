@@ -1,8 +1,22 @@
 **ArcadeOnline 公网部署记录 · 2026-10-25**
 
+## 当前腾讯云发布：24625c6
+
+2026-10-25 03:00（北京时间，发布目录时间02:59:54）已将 `24625c6` 部署至 **https://43.142.142.215/**，同时包含上一批 `fb08dc9` 的遥控包多包/最后一发/三回调起爆、地面动画和爆炸震屏/RGB亮度。新批恢复159面预置墙及玩家假墙的1000HP、十段损伤图、原伤害队列/最近项优先、五回调渐隐与后续阻挡释放，补齐原15帧烟雾。用户指定的权威联机、四人共享大视野、全屏和替代键继续保留。
+
+包51.5MiB、4985文件，SHA256 `8dee01ea738204ed7390f5af21120e3ca01cea69d8223020e499a3db6e9032c0`；清单和构建来源校验通过。当前 `/opt/arcade-online/releases/20261024185954-109244`，回滚 `/opt/arcade-online/releases/20261024173002-88743`，上传目录 `/root/arcade-deploy-20261025-walls-8dee01ea/release`。应用/Caddy/coturn均active/enabled，本机/公网健康检查正常。完整还原清单也纳入发布包，测试夹具、原SWF、分析缓存和凭据仍不在包中。
+
+274单测、5部署测试及类型/构建检查通过；正常32击杀解锁后的实际放墙、20次双倍伤害手枪、十段损伤、渐隐中恢复/真实通过和原烟雾，本地双浏览器通过；遥控包自然解锁/多包/零弹药引爆/拥有者隔离及反馈像素、四人联机回归通过。来源及范围见 [本批记录](docs/fidelity-audit/boxhead-walls-2026-10-25/README.md)。
+
+公网八款资源/封面/背景/旧入口关闭/临时TURN凭据/WSS入房通过；160文件SHA256匹配固定发布清单，包含完整烟雾、墙图和素材来源记录。僵尸危机3实际四浏览器入座/准备、P1～P4移动/攻击、全屏、完整/增量、暂停/恢复、离座/换图/再次开局通过。见 [部署证据](docs/fidelity-audit/boxhead-walls-2026-10-25/public-deployment.json)、[文件校验](docs/fidelity-audit/boxhead-walls-2026-10-25/public-hashes.json)、[四人过程](docs/fidelity-audit/boxhead-walls-2026-10-25/public-four-player-results.json) 和 [截图](docs/fidelity-audit/boxhead-walls-2026-10-25/public-four-player.png)。自然击杀/道具专项仍按本地范围记录，不冒称公网夹具验收；其余七款没有新跑完整操作套件。本轮没有重测带宽或实际TURN中继，所有Chrome仍来自同一Windows工作机。
+
+原对象登记、半径成长、枪口/放置格、Mapwho/AI、人物/难度/模式/原流程等继续按 [完整清单](BOXHEAD_RESTORATION_PLAN.md) 推进，整体目标未完成。下方10月25日“本地尚未部署”和 `84c75ae` 当前目录均为此前历史，已由本次发布更新。
+
+## 24625c6发布前的本地进展历史
+
 后续本地进展：僵尸危机3遥控包三回调起爆/多包/最后一发、原动画/音效/地面层，以及震屏/RGB亮度已补正；262单测和真实双人/四人回归通过，见 [本地证据](docs/fidelity-audit/boxhead-objects-2026-10-25/README.md)。本批尚未部署，当前公网仍为下方 `84c75ae`，不能把本地验证写成公网结果。
 
-## 当前腾讯云发布：84c75ae
+## 84c75ae发布历史
 
 2026-10-25 01:30（北京时间）已将僵尸危机3强化爆炸/集束弹/手雷补正 `84c75ae` 发布至 **https://43.142.142.215/**。发布包50.7MiB、4960文件，SHA256 `0dc30f331f25193e75ca0fe63092dd0fcc53fca674738f0911d548b7a58e72f1`；发布清单与构建来源校验通过。当前目录 `/opt/arcade-online/releases/20261024173002-88743`，上一版 `/opt/arcade-online/releases/20261024164249-77619`；上传目录 `/root/arcade-deploy-20261025-boxhead-0dc30f33/release`。应用/Caddy/coturn均active/enabled，健康检查正常。
 

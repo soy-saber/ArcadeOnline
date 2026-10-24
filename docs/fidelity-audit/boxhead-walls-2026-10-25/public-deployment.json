@@ -1,0 +1,41 @@
+{
+  "verifiedAt": "2026-10-24T19:03:18.787512+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "24625c6",
+  "includesPriorLocalCommit": "fb08dc9",
+  "archiveSha256": "8dee01ea738204ed7390f5af21120e3ca01cea69d8223020e499a3db6e9032c0",
+  "releaseFileCount": 4985,
+  "current": "/opt/arcade-online/releases/20261024185954-109244",
+  "previous": "/opt/arcade-online/releases/20261024173002-88743",
+  "remoteUpload": "/root/arcade-deploy-20261025-walls-8dee01ea/release",
+  "releaseManifestVerified": true,
+  "nativeBuildMatchesSource": true,
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "applicationLoopbackHealth": "ok",
+  "browserSha256": "61ace3405d5f3e83ccf2da2e824c8bcce0f99d78f0a34f3f18c64c913978e75d",
+  "runtimeSha256": "dd0bab52a06fff9dcaee6e2011bda4c0c1541c501ba1134e63037de0a3947743",
+  "publicProbe": "PASS https://43.142.142.215: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.",
+  "hashedFiles": 160,
+  "publicFourPlayerGame": "50737-server",
+  "publicSuiteMethod": "Same gameplay assertions as tests/expanded-e2e.cjs; public URL, DOMContentLoaded,60s navigation and15s recovery readiness; installed headless Chrome,disableGPU and background throttling;4 contexts on one Windows workstation",
+  "scopeLimits": [
+    "Wall natural-unlock/pistol/fade/smoke and multi-pack natural-unlock scenarios are local, not replayed through public fixtures",
+    "Public four-player test covers movement/attack,fullscreen,full/delta,pause/full recovery,map/rematch",
+    "Other7 games have resource/hash/WSS checks, not new gameplay suites",
+    "No new bandwidth or actual TURN relay measurement",
+    "Remaining original-game gaps retain full scope in BOXHEAD_RESTORATION_PLAN.md"
+  ]
+}
