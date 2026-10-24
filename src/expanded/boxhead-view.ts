@@ -3,9 +3,11 @@ import type { State } from './types';
 import { WIDTH, HEIGHT, HUD, WEAPONS, camera, room } from './boxhead-world';
 import { explosionFrame } from './boxhead-explosions';
 import { drawBrightness } from './boxhead-feedback';
+import { smokeFrame } from './boxhead-walls';
 
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
+const combatFiles=Object.entries(data.objects).filter(([key])=>/^(Object|Effect|Shot|Pistol|Railgun|Shotgun|UZI)\./.test(key)).map(([,meta])=>meta.file);
 let backdrop:{id:string;floor?:HTMLCanvasElement;cover?:HTMLCanvasElement}|null=null;
 function image(file:string):HTMLImageElement {
   let im=images.get(file);if(!im){im=new Image();im.src=base+file;images.set(file,im);}return im;
@@ -43,6 +45,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   if(canvas.width!==WIDTH)canvas.width=WIDTH;if(canvas.height!==HEIGHT)canvas.height=HEIGHT;
   const c=canvas.getContext('2d');if(!c)return;
   c.fillStyle='#2b302a';c.fillRect(0,0,WIDTH,HEIGHT);if(!s)return;
+  for(const file of combatFiles)image(file);
   const map=room(s), cam=camera(s);c.save();c.beginPath();c.rect(0,HUD,WIDTH,HEIGHT-HUD);c.clip();c.translate(cam.x,cam.y);c.scale(cam.scale,cam.scale);
   const floor=image(map.id+'-floor.svg'),cover=image(map.id+'-cover.svg');
   const floorBitmap=mapBitmap(map.id,'floor',floor,map.width,map.height),coverBitmap=mapBitmap(map.id,'cover',cover,map.width,map.height);
@@ -55,7 +58,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const p of s.pickups)if(p.life>50||s.tick%6<3)sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
   const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
-    if(p.entity==='object'){sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y,0);continue;}
+    if(p.entity==='object'){c.globalAlpha=p.kind==='wall'?p.wallAlpha/100:1;sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y,p.kind==='wall'?p.wallFrame:0);c.globalAlpha=1;continue;}
     if(p.entity==='human'){
       const gun=WEAPONS[p.weapon],action=s.tick-p.hitAt<5?'hitfront':(gun.pose?gun.pose+'-':'')+(p.moving?'walk':'stand');
       c.globalAlpha=p.invul>0&&s.tick%4<2?.55:1;person(c,p.character,action,p,s.tick);c.globalAlpha=1;
@@ -68,7 +71,8 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y-(b.z||0),s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
   }
   for(const e of s.effects)if(!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){
-    const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):(1-e.life/e.total)*(meta?.frames||1);
+    if(e.kind==='Effect.SmokeCloud'&&s.tick<e.born)continue;
+    const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):e.kind==='Effect.SmokeCloud'?smokeFrame(s.tick,e.born,meta.frames):(1-e.life/e.total)*(meta?.frames||1);
     sprite(c,e.kind,e.x,e.y-(e.z||0),frame,e.scale||1);
   }
   if(coverBitmap)c.drawImage(coverBitmap,0,0,map.width,map.height);

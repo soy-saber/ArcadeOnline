@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-24T18:56:19.669138+00:00",
+  "scope": "local; deployment recorded separately",
+  "checks": {
+    "unitPassed": 274,
+    "deploymentTestsPassed": 5,
+    "typecheck": "passed",
+    "nativeBuildMatchesSource": true,
+    "assetReimport": "two static exports produced identical native sheet metadata/hashes",
+    "wallsBrowser": "passed; real32kills/peak33 unlock; actual placement and20 real52-damage pistol hits; all10 images; damaged/fading full recovery; smoke draw and actual collision release",
+    "objectsBrowserRegression": "passed; real56kills/charge pack controls and feedback pixel checks",
+    "fourPlayerRegression": "passed; actual4 contexts, movement/attacks, fullscreen, full/delta, pause/recovery, map/rematch"
+  },
+  "fixtureLimits": "Only original100HP enemies, poses and scene objects; no grants of upgrades, ammo, damage, immunity, fade, health or timing in browser process. Unit test arrangements are separate. No fixtures in release.",
+  "initialUnitCorrection": "Friendly-fire test oracle omitted the later player same-tick health regeneration; corrected expected HP to174+200/750. Production damage unchanged.",
+  "browserLimits": "All Chrome contexts run on one Windows workstation; local checks do not imply public/cross-region gameplay. Visual smoke snapshots may skip network display frames; all15 asset frames and exact callback timeline separately tested."
+}

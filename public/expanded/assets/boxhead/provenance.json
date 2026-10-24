@@ -14,5 +14,11 @@
   "animations": 78,
   "audio": 26,
   "upgrades": 58,
-  "limitations": "Native server simulation, collision and four-player shared camera are adapted for online play. Original room geometry, material textures, polygon animations and audio are preserved; frame-exact Flash execution is not asserted."
+  "limitations": "Native server simulation, collision and four-player shared camera are adapted for online play. Original room geometry, material textures, polygon animations and audio are preserved; frame-exact Flash execution is not asserted.",
+  "wallTimelines": {
+    "Object.Wall": 10,
+    "Effect.SmokeCloud": 15,
+    "metadata": "src/expanded/boxhead-wall-art.json",
+    "method": "Static JPEXS PNG/SVG export; smoke wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+  }
 }

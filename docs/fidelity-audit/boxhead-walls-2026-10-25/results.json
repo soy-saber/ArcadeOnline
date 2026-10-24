@@ -1,0 +1,235 @@
+{
+  "at": "2026-10-24T18:54:42.215Z",
+  "earned": {
+    "kills": 32,
+    "peakCombo": 33,
+    "stock": 5
+  },
+  "placed": {
+    "id": 295,
+    "x": 176,
+    "y": 272,
+    "kind": "wall",
+    "hp": 1000,
+    "maxHp": 1000,
+    "wallFrame": 0,
+    "wallAlpha": 100,
+    "fadeAt": null,
+    "deleteAt": null,
+    "affects": [],
+    "damage": 100,
+    "owner": 1,
+    "exploded": false,
+    "armed": 512,
+    "detonateAt": 0,
+    "animation": 0,
+    "detonating": false,
+    "detonateCounter": null
+  },
+  "pistolHits": 20,
+  "pistolDamage": 52,
+  "smokePreloadedBeforeBreak": true,
+  "allTenDamageFrames": true,
+  "damagedFullRecovery": true,
+  "fadeFullRecovery": true,
+  "collisionReleasedOnDisposal": true,
+  "nativeSmokeFramesDrawn": [
+    1,
+    5,
+    6,
+    9,
+    11,
+    12,
+    14
+  ],
+  "watch": {
+    "damage": [
+      {
+        "tick": 517,
+        "hp": 1000,
+        "frame": 0
+      },
+      {
+        "tick": 527,
+        "hp": 948,
+        "frame": 0
+      },
+      {
+        "tick": 541,
+        "hp": 896,
+        "frame": 1
+      },
+      {
+        "tick": 554,
+        "hp": 844,
+        "frame": 1
+      },
+      {
+        "tick": 567,
+        "hp": 792,
+        "frame": 2
+      },
+      {
+        "tick": 579,
+        "hp": 740,
+        "frame": 2
+      },
+      {
+        "tick": 590,
+        "hp": 688,
+        "frame": 3
+      },
+      {
+        "tick": 602,
+        "hp": 636,
+        "frame": 3
+      },
+      {
+        "tick": 615,
+        "hp": 584,
+        "frame": 4
+      },
+      {
+        "tick": 627,
+        "hp": 532,
+        "frame": 4
+      },
+      {
+        "tick": 639,
+        "hp": 480,
+        "frame": 5
+      },
+      {
+        "tick": 651,
+        "hp": 428,
+        "frame": 5
+      },
+      {
+        "tick": 663,
+        "hp": 376,
+        "frame": 6
+      },
+      {
+        "tick": 678,
+        "hp": 324,
+        "frame": 6
+      },
+      {
+        "tick": 690,
+        "hp": 272,
+        "frame": 7
+      },
+      {
+        "tick": 701,
+        "hp": 220,
+        "frame": 7
+      },
+      {
+        "tick": 714,
+        "hp": 168,
+        "frame": 8
+      },
+      {
+        "tick": 726,
+        "hp": 116,
+        "frame": 8
+      },
+      {
+        "tick": 740,
+        "hp": 64,
+        "frame": 9
+      },
+      {
+        "tick": 752,
+        "hp": 12,
+        "frame": 9
+      }
+    ],
+    "motion": [
+      {
+        "tick": 769,
+        "x": 149.12,
+        "wall": true,
+        "alpha": 60,
+        "deleteAt": null
+      },
+      {
+        "tick": 769,
+        "x": 149.12,
+        "wall": true,
+        "alpha": 60,
+        "deleteAt": null
+      },
+      {
+        "tick": 773,
+        "x": 154.24,
+        "wall": false
+      },
+      {
+        "tick": 774,
+        "x": 159.36,
+        "wall": false
+      },
+      {
+        "tick": 777,
+        "x": 174.72000000000003,
+        "wall": false
+      },
+      {
+        "tick": 779,
+        "x": 184.96000000000004,
+        "wall": false
+      },
+      {
+        "tick": 780,
+        "x": 190.08000000000004,
+        "wall": false
+      },
+      {
+        "tick": 782,
+        "x": 200.32000000000005,
+        "wall": false
+      },
+      {
+        "tick": 783,
+        "x": 205.44000000000005,
+        "wall": false
+      },
+      {
+        "tick": 785,
+        "x": 210.56000000000006,
+        "wall": false
+      }
+    ],
+    "smokes": {
+      "316": {
+        "id": 316,
+        "kind": "Effect.SmokeCloud",
+        "x": 176,
+        "y": 272,
+        "life": 15,
+        "total": 16,
+        "born": 769,
+        "scale": 1
+      }
+    },
+    "fadeRequest": {
+      "tick": 769,
+      "full": 11,
+      "id": 295,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 768,
+      "alpha": 60
+    },
+    "fadeRecovery": {
+      "tick": 769,
+      "id": 295,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 768,
+      "alpha": 60
+    }
+  },
+  "errors": []
+}

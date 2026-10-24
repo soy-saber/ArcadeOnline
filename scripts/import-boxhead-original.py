@@ -292,3 +292,4 @@ manifest={'source':'games/50737/game.swf','sha256':data['sourceSha256'],'tool':r
           'limitations':'Native server simulation, collision and four-player shared camera are adapted for online play. Original room geometry, material textures, polygon animations and audio are preserved; frame-exact Flash execution is not asserted.'}
 (OUT/'provenance.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(manifest,ensure_ascii=False),flush=True)
+subprocess.run(['python',str(ROOT/'scripts/import-boxhead-wall-art.py'),'--ffdec',JAR],check=True,cwd=ROOT)

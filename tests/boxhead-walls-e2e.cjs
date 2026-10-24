@@ -1,0 +1,53 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{fork}=require('child_process'),puppeteer=require('puppeteer-core');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/boxhead-walls-e2e'),port=48000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],pending=new Map(),wait=ms=>new Promise(r=>setTimeout(r,ms));let browser,id=0;
+const server=fork(path.join(__dirname,'fixtures/fidelity-server.cjs'),[],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});server.stderr.on('data',d=>errors.push(d.toString()));server.on('message',m=>{const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve();}});
+function fixture(room,action){return new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});server.send({id:key,room,action});setTimeout(()=>{if(pending.delete(key))reject(Error('Fixture timeout'));},5000).unref();});}
+async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function select(p,key,index){await focus(p);await p.keyboard.press(key);await p.waitForFunction(index=>window.__authorityTest.authority.players[0].weapon===index,{},index);}
+async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='walls-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<2;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(15000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
+  await p.evaluateOnNewDocument(i=>{localStorage.setItem('arcade_name','Wall P'+(i+1));localStorage.setItem('arcade_native_sound','on');window.__wallDraws=[];window.__smokeDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;
+   CanvasRenderingContext2D.prototype.drawImage=function(...args){const src=args[0]?.src||'';if(this.canvas.id==='game-canvas'&&/\/(object-wall|effect-smokecloud)\.png$/.test(src)){const list=src.endsWith('/object-wall.png')?window.__wallDraws:window.__smokeDraws;list.push({name:src.split('/').pop(),args:args.slice(1),alpha:this.globalAlpha,tick:window.__authorityTest?.authority.tick});if(list.length>2000)list.splice(0,500);}return draw.apply(this,args);};
+  },i);
+  await p.goto(`${base}/authority-room.html?game=50737-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);
+ }
+ const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await fixture(room,'boxhead-horde');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].x===144);await focus(a);
+ for(let n=0;n<16;n++){await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await a.keyboard.press('Space');await a.waitForFunction(n=>window.__authorityTest.authority.players[0].lastAttack>=n,{},n+1);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===4);
+ for(let group=1;group<=7;group++){
+  await fixture(room,'boxhead-horde');await select(a,'Digit2',1);await a.keyboard.down('Space');const target=(group+1)*4,deadline=Date.now()+10000;
+  while(Date.now()<deadline){const s=await a.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,weapon:s.players[0].weapon,alive:s.players[0].alive};});assert(s.alive);if(s.kills>=target)break;if(s.weapon!==1)await select(a,'Digit2',1);await wait(80);}
+  await a.keyboard.up('Space');await a.waitForFunction(target=>window.__authorityTest.authority.players[0].kills===target,{},target);console.log('Natural kills: '+target);
+ }
+ await b.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=30);const earned=await b.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,peakCombo:s.peakCombo,stock:s.players[0].inventory[5]};});
+ await fixture(room,'boxhead-wall-scene');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.length===0);await select(a,'Digit6',5);const stock=await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo);await a.keyboard.press('Space');await b.waitForFunction(()=>window.__authorityTest.authority.barrels.some(b=>b.kind==='wall'));
+ const placed=await b.evaluate(()=>window.__authorityTest.authority.barrels.find(b=>b.kind==='wall'));assert.equal(placed.hp,1000);assert.equal(placed.wallFrame,0);assert.equal(placed.wallAlpha,100);assert.equal(await a.evaluate(()=>window.__authorityTest.authority.players[0].inventory[5]),stock-1);
+ const smokePreloaded=await b.evaluate(()=>performance.getEntriesByName(new URL('/expanded/assets/boxhead/effect-smokecloud.png',location.href).href).some(e=>e.responseEnd>0));assert(smokePreloaded);
+ await b.evaluate(()=>{window.__watch={damage:[],motion:[],smokes:{}};const net=window.__authorityTest.network,original=net.onSnapshot;net.onSnapshot=function(s,...args){original.call(this,s,...args);const w=window.__watch,p=s.players[0],wall=s.barrels.find(b=>b.kind==='wall');
+  if(wall&&wall.hp>0&&!w.damage.some(v=>v.hp===wall.hp))w.damage.push({tick:s.tick,hp:wall.hp,frame:wall.wallFrame});
+  for(const e of s.effects)if(e.kind==='Effect.SmokeCloud'&&!w.smokes[e.id])w.smokes[e.id]=JSON.parse(JSON.stringify(e));
+  if(wall?.fadeAt!==null&&wall?.fadeAt!==undefined||w.fadeRequest)w.motion.push({tick:s.tick,x:p.x,wall:!!wall,alpha:wall?.wallAlpha,deleteAt:wall?.deleteAt});
+  if(wall?.hp<=0&&!w.fadeRequest){const before=this.resyncs,candidate={tick:s.tick,full:this.fullUpdates,id:wall.id,hp:wall.hp,frame:wall.wallFrame,fadeAt:wall.fadeAt,alpha:wall.wallAlpha};this.requestFull();if(this.resyncs>before)w.fadeRequest=candidate;}
+  else if(w.fadeRequest&&!w.fadeRecovery&&this.fullUpdates>w.fadeRequest.full){w.fadeRecovery={tick:s.tick,id:wall?.id,hp:wall?.hp,frame:wall?.wallFrame,fadeAt:wall?.fadeAt,alpha:wall?.wallAlpha};}
+ };});
+ await select(a,'Digit1',0);
+ for(let n=1;n<=19;n++){
+  await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await focus(a);await a.keyboard.press('Space');await b.waitForFunction(hp=>window.__authorityTest.authority.barrels.find(b=>b.kind==='wall')?.hp===hp,{},1000-52*n);
+  if(n===10){const baseline=await b.evaluate(()=>({full:window.__authorityTest.network.fullUpdates,wall:window.__authorityTest.authority.barrels.find(b=>b.kind==='wall')}));await b.evaluate(()=>window.__authorityTest.resync());await b.waitForFunction(full=>window.__authorityTest.network.fullUpdates>full,{},baseline.full);assert.deepEqual(await b.evaluate(()=>window.__authorityTest.authority.barrels.find(b=>b.kind==='wall')),baseline.wall);}
+ }
+ await b.waitForFunction(()=>window.__wallDraws.some(d=>d.args[0]===9*45));await screenshot(b,'wall-damage-nine.png');await focus(a);await a.keyboard.down('ArrowRight');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].x>144);const blockedX=await a.evaluate(()=>window.__authorityTest.authority.players[0].x);
+ await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await a.keyboard.press('Space');await b.waitForFunction(()=>window.__watch.fadeRecovery);await b.waitForFunction(()=>window.__smokeDraws.length>0);await screenshot(b,'wall-native-smoke.png');
+ await a.waitForFunction(x=>window.__authorityTest.authority.players[0].x>x+20,{},placed.x);await a.keyboard.up('ArrowRight');await b.waitForFunction(()=>!window.__authorityTest.authority.effects.some(e=>e.kind==='Effect.SmokeCloud'));
+ const watch=await b.evaluate(()=>window.__watch),request=watch.fadeRequest,recovery=watch.fadeRecovery;
+ assert(request&&recovery);assert(recovery.tick<request.fadeAt+5);assert.equal(recovery.id,request.id);assert.equal(recovery.hp,request.hp);assert.equal(recovery.frame,request.frame);assert.equal(recovery.fadeAt,request.fadeAt);assert.equal(recovery.alpha,request.alpha-20*(recovery.tick-request.tick));
+ assert.equal(watch.damage.at(-1).hp,12);assert.deepEqual([...new Set([0,...watch.damage.map(v=>v.frame)])],[0,1,2,3,4,5,6,7,8,9]);assert(watch.motion.filter(v=>v.wall).every(v=>v.x===blockedX));assert(watch.motion.some(v=>!v.wall&&v.x>blockedX));assert.equal(Object.keys(watch.smokes).length,1);
+ const draws=await b.evaluate(()=>({walls:window.__wallDraws,smoke:window.__smokeDraws}));assert(draws.walls.some(d=>d.alpha<1&&d.alpha>0));assert(draws.walls.every(d=>d.args[2]===45&&d.args[3]===49&&d.args[6]===45&&d.args[7]===49));assert(draws.smoke.every(d=>d.args[2]===134&&d.args[3]===134&&d.args[6]===134&&d.args[7]===134));const smokeFrames=[...new Set(draws.smoke.map(d=>d.args[0]/134))];assert(smokeFrames.length>=3);assert(smokeFrames.every(f=>f>=1&&f<=14));assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),earned,placed,pistolHits:20,pistolDamage:52,smokePreloadedBeforeBreak:smokePreloaded,allTenDamageFrames:true,damagedFullRecovery:true,fadeFullRecovery:true,collisionReleasedOnDisposal:true,nativeSmokeFramesDrawn:smokeFrames,watch,errors},null,2));console.log('Natural wall unlock, native1000HP/damage/fade/smoke, collider disposal and live full recovery passed.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),watch:window.__watch})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();});

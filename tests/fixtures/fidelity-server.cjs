@@ -88,14 +88,15 @@ process.on('message',m=>{try{
  }else if(m.action==='boxhead-pack-pose'){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01'||s.peakCombo<55||s.players.some(p=>!p.alive)||!Number.isInteger(m.index)||m.index<0||m.index>8)throw Error('Expected living players after actual charge-pack unlock');
    const p=s.players[0];p.x=m.index===8?144:80+m.index*64;p.y=m.index===8?400:144;p.dir=m.index===8?0:Math.PI/2;
- }else if(m.action==='boxhead-horde'||m.action==='boxhead-grenade-scene'||m.action==='boxhead-objects-scene'){
+ }else if(m.action==='boxhead-horde'||m.action==='boxhead-grenade-scene'||m.action==='boxhead-objects-scene'||m.action==='boxhead-wall-scene'){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01')throw Error('Expected native BOXY room');
    if(s.zombies.length&&m.action==='boxhead-horde'&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
    if(s.players.some(p=>!p.alive))throw Error('Players must remain alive');
    if(m.action==='boxhead-grenade-scene'&&s.peakCombo<45)throw Error('Earn the native grenade upgrades through actual kills first');
    if(m.action==='boxhead-objects-scene'&&s.peakCombo<55)throw Error('Earn the native charge-pack unlock through actual kills first');
+   if(m.action==='boxhead-wall-scene'&&s.peakCombo<30)throw Error('Earn the native fake-wall unlock through actual kills first');
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];s.bullets=[];s.explosions=[];s.effects=[];
-   const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=m.action==='boxhead-objects-scene'?544:624;q.y=m.action==='boxhead-objects-scene'?400:464;
+   const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?544:624;q.y=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?400:464;
    s.zombies=m.action==='boxhead-horde'?Array.from({length:4},()=>({id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})):[];
  }else if(m.action==='zombies'){
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];

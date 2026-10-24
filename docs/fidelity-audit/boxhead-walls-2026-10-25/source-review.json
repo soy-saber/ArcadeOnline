@@ -1,0 +1,257 @@
+{
+  "at": "2026-10-24T18:56:19.664129+00:00",
+  "baseline": "fb08dc9",
+  "swfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/Object/CThing_Object_Wall": "237e9b7ec5e9de32924931f8643c5b7196a4124af8b7499a7616d43e7e16fa9a",
+    "Thing/Weapon/CThing_Weapon_FakeWall": "f0ae7de4b8cd7097b9e4a46615066627889bce18107a065284bff80635a6f7b9",
+    "Thing/Effect/CThing_Effect_SmokeCloud": "529c0332ec18fd001961d7f3384bb2e3551a766084e770f67c92dee718499b6a",
+    "Thing/CThing": "8a6fab0dee85a00895f4a01a58946fbc10a23eb6f583393c34c1413f72dbe47f",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip_Animation": "170799518ff80397a21e73f67e23dcece0d50020378573e3d2770356918c2da1",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip": "6ba57059a675c37dd326db1bd87caac2f6faac542af34e3c56ad83f1607c8928",
+    "World/Map/CMap": "bc93816e8d32c503c16cfdb394bb63587dcdae3adef939a3299e2427e3f74ee9",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a"
+  },
+  "nativeArt": {
+    "source": "games/50737/game.swf",
+    "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+    "timelines": {
+      "Object.Wall": {
+        "file": "object-wall.png",
+        "frames": 10,
+        "w": 45,
+        "h": 49,
+        "x": -25.85,
+        "y": -32.75,
+        "symbol": 660,
+        "bounds": [
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ],
+          [
+            2,
+            1,
+            43,
+            48
+          ]
+        ],
+        "frameSha256": [
+          "582bb44d2765d040047d01cb84b387d024ec1b2ea6c86260478bb385619c6764",
+          "4ce09c8eeb696469177bd8d7c0b5e42464e69a86f283c4f747e955ce3b39555d",
+          "8285a09b5c86e4ec1503a04e37eb8d452759ad74863d1917adfdd5e40e1f35f7",
+          "93177606c7d0cbc153eaecb125a80aedfa475d44450b42a9987441ce44e00748",
+          "1a6d58f26e19bdaf42bd78ea9cdb275e07edd3345f06052072fd30961b3aa79f",
+          "6b30acb16d4658f763b543c61ad20c89583ca173b4699e995035b63668976c1b",
+          "d407cac7adabe0476ba27681abf225110d6b0f57af7d5c2dc283253d325ce77e",
+          "b83ad3c9467f3cf2b30e81a38ba3a1d31e3e1ecb13de3705c8afaa156e0b004a",
+          "a110632c5db5462062b35c0bbd5216828b759241f3be42c3b8921ca0aad0c950",
+          "a110632c5db5462062b35c0bbd5216828b759241f3be42c3b8921ca0aad0c950"
+        ],
+        "sha256": "cdead4424cafeacef978a34d082d9e3427bed3d0f1693f76fa0f68ac010bc509"
+      },
+      "Effect.SmokeCloud": {
+        "file": "effect-smokecloud.png",
+        "frames": 15,
+        "w": 134,
+        "h": 134,
+        "x": -64.0,
+        "y": -100.25,
+        "symbol": 627,
+        "bounds": [
+          [
+            51,
+            83,
+            85,
+            115
+          ],
+          [
+            36,
+            62,
+            97,
+            118
+          ],
+          [
+            28,
+            49,
+            107,
+            123
+          ],
+          [
+            25,
+            45,
+            110,
+            125
+          ],
+          [
+            23,
+            42,
+            112,
+            125
+          ],
+          [
+            22,
+            39,
+            114,
+            126
+          ],
+          [
+            20,
+            37,
+            115,
+            126
+          ],
+          [
+            18,
+            34,
+            117,
+            127
+          ],
+          [
+            17,
+            32,
+            119,
+            127
+          ],
+          [
+            15,
+            29,
+            121,
+            127
+          ],
+          [
+            14,
+            26,
+            122,
+            128
+          ],
+          [
+            12,
+            24,
+            124,
+            128
+          ],
+          [
+            10,
+            21,
+            125,
+            129
+          ],
+          [
+            9,
+            19,
+            127,
+            129
+          ],
+          [
+            8,
+            17,
+            128,
+            128
+          ]
+        ],
+        "frameSha256": [
+          "15876378d8d69253f368d10dbe929fb9ad5c0591a88b335556d4a92d7b237ad6",
+          "de95c5dc5d63cc3c60f434c565cfa51c5a031f4cdb017fe1280e2a6ad4dc558f",
+          "6070a353966c0492b2bab2bb18cfbcbc7e9cf59d8373134d731d4bc13812287e",
+          "c5a90546f6e9638e9af16b193e35edfc151061b8407be95a64d67739b42d16b7",
+          "93a44552284d36d004944ef5d108fa2d97087955ef3b7ba79311ed357a875e98",
+          "99cbe6930fc1cb55f61c964947d4f9651f337984d57ac03ec40aa360052eeef0",
+          "1611e9801a15e22ceed4c1869edcc560b17e93ac045d1f6a2608c372171a9d6c",
+          "488cab15e0d02d18e73b21c51e1b677630d98200e07b7c7e0552a3283fdb52a6",
+          "b50dc97e9f52c5ddc0d4180e302c9cf5e280b8b0dd8ebff858b123572be0d509",
+          "efa0accde40b4a8e3c286efec8371582802a0d2c90210a652d882dc74652d569",
+          "b4932fddb7aeaf7c6e6ab2b015829100d98ba8818e42bacbf2a71b319ee1b02b",
+          "c0e727c24a2ecb145319a20d0dde9927e247efd60c5e3bece0e0b7644124ab6e",
+          "a5a20a2113d09178990bbe291fdaf7f828d0ba311f058069abfa72331f6bd46d",
+          "42e1813b2df75e7148b923093b9ea3987ab4f8e6213b1b32880076b3e242b573",
+          "bb9fb9ddb6efe152025e0c8457d25a91a2a449e74d7ae8691c8ebb18969d1465"
+        ],
+        "sha256": "a4cf134d8b46a177cfa7da87e7e7ff34c14ac9c39dada645edbe493813721c96"
+      }
+    },
+    "smokeContentsSymbol": 626,
+    "method": "Static JPEXS PNG/SVG export; smoke wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+  },
+  "avm1Enumeration": {
+    "finding": "CThing.Affect pushes into a dense array; AS2 for-in processes most recently inserted keys first. Wall callback drains pending affects newest-first, clears them on fatal hit, and keeps the prior nonlethal image.",
+    "references": [
+      "https://github.com/ruffle-rs/ruffle/blob/045db00b393aed22a462d29cb6c25efa26be90a0/core/src/avm1/property_map.rs#L92-L99",
+      "https://github.com/ruffle-rs/ruffle/blob/045db00b393aed22a462d29cb6c25efa26be90a0/core/src/avm1/object/script_object.rs#L827-L866",
+      "https://github.com/ruffle-rs/ruffle/blob/045db00b393aed22a462d29cb6c25efa26be90a0/core/src/avm1/activation.rs#L1120-L1150"
+    ],
+    "sha256": {
+      "property_map.rs": "dc05653e0c870ec685937c05a2cfbbad405453221c4c48ee69574dc46a9a991b",
+      "script-object.rs": "4a313584b371e68ee75ecd0e6a3d024e7f4ac08437e7e38b6bd87eca03f28639",
+      "activation.rs": "3eeeceb2e373e679006a236ee7fd57c199159256017407ca632b9d5c6c68f67e"
+    },
+    "limitation": "Primary-source inference from fixed AVM1 implementation, not Flash runtime trace. Whole collection order still grouped by platform phases."
+  },
+  "rules": {
+    "life": 1000,
+    "damageImages": "10 native frames, including1 duplicate; floor((1-hp/1000)*10) after each nonlethal affect. Native floating expression retained.",
+    "fatal": "Clear damage flags, retain last nonlethal frame, start80 percent alpha immediately; then60,40,20,0; delete on0, dispose collision on next callback",
+    "smoke": "Native symbol627 contains15-frame _Contents626; old importer exported only1 outer frame. Static wrapper extension preserves original blur and nested15 frames; original SWF unchanged. First registered callback advances toframe1; terminal14 stays until next collection cleanup.",
+    "authority": "pending affects, HP, frame, fade/disposal ticks and smoke birth/life serialized; fading wall ignores further damage but still blocks motion and rockets until disposal",
+    "preload": "Combat images fetched during preview, including full smoke strip before destruction"
+  },
+  "remaining": [
+    "Original wall/barrel registration and radius growth",
+    "Model gun-position placement and original cell child-count checks",
+    "Mapwho continuous height-aware geometry and navigation reservation flags",
+    "Whole AS2 object order and other affect queues",
+    "Other AI/characters/difficulty/modes/HUD/flow in BOXHEAD_RESTORATION_PLAN.md"
+  ],
+  "renderLimit": "Native static SVG registration/PNG export and source timing; whole Flash frame pixel equivalence not claimed."
+}

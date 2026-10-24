@@ -1,5 +1,6 @@
 import data from './boxhead-data.json';
 import type { State } from './types';
+import { wallBlocks } from './boxhead-walls';
 
 export const WIDTH = 1280, HEIGHT = 800, HUD = 84, CELL = 32;
 export const MAPS = data.maps;
@@ -23,7 +24,7 @@ export function solid(map: typeof MAPS[number], x: number, y: number): boolean {
 export function blocked(s: State, x: number, y: number, radius = 11, ignore?: any): boolean {
   const map = room(s);
   for (const dx of [-radius, radius]) for (const dy of [-radius, radius]) if (solid(map, x + dx, y + dy)) return true;
-  return s.barrels.some((b: any) => b !== ignore && b.hp > 0 && (b.kind === 'barrel' || b.kind === 'wall') && Math.abs(b.x-x)<radius+14 && Math.abs(b.y-y)<radius+14);
+  return s.barrels.some((b: any) => b !== ignore && (b.kind==='barrel'&&b.hp>0||wallBlocks(b,s.tick)) && Math.abs(b.x-x)<radius+14 && Math.abs(b.y-y)<radius+14);
 }
 export function move(s: State, p: any, dx: number, dy: number, radius = 11): void {
   if (!blocked(s, p.x + dx, p.y, radius, p)) p.x += dx;

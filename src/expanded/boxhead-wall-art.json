@@ -1,0 +1,211 @@
+{
+  "source": "games/50737/game.swf",
+  "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "timelines": {
+    "Object.Wall": {
+      "file": "object-wall.png",
+      "frames": 10,
+      "w": 45,
+      "h": 49,
+      "x": -25.85,
+      "y": -32.75,
+      "symbol": 660,
+      "bounds": [
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ],
+        [
+          2,
+          1,
+          43,
+          48
+        ]
+      ],
+      "frameSha256": [
+        "582bb44d2765d040047d01cb84b387d024ec1b2ea6c86260478bb385619c6764",
+        "4ce09c8eeb696469177bd8d7c0b5e42464e69a86f283c4f747e955ce3b39555d",
+        "8285a09b5c86e4ec1503a04e37eb8d452759ad74863d1917adfdd5e40e1f35f7",
+        "93177606c7d0cbc153eaecb125a80aedfa475d44450b42a9987441ce44e00748",
+        "1a6d58f26e19bdaf42bd78ea9cdb275e07edd3345f06052072fd30961b3aa79f",
+        "6b30acb16d4658f763b543c61ad20c89583ca173b4699e995035b63668976c1b",
+        "d407cac7adabe0476ba27681abf225110d6b0f57af7d5c2dc283253d325ce77e",
+        "b83ad3c9467f3cf2b30e81a38ba3a1d31e3e1ecb13de3705c8afaa156e0b004a",
+        "a110632c5db5462062b35c0bbd5216828b759241f3be42c3b8921ca0aad0c950",
+        "a110632c5db5462062b35c0bbd5216828b759241f3be42c3b8921ca0aad0c950"
+      ],
+      "sha256": "cdead4424cafeacef978a34d082d9e3427bed3d0f1693f76fa0f68ac010bc509"
+    },
+    "Effect.SmokeCloud": {
+      "file": "effect-smokecloud.png",
+      "frames": 15,
+      "w": 134,
+      "h": 134,
+      "x": -64.0,
+      "y": -100.25,
+      "symbol": 627,
+      "bounds": [
+        [
+          51,
+          83,
+          85,
+          115
+        ],
+        [
+          36,
+          62,
+          97,
+          118
+        ],
+        [
+          28,
+          49,
+          107,
+          123
+        ],
+        [
+          25,
+          45,
+          110,
+          125
+        ],
+        [
+          23,
+          42,
+          112,
+          125
+        ],
+        [
+          22,
+          39,
+          114,
+          126
+        ],
+        [
+          20,
+          37,
+          115,
+          126
+        ],
+        [
+          18,
+          34,
+          117,
+          127
+        ],
+        [
+          17,
+          32,
+          119,
+          127
+        ],
+        [
+          15,
+          29,
+          121,
+          127
+        ],
+        [
+          14,
+          26,
+          122,
+          128
+        ],
+        [
+          12,
+          24,
+          124,
+          128
+        ],
+        [
+          10,
+          21,
+          125,
+          129
+        ],
+        [
+          9,
+          19,
+          127,
+          129
+        ],
+        [
+          8,
+          17,
+          128,
+          128
+        ]
+      ],
+      "frameSha256": [
+        "15876378d8d69253f368d10dbe929fb9ad5c0591a88b335556d4a92d7b237ad6",
+        "de95c5dc5d63cc3c60f434c565cfa51c5a031f4cdb017fe1280e2a6ad4dc558f",
+        "6070a353966c0492b2bab2bb18cfbcbc7e9cf59d8373134d731d4bc13812287e",
+        "c5a90546f6e9638e9af16b193e35edfc151061b8407be95a64d67739b42d16b7",
+        "93a44552284d36d004944ef5d108fa2d97087955ef3b7ba79311ed357a875e98",
+        "99cbe6930fc1cb55f61c964947d4f9651f337984d57ac03ec40aa360052eeef0",
+        "1611e9801a15e22ceed4c1869edcc560b17e93ac045d1f6a2608c372171a9d6c",
+        "488cab15e0d02d18e73b21c51e1b677630d98200e07b7c7e0552a3283fdb52a6",
+        "b50dc97e9f52c5ddc0d4180e302c9cf5e280b8b0dd8ebff858b123572be0d509",
+        "efa0accde40b4a8e3c286efec8371582802a0d2c90210a652d882dc74652d569",
+        "b4932fddb7aeaf7c6e6ab2b015829100d98ba8818e42bacbf2a71b319ee1b02b",
+        "c0e727c24a2ecb145319a20d0dde9927e247efd60c5e3bece0e0b7644124ab6e",
+        "a5a20a2113d09178990bbe291fdaf7f828d0ba311f058069abfa72331f6bd46d",
+        "42e1813b2df75e7148b923093b9ea3987ab4f8e6213b1b32880076b3e242b573",
+        "bb9fb9ddb6efe152025e0c8457d25a91a2a449e74d7ae8691c8ebb18969d1465"
+      ],
+      "sha256": "a4cf134d8b46a177cfa7da87e7e7ff34c14ac9c39dada645edbe493813721c96"
+    }
+  },
+  "smokeContentsSymbol": 626,
+  "method": "Static JPEXS PNG/SVG export; smoke wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+}

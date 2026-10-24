@@ -4,6 +4,7 @@ import { MAPS, WEAPONS, CHARACTERS, CELL, room, solid, blocked, move, openPositi
 import { queueExplosion, processExplosions, validExplosions, type Explosion } from './boxhead-explosions';
 import { ownedPacks, weaponEmpty, selectWeapon, stepExplosiveObjects, validExplosiveObject } from './boxhead-objects';
 import { explosionFeedback, stepFeedback } from './boxhead-feedback';
+import { wallState, wallBlocks, affectWall, processWallAffects, stepWalls, validWall } from './boxhead-walls';
 
 export const ID = '50737-server';
 export function random(s: State): number { s.rng=(Math.imul(s.rng,1664525)+1013904223)>>>0;return s.rng/4294967296; }
@@ -24,7 +25,7 @@ export function create(round: number, playing: boolean, seats: number[], seed: n
   const s: State={gameId:ID,round,tick:0,phase:playing?'playing':'waiting',winner:null,ack:[0,0,0,0],inputs:Array.from({length:4},()=>({...EMPTY_INPUT})),rng:seed>>>0,mapId:map.id,
     players:[],zombies:[],bullets:[],barrels:[],pickups:[],effects:[],explosions:[],corpses:[],sounds:[],soundId:0,shakeY:0,brightness:playing?1:0,wave:0,spawnLeft:0,devilLeft:0,nextSpawn:0,nextDevil:0,waveReady:1,nextId:0,score:0,combo:1,peakCombo:1,comboUntil:75,message:'',messageUntil:0};
   for(const b of map.barrels) s.barrels.push({id:++s.nextId,...b,kind:'barrel',hp:1,damage:100,owner:0,exploded:false,armed:0});
-  for(const b of map.walls) s.barrels.push({id:++s.nextId,...b,kind:'wall',hp:100,owner:0,exploded:false,armed:0});
+  for(const b of map.walls) s.barrels.push({id:++s.nextId,...b,kind:'wall',...wallState(),owner:0,exploded:false,armed:0});
   for(const b of map.pickups) s.pickups.push({id:++s.nextId,...b,life:250});
   const primary=map.playerSpawns[0]||{x:map.width/2,y:map.height/2,dir:0};
   const spawns=[primary,...map.otherSpawns].sort((a,b)=>Math.hypot(a.x-primary.x,a.y-primary.y)-Math.hypot(b.x-primary.x,b.y-primary.y));
@@ -49,6 +50,9 @@ function spawnEnemy(s: State, devil: boolean): void {
   s.zombies.push({id:++s.nextId,x:pos.x,y:pos.y,hp:devil?1000:100,devil,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99});
 }
 function damage(s: State,target: any,amount: number,owner: number): void {
+  if(target.kind==='wall'){
+    affectWall(target,amount,owner);return;
+  }
   if(target.hp<=0)return;target.hp-=amount;target.owner=owner;target.hitAt=s.tick;
   if('devil' in target) effect(s,'Effect.BloodSplat',target.x,target.y-14,8);
 }
@@ -88,7 +92,7 @@ function fire(s: State,p: any): void {
     if(gun.id==='chargepack')sound(s,'Weapon.Mine.Place.wav');
     const x=Math.floor((p.x+Math.cos(p.dir)*34)/CELL)*CELL+16,y=Math.floor((p.y+Math.sin(p.dir)*34)/CELL)*CELL+16;
     if(blocked(s,x,y,12)||s.players.some(q=>q.alive&&Math.hypot(q.x-x,q.y-y)<24)||s.barrels.some((b:any)=>b.hp>0&&Math.hypot(b.x-x,b.y-y)<22))return;
-    s.barrels.push({id:++s.nextId,x,y,kind:gun.id==='fakewall'?'wall':gun.id,hp:gun.id==='barrel'?1:gun.id==='fakewall'?100:60,damage:gun.damage,owner:p.seat,exploded:false,armed:s.tick,detonateAt:0,animation:0,detonating:false,detonateCounter:null});
+    s.barrels.push({id:++s.nextId,x,y,kind:gun.id==='fakewall'?'wall':gun.id,hp:gun.id==='barrel'?1:60,...(gun.id==='fakewall'?wallState():{}),damage:gun.damage,owner:p.seat,exploded:false,armed:s.tick,detonateAt:0,animation:0,detonating:false,detonateCounter:null});
     if(gun.id==='chargepack')p.chargeDetonate=true;
     else sound(s,gun.id==='mine'?'Weapon.Mine.Place.wav':'Object.Barrel.Place.wav');
   } else if(gun.id==='grenade'||gun.id==='rocket') {
@@ -167,7 +171,7 @@ function projectiles(s: State): void {
         b.x+=b.vx/steps;b.y+=b.vy/steps;
         if(solid(room(s),b.x,b.y)){b.life=0;break;}
         if(b.owner<0){const p=s.players.find(p=>p.alive&&Math.hypot(p.x-b.x,p.y-b.y)<16);if(p){hurt(s,p,b.damage);b.life=0;break;}}
-        else if(s.zombies.some((z:any)=>z.hp>0&&Math.hypot(z.x-b.x,z.y-b.y)<17)||s.barrels.some((z:any)=>z.hp>0&&['wall','barrel'].includes(z.kind)&&Math.hypot(z.x-b.x,z.y-b.y)<17)||s.players.some(p=>p.alive&&p.seat!==b.owner&&Math.hypot(p.x-b.x,p.y-b.y)<17)){b.life=0;break;}
+        else if(s.zombies.some((z:any)=>z.hp>0&&Math.hypot(z.x-b.x,z.y-b.y)<17)||s.barrels.some((z:any)=>(wallBlocks(z,s.tick)||z.kind==='barrel'&&z.hp>0)&&Math.hypot(z.x-b.x,z.y-b.y)<17)||s.players.some(p=>p.alive&&p.seat!==b.owner&&Math.hypot(p.x-b.x,p.y-b.y)<17)){b.life=0;break;}
       }
     }
     if(--b.life<=0&&(b.weapon===4||b.weapon===7))queueExplosion(s,b.x,b.y,b.damage,b.owner,b.bang,b.cluster,b.z||0);
@@ -176,6 +180,7 @@ function projectiles(s: State): void {
 }
 export function step(s: State,inputs: Input[]): void {
   if(s.phase!=='playing')return;s.tick++;
+  stepWalls(s);
   s.effects=s.effects.filter((e:any)=>--e.life>0);s.corpses=s.corpses.filter((e:any)=>s.tick-e.deadAt<100);
   s.sounds=s.sounds.filter((e:any)=>s.tick-e.tick<10);
   if(s.combo>1&&s.tick>s.comboUntil){s.combo--;s.comboUntil=s.tick+Math.max(3,Math.round(Math.pow(101-Math.min(s.combo,100),2.5)/100000*72+3));}
@@ -206,13 +211,18 @@ export function step(s: State,inputs: Input[]): void {
   if(s.spawnLeft>0&&s.tick>=s.nextSpawn&&s.zombies.filter((z:any)=>!z.devil&&z.hp>0).length<Math.min(10+5*(s.wave-1),60)){spawnEnemy(s,false);s.spawnLeft--;s.nextSpawn=s.tick+Math.max(25-(s.wave-1),1);}
   if(s.devilLeft>0&&s.tick>=s.nextDevil&&s.zombies.filter((z:any)=>z.devil&&z.hp>0).length<Math.min(1+(s.wave-2)*.3,5)){spawnEnemy(s,true);s.devilLeft--;s.nextDevil=s.tick+Math.max(250-(s.wave-1),25);}
   projectiles(s);processExplosions(s,random,e=>explode(s,e));enemies(s);
+  processWallAffects(s,b=>{
+    const frames=data.objects['Effect.SmokeCloud'].frames;
+    effect(s,'Effect.SmokeCloud',b.x,b.y,frames+1,{born:s.tick+1,scale:1});
+    effect(s,'Effect.ScorchMark',b.x,b.y,500);
+  });
   stepExplosiveObjects(s,sound);
   for(const b of s.barrels)if(b.hp<=0&&!b.exploded){b.exploded=true;if(b.kind!=='wall'){
     const index=b.kind==='mine'?6:b.kind==='chargepack'?8:3,gun=weaponStats(s,index);
     // Native objects retain construction damage; object flags refresh on hit.
     queueExplosion(s,b.x,b.y,b.damage??100,b.owner,gun.bang,gun.cluster);
   }}
-  s.barrels=s.barrels.filter((b:any)=>b.hp>0);
+  s.barrels=s.barrels.filter((b:any)=>b.hp>0||wallBlocks(b,s.tick));
   for(const z of s.zombies.filter((z:any)=>z.hp<=0)){
     const p=s.players.find(p=>p.seat===z.owner);if(p)p.kills++;
     s.score+=(z.devil?1000:100)*s.combo;s.combo++;s.comboUntil=s.tick+Math.max(3,Math.round(Math.pow(101-Math.min(s.combo,100),2.5)/100000*72+3));upgrade(s);
@@ -245,8 +255,9 @@ export function valid(value: unknown): value is State {
     validExplosions(s)&&s.zombies.every((z:any)=>nums(z,['id','hp','dir','attack','owner','hitAt','attackAt'])&&typeof z.devil==='boolean')&&s.bullets.every((b:any)=>nums(b,['id','vx','vy','damage','weapon','owner','life'])&&
       (b.weapon!==4&&b.weapon!==7||nums(b,['z','vz'])&&b.z>=0&&[0,1,2].includes(b.bang)&&typeof b.cluster==='boolean'&&(b.clusterShell===undefined||typeof b.clusterShell==='boolean'))&&
       (b.born===undefined||Number.isSafeInteger(b.born)&&b.born>=0&&b.born<=s.tick))&&
-    s.barrels.every((b:any)=>nums(b,['id','hp','owner','armed'])&&['barrel','wall','mine','chargepack'].includes(b.kind)&&typeof b.exploded==='boolean'&&validExplosiveObject(b)&&(b.damage===undefined||Number.isFinite(b.damage)&&b.damage>0))&&s.pickups.every((p:any)=>nums(p,['id','life']))&&s.effects.every((e:any)=>nums(e,['life','total'])&&typeof e.kind==='string'&&
-      (e.kind!=='Effect.Explosion'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick&&Number.isFinite(e.z)&&e.z>=0&&e.scale===1))&&s.corpses.every((e:any)=>nums(e,['dir','deadAt'])&&['zombie','devil'].includes(e.character))&&
+    s.barrels.every((b:any)=>nums(b,['id','hp','owner','armed'])&&['barrel','wall','mine','chargepack'].includes(b.kind)&&typeof b.exploded==='boolean'&&validExplosiveObject(b)&&validWall(b,s.tick)&&(b.damage===undefined||Number.isFinite(b.damage)&&b.damage>0))&&s.pickups.every((p:any)=>nums(p,['id','life']))&&s.effects.every((e:any)=>nums(e,['life','total'])&&typeof e.kind==='string'&&
+      (e.kind!=='Effect.Explosion'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick&&Number.isFinite(e.z)&&e.z>=0&&e.scale===1)&&
+      (e.kind!=='Effect.SmokeCloud'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick+1&&e.scale===1&&e.total===data.objects['Effect.SmokeCloud'].frames+1&&e.life===e.total-(s.tick-e.born+1)))&&s.corpses.every((e:any)=>nums(e,['dir','deadAt'])&&['zombie','devil'].includes(e.character))&&
     Array.isArray(s.sounds)&&s.sounds.length<=40&&s.sounds.every((e:any)=>nums(e,['id','tick'])&&Object.prototype.hasOwnProperty.call(data.audio,e.name))&&
     nums(s,['rng','wave','spawnLeft','devilLeft','nextSpawn','nextDevil','waveReady','nextId','score','combo','peakCombo','comboUntil','soundId','messageUntil','shakeY','brightness'])&&Math.abs(s.shakeY)<=32&&s.brightness>=0&&s.brightness<=1&&typeof s.message==='string';
 }
