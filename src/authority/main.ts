@@ -81,6 +81,9 @@ function start(): void {
   canvas.style.setProperty("--game-aspect", String(canvas.width / canvas.height));
   const mapSelect = el<HTMLSelectElement>("game-map");
   const modeSelect = el<HTMLSelectElement>("game-mode");
+  const characterSelect=el<HTMLSelectElement>('game-character'),difficultySelect=el<HTMLSelectElement>('game-difficulty');
+  const bombSettings=gameId==='3881-server'||gameId==='9109-server';
+  characterSelect.parentElement!.hidden=!bombSettings;difficultySelect.parentElement!.hidden=!bombSettings;
   if (adapter?.modes) {
     modeSelect.parentElement!.hidden = false;
     for (const mode of adapter.modes) { const option = document.createElement("option"); option.value = mode.id; option.textContent = mode.label; modeSelect.append(option); }
@@ -189,9 +192,10 @@ function start(): void {
   }
   el<HTMLButtonElement>("start-game").onclick = () => toggleReady();
   el<HTMLButtonElement>("fullscreen-ready").onclick = () => toggleReady(true);
-  for (const key of ["map", "mode", "loadout"] as const) el<HTMLSelectElement>(`game-${key}`).onchange = () => {
-    if (net.isController) net.control({ t: "authOptions", map: mapSelect.value, ...(adapter?.modes ? { gameMode: modeSelect.value } : {}), loadout: el<HTMLSelectElement>("game-loadout").value });
+  for (const key of ["map", "mode", "loadout", "difficulty"] as const) el<HTMLSelectElement>(`game-${key}`).onchange = () => {
+    if (net.isController) net.control({ t: "authOptions", map: mapSelect.value, ...(adapter?.modes ? { gameMode: modeSelect.value } : {}), ...(bombSettings?{difficulty:difficultySelect.value}:{}), loadout: el<HTMLSelectElement>("game-loadout").value });
   };
+  characterSelect.onchange=()=>{net.control({t:'authCharacter',character:Number(characterSelect.value)});characterSelect.blur();};
   el("copy-invite").onclick = async () => {
     const invite = new URL(location.href); invite.searchParams.delete("debug");
     try { await navigator.clipboard.writeText(invite.href); notice("邀请链接已复制"); }
@@ -295,6 +299,19 @@ function start(): void {
     mapSelect.disabled = !net.isController || state?.phase === "playing";
     modeSelect.disabled = mapSelect.disabled;
     el<HTMLSelectElement>("game-loadout").disabled = mapSelect.disabled;
+    difficultySelect.disabled=mapSelect.disabled;
+    if(bombSettings){
+      const people=(state?.players||[]) as {seat?:number;character?:number}[];
+      const me=people.find(p=>p.seat===seat);
+      if(me?.character)characterSelect.value=String(me.character);
+      characterSelect.disabled=!seat||state?.phase==='playing';
+      for(const option of characterSelect.options)option.disabled=people.some(p=>p.seat!==seat&&net.room.members.some(m=>m.seat===p.seat)&&p.character===Number(option.value));
+      difficultySelect.value=(net.room.auth?.options as {difficulty?:string})?.difficulty||'normal';
+      if(bomb2&&state&&'gameId'in state){
+        const p=state.players.find(p=>p.seat===seat);
+        el('attack-button-text').textContent=p&&(p.weapon||p.attack||state.mode==='kill'||state.bombs.some((b:any)=>b.owner===seat&&b.kind==='remote'))?'使用武器':'放炸弹';
+      }
+    }
     const nextAt = net.room.auth?.nextRoundAt;
     if (!net.connected) el("round-status").textContent = "连接中";
     else if (state?.phase === "playing") el("round-status").textContent = "比赛进行中";

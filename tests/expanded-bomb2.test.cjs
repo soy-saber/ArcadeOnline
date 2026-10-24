@@ -30,7 +30,7 @@ test('cross flames stop at crates, chain bombs and give killer attribution',()=>
 test('three lives, safe respawn and survival complete round',()=>{
  const s=arena();s.players[0].x=3;s.players[0].y=3;s.flames[core.index(3,3)]=20;s.owners[core.index(3,3)]=2;
  a.step(s,[input(),input()]);assert.equal(s.players[0].life,2);assert.equal(s.players[0].alive,true);assert.ok(s.players[0].respawnAt>s.tick);
- for(let i=0;i<40;i++)a.step(s,[input(),input()]);assert.equal(s.players[0].x,1);assert.equal(s.players[0].y,1);assert.ok(s.players[0].invulnerable>0);
+ for(let i=0;i<core.RESPAWN_TICKS;i++)a.step(s,[input(),input()]);assert.equal(s.players[0].x,1);assert.equal(s.players[0].y,1);assert.ok(s.players[0].invulnerable>0);
  s.players[0].life=1;s.players[0].invulnerable=0;s.flames[core.index(1,1)]=s.tick+10;s.owners[core.index(1,1)]=2;a.step(s,[input(),input()]);assert.equal(s.phase,'finished');assert.equal(s.winner,2);assert.equal(a.valid(s),true);
 });
 test('powerups change authoritative capacity, range and remote bomb detonation',()=>{

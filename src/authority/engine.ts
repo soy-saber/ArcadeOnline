@@ -29,7 +29,7 @@ let roundId = Date.now();
 function newState(room: Room, playing: boolean): State {
   const round = roundId = Math.max(Date.now(), roundId + 1);
   const adapter = getAdapter(room.gameId);
-  if (adapter) return { ...adapter.create(round, playing, activeSeats(room), Math.floor(Math.random() * 0x100000000), room.auth?.options.map, room.auth?.options.gameMode), gameId: adapter.id };
+  if (adapter) return { ...adapter.create(round, playing, activeSeats(room), Math.floor(Math.random() * 0x100000000), room.auth?.options.map, room.auth?.options.gameMode,room.auth?.options), gameId: adapter.id };
   return isBomb(room) ? bomb.createGame(Math.floor(Math.random() * 0x100000000), round, playing,
     { ...room.auth?.options, mode: "online", bots: [], activeSeats: activeSeats(room) }) : badminton.createGame(round, playing);
 }
@@ -167,6 +167,8 @@ export class AuthorityEngine {
     const match = room.auth;
     if (!match || room.controllerId !== member.id || match.state.phase === "playing") return false;
     const adapter = getAdapter(room.gameId);
+    const difficulty=message.difficulty??match.options.difficulty??'normal';
+    if((isBomb(room)||adapter?.difficulties)&&(typeof difficulty!=='string'||!['easy','normal','hard'].includes(difficulty)))return false;
     if (adapter) {
       const map = message.map ?? match.options.map, requestedMode = message.gameMode ?? match.options.gameMode;
       if (requestedMode !== undefined && typeof requestedMode !== "string") return false;
@@ -174,10 +176,11 @@ export class AuthorityEngine {
       if (typeof map !== "string" || !adapter.maps?.some((item) => item.id === map)) return false;
       if (adapter.modes && !adapter.modes.some((item) => item.id === mode)) return false;
       if (!adapter.modes && message.gameMode !== undefined) return false;
-      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode);
+      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,difficulty:String(difficulty)});
       if (!adapter.valid(candidate)) return false;
       match.options.map = map as bomb.GameOptions["map"];
       if (adapter.modes) match.options.gameMode = mode;
+      if(adapter.difficulties)match.options.difficulty=difficulty as bomb.GameOptions['difficulty'];
       this.begin(room, false); return true;
     }
     if (!isBomb(room)) return false;
@@ -185,9 +188,20 @@ export class AuthorityEngine {
     // createGame/validState jointly enforce the map and loadout allowlists.
     if (typeof message.map === "string") options.map = message.map as bomb.GameOptions["map"];
     if (typeof message.loadout === "string") options.loadout = message.loadout as bomb.GameOptions["loadout"];
+    options.difficulty=difficulty as bomb.GameOptions['difficulty'];
     const candidate = bomb.createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room) });
     if (!bomb.validState(candidate)) return false;
     match.options = options; this.begin(room, false); return true;
+  }
+
+  character(room:Room,member:Member,value:unknown):boolean {
+    const match=room.auth,adapter=getAdapter(room.gameId);
+    if(!match||member.seat==null||room.seats[member.seat]!==member.id||match.state.phase==='playing'||(!isBomb(room)&&!adapter?.characters)||!Number.isInteger(value)||Number(value)<1||Number(value)>4)return false;
+    const character=Number(value);
+    if(match.state.players.some(p=>p.seat!==member.seat&&room.seats[p.seat]&&p.character===character))return false;
+    const characters=[1,2,3,4];for(const p of match.state.players)if(room.seats[p.seat])characters[p.seat-1]=p.character;
+    characters[member.seat-1]=character;match.options.characters=characters;
+    this.begin(room,false);return true;
   }
 
   pump(room: Room, now = Date.now()): void {

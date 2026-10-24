@@ -6,7 +6,7 @@ const output = path.join(__dirname, "../artifacts/authority-tests/protocol.cjs")
 require("esbuild").buildSync({ entryPoints: [path.join(__dirname, "../src/authority/protocol.ts")], outfile: output, bundle: true, platform: "node", format: "cjs" });
 const { createUpdate, applyUpdate, hashState } = require(output);
 const bundle = (name) => {
-  const out = path.join(__dirname, `../artifacts/authority-tests/${name}.cjs`);
+  const out = path.join(__dirname, `../artifacts/authority-protocol-tests/${name}.cjs`);
   require("esbuild").buildSync({entryPoints:[path.join(__dirname, name === "bomb" ? "../src/authority/bomb-core.ts" : "../src/badminton/core.ts")],outfile:out,bundle:true,platform:"node",format:"cjs"});
   return require(out);
 };

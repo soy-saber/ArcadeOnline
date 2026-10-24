@@ -5,7 +5,9 @@ export interface State {
 }
 export interface Adapter {
   id: string; title: string; seats: number; hz: number; width: number; height: number; controls: string;
-  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string): State;
+  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[]}): State;
+  characters?:string[];
+  difficulties?:{id:string;label:string}[];
   step(state: State, inputs: Input[]): void;
   valid(state: unknown): state is State;
   render(canvas: HTMLCanvasElement, state: State | null, seat: number | null): void;

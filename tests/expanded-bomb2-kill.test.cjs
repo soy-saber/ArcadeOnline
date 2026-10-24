@@ -35,7 +35,7 @@ test('base hammer repeats without ammunition, hits at animation end, breaks crat
 test('kill pickup pool preserves original weights and excludes vehicles and bomb upgrades',()=>{
   assert.deepEqual(core.KILL_PROPS,[16,16,21,21,21,20,20,20,19,19,19,17,17,18,18,7]);
   const seen=new Set();for(let seed=1;seed<=100;seed++){const s=a.create(1,true,[1,2],seed,'mine-one','kill');s.board.fill(0);s.hazards=[];s.players[0].x=3;s.players[0].y=3;
-    for(let n=0;n<3;n++){s.board[core.index(4,3)]=2;tick(s,input(n*30+1,n+1,{right:true}));wait(s,25,input(n*30+2,n+1));if(s.items[core.index(4,3)]){seen.add(s.items[core.index(4,3)]);assert(core.KILL_PROPS.includes(s.items[core.index(4,3)]));}s.items.fill(0);}
+    for(let n=0;n<3;n++){s.board[core.index(4,3)]=2;tick(s,input(n*30+1,n+1,{right:true}));wait(s,36,input(n*30+2,n+1));if(s.items[core.index(4,3)]){seen.add(s.items[core.index(4,3)]);assert(core.KILL_PROPS.includes(s.items[core.index(4,3)]));}s.items.fill(0);}
   }assert(seen.size>=5);
 });
 test('pickup ammunition matches original, finished weapons recover the infinite base hammer',()=>{

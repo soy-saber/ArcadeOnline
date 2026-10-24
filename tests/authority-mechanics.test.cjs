@@ -3,7 +3,7 @@ const {test}=require("node:test"),assert=require("node:assert/strict"),path=requ
 function load(file){const source=require("esbuild").buildSync({entryPoints:[path.resolve(__dirname,file)],bundle:true,platform:"node",format:"cjs",write:false}).outputFiles[0].text;const mod=new Module(file,module);mod.paths=module.paths;mod._compile(source,file);return mod.exports;}
 const core=load("../src/authority/bomb-core.ts"),{AuthorityEngine}=load("../src/authority/engine.ts"),protocol=load("../src/authority/protocol.ts"),{Presentation}=load("../src/authority/presentation.ts");
 const input=(seq,dir=-1,bomb=0)=>({seq,dir,bomb,special:0});
-function arena(){const s=core.createGame(123,100,true,{mode:"online",activeSeats:[1,2]});s.board.fill(0);s.players[0].x=3;s.players[0].y=3;s.players[1].x=12;s.players[1].y=10;return s;}
+function arena(){const s=core.createGame(123,100,true,{mode:"online",activeSeats:[1,2]});s.board.fill(0);s.players.forEach(p=>p.invulnerable=0);s.players[0].x=3;s.players[0].y=3;s.players[1].x=12;s.players[1].y=10;return s;}
 function tick(s,control=core.EMPTY_INPUT){core.step(s,[control,core.EMPTY_INPUT,core.EMPTY_INPUT,core.EMPTY_INPUT]);}
 test("push glove cooldown blocks another push until expiry and is spent only on success",()=>{
   const s=arena(),p=s.players[0];p.push=true;s.bombs=[{id:1,x:4,y:3,owner:1,range:1,explodeAt:600}];

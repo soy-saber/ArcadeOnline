@@ -77,6 +77,8 @@ test("original edge cells allow movement and blast while blocking travel outside
   state.bombs.push({ id: 1, owner: 1, x: 1, y: 0, range: 2, explodeAt: state.tick + 1 });
   const visual = JSON.stringify(state.mapVisual);
   step(state, [EMPTY_INPUT, EMPTY_INPUT, EMPTY_INPUT, EMPTY_INPUT]);
+  assert.equal(state.flames[index(0,0)],0); // The neighbouring arm arrives on the next original frame.
+  step(state, [EMPTY_INPUT, EMPTY_INPUT, EMPTY_INPUT, EMPTY_INPUT]);
   assert(state.flames[index(0, 0)] > state.tick);
   assert.equal(JSON.stringify(state.mapVisual), visual);
 });

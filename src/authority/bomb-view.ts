@@ -2,17 +2,15 @@ import { GameState, HZ, WIDTH, HEIGHT, ROUND_TICKS, position, index, WEAPONS, IT
 import { ORIGINAL_MAPS, BRICK_RASTER_ORIGIN, originalMap } from "./maps";
 import { drawPlayerStatus, weaponBadge } from './player-status';
 import { BOMB_CANVAS_WIDTH, BOMB_FIELD_WIDTH, bombWeapon, bombStatus, bombBadgeAnchor } from './bomb-status';
+import { NativeAudio } from './native-audio';
+import { BOMB_SOUND_FILES } from './bomb-sound';
 
 const CELL = 44, LEFT = 28, TOP = 66;
 export class GameView {
   private ctx: CanvasRenderingContext2D;
   private images = new Map<string, HTMLImageElement>();
-  private observedBombs = new Set<number>();
-  private observedRound = 0;
-  private observedSpecials = new Set<number>();
-  private observedItems = 0;
-  private audioReady = false;
-  private playingSounds = new Set<HTMLAudioElement>();
+  private audio=new NativeAudio(BOMB_SOUND_FILES);
+  private seat:number|null=null;
   sound = true;
   volume = 0.24;
   fps = 0;
@@ -25,6 +23,7 @@ export class GameView {
     canvas.height = TOP + HEIGHT * CELL + 28;
     this.ctx = canvas.getContext("2d", { alpha: false })!;
     for (const name of ["floor", "crate", "wall", "bomb", "mine", "gas", "grenade", "fx-fire", "fx-ice", "fx-blast", "fx-death",
+      ...Array.from({length:12},(_,i)=>`bomb1-blast-${i+1}`),
       ...["life", "push", "bomb", "shield", "range", "speed", ...WEAPONS].map((item) => `item-${item}`),
       ...[0, 1, 2, 3].map((d) => `rocket-${d}`),
       ...[1, 2, 3, 4].flatMap((hero) => [0, 1, 2, 3].flatMap((direction) => [`hero-${hero}-${direction}`, `walk-${hero}-${direction}`]))]) {
@@ -36,8 +35,6 @@ export class GameView {
     ]) {
       const image = new Image(); image.src = `/authority/assets/maps/${name}.png`; this.images.set(name, image);
     }
-    window.addEventListener("pointerdown", () => { this.audioReady = true; });
-    window.addEventListener("keydown", () => { this.audioReady = true; });
   }
   private animation(name: string, frame: number, x: number, bottom: number, width: number, height: number): void {
     const image = this.images.get(name);
@@ -68,40 +65,21 @@ export class GameView {
     this.ctx.drawImage(image, LEFT + x * CELL + BRICK_RASTER_ORIGIN.x * scale,
       TOP + y * CELL + BRICK_RASTER_ORIGIN.y * scale, image.width * scale, image.height * scale);
   }
-  private play(name: string): void {
-    if (!this.sound || !this.audioReady || this.volume <= 0) return;
-    const audio = new Audio(`/authority/assets/${name}.mp3`); audio.volume = this.volume;
-    this.playingSounds.add(audio);
-    const done = () => this.playingSounds.delete(audio);
-    audio.addEventListener("ended", done, { once: true });
-    audio.addEventListener("error", done, { once: true });
-    void audio.play().catch(done);
-  }
   setSound(enabled: boolean): void {
     this.sound = enabled;
-    if (!enabled) for (const audio of this.playingSounds) { audio.pause(); audio.currentTime = 0; }
-    if (!enabled) this.playingSounds.clear();
+    this.audio.setSound(enabled);
   }
   setVolume(volume: number): void {
     this.volume = Math.max(0, Math.min(1, volume));
-    for (const audio of this.playingSounds) audio.volume = this.volume;
+    this.audio.setVolume(this.volume);
   }
   // Only confirmed authority changes produce audio: prediction replay cannot
   // repeatedly play an explosion or an unconfirmed placement.
   confirm(state: GameState): void {
-    const current = new Set(state.bombs.map((bomb) => bomb.id));
-    const specials = new Set(state.specials.map((s) => s.id));
-    const items = state.items.filter(Boolean).length;
-    if (state.round === this.observedRound) {
-      if ([...current].some((id) => !this.observedBombs.has(id))) this.play("place");
-      if ([...this.observedBombs].some((id) => !current.has(id))) this.play("explode");
-      if ([...specials].some((id) => !this.observedSpecials.has(id))) this.play("place");
-      if (items < this.observedItems) this.play("item");
-    }
-    this.observedBombs = current; this.observedRound = state.round;
-    this.observedSpecials = specials; this.observedItems = items;
+    this.audio.confirm(state,this.seat,state.winner);
   }
   render(state: GameState | null, seat: number | null): void {
+    this.seat=seat;
     const now = performance.now();
     this.frameCount++;
     if (now - this.fpsAt >= 1000) { this.fps = Math.round(this.frameCount * 1000 / (now - this.fpsAt)); this.frameCount = 0; this.fpsAt = now; }
@@ -136,9 +114,18 @@ export class GameView {
         else this.sprite("crate", px + CELL / 2, py + CELL - 1, CELL - 2, CELL - 1);
       }
       if (state.flames[cell] > state.tick) {
-        ctx.fillStyle = "#ffb631cc"; ctx.fillRect(px + 1, py + 1, CELL - 2, CELL - 2);
-        ctx.fillStyle = "#fff1a5"; ctx.beginPath(); ctx.arc(px + CELL / 2, py + CELL / 2, 12 + Math.sin(now / 60) * 3, 0, Math.PI * 2); ctx.fill();
-        this.animation("fx-blast", state.tick / 2, px + CELL / 2, py + CELL, CELL, CELL);
+        let original=false;
+        for(const blast of state.blasts){
+          const dx=x-blast.x,dy=y-blast.y;
+          if(dx&&dy)continue;
+          const dir=dx<0?0:dy<0?1:dx>0?2:3,distance=Math.abs(dx)+Math.abs(dy);
+          if(distance&&distance>blast.lengths[dir])continue;
+          const tip=distance===blast.lengths[dir]&&(!blast.active[dir]||blast.distance>=blast.range);
+          const frame=(state.players.find(p=>p.seat===blast.owner)?.character||blast.owner)+(distance?(tip?8:4):0);
+          ctx.save();ctx.translate(px+CELL/2,py+CELL/2);if(distance)ctx.rotate((dir+2)*Math.PI/2);
+          this.sprite(`bomb1-blast-${frame}`,0,CELL/2,CELL,CELL);ctx.restore();original=true;break;
+        }
+        if(!original)this.animation("fx-blast",state.tick/2,px+CELL/2,py+CELL,CELL,CELL);
       } else if (state.ice[cell] > state.tick) {
         ctx.fillStyle = "#9cdef3bd"; ctx.fillRect(px + 1, py + 1, CELL - 2, CELL - 2);
         this.animation("fx-ice", state.tick / 4, px + CELL / 2, py + CELL, CELL, CELL);
@@ -192,8 +179,8 @@ export class GameView {
         ctx.beginPath(); ctx.ellipse(x, y - 3, 17, 7, 0, 0, Math.PI * 2); ctx.stroke();
       }
       ctx.globalAlpha = player.invulnerable > 0 && state.tick % 4 < 2 ? .5 : 1;
-      if (player.moveDir >= 0 && !player.frozen) this.walking(player.seat, Math.max(0, player.dir), state.tick / 2, x, y);
-      else this.sprite(`hero-${player.seat}-${Math.max(0, player.dir)}`, x, y, CELL * .9, CELL * 1.12);
+      if (player.moveDir >= 0 && !player.frozen) this.walking(player.character, Math.max(0, player.dir), state.tick / 2, x, y);
+      else this.sprite(`hero-${player.character}-${Math.max(0, player.dir)}`, x, y, CELL * .9, CELL * 1.12);
       ctx.globalAlpha = 1;
       if (player.frozen) { ctx.fillStyle = "#92dcff99"; ctx.fillRect(x - 15, y - 38, 30, 38); }
       if (player.slow) { ctx.strokeStyle = "#a97be3"; ctx.lineWidth = 3; ctx.strokeRect(x - 17, y - 5, 34, 5); }

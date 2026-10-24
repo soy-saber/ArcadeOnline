@@ -10,7 +10,7 @@ export function bomb2Weapon(s:State,p:any):StatusIcon|null {
   return s.mode==='kill'?{src:'/expanded/assets/bomb2/hud-weapon-15.png',label:'锤子',value:'∞'}:null;
 }
 export function bomb2Status(s:State):PlayerStatus[] {
-  return s.players.map(p=>({seat:p.seat,alive:p.alive&&p.respawnAt<=s.tick,portrait:`/expanded/assets/bomb2/hero-${p.seat-1}-down.png`,portraitFrames:24,
+  return s.players.map(p=>({seat:p.seat,alive:p.alive&&p.respawnAt<=s.tick,portrait:`/expanded/assets/bomb2/hero-${p.character-1}-down.png`,portraitFrames:24,
     title:!p.alive?'已出局':p.respawnAt>s.tick?'复活中':`生命 ${p.life}`,
     note:s.mode==='kill'?`${p.points}/10 击杀`:s.mode==='collect'?`${p.points}/10 金币`:s.mode==='color'?`${p.points}/50 地块`:p.invulnerable?'保护中':'生存',
     icons:[{src:asset(1),label:'炸弹数量',value:String(p.capacity)},{src:asset(2),label:'威力',value:String(p.range)},{src:asset(3),label:'速度',value:String(9-p.speed)},

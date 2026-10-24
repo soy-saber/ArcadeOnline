@@ -9,6 +9,16 @@ process.on('message',m=>{try{
    s.board.fill(0);s.bombs=[];s.flames.fill(0);if(s.tiles)s.tiles.fill(0);
    const [p,q]=s.players;if(p.actionLock||p.attack||p.moveDir>=0)throw new Error('Player action not recovered');p.x=3;p.y=4;q.x=11;q.y=8;
    s.items.fill(s.gameId?0:null);s.items[4*('gameId'in s?17:15)+4]=m.kind;
+ }else if(m.action==='coin-duel'){
+   if(s.gameId!=='9109-server'||s.mode!=='collect')throw Error('Expected coin mode');
+   if(s.players.some(p=>p.moveDir>=0||p.actionLock||p.invulnerable))throw Error('Players must recover naturally first');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.flames.fill(0);
+   const [p,q]=s.players;p.x=5;p.y=4;q.x=5;q.y=4;q.dir=3;
+ }else if(m.action==='blast'){
+   if(s.gameId)throw Error('Expected first Bomb It');
+   if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');
+   s.board.fill(0);s.items.fill(null);s.bombs=[];s.specials=[];s.blasts=[];s.flames.fill(0);
+   const [p,q]=s.players;p.x=5;p.y=5;q.x=11;q.y=9;s.board[4*15+5]=2;s.board[3*15+5]=2;
  }else if(m.action==='zombies'){
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;

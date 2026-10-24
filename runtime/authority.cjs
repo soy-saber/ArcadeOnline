@@ -112,6 +112,121 @@ function generateOriginalMap(id, random6) {
   return { board, visual: { floor, landmark, tiles } };
 }
 
+// src/authority/native-audio.ts
+function emitSound(s, name) {
+  s.sounds.push({ id: ++s.soundId, name });
+  if (s.sounds.length > 64) s.sounds.splice(0, s.sounds.length - 64);
+}
+var NativeAudio = class {
+  constructor(files) {
+    this.files = files;
+    this.enabled = true;
+    this.volume = 0.24;
+    this.ready = false;
+    this.round = 0;
+    this.heard = 0;
+    this.playing = /* @__PURE__ */ new Set();
+    this.music = null;
+    this.track = "";
+    this.wanted = "";
+    this.installed = false;
+  }
+  setSound(value) {
+    this.enabled = value;
+    if (!value) {
+      for (const a of this.playing) a.pause();
+      this.playing.clear();
+      this.music?.pause();
+    } else this.syncMusic();
+  }
+  setVolume(value) {
+    this.volume = Math.min(1, Math.max(0, value));
+    for (const a of this.playing) a.volume = this.volume;
+    if (this.music) this.music.volume = this.volume * 0.45;
+    this.syncMusic();
+  }
+  install() {
+    if (this.installed || typeof window === "undefined") return;
+    this.installed = true;
+    const unlock = () => {
+      this.ready = true;
+      this.syncMusic();
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    window.addEventListener("pagehide", () => {
+      this.music?.pause();
+      for (const a of this.playing) a.pause();
+    });
+    document.addEventListener("visibilitychange", () => this.syncMusic());
+  }
+  syncMusic() {
+    if (!this.enabled || !this.ready || this.volume === 0 || typeof document === "undefined" || document.hidden || !this.wanted) {
+      this.music?.pause();
+      return;
+    }
+    if (this.track !== this.wanted) {
+      this.music?.pause();
+      this.track = this.wanted;
+      this.music = new Audio(this.files[this.track]);
+      this.music.loop = true;
+    }
+    if (this.music?.paused) {
+      this.music.volume = this.volume * 0.45;
+      void this.music.play().catch(() => {
+      });
+    }
+  }
+  play(name) {
+    const file = this.files[name];
+    if (!file || !this.enabled || !this.ready || this.volume === 0) return;
+    if (this.playing.size >= 16) {
+      const oldest = this.playing.values().next().value;
+      if (oldest) {
+        oldest.pause();
+        this.playing.delete(oldest);
+      }
+    }
+    const audio2 = new Audio(file);
+    audio2.volume = this.volume;
+    this.playing.add(audio2);
+    const done = () => this.playing.delete(audio2);
+    audio2.onended = done;
+    audio2.onerror = done;
+    void audio2.play().catch(done);
+  }
+  confirm(s, seat, winner) {
+    this.install();
+    this.wanted = s.phase === "playing" ? "music" + s.musicTrack : s.phase === "waiting" ? "menu" : "";
+    this.syncMusic();
+    if (this.round !== s.round) {
+      this.round = s.round;
+      this.heard = s.soundId;
+      return;
+    }
+    for (const event of s.sounds) if (event.id > this.heard) this.play(event.name === "result" ? seat && winner !== seat ? "failed" : "complete" : event.name);
+    this.heard = s.soundId;
+  }
+};
+
+// src/authority/bomb-sound.ts
+var BOMB_SOUND_FILES = {
+  place: "/authority/assets/place.mp3",
+  explode: "/authority/assets/explode.mp3",
+  pickup: "/authority/assets/item.mp3",
+  rocket: "/authority/assets/bomb1-rocket.mp3",
+  grenade: "/authority/assets/bomb1-grenade.mp3",
+  mine: "/authority/assets/bomb1-mine.mp3",
+  push: "/authority/assets/bomb1-push.mp3",
+  complete: "/authority/assets/bomb1-complete.mp3",
+  failed: "/authority/assets/bomb1-failed.mp3",
+  menu: "/authority/assets/bomb1-menu.mp3",
+  music1: "/authority/assets/bomb1-music1.mp3",
+  music2: "/authority/assets/bomb1-music2.mp3",
+  music3: "/authority/assets/bomb1-music3.mp3",
+  music4: "/authority/assets/bomb1-music4.mp3"
+};
+
 // src/authority/bomb-core.ts
 var HZ = 35;
 var STEP_MS = 1e3 / HZ;
@@ -139,7 +254,7 @@ function random(state) {
   return state.rng / 4294967296;
 }
 function createGame(seed, round = 1, playing2 = true, options = {}) {
-  const config = { ...DEFAULT_OPTIONS, ...options, bots: [...options.bots || []], activeSeats: [...options.activeSeats || [1, 2]] };
+  const config = { ...DEFAULT_OPTIONS, difficulty: "normal", characters: [1, 2, 3, 4], ...options, bots: [...options.bots || []], activeSeats: [...options.activeSeats || [1, 2]] };
   if (config.mode === "coop") config.bots = [.../* @__PURE__ */ new Set([...config.bots, 3, 4])];
   if (config.mode === "online") config.bots = [];
   const count = config.mode === "coop" || config.mode === "online" ? 4 : 2;
@@ -161,8 +276,20 @@ function createGame(seed, round = 1, playing2 = true, options = {}) {
     specials: [],
     ack: Array(count).fill(0),
     inputs: Array.from({ length: count }, () => ({ ...EMPTY_INPUT })),
-    players: []
+    players: [],
+    blasts: [],
+    dropWeapons: [],
+    soundId: 0,
+    sounds: [],
+    musicTrack: 1
   };
+  const weapons = [...WEAPONS];
+  for (let n = weapons.length - 1; n > 0; n--) {
+    const j = Math.floor(random(state) * (n + 1));
+    [weapons[n], weapons[j]] = [weapons[j], weapons[n]];
+  }
+  state.dropWeapons = weapons.slice(0, 2);
+  state.musicTrack = 1 + Math.floor(random(state) * 4);
   const theme = originalMap(config.map);
   if (theme) {
     const generated = generateOriginalMap(theme.id, () => random(state));
@@ -174,7 +301,18 @@ function createGame(seed, round = 1, playing2 = true, options = {}) {
     state.board[index(x, y)] = wall ? 1 : random(state) < (config.map === "open" ? 0.4 : 0.6) ? 2 : 0;
   }
   const spawns = theme ? ORIGINAL_SPAWNS.map(([x, y], i) => [i + 1, x, y]) : [[1, 1, 1], [2, WIDTH - 2, HEIGHT - 2], [3, WIDTH - 2, 1], [4, 1, HEIGHT - 2]];
-  for (const [seat, x, y] of spawns.slice(0, count)) {
+  const used = /* @__PURE__ */ new Set();
+  const characterBySeat = /* @__PURE__ */ new Map();
+  for (const seat of [...config.activeSeats, ...Array.from({ length: count }, (_, i) => i + 1)].filter((v, i, a) => Number.isInteger(v) && v >= 1 && v <= count && a.indexOf(v) === i)) {
+    const value = config.characters?.[seat - 1];
+    const requested = typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 4 ? value : seat;
+    const character = used.has(requested) ? [1, 2, 3, 4].find((c) => !used.has(c)) : requested;
+    used.add(character);
+    characterBySeat.set(seat, character);
+  }
+  for (const [seat, sx, sy] of spawns.slice(0, count)) {
+    const character = characterBySeat.get(seat);
+    const [x, y] = theme ? ORIGINAL_SPAWNS[character - 1] : [sx, sy];
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
       if (x + dx > 0 && x + dx < WIDTH - 1 && y + dy > 0 && y + dy < HEIGHT - 1 && Math.abs(dx) + Math.abs(dy) <= 1) {
         state.board[index(x + dx, y + dy)] = 0;
@@ -183,6 +321,7 @@ function createGame(seed, round = 1, playing2 = true, options = {}) {
     const active = config.mode !== "online" || config.activeSeats.includes(seat);
     state.players.push({
       seat,
+      character,
       x,
       y,
       dir: 3,
@@ -193,7 +332,7 @@ function createGame(seed, round = 1, playing2 = true, options = {}) {
       capacity: 1,
       range: 1,
       shield: false,
-      invulnerable: 0,
+      invulnerable: active ? 60 + Math.floor(random(state) * 4) : 0,
       lastBomb: 0,
       life: active ? 1 : 0,
       push: false,
@@ -208,6 +347,7 @@ function createGame(seed, round = 1, playing2 = true, options = {}) {
       pushCooldown: 0,
       actionLock: 0
     });
+    state.players[state.players.length - 1].shield = config.difficulty === "easy";
   }
   return state;
 }
@@ -220,9 +360,10 @@ function position(player) {
 }
 function takeItem(state, player) {
   const cell = index(player.x, player.y);
+  if (!state.items[cell]) return;
   switch (state.items[cell]) {
     case "bomb":
-      player.capacity = Math.min(8, player.capacity + 1);
+      player.capacity = Math.min(WIDTH * HEIGHT, player.capacity + 1);
       break;
     case "range":
       player.range = Math.min(10, player.range + 1);
@@ -234,7 +375,7 @@ function takeItem(state, player) {
       player.shield = true;
       break;
     case "life":
-      player.life = Math.min(5, player.life + 1);
+      player.life = Math.min(WIDTH * HEIGHT + 1, player.life + 1);
       break;
     case "push":
       player.push = true;
@@ -248,6 +389,7 @@ function takeItem(state, player) {
     }
   }
   state.items[cell] = null;
+  emitSound(state, "pickup");
 }
 function placeBomb(state, player) {
   if (player.actionLock > 0) return;
@@ -261,12 +403,13 @@ function placeBomb(state, player) {
     range: player.range,
     explodeAt: state.tick + FUSE_TICKS
   });
+  emitSound(state, "place");
 }
 function breakCrate(state, cell) {
   if (state.board[cell] !== 2) return;
   state.board[cell] = 0;
   if (random(state) >= 0.65) return;
-  if (random(state) >= 0.8) state.items[cell] = WEAPONS[Math.floor(random(state) * WEAPONS.length)];
+  if (random(state) >= 0.8) state.items[cell] = state.dropWeapons[Math.floor(random(state) * 2)];
   else {
     const roll = random(state);
     state.items[cell] = roll < 0.01 ? "life" : roll < 0.15 ? "push" : roll < 0.4 ? "bomb" : roll < 0.5 ? "shield" : roll < 0.75 ? "range" : "speed";
@@ -279,7 +422,7 @@ function passable(state, x, y) {
 function ignite(state, x, y, until = state.tick + 12, owner = 0) {
   if (!inside(x, y) || state.board[index(x, y)] === 1) return;
   const cell = index(x, y);
-  if (state.flames[cell] <= state.tick) state.flameOwners[cell] = owner;
+  state.flameOwners[cell] = owner;
   state.flames[cell] = Math.max(state.flames[cell], until);
   state.ice[cell] = 0;
   breakCrate(state, cell);
@@ -287,8 +430,8 @@ function ignite(state, x, y, until = state.tick + 12, owner = 0) {
 function explodeBombs(state) {
   const queue = state.bombs.filter((bomb) => bomb.explodeAt <= state.tick || state.flames[index(bomb.x, bomb.y)] > state.tick);
   const exploded = /* @__PURE__ */ new Set();
-  const flame = (x, y, owner) => {
-    ignite(state, x, y, state.tick + 12, owner);
+  const flame = (x, y, owner, until) => {
+    ignite(state, x, y, until, owner);
     const other = state.bombs.find((bomb) => bomb.x === x && bomb.y === y && !exploded.has(bomb.id));
     if (other) queue.push(other);
   };
@@ -296,18 +439,29 @@ function explodeBombs(state) {
     const bomb = queue[i];
     if (exploded.has(bomb.id)) continue;
     exploded.add(bomb.id);
-    flame(bomb.x, bomb.y, bomb.owner);
-    for (const [dx, dy] of DIRECTIONS) for (let distance = 1; distance <= bomb.range; distance++) {
-      const x = bomb.x + dx * distance, y = bomb.y + dy * distance;
-      if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) break;
-      const cell = index(x, y);
-      if (state.board[cell] === 1) break;
-      const crate = state.board[cell] === 2;
-      flame(x, y, bomb.owner);
-      if (crate) break;
-    }
+    emitSound(state, "explode");
+    flame(bomb.x, bomb.y, bomb.owner, state.tick + bomb.range + 10);
+    state.blasts.push({ x: bomb.x, y: bomb.y, owner: bomb.owner, range: bomb.range, born: state.tick, distance: 0, active: [true, true, true, true], lengths: [0, 0, 0, 0] });
   }
   state.bombs = state.bombs.filter((bomb) => !exploded.has(bomb.id));
+}
+function advanceBlasts(state) {
+  for (const blast2 of state.blasts) {
+    if (blast2.distance >= blast2.range) continue;
+    blast2.distance++;
+    for (let dir = 0; dir < 4; dir++) if (blast2.active[dir]) {
+      const [dx, dy] = DIRECTIONS[dir], x = blast2.x + dx * blast2.distance, y = blast2.y + dy * blast2.distance;
+      if (!inside(x, y) || state.board[index(x, y)] === 1) {
+        blast2.active[dir] = false;
+        continue;
+      }
+      const crate = state.board[index(x, y)] === 2;
+      blast2.lengths[dir] = blast2.distance;
+      ignite(state, x, y, blast2.born + blast2.range + 10, blast2.owner);
+      if (crate) blast2.active[dir] = false;
+    }
+  }
+  state.blasts = state.blasts.filter((b) => state.tick < b.born + b.range + 10);
 }
 function useSpecial(state, player) {
   if (player.actionLock > 0 || !player.weapon || player.ammo <= 0 || player.moveDir >= 0 || state.specials.length >= 64 || state.bombs.some((bomb) => bomb.x === player.x && bomb.y === player.y)) return;
@@ -331,6 +485,7 @@ function useSpecial(state, player) {
   player.actionLock = SPECIAL_RECOVERY_TICKS;
   player.ammo--;
   if (!player.ammo) player.weapon = null;
+  if (kind === "rocket" || kind === "grenade" || kind === "mine") emitSound(state, kind);
 }
 function visibleSpecials(state, seat) {
   return state.specials.filter((special) => special.kind !== "mine" && special.kind !== "gas" || special.owner === seat || state.tick - special.born < TRAP_REVEAL_TICKS);
@@ -344,6 +499,7 @@ function updateSpecials(state) {
         const x = s.x + dx, y = s.y + dy;
         if (!inside(x, y) || state.board[index(x, y)] === 1) {
           ignite(state, s.x, s.y, state.tick + 12, s.owner);
+          emitSound(state, "explode");
           s.until = state.tick;
           break;
         }
@@ -352,21 +508,26 @@ function updateSpecials(state) {
         s.distance++;
         if (state.board[index(x, y)] === 2 || state.bombs.some((b) => b.x === x && b.y === y) || state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - x, position(p).y - y) < 0.6)) {
           ignite(state, x, y, state.tick + 12, s.owner);
+          emitSound(state, "explode");
           s.until = state.tick;
         }
       }
-      if (state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < 0.5)) {
+      if (s.until > state.tick && state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < 0.5)) {
         ignite(state, s.x, s.y, state.tick + 12, s.owner);
+        emitSound(state, "explode");
         s.until = state.tick;
       }
     } else if (s.kind === "mine" || s.kind === "gas") {
       const victim = state.players.find((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < 0.5);
       if (victim || state.flames[index(s.x, s.y)] > state.tick) {
-        if (s.kind === "mine") ignite(state, s.x, s.y, state.tick + 12, s.owner);
-        else if (victim) victim.slow = 600;
+        if (s.kind === "mine") {
+          ignite(state, s.x, s.y, state.tick + 12, s.owner);
+          emitSound(state, "explode");
+        } else if (victim) victim.slow = 600;
         s.until = state.tick;
       }
     } else if (s.kind === "grenade" && state.tick >= s.until) {
+      emitSound(state, "explode");
       const x = s.x + dx * 2, y = s.y + dy * 2;
       ignite(state, x, y, state.tick + 12, s.owner);
       for (const [a, b] of DIRECTIONS) ignite(state, x + a, y + b, state.tick + 12, s.owner);
@@ -537,6 +698,7 @@ function step(state, inputs) {
         pushed.slide = input.dir;
         pushed.slideTick = 0;
         player.pushCooldown = PUSH_COOLDOWN_TICKS;
+        emitSound(state, "push");
       }
       if (passable(state, x, y)) {
         player.moveDir = input.dir;
@@ -554,9 +716,13 @@ function step(state, inputs) {
     }
   }
   updateSpecials(state);
+  advanceBlasts(state);
   explodeBombs(state);
   for (const s of state.specials) if ((s.kind === "mine" || s.kind === "gas") && state.flames[index(s.x, s.y)] > state.tick) {
-    if (s.kind === "mine") ignite(state, s.x, s.y, state.tick + 12, s.owner);
+    if (s.kind === "mine") {
+      ignite(state, s.x, s.y, state.tick + 12, s.owner);
+      emitSound(state, "explode");
+    }
     s.until = state.tick;
   }
   state.specials = state.specials.filter((s) => s.until > state.tick);
@@ -570,11 +736,13 @@ function step(state, inputs) {
       if (player.shield) {
         player.shield = false;
         player.invulnerable = 60;
-      } else if (--player.life > 0) player.invulnerable = 60;
-      else {
-        player.alive = false;
-        player.diedAt = state.tick;
-        player.killedBy = state.flameOwners[index(Math.round(pos.x), Math.round(pos.y))];
+      } else {
+        player.life = Math.max(0, player.life - 1);
+        if (state.options.mode === "online" || !state.options.bots.includes(player.seat) || player.life === 0) {
+          player.alive = false;
+          player.diedAt = state.tick;
+          player.killedBy = state.flameOwners[index(Math.round(pos.x), Math.round(pos.y))];
+        } else player.invulnerable = 60;
       }
     }
   }
@@ -583,6 +751,7 @@ function step(state, inputs) {
   if (teams.size < 2 || state.tick >= ROUND_TICKS) {
     state.phase = "finished";
     state.winner = teams.size === 1 ? [...teams][0] : 0;
+    emitSound(state, "result");
   }
 }
 function validInput(value) {
@@ -595,16 +764,19 @@ function validState(value) {
   const s = value;
   const integer2 = (v, low, high) => Number.isInteger(v) && v >= low && v <= high;
   const o = s.options;
+  if (!o || !["easy", "normal", "hard"].includes(o.difficulty || "") || !Array.isArray(o.characters) || o.characters.length !== 4 || !o.characters.every((c) => integer2(c, 1, 4))) return false;
+  if (!integer2(s.soundId, 0, 1e9) || !integer2(s.musicTrack, 1, 4) || !Array.isArray(s.sounds) || s.sounds.length > 64 || !s.sounds.every((e, i) => e && integer2(e.id, 1, s.soundId) && (i === 0 || e.id > s.sounds[i - 1].id) && (e.name === "result" || Object.prototype.hasOwnProperty.call(BOMB_SOUND_FILES, e.name)))) return false;
   if (!o || !["duel", "practice", "coop", "online"].includes(o.mode) || !MAP_IDS.includes(o.map) || !["none", ...WEAPONS].includes(o.loadout)) return false;
   const count = o.mode === "coop" || o.mode === "online" ? 4 : 2;
+  if (!Array.isArray(s.dropWeapons) || s.dropWeapons.length !== 2 || new Set(s.dropWeapons).size !== 2 || !s.dropWeapons.every((w) => WEAPONS.includes(w)) || !Array.isArray(s.blasts) || s.blasts.length > WIDTH * HEIGHT * 20 || !s.blasts.every((b) => b && integer2(b.x, 0, WIDTH - 1) && integer2(b.y, 0, HEIGHT - 1) && integer2(b.owner, 1, count) && integer2(b.range, 1, 10) && integer2(b.born, 0, s.tick) && integer2(b.distance, 0, b.range) && Array.isArray(b.active) && b.active.length === 4 && b.active.every((v) => typeof v === "boolean") && Array.isArray(b.lengths) && b.lengths.length === 4 && b.lengths.every((v) => integer2(v, 0, b.distance)))) return false;
   if (!Array.isArray(o.bots) || o.bots.length > count || new Set(o.bots).size !== o.bots.length || !o.bots.every((v) => integer2(v, 1, count)) || o.mode === "duel" && o.bots.length > 0 || o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4)) || o.mode === "online" && o.bots.length > 0) return false;
   if (o.mode === "online" && (!Array.isArray(o.activeSeats) || o.activeSeats.length > 4 || s.phase !== "waiting" && o.activeSeats.length < 2 || new Set(o.activeSeats).size !== o.activeSeats.length || !o.activeSeats.every((v) => integer2(v, 1, 4)))) return false;
   if (s.version !== 2 || !integer2(s.round, 1, Number.MAX_SAFE_INTEGER) || !integer2(s.tick, 0, ROUND_TICKS + 1) || !integer2(s.rng, 0, 4294967295) || !integer2(s.nextBomb, 1, 1e6) || !["waiting", "playing", "finished"].includes(s.phase) || !(s.winner === null || integer2(s.winner, 0, count))) return false;
   if (!Array.isArray(s.board) || s.board.length !== WIDTH * HEIGHT || !s.board.every((v) => integer2(v, 0, 2)) || !Array.isArray(s.flames) || s.flames.length !== WIDTH * HEIGHT || !s.flames.every((v) => integer2(v, 0, ROUND_TICKS + 100)) || !Array.isArray(s.flameOwners) || s.flameOwners.length !== WIDTH * HEIGHT || !s.flameOwners.every((v) => integer2(v, 0, count)) || !Array.isArray(s.ice) || s.ice.length !== WIDTH * HEIGHT || !s.ice.every((v) => integer2(v, 0, ROUND_TICKS + 100)) || !Array.isArray(s.items) || s.items.length !== WIDTH * HEIGHT || !s.items.every((v) => v === null || typeof v === "string" && Object.prototype.hasOwnProperty.call(ITEM_LABELS, v))) return false;
   const theme = originalMap(o.map);
   if (theme && (!s.mapVisual || !theme.floorFrames.some((frame) => frame === s.mapVisual.floor) || !theme.landmarkFrames.some((frame) => frame === s.mapVisual.landmark) || !Array.isArray(s.mapVisual.tiles) || s.mapVisual.tiles.length !== WIDTH * HEIGHT || !s.mapVisual.tiles.every((frame) => frame === 0 || theme.crateFrames.some((v) => v === frame) || theme.wallFrames.some((v) => v === frame)))) return false;
-  if (!Array.isArray(s.players) || s.players.length !== count || !s.players.every((p, i) => p && p.seat === i + 1 && integer2(p.x, 0, WIDTH - 1) && integer2(p.y, 0, HEIGHT - 1) && integer2(p.dir, -1, 3) && integer2(p.moveDir, -1, 3) && integer2(p.speed, 3, 6) && integer2(p.moveTicks, 3, 20) && integer2(p.progress, 0, p.moveTicks - 1) && integer2(p.capacity, 1, 8) && integer2(p.range, 1, 10) && integer2(p.invulnerable, 0, 60) && integer2(p.life, 0, 5) && typeof p.push === "boolean" && (p.weapon === null || WEAPONS.includes(p.weapon)) && integer2(p.ammo, 0, 2) && integer2(p.lastSpecial, 0, 1e9) && integer2(p.slow, 0, 600) && integer2(p.frozen, 0, 300) && integer2(p.diedAt, 0, ROUND_TICKS) && integer2(p.killedBy, 0, count) && integer2(p.pushCooldown, 0, PUSH_COOLDOWN_TICKS) && integer2(p.actionLock, 0, SPECIAL_RECOVERY_TICKS) && integer2(p.lastBomb, 0, 1e9) && typeof p.alive === "boolean" && typeof p.shield === "boolean")) return false;
-  return Array.isArray(s.ack) && s.ack.length === count && s.ack.every((v) => integer2(v, 0, 1e9)) && Array.isArray(s.inputs) && s.inputs.length === count && s.inputs.every(validInput) && Array.isArray(s.specials) && s.specials.length <= 64 && s.specials.every((v) => v && integer2(v.id, 1, 1e6) && WEAPONS.includes(v.kind) && integer2(v.owner, 1, count) && integer2(v.x, 0, WIDTH - 1) && integer2(v.y, 0, HEIGHT - 1) && integer2(v.dir, 0, 3) && integer2(v.born, 0, ROUND_TICKS) && integer2(v.until, v.born, ROUND_TICKS * 2) && integer2(v.distance, 0, 1e3)) && Array.isArray(s.bombs) && s.bombs.length <= count * 8 && s.bombs.every((b) => b && integer2(b.id, 1, 1e6) && integer2(b.x, 0, WIDTH - 1) && integer2(b.y, 0, HEIGHT - 1) && integer2(b.owner, 1, count) && (b.slide === void 0 || integer2(b.slide, -1, 3)) && (b.slideTick === void 0 || integer2(b.slideTick, 0, 1)) && integer2(b.range, 1, 10) && integer2(b.explodeAt, 0, ROUND_TICKS + FUSE_TICKS));
+  if (!Array.isArray(s.players) || s.players.length !== count || !s.players.every((p, i) => p && p.seat === i + 1 && integer2(p.character, 1, 4) && integer2(p.x, 0, WIDTH - 1) && integer2(p.y, 0, HEIGHT - 1) && integer2(p.dir, -1, 3) && integer2(p.moveDir, -1, 3) && integer2(p.speed, 3, 6) && integer2(p.moveTicks, 3, 20) && integer2(p.progress, 0, p.moveTicks - 1) && integer2(p.capacity, 1, WIDTH * HEIGHT) && integer2(p.range, 1, 10) && integer2(p.invulnerable, 0, 63) && integer2(p.life, 0, WIDTH * HEIGHT + 1) && typeof p.push === "boolean" && (p.weapon === null || WEAPONS.includes(p.weapon)) && integer2(p.ammo, 0, 2) && integer2(p.lastSpecial, 0, 1e9) && integer2(p.slow, 0, 600) && integer2(p.frozen, 0, 300) && integer2(p.diedAt, 0, ROUND_TICKS) && integer2(p.killedBy, 0, count) && integer2(p.pushCooldown, 0, PUSH_COOLDOWN_TICKS) && integer2(p.actionLock, 0, SPECIAL_RECOVERY_TICKS) && integer2(p.lastBomb, 0, 1e9) && typeof p.alive === "boolean" && typeof p.shield === "boolean")) return false;
+  return Array.isArray(s.ack) && s.ack.length === count && s.ack.every((v) => integer2(v, 0, 1e9)) && Array.isArray(s.inputs) && s.inputs.length === count && s.inputs.every(validInput) && Array.isArray(s.specials) && s.specials.length <= 64 && s.specials.every((v) => v && integer2(v.id, 1, 1e6) && WEAPONS.includes(v.kind) && integer2(v.owner, 1, count) && integer2(v.x, 0, WIDTH - 1) && integer2(v.y, 0, HEIGHT - 1) && integer2(v.dir, 0, 3) && integer2(v.born, 0, ROUND_TICKS) && integer2(v.until, v.born, ROUND_TICKS * 2) && integer2(v.distance, 0, 1e3)) && Array.isArray(s.bombs) && s.bombs.length <= WIDTH * HEIGHT && s.bombs.every((b) => b && integer2(b.id, 1, 1e6) && integer2(b.x, 0, WIDTH - 1) && integer2(b.y, 0, HEIGHT - 1) && integer2(b.owner, 1, count) && (b.slide === void 0 || integer2(b.slide, -1, 3)) && (b.slideTick === void 0 || integer2(b.slideTick, 0, 1)) && integer2(b.range, 1, 10) && integer2(b.explodeAt, 0, ROUND_TICKS + FUSE_TICKS));
 }
 
 // src/badminton/core.ts
@@ -1388,7 +1560,7 @@ function bomb2Status(s) {
   return s.players.map((p) => ({
     seat: p.seat,
     alive: p.alive && p.respawnAt <= s.tick,
-    portrait: `/expanded/assets/bomb2/hero-${p.seat - 1}-down.png`,
+    portrait: `/expanded/assets/bomb2/hero-${p.character - 1}-down.png`,
     portraitFrames: 24,
     title: !p.alive ? "\u5DF2\u51FA\u5C40" : p.respawnAt > s.tick ? "\u590D\u6D3B\u4E2D" : `\u751F\u547D ${p.life}`,
     note: s.mode === "kill" ? `${p.points}/10 \u51FB\u6740` : s.mode === "collect" ? `${p.points}/10 \u91D1\u5E01` : s.mode === "color" ? `${p.points}/50 \u5730\u5757` : p.invulnerable ? "\u4FDD\u62A4\u4E2D" : "\u751F\u5B58",
@@ -1404,6 +1576,212 @@ function bomb2Status(s) {
   }));
 }
 
+// src/expanded/bomb2-rules.json
+var bomb2_rules_default = {
+  source: "games/9109/game.swf",
+  rawSha256: "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+  function: "actionSprite.Game.mapPropInit",
+  pools: {
+    arcade: [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      22,
+      7,
+      4,
+      15,
+      15,
+      16,
+      21,
+      21,
+      20,
+      20,
+      19,
+      19,
+      17,
+      18
+    ],
+    kill: [
+      16,
+      16,
+      21,
+      21,
+      21,
+      20,
+      20,
+      20,
+      19,
+      19,
+      19,
+      17,
+      17,
+      18,
+      18,
+      7
+    ],
+    collect: [
+      2,
+      2,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      3,
+      3,
+      6,
+      6,
+      22,
+      7,
+      15,
+      16,
+      21,
+      20,
+      19,
+      17,
+      18
+    ],
+    color: [
+      2,
+      2,
+      2,
+      2,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      3,
+      3,
+      6,
+      6,
+      22,
+      7,
+      15,
+      16,
+      21,
+      20,
+      19,
+      17,
+      18
+    ]
+  }
+};
+
+// src/expanded/bomb2-brick.json
+var bomb2_brick_default = {
+  source: "games/9109/game.swf",
+  symbol: 3006,
+  frames: 11,
+  w: 30,
+  h: 34,
+  path: "public/expanded/assets/bomb2/brick-burst.png",
+  sha256: "a9018a59415102703496ac85a2e15bd605e6bb184107c0b9f72025e8a6e15cf3"
+};
+
+// src/expanded/bomb2-sound.ts
+var root = "/expanded/assets/bomb2/original/sounds/";
+var SOUND_FILES = {
+  place: "4110_addBomb.mp3",
+  remote: "4108_addTeleBomb.mp3",
+  mine: "4109_addMineBomb.mp3",
+  explode: "4107_bomb.mp3",
+  pickup: "4104_eatProp.mp3",
+  dead: "4105_dead.mp3",
+  hammer: "4088_useSinker.mp3",
+  launcher: "4091_useLauncher.mp3",
+  shotgun: "4089_useShotgun.mp3",
+  laserReady: "4093_useLaserReady.mp3",
+  laser: "4092_useLaserShoot.mp3",
+  fire: "4087_useThrower.mp3",
+  shield: "4090_useNombril.mp3",
+  invincible: "4100_InvincibilitySound.mp3",
+  frog: "4101_getFrog.mp3",
+  car: "4102_getCar.mp3",
+  bulldozer: "4103_getBulldozer.mp3",
+  crush: "4106_bulldozerProp.mp3",
+  complete: "4099_levelComplete.mp3",
+  failed: "4098_levelFailed.mp3",
+  menu: "4115_uiMusic.mp3",
+  music1: "4114_gameMusic_1.mp3",
+  music2: "4113_gameMusic_2.mp3",
+  music3: "4112_gameMusic_3.mp3",
+  music4: "4111_gameMusic_4.mp3"
+};
+var audio = new NativeAudio(Object.fromEntries(Object.entries(SOUND_FILES).map(([name, file]) => [name, root + file])));
+function sound(s, name) {
+  emitSound(s, name);
+}
+
 // src/expanded/bomb2.ts
 var HZ4 = 40;
 var WIDTH2 = 17;
@@ -1412,14 +1790,20 @@ var ROUND_TICKS3 = HZ4 * 180;
 var FUSE = 62;
 var DIRS = [[-1, 0], [0, -1], [1, 0], [0, 1]];
 var SPAWNS = [[1, 1], [15, 1], [1, 13], [15, 13]];
-var PROPS = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 6, 6, 7, 22, 4, 15, 16, 21, 20, 19, 17, 18, 11, 12, 13, 14];
-var KILL_PROPS = [16, 16, 21, 21, 21, 20, 20, 20, 19, 19, 19, 17, 17, 18, 18, 7];
+var PROP_POOLS = bomb2_rules_default.pools;
+var KILL_PROPS = PROP_POOLS.kill;
 var MODES = ["arcade", "kill", "collect", "color"];
 var RESPAWN_TICKS = 64;
 var RESPAWN_PROTECTION_TICKS = 80;
 var WEAPON_USES = { 15: 2, 16: 2, 17: 1, 18: 1, 19: 2, 20: 2, 21: 2 };
 var WEAPON_LOCK = { 15: 25, 16: 14, 17: 0, 18: 0, 19: 8, 20: 23, 21: 24 };
 var THEMES = { mine: "\u77FF\u6D1E", beach: "\u6D77\u6EE9", snow: "\u51B0\u96EA", disce: "\u8FEA\u65AF\u79D1", factory: "\u5DE5\u5382", center: "\u57CE\u5E02" };
+var localSeat = null;
+var COIN_INTERVAL = HZ4 * 6 + 2;
+var FLOOR_COLORS = ["#0099ff", "#ffccff", "#ff9900", "#33cc00"];
+function territoryColor(s, seat) {
+  return FLOOR_COLORS[(s.players.find((p) => p.seat === seat)?.character || seat) - 1];
+}
 var index2 = (x, y) => y * WIDTH2 + x;
 function random3(s) {
   let x = s.rng | 0;
@@ -1433,7 +1817,7 @@ var inside2 = (x, y) => x >= 0 && x < WIDTH2 && y >= 0 && y < HEIGHT2;
 function direction(i) {
   return i.left ? 0 : i.up ? 1 : i.right ? 2 : i.down ? 3 : -1;
 }
-function create2(round, playing2, seats, seed, mapId, gameMode) {
+function create2(round, playing2, seats, seed, mapId, gameMode, settings) {
   const [legacyMode, selectedMap] = mapId?.includes(":") ? mapId.split(":") : ["arcade", mapId];
   const selectedMode = gameMode ?? legacyMode;
   const mode = MODES.includes(selectedMode) ? selectedMode : "arcade";
@@ -1463,8 +1847,21 @@ function create2(round, playing2, seats, seed, mapId, gameMode) {
     nextId: 1,
     scores: [0, 0, 0, 0],
     players: [],
-    tram: 0
+    tram: 0,
+    soundId: 0,
+    sounds: [],
+    musicTrack: 1,
+    vehiclePool: [],
+    vehiclesLeft: 4
   };
+  s.musicTrack = 1 + Math.floor(random3(s) * 4);
+  s.difficulty = settings?.difficulty || "normal";
+  s.crateOffset = Math.floor(random3(s) * 3);
+  s.crateBursts = [];
+  if (mode !== "kill") {
+    const vehicles = map.theme === "disce" ? [12, 13] : [12, 13, 14];
+    while (s.vehiclePool.length < 2) s.vehiclePool.push(vehicles.splice(Math.floor(random3(s) * vehicles.length), 1)[0]);
+  }
   const params = Array.from({ length: 255 }, () => ({ empty: 0, fixed: 0, crate: 0, mid: 0, frame: -1 }));
   for (const op of map.ops) {
     const [name, x, y, value, frame] = op;
@@ -1488,19 +1885,25 @@ function create2(round, playing2, seats, seed, mapId, gameMode) {
       s.board[cell] = 1;
       s.tiles[cell] = map.begin + 5 + (p.frame >= 0 ? p.frame : Math.floor(random3(s) * 2));
     } else if (r > p.empty + p.fixed && r < p.empty + p.fixed + p.crate) {
+      const roll = Math.floor(random3(s) * 3);
       s.board[cell] = 2;
-      s.tiles[cell] = map.begin + Math.floor(random3(s) * 3);
+      s.tiles[cell] = map.begin + (roll ? roll + s.crateOffset : 0);
     }
   }
+  const used = /* @__PURE__ */ new Set();
   for (const seat of [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort((a, b) => a - b)) {
-    const [x, y] = SPAWNS[seat - 1];
+    const preferred = settings?.characters?.[seat - 1] || seat;
+    const character = used.has(preferred) ? [1, 2, 3, 4].find((c) => !used.has(c)) : preferred;
+    used.add(character);
+    const [x, y] = SPAWNS[character - 1] || SPAWNS[seat - 1];
     for (const [dx, dy] of [[0, 0], ...DIRS]) if (x + dx > 0 && x + dx < 16 && y + dy > 0 && y + dy < 14) {
       s.board[index2(x + dx, y + dy)] = 0;
       s.tiles[index2(x + dx, y + dy)] = 0;
     }
-    s.players.push({ seat, x, y, dir: 3, moveDir: -1, progress: 0, moveTicks: 8, speed: 8, alive: true, life: 3, capacity: 1, range: 1, kick: false, shield: false, invulnerable: mode === "kill" ? RESPAWN_PROTECTION_TICKS : 0, lastAttack: 0, lastAlt: 0, weapon: 0, ammo: 0, vehicle: 0, vehicleUntil: 0, respawnAt: 0, teleportUntil: 0, killedBy: 0, points: 0, kills: 0, deaths: 0, diedAt: 0, actionLock: 0, attack: null, weaponStock: [] });
+    s.players.push({ seat, character, x, y, dir: 3, moveDir: -1, progress: 0, moveTicks: 8, speed: 8, alive: true, life: 3, capacity: 1, range: 1, kick: false, shield: mode === "arcade" && s.difficulty === "easy", invulnerable: mode === "kill" ? RESPAWN_PROTECTION_TICKS : 0, lastAttack: 0, lastAlt: 0, weapon: 0, ammo: 0, vehicle: 0, vehicleUntil: 0, respawnAt: 0, teleportUntil: 0, killedBy: 0, points: 0, kills: 0, deaths: 0, diedAt: 0, actionLock: 0, attack: null, weaponStock: [] });
   }
   if (mode === "collect") for (let i = 0; i < 5; i++) spawnCoin(s);
+  for (const p of s.players) p.invulnerable = RESPAWN_PROTECTION_TICKS;
   return s;
 }
 function spawnCoin(s) {
@@ -1515,30 +1918,46 @@ function breakCrate2(s, cell) {
   if (s.board[cell] !== 2) return;
   s.board[cell] = 0;
   s.tiles[cell] = 0;
-  const pool = s.mode === "kill" ? KILL_PROPS : PROPS;
-  if (s.items.filter((item) => item !== 0).length < 32 && random3(s) < 0.6) s.items[cell] = pool[Math.floor(random3(s) * pool.length)];
+  s.crateBursts.push({ cell, born: s.tick, at: s.tick + bomb2_brick_default.frames });
+}
+function finishCrates(s) {
+  for (const burst of s.crateBursts) {
+    if (burst.at > s.tick) continue;
+    const cell = burst.cell;
+    if (s.board[cell] || s.items[cell]) continue;
+    const pool = [...PROP_POOLS[s.mode], ...s.vehiclesLeft > 0 ? s.vehiclePool : []];
+    if (s.items.filter((item) => item !== 0).length < 32 && random3(s) < 0.6) {
+      const item = pool[Math.floor(random3(s) * pool.length)];
+      s.items[cell] = item;
+      if (item >= 11 && item <= 14) s.vehiclesLeft--;
+    }
+  }
+  s.crateBursts = s.crateBursts.filter((b) => b.at > s.tick);
 }
 function ignite2(s, x, y, owner) {
   if (!inside2(x, y) || s.board[index2(x, y)] === 1) return;
   const cell = index2(x, y);
   if (s.flames[cell] <= s.tick) s.owners[cell] = owner;
   s.flames[cell] = s.tick + 16;
-  breakCrate2(s, cell);
+  if (s.board[cell] === 2) breakCrate2(s, cell);
+  else s.items[cell] = 0;
   for (const b of s.bombs) if (b.x === x && b.y === y) b.explodeAt = Math.min(b.explodeAt, s.tick);
 }
 function place(s, p, kind = "normal", x = p.x, y = p.y) {
-  if (!inside2(x, y) || s.board[index2(x, y)] || s.bombs.length >= 32 || s.bombs.some((b) => b.x === x && b.y === y) || s.bombs.filter((b) => b.owner === p.seat).length >= p.capacity) return false;
+  if (!inside2(x, y) || s.board[index2(x, y)] || s.bombs.length >= 36 || s.bombs.some((b) => b.x === x && b.y === y) || s.bombs.filter((b) => b.owner === p.seat).length >= p.capacity) return false;
   s.bombs.push({ id: s.nextId++, owner: p.seat, x, y, range: kind === "mine" ? 2 : p.range, kind, explodeAt: kind === "normal" ? s.tick + FUSE : kind === "thrown" ? s.tick + 25 : ROUND_TICKS3 + FUSE, armedAt: kind === "mine" ? ROUND_TICKS3 + 20 : s.tick + 20, slide: -1 });
+  sound(s, kind === "remote" ? "remote" : kind === "mine" ? "mine" : "place");
   return true;
 }
 function take(s, p) {
   const cell = index2(p.x, p.y), item = s.items[cell];
   if (!item) return;
   s.items[cell] = 0;
-  if (item === 1) p.capacity = Math.min(8, p.capacity + 1);
-  else if (item === 2) p.range = Math.min(10, p.range + 1);
+  sound(s, "pickup");
+  if (item === 1) p.capacity = Math.min(9, p.capacity + 1);
+  else if (item === 2) p.range = Math.min(5, p.range + 1);
   else if (item === 3) p.speed = Math.max(6, p.speed - 1);
-  else if (item === 4) p.life = Math.min(5, p.life + 1);
+  else if (item === 4) p.life = Math.min(255, p.life + 1);
   else if (item === 6) p.kick = true;
   else if (item === 7) p.invulnerable = HZ4 * 10;
   else if (item === 22) p.shield = true;
@@ -1547,16 +1966,15 @@ function take(s, p) {
     s.scores[p.seat - 1] = p.points;
   } else if (item >= 11 && item <= 14) {
     p.vehicle = item;
-    p.vehicleUntil = s.tick + HZ4 * 15;
-    p.shield = true;
+    p.vehicleUntil = 0;
+    sound(s, item === 12 ? "bulldozer" : item === 13 ? "car" : item === 14 ? "frog" : "pickup");
   } else {
     p.weapon = item;
     p.ammo = WEAPON_USES[item] || 2;
-    if (s.mode === "kill") {
-      p.weaponStock.push(item);
-      p.weaponStock = p.weaponStock.slice(-32);
-    }
+    p.weaponStock.push(item);
+    p.weaponStock = p.weaponStock.slice(-32);
   }
+  if (item === 7) sound(s, "invincible");
 }
 function dropWeapons(s, p) {
   for (let n = 0; n < 2 && p.weaponStock.length; n++) {
@@ -1567,10 +1985,19 @@ function dropWeapons(s, p) {
 }
 function hit(s, p, owner) {
   if (!p.alive || p.respawnAt > s.tick || p.invulnerable > 0) return;
+  if (p.vehicle) {
+    p.vehicle = 0;
+    p.vehicleUntil = 0;
+    p.moveDir = -1;
+    p.progress = 0;
+    p.invulnerable = RESPAWN_PROTECTION_TICKS;
+    sound(s, "shield");
+    return;
+  }
   if (p.shield) {
     p.shield = false;
-    p.vehicle = 0;
-    p.invulnerable = HZ4;
+    p.invulnerable = RESPAWN_PROTECTION_TICKS;
+    sound(s, "shield");
     return;
   }
   if (s.mode === "arcade") p.life--;
@@ -1582,10 +2009,27 @@ function hit(s, p, owner) {
   if (p.life <= 0) {
     p.alive = false;
     p.respawnAt = 0;
-  } else p.respawnAt = s.tick + (s.mode === "kill" ? RESPAWN_TICKS : HZ4);
+  } else p.respawnAt = s.tick + RESPAWN_TICKS;
+  sound(s, "dead");
   p.attack = null;
   p.actionLock = 0;
-  if (s.mode === "kill") dropWeapons(s, p);
+  dropWeapons(s, p);
+  if (s.mode === "collect") {
+    const count = Math.floor(p.points / 2);
+    for (let n = 0; n < count; n++) {
+      const cells = s.board.map((v, i) => v === 0 && !s.items[i] && !s.bombs.some((b) => index2(b.x, b.y) === i) && Math.abs(i % WIDTH2 - p.x) + Math.abs(Math.floor(i / WIDTH2) - p.y) <= 2 ? i : -1).filter((i) => i >= 0);
+      if (cells.length) {
+        s.items[cells[Math.floor(random3(s) * cells.length)]] = 9;
+        p.points--;
+      }
+    }
+    s.scores[p.seat - 1] = p.points;
+  }
+  if (s.mode === "color") {
+    for (let cell = 0; cell < s.colors.length; cell++) if (s.colors[cell] === p.seat) s.colors[cell] = 0;
+    p.points = 0;
+    s.scores[p.seat - 1] = 0;
+  }
   p.weaponStock = [];
   p.weapon = 0;
   p.ammo = 0;
@@ -1628,6 +2072,8 @@ function useWeapon(s, p) {
     p.attack = { kind, dir: p.dir, x: p.x, y: p.y, born: s.tick, at: s.tick + (kind === 20 ? 12 : kind === 21 ? 1 : WEAPON_LOCK[kind]), remaining: p.weapon ? Math.max(0, p.ammo - 1) : -1 };
   }
   if (p.weapon && --p.ammo <= 0) p.weapon = 0;
+  const cue = { 15: "hammer", 16: "launcher", 19: "shotgun", 20: "laserReady", 21: "fire" };
+  if (cue[kind]) sound(s, cue[kind]);
 }
 function updateAttacks(s) {
   for (const p of s.players) {
@@ -1648,6 +2094,7 @@ function updateAttacks(s) {
     } else if ((kind === 16 || kind === 19) && s.shots.length < 64) {
       s.shots.push({ id: s.nextId++, owner: p.seat, x: x + 0.5, y: y + 0.5, vx: dx * (kind === 19 ? 12 / 30 : 10 / 30), vy: dy * (kind === 19 ? 12 / 30 : 10 / 30), until: s.tick + HZ4 * 4, kind });
     } else if ((kind === 20 || kind === 21) && s.effects.length < 64) {
+      if (kind === 20) sound(s, "laser");
       const effect2 = { id: s.nextId++, kind, owner: p.seat, x, y, dir, born: s.tick, until: s.tick + (kind === 20 ? 11 : 23), cells: [] };
       if (kind === 20) for (let d = 1; d < Math.max(WIDTH2, HEIGHT2); d++) {
         const tx = x + dx * d, ty = y + dy * d;
@@ -1684,7 +2131,7 @@ function updateAttacks(s) {
   s.effects = s.effects.filter((effect2) => effect2.until > s.tick);
 }
 function hazards(s, p) {
-  if (p.teleportUntil > s.tick || p.vehicle === 11) return;
+  if (p.teleportUntil > s.tick || p.vehicle) return;
   const h = s.hazards.find((h2) => h2.x === p.x && h2.y === p.y);
   if (!h) return;
   if (h.kind === "QuickSand" && h.target !== void 0) {
@@ -1734,14 +2181,13 @@ function step4(s, inputs) {
         p.lastAlt = Math.max(p.lastAlt, input.alt);
       }
       if (p.respawnAt > s.tick) continue;
-      const [x, y] = SPAWNS[p.seat - 1];
+      const [x, y] = SPAWNS[p.character - 1];
       p.x = x;
       p.y = y;
       p.respawnAt = 0;
       p.invulnerable = RESPAWN_PROTECTION_TICKS;
     }
     if (p.invulnerable > 0) p.invulnerable--;
-    if (p.vehicle && p.vehicleUntil <= s.tick) p.vehicle = 0;
     if (p.actionLock > 0) p.actionLock--;
     if (p.moveDir >= 0) {
       if (++p.progress >= p.moveTicks) {
@@ -1786,15 +2232,25 @@ function step4(s, inputs) {
           bomb.x += dx;
           bomb.y += dy;
         }
-        if (p.vehicle === 12 && inside2(x, y) && s.board[index2(x, y)] === 2) breakCrate2(s, index2(x, y));
-        if (passable2(s, x, y)) {
+        if (p.vehicle === 12 && inside2(x, y) && s.board[index2(x, y)] === 2) {
+          breakCrate2(s, index2(x, y));
+          p.actionLock = 12;
+          sound(s, "crush");
+          continue;
+        }
+        if (p.vehicle === 14 && inside2(x, y) && !passable2(s, x, y) && passable2(s, x + dx, y + dy)) {
+          p.x = x + dx;
+          p.y = y + dy;
+          p.teleportUntil = s.tick + 20;
+          take(s, p);
+        } else if ((passable2(s, x, y) || p.vehicle === 11 && inside2(x, y) && !s.bombs.some((b) => b.x === x && b.y === y)) && !((p.vehicle === 12 || p.vehicle === 13) && s.hazards.some((h) => h.kind === "SpringBoard" && h.x === x && h.y === y))) {
           p.moveDir = dir;
-          p.moveTicks = p.vehicle === 13 ? 4 : p.vehicle === 14 ? 5 : p.speed;
+          p.moveTicks = p.vehicle === 12 ? 12 : p.vehicle === 13 ? 6 : p.speed;
           p.progress = 0;
         }
       }
     }
-    if (s.mode === "color" && s.board[index2(p.x, p.y)] === 0) s.colors[index2(p.x, p.y)] = p.seat;
+    if (s.mode === "color" && !p.respawnAt && s.board[index2(p.x, p.y)] === 0 && !s.hazards.some((h) => (h.kind === "SpringBoard" || h.kind === "QuickSand") && h.x === p.x && h.y === p.y)) s.colors[index2(p.x, p.y)] = p.seat;
     if (s.flames[index2(p.x, p.y)] > s.tick) hit(s, p, s.owners[index2(p.x, p.y)]);
   }
   updateAttacks(s);
@@ -1843,10 +2299,11 @@ function step4(s, inputs) {
     return shot2.until > s.tick;
   });
   const exploded = /* @__PURE__ */ new Set();
-  for (let cycle = 0; cycle < 32; cycle++) {
+  for (let cycle = 0; cycle < 36; cycle++) {
     const b = s.bombs.find((b2) => b2.explodeAt <= s.tick && !exploded.has(b2.id));
     if (!b) break;
     exploded.add(b.id);
+    sound(s, "explode");
     ignite2(s, b.x, b.y, b.owner);
     for (const [dx, dy] of DIRS) for (let distance = 1; distance <= b.range; distance++) {
       const x = b.x + dx * distance, y = b.y + dy * distance;
@@ -1861,13 +2318,14 @@ function step4(s, inputs) {
   for (const p of s.players) if (p.alive && !p.respawnAt && s.flames[index2(p.x, p.y)] > s.tick) hit(s, p, s.owners[index2(p.x, p.y)]);
   for (const h of s.hazards) if (h.kind === "TurnTable" && s.tick % (HZ4 * 23) === 0) {
     const cells = s.board.map((v, i) => v === 0 && !s.items[i] && Math.abs(i % WIDTH2 - h.x) + Math.abs(Math.floor(i / WIDTH2) - h.y) <= 4 ? i : -1).filter((i) => i >= 0);
-    const pool = s.mode === "kill" ? KILL_PROPS : PROPS;
+    const pool = PROP_POOLS[s.mode];
     for (let i = 0; i < 2 && cells.length; i++) {
       const cell = cells.splice(Math.floor(random3(s) * cells.length), 1)[0];
       s.items[cell] = pool[Math.floor(random3(s) * pool.length)];
     }
   }
-  if (s.mode === "collect" && s.tick % (HZ4 * 6) === 0) spawnCoin(s);
+  if (s.mode === "collect" && s.tick % COIN_INTERVAL === 0) spawnCoin(s);
+  finishCrates(s);
   if (s.mode === "color") for (const p of s.players) {
     p.points = s.colors.filter((v) => v === p.seat).length;
     s.scores[p.seat - 1] = p.points;
@@ -1883,19 +2341,23 @@ function step4(s, inputs) {
       s.winner = ranks.length && ranks[0].score !== ranks[1]?.score ? ranks[0].seat : null;
     } else s.winner = null;
     if (s.winner !== null && s.mode === "arcade") s.scores[s.winner - 1]++;
+    sound(s, "result");
   }
 }
 function valid2(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
   const int = (n, lo, hi) => Number.isSafeInteger(n) && n >= lo && n <= hi;
+  if (!["easy", "normal", "hard"].includes(s.difficulty) || !int(s.crateOffset, 0, 2) || !Array.isArray(s.players) || !s.players.every((p) => p && int(p.character, 1, 4)) || new Set(s.players.map((p) => p.character)).size !== s.players.length) return false;
   if (s.gameId !== "9109-server" || s.version !== 1 || !int(s.round, 1, Number.MAX_SAFE_INTEGER) || !int(s.tick, 0, ROUND_TICKS3) || !int(s.rng, 0, 4294967295) || !int(s.nextId, 1, 1e7) || !MODES.includes(s.mode) || !MAPS.some((m) => m.id === s.mapId && m.theme === s.theme) || !["waiting", "playing", "finished"].includes(s.phase)) return false;
-  if (!Array.isArray(s.players) || s.players.length > 4 || new Set(s.players.map((p) => p?.seat)).size !== s.players.length || !s.players.every((p) => p && int(p.seat, 1, 4) && int(p.x, 0, 16) && int(p.y, 0, 14) && typeof p.alive === "boolean" && int(p.life, 0, 5) && int(p.dir, 0, 3) && int(p.moveDir, -1, 3) && int(p.progress, 0, 19) && int(p.moveTicks, 3, 20) && p.progress < p.moveTicks && int(p.speed, 4, 8) && int(p.capacity, 1, 8) && int(p.range, 1, 10) && int(p.lastAttack, 0, 1e9) && int(p.lastAlt, 0, 1e9) && int(p.invulnerable, 0, HZ4 * 10) && int(p.weapon, 0, 22) && int(p.ammo, 0, 3) && int(p.respawnAt, 0, ROUND_TICKS3 + RESPAWN_TICKS) && int(p.teleportUntil, 0, ROUND_TICKS3 + HZ4) && int(p.points, 0, 255) && int(p.kills, 0, 1e3) && int(p.deaths, 0, 1e3) && int(p.killedBy, 0, 4) && int(p.vehicle, 0, 14) && int(p.vehicleUntil, 0, ROUND_TICKS3 + HZ4 * 15) && typeof p.kick === "boolean" && typeof p.shield === "boolean")) return false;
+  if (!int(s.soundId, 0, 1e9) || !int(s.musicTrack, 1, 4) || !Array.isArray(s.sounds) || s.sounds.length > 64 || !s.sounds.every((e, i) => e && int(e.id, 1, s.soundId) && (i === 0 || e.id > s.sounds[i - 1].id) && (e.name === "result" || Object.prototype.hasOwnProperty.call(SOUND_FILES, e.name))) || !Array.isArray(s.vehiclePool) || s.vehiclePool.length !== (s.mode === "kill" ? 0 : 2) || new Set(s.vehiclePool).size !== s.vehiclePool.length || !s.vehiclePool.every((v) => (s.theme === "disce" ? [12, 13] : [12, 13, 14]).includes(v)) || !int(s.vehiclesLeft, 0, 4)) return false;
+  if (!Array.isArray(s.crateBursts) || s.crateBursts.length > 255 || !s.crateBursts.every((b) => b && int(b.cell, 0, 254) && int(b.born, 0, s.tick) && b.at === b.born + bomb2_brick_default.frames)) return false;
+  if (!Array.isArray(s.players) || s.players.length > 4 || new Set(s.players.map((p) => p?.seat)).size !== s.players.length || !s.players.every((p) => p && int(p.seat, 1, 4) && int(p.x, 0, 16) && int(p.y, 0, 14) && typeof p.alive === "boolean" && int(p.life, 0, 255) && int(p.dir, 0, 3) && int(p.moveDir, -1, 3) && int(p.progress, 0, 19) && int(p.moveTicks, 3, 20) && p.progress < p.moveTicks && int(p.speed, 4, 8) && int(p.capacity, 1, 9) && int(p.range, 1, 10) && int(p.lastAttack, 0, 1e9) && int(p.lastAlt, 0, 1e9) && int(p.invulnerable, 0, HZ4 * 10) && int(p.weapon, 0, 22) && int(p.ammo, 0, 3) && int(p.respawnAt, 0, ROUND_TICKS3 + RESPAWN_TICKS) && int(p.teleportUntil, 0, ROUND_TICKS3 + HZ4) && int(p.points, 0, 255) && int(p.kills, 0, 1e3) && int(p.deaths, 0, 1e3) && int(p.killedBy, 0, 4) && int(p.vehicle, 0, 14) && int(p.vehicleUntil, 0, ROUND_TICKS3 + HZ4 * 15) && typeof p.kick === "boolean" && typeof p.shield === "boolean")) return false;
   if (s.winner !== null && !s.players.some((p) => p.seat === s.winner)) return false;
   for (const [key, max] of [["board", 2], ["tiles", 59], ["items", 22], ["flames", ROUND_TICKS3 + 16], ["owners", 4], ["colors", 4]]) if (!Array.isArray(s[key]) || s[key].length !== 255 || !s[key].every((v) => int(v, 0, max))) return false;
   if (!Array.isArray(s.ack) || s.ack.length !== 4 || !s.ack.every((n) => int(n, 0, 1e9)) || !Array.isArray(s.scores) || s.scores.length !== 4 || !s.scores.every((n) => int(n, 0, 1e3))) return false;
   const owns = (owner) => s.players.some((p) => p.seat === owner);
-  if (!Array.isArray(s.bombs) || s.bombs.length > 32 || !s.bombs.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && int(b.range, 1, 10) && ["normal", "remote", "mine", "thrown"].includes(b.kind) && int(b.slide, -1, 3) && int(b.explodeAt, 0, ROUND_TICKS3 + FUSE) && int(b.armedAt, 0, ROUND_TICKS3 + 20))) return false;
+  if (!Array.isArray(s.bombs) || s.bombs.length > 36 || !s.bombs.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && int(b.range, 1, 10) && ["normal", "remote", "mine", "thrown"].includes(b.kind) && int(b.slide, -1, 3) && int(b.explodeAt, 0, ROUND_TICKS3 + FUSE) && int(b.armedAt, 0, ROUND_TICKS3 + 20))) return false;
   if (!Array.isArray(s.shots) || s.shots.length > 64 || !s.shots.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && Number.isFinite(b.x) && b.x >= 0 && b.x <= 17 && Number.isFinite(b.y) && b.y >= 0 && b.y <= 15 && Number.isFinite(b.vx) && Math.abs(b.vx) <= 1 && Number.isFinite(b.vy) && Math.abs(b.vy) <= 1 && [16, 19].includes(b.kind) && int(b.until, 0, ROUND_TICKS3 + HZ4 * 4))) return false;
   if (!s.players.every((p) => int(p.actionLock, 0, 25) && Array.isArray(p.weaponStock) && p.weaponStock.length <= 32 && p.weaponStock.every((kind) => Object.prototype.hasOwnProperty.call(WEAPON_USES, kind)) && (p.attack === null || p.attack && [15, 16, 19, 20, 21].includes(p.attack.kind) && int(p.attack.dir, 0, 3) && int(p.attack.x, 0, 16) && int(p.attack.y, 0, 14) && int(p.attack.born, 0, s.tick) && int(p.attack.at, p.attack.born, ROUND_TICKS3 + 25)))) return false;
   if (!Array.isArray(s.effects) || s.effects.length > 64 || !s.effects.every((e) => e && int(e.id, 1, s.nextId - 1) && owns(e.owner) && [20, 21].includes(e.kind) && int(e.x, 0, 16) && int(e.y, 0, 14) && int(e.dir, 0, 3) && int(e.born, 0, s.tick) && int(e.until, e.born, ROUND_TICKS3 + 25) && Array.isArray(e.cells) && e.cells.length <= 17 && e.cells.every((cell) => int(cell, 0, 254)))) return false;
@@ -1929,6 +2391,7 @@ function timeline(ctx, name, frame, x, y, feet = false) {
   return true;
 }
 function render2(canvas, s, seat) {
+  localSeat = seat;
   const ctx = canvas.getContext("2d");
   const cell = 30, left = 45, top = 66;
   ctx.clearRect(0, 0, BOMB2_CANVAS_WIDTH, 550);
@@ -1942,6 +2405,13 @@ function render2(canvas, s, seat) {
   ctx.fillText(`${THEMES[s.theme]} \xB7 ${["\u751F\u5B58", "\u51FB\u6740 10", "\u91D1\u5E01 10", "\u5360\u5730 50"][MODES.indexOf(s.mode)]}`, 180, 31);
   ctx.fillText(`${Math.max(0, Math.ceil((ROUND_TICKS3 - s.tick) / HZ4))} \u79D2`, 500, 31);
   draw(ctx, "background-" + s.theme, left, top, WIDTH2 * cell, HEIGHT2 * cell);
+  for (const burst of s.crateBursts) {
+    const im = asset2("brick-burst");
+    if (im.complete && im.naturalWidth) {
+      const frame = Math.min(bomb2_brick_default.frames - 1, s.tick - burst.born);
+      ctx.drawImage(im, frame * bomb2_brick_default.w, 0, bomb2_brick_default.w, bomb2_brick_default.h, left + (burst.cell % WIDTH2 + 0.5) * cell - bomb2_brick_default.w / 2, top + (Math.floor(burst.cell / WIDTH2) + 1) * cell - bomb2_brick_default.h, bomb2_brick_default.w, bomb2_brick_default.h);
+    }
+  }
   for (const h of s.hazards) {
     const px = left + h.x * cell, py = top + h.y * cell;
     if (h.kind === "QuickSand") draw(ctx, `quicksand-${h.dir}-1`, px, py, cell, cell);
@@ -1954,7 +2424,7 @@ function render2(canvas, s, seat) {
   for (let y = 0; y < HEIGHT2; y++) for (let x = 0; x < WIDTH2; x++) {
     const i = index2(x, y), px = left + x * cell, py = top + y * cell;
     if (s.colors[i]) {
-      ctx.fillStyle = ["", "#009aff66", "#ff97cc66", "#ffbd4566", "#59af5466"][s.colors[i]];
+      ctx.fillStyle = territoryColor(s, s.colors[i]);
       ctx.fillRect(px, py, cell, cell);
     }
     if (s.board[i] && s.tiles[i]) {
@@ -2011,14 +2481,14 @@ function render2(canvas, s, seat) {
   }
   for (const p of [...s.players].sort((a, b) => a.y - b.y)) {
     if (!p.alive || p.respawnAt > s.tick) {
-      if (p.deaths > 0 && s.tick - p.diedAt < RESPAWN_TICKS) timeline(ctx, "dead-" + (p.seat - 1), s.tick - p.diedAt, left + (p.x + 0.5) * cell, top + (p.y + 1) * cell, true);
+      if (p.deaths > 0 && s.tick - p.diedAt < RESPAWN_TICKS) timeline(ctx, "dead-" + (p.character - 1), s.tick - p.diedAt, left + (p.x + 0.5) * cell, top + (p.y + 1) * cell, true);
       continue;
     }
     const delta = p.moveDir < 0 ? [0, 0] : DIRS[p.moveDir], x = left + (p.x + 0.5 + delta[0] * p.progress / p.moveTicks) * cell, y = top + (p.y + 1 + delta[1] * p.progress / p.moveTicks) * cell;
-    const img2 = asset2(`hero-${p.seat - 1}-${["left", "up", "right", "down"][p.dir]}`), frames = 24, width = img2.naturalWidth / frames;
+    const img2 = asset2(`hero-${p.character - 1}-${["left", "up", "right", "down"][p.dir]}`), frames = 24, width = img2.naturalWidth / frames;
     ctx.globalAlpha = p.invulnerable > 0 && s.tick % 6 < 3 ? 0.5 : 1;
     if (p.vehicle === 12 || p.vehicle === 13 || p.vehicle === 14) {
-      draw(ctx, `vehicle-${p.seat - 1}-${p.vehicle === 12 ? "bulldozer" : p.vehicle === 13 ? "car" : "frog"}-${["left", "up", "right", "down"][p.dir]}`, x - 20, y - 42, 40, 42);
+      draw(ctx, `vehicle-${p.character - 1}-${p.vehicle === 12 ? "bulldozer" : p.vehicle === 13 ? "car" : "frog"}-${["left", "up", "right", "down"][p.dir]}`, x - 20, y - 42, 40, 42);
     } else if (img2.complete && img2.naturalWidth) {
       const h = 37, w = width / img2.naturalHeight * h;
       ctx.drawImage(img2, (p.moveDir < 0 ? 0 : Math.floor(s.tick / 2) % frames) * width, 0, width, img2.naturalHeight, x - w / 2, y - h, w, h);
@@ -2066,13 +2536,18 @@ var adapter2 = {
   step: step4,
   valid: valid2,
   render: render2,
+  characters: ["\u89D2\u8272 1", "\u89D2\u8272 2", "\u89D2\u8272 3", "\u89D2\u8272 4"],
+  difficulties: [{ id: "easy", label: "\u7B80\u5355" }, { id: "normal", label: "\u666E\u901A" }, { id: "hard", label: "\u56F0\u96BE" }],
+  confirm: (s) => audio.confirm(s, localSeat, s.winner),
+  setSound: (value) => audio.setSound(value),
+  setVolume: (value) => audio.setVolume(value),
   controls: "\u65B9\u5411\u952E / WASD \u79FB\u52A8\uFF1B\u7A7A\u683C\u4F7F\u7528\u6301\u6709\u6B66\u5668\uFF0C\u65E0\u6B66\u5668\u65F6\u653E\u70B8\u5F39\uFF1BJ / Shift \u4E5F\u53EF\u4F7F\u7528\u6B66\u5668\u6216\u5F15\u7206\u9065\u63A7\u5F39\u3002",
   maps: MAPS.map((m) => ({ id: m.id, label: `${THEMES[m.theme]} ${["one", "two", "three"].indexOf(m.id.split("-")[1]) + 1}` })),
   modes: [
     { id: "arcade", label: "\u751F\u5B58", description: "\u521D\u59CB 3 \u6761\u547D\uFF0C\u6700\u540E\u5B58\u6D3B\u8005\u83B7\u80DC\u3002" },
     { id: "kill", label: "\u51FB\u6740", description: "\u5148\u5F97 10 \u5206\u83B7\u80DC\uFF0C\u81EA\u6740\u6263 1 \u5206\uFF1B\u65E0\u9650\u590D\u6D3B\uFF0C\u57FA\u7840\u9524\u5B50\u53EF\u53CD\u590D\u4F7F\u7528\u3002" },
-    { id: "collect", label: "\u91D1\u5E01", description: "\u5148\u6536\u96C6 10 \u679A\u91D1\u5E01\u83B7\u80DC\uFF0C\u6B7B\u4EA1\u540E\u590D\u6D3B\u3002" },
-    { id: "color", label: "\u5360\u5730", description: "\u8D70\u8FC7\u683C\u5B50\u5360\u5730\uFF0C\u53EF\u8986\u76D6\u5BF9\u624B\u989C\u8272\uFF0C\u5148\u5360 50 \u683C\u83B7\u80DC\u3002" }
+    { id: "collect", label: "\u91D1\u5E01", description: "\u5148\u6536\u96C6 10 \u679A\u91D1\u5E01\u83B7\u80DC\uFF0C\u6B7B\u4EA1\u6389\u843D\u4E00\u534A\u91D1\u5E01\u540E\u590D\u6D3B\u3002" },
+    { id: "color", label: "\u5360\u5730", description: "\u8D70\u8FC7\u683C\u5B50\u5360\u5730\uFF0C\u53EF\u8986\u76D6\u5BF9\u624B\u989C\u8272\uFF0C\u5148\u5360 50 \u683C\u83B7\u80DC\uFF1B\u6B7B\u4EA1\u5931\u53BB\u5DF2\u5360\u9886\u7684\u683C\u5B50\u3002" }
   ],
   consumeInput(s, seat, input) {
     const p = s.players.find((p2) => p2.seat === seat);
@@ -2176,7 +2651,7 @@ function random4(s) {
   s.rng = Math.imul(s.rng, 1664525) + 1013904223 >>> 0;
   return s.rng / 4294967296;
 }
-function sound(s, name) {
+function sound2(s, name) {
   s.sounds.push({ id: ++s.soundId, tick: s.tick, name });
 }
 function effect(s, kind, x, y, life = 12, extra = {}) {
@@ -2274,7 +2749,7 @@ function beginWave(s) {
   s.waveReady = 0;
   s.message = `\u7B2C ${s.wave} \u6CE2`;
   s.messageUntil = s.tick + 65;
-  if (s.wave > 1) sound(s, "World.End.wav");
+  if (s.wave > 1) sound2(s, "World.End.wav");
 }
 function spawnEnemy(s, devil) {
   const map = room(s), locations = devil ? map.devilSpawns : map.zombieSpawns;
@@ -2299,7 +2774,7 @@ function explode(s, x, y, amount, owner, bang = 0, cluster = false) {
   const radius = (2 + Math.max(amount - 100, 0) * 5e-3) * 32;
   effect(s, "Effect.Explosion", x, y, 10, { scale: 1 + bang * 0.3 });
   effect(s, "Effect.ScorchMark", x, y, 500);
-  sound(s, "Effect.Explosion.wav");
+  sound2(s, "Effect.Explosion.wav");
   const area = radius + bang * 22;
   const amountAt = (target) => {
     const fraction = Math.hypot(target.x - x, target.y - y) / area;
@@ -2352,7 +2827,7 @@ function fire2(s, p) {
     const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL2) * CELL2 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL2) * CELL2 + 16;
     if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
     s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "fakewall" ? 100 : 60, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0 });
-    sound(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
+    sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
   } else if (gun.id === "grenade" || gun.id === "rocket") {
     const speed = gun.id === "grenade" ? Math.min(0.75, Math.max(0.25, (s.tick - p.triggerAt) / 25)) * 32 : 16;
     s.bullets.push({ id: ++s.nextId, x: p.x + Math.cos(p.dir) * 20, y: p.y + Math.sin(p.dir) * 20, z: gun.id === "grenade" ? 40 : 18, vz: 8, vx: Math.cos(p.dir) * speed, vy: Math.sin(p.dir) * speed, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: gun.id === "grenade" ? 60 : 100, bang: gun.bang, cluster: gun.cluster });
@@ -2368,7 +2843,7 @@ function fire2(s, p) {
     p.weapon = 0;
     p.ammo = -1;
   }
-  if (gun.sound) sound(s, "Weapon." + gun.sound + ".Fire.wav");
+  if (gun.sound) sound2(s, "Weapon." + gun.sound + ".Fire.wav");
 }
 function upgrade(s) {
   if (s.combo <= s.peakCombo) return;
@@ -2451,7 +2926,7 @@ function enemies(s) {
       hurt(s, p, 50);
       z.attack = 25;
       z.attackAt = s.tick;
-      sound(s, "Creature.Zombie.Attack.wav");
+      sound2(s, "Creature.Zombie.Attack.wav");
     } else if (z.devil && visible && distance < 160 && z.attack === 0) {
       z.dir = Math.atan2(p.y - z.y, p.x - z.x);
       z.attack = 60;
@@ -2482,11 +2957,11 @@ function projectiles(s) {
       }
       if (blocked(s, b.x + b.vx, b.y, 3)) {
         b.vx *= -0.25;
-        sound(s, "Shot.Grenade.Bounce.wav");
+        sound2(s, "Shot.Grenade.Bounce.wav");
       }
       if (blocked(s, b.x, b.y + b.vy, 3)) {
         b.vy *= -0.25;
-        sound(s, "Shot.Grenade.Bounce.wav");
+        sound2(s, "Shot.Grenade.Bounce.wav");
       }
       b.x += b.vx;
       b.y += b.vy;
@@ -2597,7 +3072,7 @@ function step5(s, inputs) {
   for (const b of s.barrels) if (b.kind === "mine" && b.hp > 0) {
     if (!b.detonateAt && s.tick >= b.armed && s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 27)) {
       b.detonateAt = s.tick + 50;
-      sound(s, "Object.Mine.Detonate.wav");
+      sound2(s, "Object.Mine.Detonate.wav");
     }
     if (b.detonateAt && s.tick >= b.detonateAt) b.hp = 0;
   }
@@ -2625,7 +3100,7 @@ function step5(s, inputs) {
     s.corpses.push({ x: z.x, y: z.y, dir: z.dir, character: z.devil ? "devil" : "zombie", deadAt: s.tick });
     effect(s, "Effect.BloodPool", z.x, z.y, 500);
     if (random4(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250 });
-    sound(s, "Creature.Zombie.Hit.wav");
+    sound2(s, "Creature.Zombie.Hit.wav");
   }
   s.zombies = s.zombies.filter((z) => z.hp > 0);
   for (const item of s.pickups) {
@@ -2639,7 +3114,7 @@ function step5(s, inputs) {
         p.ammo = p.inventory[p.weapon];
       }
       item.life = 0;
-      sound(s, "Object.Pickup.wav");
+      sound2(s, "Object.Pickup.wav");
     }
     item.life--;
   }
@@ -2655,12 +3130,12 @@ function step5(s, inputs) {
     p.inventory = WEAPONS3.map((_, i) => i === 0 ? -1 : 0);
     p.triggerDown = false;
     p.cooldown = 0;
-    sound(s, "Creature.Player.Scream.1.wav");
+    sound2(s, "Creature.Player.Scream.1.wav");
   }
   if (s.players.length && !s.players.some((p) => p.alive)) {
     s.phase = "finished";
     s.winner = 0;
-    sound(s, "World.End.wav");
+    sound2(s, "World.End.wav");
   }
   if (s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
   s.effects = s.effects.slice(-180);
@@ -2869,23 +3344,23 @@ var playing = /* @__PURE__ */ new Set();
 var ambient = /* @__PURE__ */ new Set();
 var gain = /* @__PURE__ */ new WeakMap();
 function stopAmbience() {
-  for (const audio of ambient) {
-    audio.pause();
-    playing.delete(audio);
+  for (const audio2 of ambient) {
+    audio2.pause();
+    playing.delete(audio2);
   }
   ambient.clear();
 }
 function setSound(value) {
   enabled = value;
   if (!value) {
-    for (const audio of playing) audio.pause();
+    for (const audio2 of playing) audio2.pause();
     playing.clear();
     ambient.clear();
   }
 }
 function setVolume(value) {
   volume = Math.max(0, Math.min(1, value));
-  for (const audio of playing) audio.volume = volume * (gain.get(audio) ?? 1);
+  for (const audio2 of playing) audio2.volume = volume * (gain.get(audio2) ?? 1);
 }
 function confirm(s) {
   if (s.round !== heardRound) {
@@ -2898,7 +3373,7 @@ function confirm(s) {
   for (const event of s.sounds) {
     if (event.id <= heardId) continue;
     if (event.name === "World.End.wav" && playing.size >= 12) {
-      const oldest = [...playing].find((audio) => !ambient.has(audio));
+      const oldest = [...playing].find((audio2) => !ambient.has(audio2));
       if (oldest) {
         oldest.pause();
         playing.delete(oldest);
@@ -2907,14 +3382,14 @@ function confirm(s) {
     if (enabled && volume > 0 && s.tick - event.tick <= 5 && playing.size < 12) {
       const file = boxhead_data_default.audio[event.name];
       if (!file) continue;
-      const audio = new Audio(base + file);
-      gain.set(audio, 1);
-      audio.volume = volume;
-      playing.add(audio);
-      const done = () => playing.delete(audio);
-      audio.onended = done;
-      audio.onerror = done;
-      void audio.play().catch(done);
+      const audio2 = new Audio(base + file);
+      gain.set(audio2, 1);
+      audio2.volume = volume;
+      playing.add(audio2);
+      const done = () => playing.delete(audio2);
+      audio2.onended = done;
+      audio2.onerror = done;
+      void audio2.play().catch(done);
     }
   }
   heardId = s.soundId;
@@ -2929,19 +3404,19 @@ function confirm(s) {
     ambientTick = s.tick;
     const name = `Creature.Zombie.Ambience.${ambientIndex % 4 + 1}.wav`;
     ambientIndex++;
-    const audio = new Audio(base + boxhead_data_default.audio[name]);
+    const audio2 = new Audio(base + boxhead_data_default.audio[name]);
     const mix = 0.4 * (count === 1 ? 0.3 : count === 2 ? 0.4 : count <= 4 ? 0.6 : count <= 8 ? 0.8 : 1);
-    gain.set(audio, mix);
-    audio.volume = volume * mix;
-    playing.add(audio);
-    ambient.add(audio);
+    gain.set(audio2, mix);
+    audio2.volume = volume * mix;
+    playing.add(audio2);
+    ambient.add(audio2);
     const done = () => {
-      playing.delete(audio);
-      ambient.delete(audio);
+      playing.delete(audio2);
+      ambient.delete(audio2);
     };
-    audio.onended = done;
-    audio.onerror = done;
-    void audio.play().catch(done);
+    audio2.onended = done;
+    audio2.onerror = done;
+    void audio2.play().catch(done);
   }
 }
 
@@ -4178,7 +4653,7 @@ var roundId = Date.now();
 function newState(room2, playing2) {
   const round = roundId = Math.max(Date.now(), roundId + 1);
   const adapter7 = getAdapter(room2.gameId);
-  if (adapter7) return { ...adapter7.create(round, playing2, activeSeats(room2), Math.floor(Math.random() * 4294967296), room2.auth?.options.map, room2.auth?.options.gameMode), gameId: adapter7.id };
+  if (adapter7) return { ...adapter7.create(round, playing2, activeSeats(room2), Math.floor(Math.random() * 4294967296), room2.auth?.options.map, room2.auth?.options.gameMode, room2.auth?.options), gameId: adapter7.id };
   return isBomb(room2) ? createGame(
     Math.floor(Math.random() * 4294967296),
     round,
@@ -4348,6 +4823,8 @@ var AuthorityEngine = class {
     const match = room2.auth;
     if (!match || room2.controllerId !== member.id || match.state.phase === "playing") return false;
     const adapter7 = getAdapter(room2.gameId);
+    const difficulty = message.difficulty ?? match.options.difficulty ?? "normal";
+    if ((isBomb(room2) || adapter7?.difficulties) && (typeof difficulty !== "string" || !["easy", "normal", "hard"].includes(difficulty))) return false;
     if (adapter7) {
       const map = message.map ?? match.options.map, requestedMode = message.gameMode ?? match.options.gameMode;
       if (requestedMode !== void 0 && typeof requestedMode !== "string") return false;
@@ -4355,10 +4832,11 @@ var AuthorityEngine = class {
       if (typeof map !== "string" || !adapter7.maps?.some((item) => item.id === map)) return false;
       if (adapter7.modes && !adapter7.modes.some((item) => item.id === mode)) return false;
       if (!adapter7.modes && message.gameMode !== void 0) return false;
-      const candidate2 = adapter7.create(match.state.round, false, activeSeats(room2), 123, map, mode);
+      const candidate2 = adapter7.create(match.state.round, false, activeSeats(room2), 123, map, mode, { ...match.options, difficulty: String(difficulty) });
       if (!adapter7.valid(candidate2)) return false;
       match.options.map = map;
       if (adapter7.modes) match.options.gameMode = mode;
+      if (adapter7.difficulties) match.options.difficulty = difficulty;
       this.begin(room2, false);
       return true;
     }
@@ -4366,9 +4844,22 @@ var AuthorityEngine = class {
     const options = { ...match.options };
     if (typeof message.map === "string") options.map = message.map;
     if (typeof message.loadout === "string") options.loadout = message.loadout;
+    options.difficulty = difficulty;
     const candidate = createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room2) });
     if (!validState(candidate)) return false;
     match.options = options;
+    this.begin(room2, false);
+    return true;
+  }
+  character(room2, member, value) {
+    const match = room2.auth, adapter7 = getAdapter(room2.gameId);
+    if (!match || member.seat == null || room2.seats[member.seat] !== member.id || match.state.phase === "playing" || !isBomb(room2) && !adapter7?.characters || !Number.isInteger(value) || Number(value) < 1 || Number(value) > 4) return false;
+    const character = Number(value);
+    if (match.state.players.some((p) => p.seat !== member.seat && room2.seats[p.seat] && p.character === character)) return false;
+    const characters = [1, 2, 3, 4];
+    for (const p of match.state.players) if (room2.seats[p.seat]) characters[p.seat - 1] = p.character;
+    characters[member.seat - 1] = character;
+    match.options.characters = characters;
     this.begin(room2, false);
     return true;
   }

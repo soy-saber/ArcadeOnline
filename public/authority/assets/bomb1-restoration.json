@@ -1,0 +1,134 @@
+{
+  "source": "games/3881/game.swf",
+  "sha256": "a2b4cc65115e4b6eb813962d80e91f1e65746a91f27e91d5e86fa1963ed5b54d",
+  "method": "Original linked sound bytes and transparent-bound crops of static FFDec frames; blast frames are four character centres, middles, and ends, not an animation.",
+  "assets": [
+    {
+      "path": "public/authority/assets/bomb1-rocket.mp3",
+      "source": "402_rocket.mp3.mp3",
+      "sha256": "5bdfb1337688c2b48b2baac5f1299f88b1ca78c1bae1449c3d9e059fbe1292ab"
+    },
+    {
+      "path": "public/authority/assets/bomb1-grenade.mp3",
+      "source": "399_grenade.mp3.mp3",
+      "sha256": "91cb39b280ec6c0178e9472348743b01dcfe21637dc2411acc3afdafce0913e7"
+    },
+    {
+      "path": "public/authority/assets/bomb1-mine.mp3",
+      "source": "390_bibi.wav.mp3",
+      "sha256": "98a72a089bf2441ee68f78c6842187ff31c0f9d6b1670eb903c0237ed85d8029"
+    },
+    {
+      "path": "public/authority/assets/bomb1-push.mp3",
+      "source": "400_pushBomb.mp3.mp3",
+      "sha256": "7d9c05039c5998aa9ca5e3affe4f34c334947b5c23d2862aef477d401eebd687"
+    },
+    {
+      "path": "public/authority/assets/bomb1-complete.mp3",
+      "source": "395_Bombit_-_level_complete.mp3",
+      "sha256": "774fae60c641cba14763fae5660f28239e9a8bc22529dd69df185d12aa24622b"
+    },
+    {
+      "path": "public/authority/assets/bomb1-failed.mp3",
+      "source": "397_Bombit_-_mission_failed.mp3",
+      "sha256": "2ec05450e783a4e4077606135ea33ab5b963f94d4a384f8183908422ee2dada1"
+    },
+    {
+      "path": "public/authority/assets/bomb1-menu.mp3",
+      "source": "396_Bombit_-_mainscreen.mp3",
+      "sha256": "7905a0b9a81896ff970a6413469dbf943b5a39b92cf3e73c377dac5c7f643f22"
+    },
+    {
+      "path": "public/authority/assets/bomb1-music1.mp3",
+      "source": "391_Bombit_-_level_1.mp3",
+      "sha256": "2710cd9b2600b1eccbbdc04b0626bea616367df937b3ee0559dbc9d26f8c8f6d"
+    },
+    {
+      "path": "public/authority/assets/bomb1-music2.mp3",
+      "source": "392_Bombit_-_level_2.mp3",
+      "sha256": "519120ca56b19dacdde22653f6eb36a3ffe86d5fdac7d396f1370a7af1242785"
+    },
+    {
+      "path": "public/authority/assets/bomb1-music3.mp3",
+      "source": "393_Bombit_-_level_3.mp3",
+      "sha256": "29343030fc049493e0ddd372ac751555adfa69121ee626b8922fab905678e88c"
+    },
+    {
+      "path": "public/authority/assets/bomb1-music4.mp3",
+      "source": "394_Bombit_-_level_4.mp3",
+      "sha256": "88180a304789403610279fc977005a66cecd39cbd4f0452191303bf70187ba4c"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-1.png",
+      "symbol": 274,
+      "frame": 1,
+      "sha256": "f547fa5fc1d25ac1ace0eff721b395d32c5837b97b8518a9f365a054bd460f05"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-2.png",
+      "symbol": 274,
+      "frame": 2,
+      "sha256": "ea8d6e627c6d8f09b3f2dde93cb97c9f8f1afee23452dedb265f37baa678554e"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-3.png",
+      "symbol": 274,
+      "frame": 3,
+      "sha256": "34441cff7b8507bd79fd6d4ba1adfde6caddcdf415f2ac178765c3320fc77903"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-4.png",
+      "symbol": 274,
+      "frame": 4,
+      "sha256": "7f0e83a440142fd16d659c9b98d771b1d1a3dd63f56101fd86b5ceccd1dbf2c5"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-5.png",
+      "symbol": 274,
+      "frame": 5,
+      "sha256": "76c7fe52ac1b6357a52d3ded7285d7333df9c7bdb2a362c8210722ce783fe319"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-6.png",
+      "symbol": 274,
+      "frame": 6,
+      "sha256": "7d8b46c820e3efcebb9d66fdb2c92d8636d9af1ab7ae0134ce336fc5a163cdd8"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-7.png",
+      "symbol": 274,
+      "frame": 7,
+      "sha256": "10a32024a940a22578c601d20432654163713d1c65e3b7ba0213545d68237a32"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-8.png",
+      "symbol": 274,
+      "frame": 8,
+      "sha256": "0f048239d73770a87c52041f79640d7f7fe05fd64350715e9af60a5d78acc476"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-9.png",
+      "symbol": 274,
+      "frame": 9,
+      "sha256": "2e2934000042ff96118ca830130edde4a4fadcccedcf9cad3f3d85b00b52b7da"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-10.png",
+      "symbol": 274,
+      "frame": 10,
+      "sha256": "7de7e324239e3aaffc8eff7022bae9596f6bffe5a1694d0732999da65b1c7183"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-11.png",
+      "symbol": 274,
+      "frame": 11,
+      "sha256": "e656afb1a3cf36e0ebbe13130d4fcadf79aec8cb04bd34a440b0db26c97e2e2e"
+    },
+    {
+      "path": "public/authority/assets/bomb1-blast-12.png",
+      "symbol": 274,
+      "frame": 12,
+      "sha256": "cb43ed9ed1285f953fc2489c00888175246957fe51d2efd2185ba13a443acd21"
+    }
+  ]
+}

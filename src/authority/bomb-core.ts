@@ -1,6 +1,8 @@
 // Bomb It reconstruction: a serializable 35 Hz simulation, independent of DOM,
 // rendering, wall clocks and transport. See SWF_RECONSTRUCTION.md for provenance.
 import { MapId, MapVisual, MAP_IDS, ORIGINAL_MAPS, ORIGINAL_SPAWNS, originalMap, generateOriginalMap } from "./maps";
+import { emitSound, type NativeSound } from './native-audio';
+import { BOMB_SOUND_FILES } from './bomb-sound';
 export const HZ = 35;
 export const STEP_MS = 1000 / HZ;
 export const WIDTH = 15;
@@ -25,10 +27,12 @@ export interface GameOptions {
   loadout: Weapon | "none";
   bots: number[];
   activeSeats?: number[];
+  difficulty?:'easy'|'normal'|'hard';
+  characters?:number[];
 }
 export const DEFAULT_OPTIONS: GameOptions = { mode: "online", map: ORIGINAL_MAPS[0].id, loadout: "none", bots: [] };
 export interface Player {
-  seat: number; x: number; y: number; dir: Direction; moveDir: Direction;
+  seat: number; character:number; x: number; y: number; dir: Direction; moveDir: Direction;
   progress: number; speed: number; alive: boolean; capacity: number; range: number;
   shield: boolean; invulnerable: number; lastBomb: number;
   life: number; push: boolean; weapon: Weapon | null; ammo: number; lastSpecial: number;
@@ -36,6 +40,7 @@ export interface Player {
   pushCooldown: number; actionLock: number;
 }
 export interface Bomb { id: number; x: number; y: number; owner: number; range: number; explodeAt: number; slide?: Direction; slideTick?: number }
+export interface Blast { x:number; y:number; owner:number; range:number; born:number; distance:number; active:boolean[]; lengths:number[] }
 export interface Special {
   id: number; kind: Weapon; owner: number; x: number; y: number; dir: Direction;
   born: number; until: number; distance: number;
@@ -46,6 +51,9 @@ export interface GameState {
   board: number[]; items: (Item | null)[]; flames: number[]; flameOwners: number[];
   players: Player[]; bombs: Bomb[]; specials: Special[]; ice: number[]; ack: number[]; inputs: Input[];
   mapVisual?: MapVisual;
+  blasts: Blast[];
+  dropWeapons: Weapon[];
+  soundId:number; sounds:NativeSound[]; musicTrack:number;
 }
 export const EMPTY_INPUT: Input = { seq: 0, dir: -1, bomb: 0, special: 0 };
 const DIRECTIONS: readonly (readonly [number, number])[] = [[-1, 0], [0, -1], [1, 0], [0, 1]];
@@ -60,7 +68,7 @@ function random(state: GameState): number {
 }
 
 export function createGame(seed: number, round = 1, playing = true, options: Partial<GameOptions> = {}): GameState {
-  const config = { ...DEFAULT_OPTIONS, ...options, bots: [...(options.bots || [])], activeSeats: [...(options.activeSeats || [1, 2])] };
+  const config = { ...DEFAULT_OPTIONS,difficulty:'normal' as const,characters:[1,2,3,4], ...options, bots: [...(options.bots || [])], activeSeats: [...(options.activeSeats || [1, 2])] };
   if (config.mode === "coop") config.bots = [...new Set([...config.bots, 3, 4])];
   if (config.mode === "online") config.bots = [];
   const count = config.mode === "coop" || config.mode === "online" ? 4 : 2;
@@ -69,8 +77,13 @@ export function createGame(seed: number, round = 1, playing = true, options: Par
     phase: playing ? "playing" : "waiting", winner: null,
     board: Array(WIDTH * HEIGHT).fill(0), items: Array(WIDTH * HEIGHT).fill(null),
     flames: Array(WIDTH * HEIGHT).fill(0), flameOwners: Array(WIDTH * HEIGHT).fill(0), ice: Array(WIDTH * HEIGHT).fill(0), bombs: [], specials: [],
-    ack: Array(count).fill(0), inputs: Array.from({ length: count }, () => ({ ...EMPTY_INPUT })), players: []
+    ack: Array(count).fill(0), inputs: Array.from({ length: count }, () => ({ ...EMPTY_INPUT })), players: [], blasts: [], dropWeapons: [],soundId:0,sounds:[],musicTrack:1
   };
+  // DefineSprite_554: shuffle the six types and expose a pair per arena.
+  const weapons:Weapon[]=[...WEAPONS];
+  for(let n=weapons.length-1;n>0;n--){const j=Math.floor(random(state)*(n+1));[weapons[n],weapons[j]]=[weapons[j],weapons[n]];}
+  state.dropWeapons=weapons.slice(0,2);
+  state.musicTrack=1+Math.floor(random(state)*4);
   const theme = originalMap(config.map);
   if (theme) {
     const generated = generateOriginalMap(theme.id, () => random(state));
@@ -83,18 +96,30 @@ export function createGame(seed: number, round = 1, playing = true, options: Par
   }
   const spawns = theme ? ORIGINAL_SPAWNS.map(([x, y], i) => [i + 1, x, y]) :
     [[1, 1, 1], [2, WIDTH - 2, HEIGHT - 2], [3, WIDTH - 2, 1], [4, 1, HEIGHT - 2]];
-  for (const [seat, x, y] of spawns.slice(0, count)) {
+  const used=new Set<number>();
+  const characterBySeat=new Map<number,number>();
+  // Allocate occupied seats first, so an empty seat cannot reserve a character.
+  for(const seat of [...config.activeSeats,...Array.from({length:count},(_,i)=>i+1)].filter((v,i,a)=>Number.isInteger(v)&&v>=1&&v<=count&&a.indexOf(v)===i)){
+    const value=config.characters?.[seat-1];
+    const requested=typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=4?value:seat;
+    const character=used.has(requested)?[1,2,3,4].find(c=>!used.has(c))!:requested;
+    used.add(character);characterBySeat.set(seat,character);
+  }
+  for (const [seat, sx, sy] of spawns.slice(0, count)) {
+    const character=characterBySeat.get(seat)!;
+    const [x,y]=theme?ORIGINAL_SPAWNS[character-1]:[sx,sy];
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
       if (x + dx > 0 && x + dx < WIDTH - 1 && y + dy > 0 && y + dy < HEIGHT - 1 && Math.abs(dx) + Math.abs(dy) <= 1) {
         state.board[index(x + dx, y + dy)] = 0;
       }
     }
     const active = config.mode !== "online" || config.activeSeats.includes(seat);
-    state.players.push({ seat, x, y, dir: 3, moveDir: -1, progress: 0, speed: 6,
-      alive: active, capacity: 1, range: 1, shield: false, invulnerable: 0, lastBomb: 0,
+    state.players.push({ seat,character, x, y, dir: 3, moveDir: -1, progress: 0, speed: 6,
+      alive: active, capacity: 1, range: 1, shield: false, invulnerable: active?60+Math.floor(random(state)*4):0, lastBomb: 0,
       life: active ? 1 : 0, push: false, weapon: config.loadout === "none" ? null : config.loadout,
       ammo: config.loadout === "none" ? 0 : config.loadout === "ice" ? 1 : 2,
       lastSpecial: 0, slow: 0, frozen: 0, moveTicks: 6, diedAt: 0, killedBy: 0, pushCooldown: 0, actionLock: 0 });
+    state.players[state.players.length-1].shield=config.difficulty==='easy';
   }
   return state;
 }
@@ -107,12 +132,13 @@ export function position(player: Player): { x: number; y: number } {
 
 function takeItem(state: GameState, player: Player): void {
   const cell = index(player.x, player.y);
+  if(!state.items[cell])return;
   switch (state.items[cell]) {
-    case "bomb": player.capacity = Math.min(8, player.capacity + 1); break;
+    case "bomb": player.capacity = Math.min(WIDTH*HEIGHT, player.capacity + 1); break;
     case "range": player.range = Math.min(10, player.range + 1); break;
     case "speed": player.speed = Math.max(3, player.speed - 1); break;
     case "shield": player.shield = true; break;
-    case "life": player.life = Math.min(5, player.life + 1); break;
+    case "life": player.life = Math.min(WIDTH*HEIGHT+1, player.life + 1); break;
     case "push": player.push = true; break;
     default: {
       const item = state.items[cell];
@@ -120,6 +146,7 @@ function takeItem(state: GameState, player: Player): void {
     }
   }
   state.items[cell] = null;
+  emitSound(state,'pickup');
 }
 
 function placeBomb(state: GameState, player: Player): void {
@@ -128,13 +155,14 @@ function placeBomb(state: GameState, player: Player): void {
   if (state.bombs.some((bomb) => bomb.x === player.x && bomb.y === player.y)) return;
   state.bombs.push({ id: state.nextBomb++, x: player.x, y: player.y, owner: player.seat,
     range: player.range, explodeAt: state.tick + FUSE_TICKS });
+  emitSound(state,'place');
 }
 
 function breakCrate(state: GameState, cell: number): void {
   if (state.board[cell] !== 2) return;
   state.board[cell] = 0;
   if (random(state) >= .65) return;
-  if (random(state) >= .8) state.items[cell] = WEAPONS[Math.floor(random(state) * WEAPONS.length)];
+  if (random(state) >= .8) state.items[cell] = state.dropWeapons[Math.floor(random(state) * 2)];
   else {
     const roll = random(state);
     state.items[cell] = roll < .01 ? "life" : roll < .15 ? "push" : roll < .4 ? "bomb" :
@@ -150,8 +178,8 @@ function passable(state: GameState, x: number, y: number): boolean {
 function ignite(state: GameState, x: number, y: number, until = state.tick + 12, owner = 0): void {
   if (!inside(x, y) || state.board[index(x, y)] === 1) return;
   const cell = index(x, y);
-  // Existing overlapping fire keeps its origin; chained bombs own their new rays.
-  if (state.flames[cell] <= state.tick) state.flameOwners[cell] = owner;
+  // Original expHeroNum is assigned when each advancing arm reaches a cell.
+  state.flameOwners[cell] = owner;
   state.flames[cell] = Math.max(state.flames[cell], until);
   state.ice[cell] = 0;
   breakCrate(state, cell);
@@ -160,8 +188,8 @@ function ignite(state: GameState, x: number, y: number, until = state.tick + 12,
 function explodeBombs(state: GameState): void {
   const queue = state.bombs.filter((bomb) => bomb.explodeAt <= state.tick || state.flames[index(bomb.x, bomb.y)] > state.tick);
   const exploded = new Set<number>();
-  const flame = (x: number, y: number, owner: number): void => {
-    ignite(state, x, y, state.tick + 12, owner);
+  const flame = (x: number, y: number, owner: number, until:number): void => {
+    ignite(state, x, y, until, owner);
     const other = state.bombs.find((bomb) => bomb.x === x && bomb.y === y && !exploded.has(bomb.id));
     if (other) queue.push(other);
   };
@@ -169,18 +197,29 @@ function explodeBombs(state: GameState): void {
     const bomb = queue[i];
     if (exploded.has(bomb.id)) continue;
     exploded.add(bomb.id);
-    flame(bomb.x, bomb.y, bomb.owner);
-    for (const [dx, dy] of DIRECTIONS) for (let distance = 1; distance <= bomb.range; distance++) {
-      const x = bomb.x + dx * distance, y = bomb.y + dy * distance;
-      if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) break;
-      const cell = index(x, y);
-      if (state.board[cell] === 1) break;
-      const crate = state.board[cell] === 2;
-      flame(x, y, bomb.owner);
-      if (crate) break;
-    }
+    emitSound(state,'explode');
+    flame(bomb.x, bomb.y, bomb.owner, state.tick+bomb.range+10);
+    // The source attaches the centre immediately; its onEnterFrame advances
+    // four arms one cell per frame, then retains all cells for ten frames.
+    state.blasts.push({x:bomb.x,y:bomb.y,owner:bomb.owner,range:bomb.range,born:state.tick,distance:0,active:[true,true,true,true],lengths:[0,0,0,0]});
   }
   state.bombs = state.bombs.filter((bomb) => !exploded.has(bomb.id));
+}
+
+function advanceBlasts(state:GameState):void {
+  for(const blast of state.blasts){
+    if(blast.distance>=blast.range)continue;
+    blast.distance++;
+    for(let dir=0;dir<4;dir++)if(blast.active[dir]){
+      const [dx,dy]=DIRECTIONS[dir],x=blast.x+dx*blast.distance,y=blast.y+dy*blast.distance;
+      if(!inside(x,y)||state.board[index(x,y)]===1){blast.active[dir]=false;continue;}
+      const crate=state.board[index(x,y)]===2;
+      blast.lengths[dir]=blast.distance;
+      ignite(state,x,y,blast.born+blast.range+10,blast.owner);
+      if(crate)blast.active[dir]=false;
+    }
+  }
+  state.blasts=state.blasts.filter(b=>state.tick<b.born+b.range+10);
 }
 
 function useSpecial(state: GameState, player: Player): void {
@@ -197,6 +236,7 @@ function useSpecial(state: GameState, player: Player): void {
   player.actionLock = SPECIAL_RECOVERY_TICKS;
   player.ammo--;
   if (!player.ammo) player.weapon = null;
+  if(kind==='rocket'||kind==='grenade'||kind==='mine')emitSound(state,kind);
 }
 
 // Hidden traps are excluded from opponents' and spectators' snapshots as well
@@ -214,25 +254,26 @@ function updateSpecials(state: GameState): void {
       const distance = Math.floor((age * (age + 1) / 2 + 15) / 30);
       while (s.distance < distance && s.until > state.tick) {
         const x = s.x + dx, y = s.y + dy;
-        if (!inside(x, y) || state.board[index(x, y)] === 1) { ignite(state, s.x, s.y, state.tick + 12, s.owner); s.until = state.tick; break; }
+        if (!inside(x, y) || state.board[index(x, y)] === 1) { ignite(state, s.x, s.y, state.tick + 12, s.owner);emitSound(state,'explode'); s.until = state.tick; break; }
         s.x = x; s.y = y; s.distance++;
         if (state.board[index(x, y)] === 2 || state.bombs.some((b) => b.x === x && b.y === y) ||
             state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - x, position(p).y - y) < .6)) {
-          ignite(state, x, y, state.tick + 12, s.owner); s.until = state.tick;
+          ignite(state, x, y, state.tick + 12, s.owner);emitSound(state,'explode'); s.until = state.tick;
         }
       }
       // Also collide with a player entering the current cell between advances.
-      if (state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < .5)) {
-        ignite(state, s.x, s.y, state.tick + 12, s.owner); s.until = state.tick;
+      if (s.until>state.tick&&state.players.some((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < .5)) {
+        ignite(state, s.x, s.y, state.tick + 12, s.owner);emitSound(state,'explode'); s.until = state.tick;
       }
     } else if (s.kind === "mine" || s.kind === "gas") {
       const victim = state.players.find((p) => p.alive && p.seat !== s.owner && Math.hypot(position(p).x - s.x, position(p).y - s.y) < .5);
       if (victim || state.flames[index(s.x, s.y)] > state.tick) {
-        if (s.kind === "mine") ignite(state, s.x, s.y, state.tick + 12, s.owner);
+        if (s.kind === "mine") {ignite(state, s.x, s.y, state.tick + 12, s.owner);emitSound(state,'explode');}
         else if (victim) victim.slow = 600;
         s.until = state.tick;
       }
     } else if (s.kind === "grenade" && state.tick >= s.until) {
+      emitSound(state,'explode');
       const x = s.x + dx * 2, y = s.y + dy * 2;
       ignite(state, x, y, state.tick + 12, s.owner);
       for (const [a, b] of DIRECTIONS) ignite(state, x + a, y + b, state.tick + 12, s.owner);
@@ -388,6 +429,7 @@ export function step(state: GameState, inputs: readonly Input[]): void {
       if (pushed && player.push && player.pushCooldown === 0 && passable(state, x + dx, y + dy)) {
         pushed.x += dx; pushed.y += dy; pushed.slide = input.dir; pushed.slideTick = 0;
         player.pushCooldown = PUSH_COOLDOWN_TICKS;
+        emitSound(state,'push');
       }
       if (passable(state, x, y)) {
         player.moveDir = input.dir;
@@ -402,10 +444,11 @@ export function step(state: GameState, inputs: readonly Input[]): void {
     }
   }
   updateSpecials(state);
+  advanceBlasts(state);
   explodeBombs(state);
   // A chain can ignite a mine or erase a gas trap during this same tick.
   for (const s of state.specials) if ((s.kind === "mine" || s.kind === "gas") && state.flames[index(s.x, s.y)] > state.tick) {
-    if (s.kind === "mine") ignite(state, s.x, s.y, state.tick + 12, s.owner);
+    if (s.kind === "mine") {ignite(state, s.x, s.y, state.tick + 12, s.owner);emitSound(state,'explode');}
     s.until = state.tick;
   }
   state.specials = state.specials.filter((s) => s.until > state.tick);
@@ -417,8 +460,13 @@ export function step(state: GameState, inputs: readonly Input[]): void {
     if (state.flames[index(Math.round(pos.x), Math.round(pos.y))] > state.tick) {
       player.frozen = 0;
       if (player.shield) { player.shield = false; player.invulnerable = 60; }
-      else if (--player.life > 0) player.invulnerable = 60;
-      else { player.alive = false; player.diedAt = state.tick; player.killedBy = state.flameOwners[index(Math.round(pos.x), Math.round(pos.y))]; }
+      else {
+        player.life=Math.max(0,player.life-1);
+        // Original human players leave the arena on an unshielded hit;
+        // the life pickup is a stage stock, not an extra hit-point shield.
+        if(state.options.mode==='online'||!state.options.bots.includes(player.seat)||player.life===0){player.alive=false;player.diedAt=state.tick;player.killedBy=state.flameOwners[index(Math.round(pos.x),Math.round(pos.y))];}
+        else player.invulnerable=60;
+      }
     }
   }
   const survivors = state.players.filter((player) => player.alive);
@@ -426,6 +474,7 @@ export function step(state: GameState, inputs: readonly Input[]): void {
   if (teams.size < 2 || state.tick >= ROUND_TICKS) {
     state.phase = "finished";
     state.winner = teams.size === 1 ? [...teams][0] : 0;
+    emitSound(state,'result');
   }
 }
 
@@ -443,9 +492,13 @@ export function validState(value: unknown): value is GameState {
   const s = value as GameState;
   const integer = (v: number, low: number, high: number) => Number.isInteger(v) && v >= low && v <= high;
   const o = s.options;
+  if(!o||!['easy','normal','hard'].includes(o.difficulty||'')||!Array.isArray(o.characters)||o.characters.length!==4||!o.characters.every(c=>integer(c,1,4)))return false;
+  if(!integer(s.soundId,0,1e9)||!integer(s.musicTrack,1,4)||!Array.isArray(s.sounds)||s.sounds.length>64||!s.sounds.every((e,i)=>e&&integer(e.id,1,s.soundId)&&(i===0||e.id>s.sounds[i-1].id)&&(e.name==='result'||Object.prototype.hasOwnProperty.call(BOMB_SOUND_FILES,e.name))))return false;
   if (!o || !["duel", "practice", "coop", "online"].includes(o.mode) || !MAP_IDS.includes(o.map) ||
       !["none", ...WEAPONS].includes(o.loadout)) return false;
   const count = o.mode === "coop" || o.mode === "online" ? 4 : 2;
+  if(!Array.isArray(s.dropWeapons)||s.dropWeapons.length!==2||new Set(s.dropWeapons).size!==2||!s.dropWeapons.every(w=>WEAPONS.includes(w))||
+    !Array.isArray(s.blasts)||s.blasts.length>WIDTH*HEIGHT*20||!s.blasts.every(b=>b&&integer(b.x,0,WIDTH-1)&&integer(b.y,0,HEIGHT-1)&&integer(b.owner,1,count)&&integer(b.range,1,10)&&integer(b.born,0,s.tick)&&integer(b.distance,0,b.range)&&Array.isArray(b.active)&&b.active.length===4&&b.active.every(v=>typeof v==='boolean')&&Array.isArray(b.lengths)&&b.lengths.length===4&&b.lengths.every(v=>integer(v,0,b.distance))))return false;
   if (!Array.isArray(o.bots) || o.bots.length > count || new Set(o.bots).size !== o.bots.length ||
       !o.bots.every((v) => integer(v, 1, count)) || (o.mode === "duel" && o.bots.length > 0) ||
       (o.mode === "coop" && (!o.bots.includes(3) || !o.bots.includes(4))) || (o.mode === "online" && o.bots.length > 0)) return false;
@@ -465,11 +518,11 @@ export function validState(value: unknown): value is GameState {
       !theme.landmarkFrames.some((frame) => frame === s.mapVisual!.landmark) ||
       !Array.isArray(s.mapVisual.tiles) || s.mapVisual.tiles.length !== WIDTH * HEIGHT ||
       !s.mapVisual.tiles.every((frame) => frame === 0 || theme.crateFrames.some((v) => v === frame) || theme.wallFrames.some((v) => v === frame)))) return false;
-  if (!Array.isArray(s.players) || s.players.length !== count || !s.players.every((p, i) => p && p.seat === i + 1 &&
+  if (!Array.isArray(s.players) || s.players.length !== count || !s.players.every((p, i) => p && p.seat === i + 1 && integer(p.character,1,4)&&
       integer(p.x, 0, WIDTH - 1) && integer(p.y, 0, HEIGHT - 1) && integer(p.dir, -1, 3) &&
       integer(p.moveDir, -1, 3) && integer(p.speed, 3, 6) && integer(p.moveTicks, 3, 20) && integer(p.progress, 0, p.moveTicks - 1) &&
-      integer(p.capacity, 1, 8) && integer(p.range, 1, 10) && integer(p.invulnerable, 0, 60) &&
-      integer(p.life, 0, 5) && typeof p.push === "boolean" && (p.weapon === null || WEAPONS.includes(p.weapon)) &&
+      integer(p.capacity, 1, WIDTH*HEIGHT) && integer(p.range, 1, 10) && integer(p.invulnerable, 0, 63) &&
+      integer(p.life, 0, WIDTH*HEIGHT+1) && typeof p.push === "boolean" && (p.weapon === null || WEAPONS.includes(p.weapon)) &&
       integer(p.ammo, 0, 2) && integer(p.lastSpecial, 0, 1e9) && integer(p.slow, 0, 600) && integer(p.frozen, 0, 300) &&
       integer(p.diedAt, 0, ROUND_TICKS) && integer(p.killedBy, 0, count) &&
       integer(p.pushCooldown, 0, PUSH_COOLDOWN_TICKS) && integer(p.actionLock, 0, SPECIAL_RECOVERY_TICKS) &&
@@ -479,7 +532,7 @@ export function validState(value: unknown): value is GameState {
     Array.isArray(s.specials) && s.specials.length <= 64 && s.specials.every((v) => v && integer(v.id, 1, 1e6) &&
       WEAPONS.includes(v.kind) && integer(v.owner, 1, count) && integer(v.x, 0, WIDTH - 1) && integer(v.y, 0, HEIGHT - 1) &&
       integer(v.dir, 0, 3) && integer(v.born, 0, ROUND_TICKS) && integer(v.until, v.born, ROUND_TICKS * 2) && integer(v.distance, 0, 1000)) &&
-    Array.isArray(s.bombs) && s.bombs.length <= count * 8 && s.bombs.every((b) => b && integer(b.id, 1, 1e6) &&
+    Array.isArray(s.bombs) && s.bombs.length <= WIDTH*HEIGHT && s.bombs.every((b) => b && integer(b.id, 1, 1e6) &&
       integer(b.x, 0, WIDTH - 1) && integer(b.y, 0, HEIGHT - 1) && integer(b.owner, 1, count) &&
       (b.slide === undefined || integer(b.slide, -1, 3)) && (b.slideTick === undefined || integer(b.slideTick, 0, 1)) &&
       integer(b.range, 1, 10) && integer(b.explodeAt, 0, ROUND_TICKS + FUSE_TICKS));

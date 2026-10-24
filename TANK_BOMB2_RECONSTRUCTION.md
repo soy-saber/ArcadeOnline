@@ -1,5 +1,7 @@
 # Tank Trouble 2 / Bomb It 2 server authority reconstruction
 
+2026-10-23 泡泡堂2后续修复：已接入原音频/四种关卡音乐、角色/难度、原金币/占地死亡规则与各模式道具权重；移除车辆15秒消失，补车辆差异、原11帧障碍销毁和动画后掉落、原五帧障碍分布。下方“声音尚未接线”“统一车辆时间”“三种箱子外观”等为历史状态；当前行为与剩余连续物理/完整流程限制见 [BOMB_RESTORATION.md](BOMB_RESTORATION.md)。
+
 2026-10-23 原作对照补正：泡泡堂2恢复装备武器后的主攻击替换、所有模式死亡后清空武器/强化、原作三个速度级别，以及头顶原版 HUD 武器图标/次数和右侧玩家状态面板。遥控弹使用原引爆图标；姓名按窗口/全屏缩放并错行避让。来源、实际浏览器拾取/消耗测试与剩余近似范围见 [FIDELITY_AUDIT.md](FIDELITY_AUDIT.md)。
 
 These modules are native TypeScript simulations. The server owns movement, collision, attacks, ammunition, deaths, respawns, timers and final results; clients draw snapshots. They do not run Flash, accept client positions, spawn bots or treat imported Flash code as trusted executable code. `Input.attack` and `Input.alt` are monotonic counters, with `consumeInput` handling expired transport commands. Both adapters use seeded xorshift RNG and have no DOM dependencies outside `render`.

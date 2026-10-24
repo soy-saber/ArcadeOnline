@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10272b">
   <title>在线联机 - ArcadeOnline</title>
   <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/authority/style.css?v=original-hud-20261023">
+  <link rel="stylesheet" href="/authority/style.css?v=bomb-restoration-20261023">
 <link rel="stylesheet" href="/theme.css?v=soft-faces-20261022">
   <script src="/arcade.js"></script>
 </head>
@@ -41,7 +41,7 @@
           <button id="start-game" class="btn authority-ready" disabled>准备</button>
           <p id="mode-note" class="native-note">至少两人入座，全员准备后自动开始。结束 3 秒后自动开下一局；取消准备可退出下一局。</p>
           <p id="score-line" class="native-note"></p>
-          <div id="round-options" class="round-options"><label for="game-mode" hidden>模式<select id="game-mode"></select></label><label for="game-map">地图<select id="game-map"></select></label><label for="game-loadout">开局武器<select id="game-loadout"><option value="none">地图拾取</option><option value="rocket">火箭</option><option value="mine">地雷</option><option value="grenade">手榴弹</option><option value="gas">汽弹</option><option value="ice">冰箭</option><option value="fire">火焰箭</option></select></label></div>
+          <div id="round-options" class="round-options"><label for="game-mode" hidden>模式<select id="game-mode"></select></label><label for="game-map">地图<select id="game-map"></select></label><label for="game-difficulty" hidden>难度<select id="game-difficulty"><option value="easy">简单</option><option value="normal" selected>普通</option><option value="hard">困难</option></select></label><label for="game-character" hidden>我的角色<select id="game-character"><option value="1">角色 1</option><option value="2">角色 2</option><option value="3">角色 3</option><option value="4">角色 4</option></select></label><label for="game-loadout">开局武器<select id="game-loadout"><option value="none">地图拾取</option><option value="rocket">火箭</option><option value="mine">地雷</option><option value="grenade">手榴弹</option><option value="gas">汽弹</option><option value="ice">冰箭</option><option value="fire">火焰箭</option></select></label></div>
           <p id="host-line" class="native-note"></p>
           <p id="connection-note" class="native-note" role="status">正在连接房间…</p><input id="invite-link" aria-label="邀请链接" readonly hidden>
         </section>
@@ -54,6 +54,6 @@
     </div>
     <details class="panel authority-metrics"><summary>连接诊断</summary><dl><dt>最近状态更新</dt><dd id="metrics-age">等待同步</dd><dt>本地输入到绘制</dt><dd id="metrics-predict">操作后采样</dd><dt>收发数据</dt><dd id="metrics-bandwidth">—</dd></dl></details>
   </main>
-  <script src="/authority/game.js?v=original-hud-20261023"></script>
+  <script src="/authority/game.js?v=bomb-restoration-20261023"></script>
 </body>
 </html>

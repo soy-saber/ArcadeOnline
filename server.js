@@ -620,6 +620,10 @@ wss.on("connection", (ws) => {
         if (member && authorityGames.has(member.room.gameId) && authority.options(member.room, member, msg)) pushState(member.room);
         break;
       }
+      case "authCharacter": {
+        if(member&&authorityGames.has(member.room.gameId)&&authority.character(member.room,member,msg.character))pushState(member.room);
+        break;
+      }
 
       case "in": {
         if (!member || member.seat == null) return;
