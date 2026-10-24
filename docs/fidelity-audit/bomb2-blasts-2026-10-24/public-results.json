@@ -1,0 +1,41 @@
+{
+  "origin": "https://223.109.141.251",
+  "at": "2026-10-24T05:36:46.506Z",
+  "results": [
+    {
+      "game": "3881-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true
+    },
+    {
+      "game": "9109-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true,
+      "continuousMovement": true,
+      "remotePixelMovement": true,
+      "nativeBombArt": true,
+      "conveyorRotation": [
+        2,
+        4
+      ],
+      "nativeFlameCentreAndEnd": true,
+      "liveFlameGroupFullRecovery": true,
+      "nativeCombatAssetsBeforeReady": true
+    }
+  ],
+  "errors": []
+}
