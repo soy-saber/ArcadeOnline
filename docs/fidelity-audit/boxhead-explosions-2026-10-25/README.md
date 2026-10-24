@@ -1,5 +1,7 @@
 # 僵尸危机3：强化爆炸、集束弹与手雷过程
 
+发布更新：实现 `84c75ae` 已于北京时间10月25日01:30部署腾讯云。157个公网文件SHA256与固定包一致，实际四浏览器WSS联机回归通过，见 [公网部署](public-deployment.json)、[哈希](public-hashes.json)、[四人过程](public-four-player-results.json) 和 [截图](public-four-player.png)。下述44击杀自然解锁专项保留其本地范围，不改写为公网运行。
+
 基线 `561f0ff`，原作资源 `games/50737/game.swf` 未改写。[来源审阅](source-review.json) 保存SWF、14个AS2类与三个原图的SHA256；运行与发布版本分别按 [本地验证](verification.json) 和 [部署记录](../../../DEPLOYMENT_STATUS.md) 判断。
 
 原 `CThing_Effect_Explosion.Process_Init` 使BigBang/BiggerBang产生2/3个子爆炸：距离一个32像素网格、随机角、同伤害、延迟2～5且子爆炸无强化/集束标记。每个爆炸仍使用原伤害决定的半径和50%/75%距离衰减；不再额外扩大半径或图像。`Process_Delay` 先减再判断，delay2在第三次回调生效。

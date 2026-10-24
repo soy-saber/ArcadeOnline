@@ -1,6 +1,14 @@
 **ArcadeOnline 公网部署记录 · 2026-10-25**
 
-## 当前腾讯云发布：916cafe
+## 当前腾讯云发布：84c75ae
+
+2026-10-25 01:30（北京时间）已将僵尸危机3强化爆炸/集束弹/手雷补正 `84c75ae` 发布至 **https://43.142.142.215/**。发布包50.7MiB、4960文件，SHA256 `0dc30f331f25193e75ca0fe63092dd0fcc53fca674738f0911d548b7a58e72f1`；发布清单与构建来源校验通过。当前目录 `/opt/arcade-online/releases/20261024173002-88743`，上一版 `/opt/arcade-online/releases/20261024164249-77619`；上传目录 `/root/arcade-deploy-20261025-boxhead-0dc30f33/release`。应用/Caddy/coturn均active/enabled，健康检查正常。
+
+原2/3次延迟子爆炸、四枚原集束弹片/寿命/运动、手雷蓄力与落地当帧反射移动、原尺寸爆炸2.5帧回调、待执行图的完整/增量恢复及地图油桶生命/伤害已补正；用户要求的共享大视野、服务器权威、Q/E和方向替代键继续保留。248单测、5部署测试、正常射击44次击杀解锁后的本地双浏览器投雷及四人联机回归通过，见 [修复说明](BOXHEAD_RECONSTRUCTION.md)。精确Mapwho碰撞/执行相位、受击/AI、震屏/亮度及角色/难度/完整流程仍有缺口。
+
+公网八款资源/封面/背景/旧入口关闭/临时TURN凭据/WSS入房探针通过；157文件SHA256与固定发布清单一致，包含原集束弹片/手雷/爆炸和更新后的浏览器入口。僵尸危机3真实四浏览器入座/准备、四席位移动/攻击、全屏、完整/增量同步、暂停/完整恢复、离座/换图/再次开局通过。见 [公网部署状态](docs/fidelity-audit/boxhead-explosions-2026-10-25/public-deployment.json)、[文件校验](docs/fidelity-audit/boxhead-explosions-2026-10-25/public-hashes.json)、[四人结果](docs/fidelity-audit/boxhead-explosions-2026-10-25/public-four-player-results.json) 和 [截图](docs/fidelity-audit/boxhead-explosions-2026-10-25/public-four-player.png)。44次击杀/升级投雷专项本轮仅在本地运行，不冒称公网夹具验收；其余七款未重新做完整操作套件。本轮未测速或验收实际TURN中继，四浏览器仍来自同一Windows工作机。
+
+## 916cafe发布历史
 
 2026-10-25 00:42（北京时间）SSH恢复后，已将来源 `916cafe8b461658cc26f5698731e66f55362a6d8` 部署至 **https://43.142.142.215/**。包含泡泡堂2原护盾/无敌、原尺寸人物、重叠火焰/事件计分，以及八款游戏所有席位的 WASD/方向键替代。发布包45.0MiB、4937文件，SHA256 `bde46227da50b5a54578ea62b6a2668f4c84a712520a755c09074c644620b42d`；完整发布清单和构建来源校验通过。
 

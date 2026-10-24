@@ -1,0 +1,39 @@
+{
+  "verifiedAt": "2026-10-24T17:32:16.838460+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "84c75ae",
+  "archiveSha256": "0dc30f331f25193e75ca0fe63092dd0fcc53fca674738f0911d548b7a58e72f1",
+  "releaseFileCount": 4960,
+  "current": "/opt/arcade-online/releases/20261024173002-88743",
+  "previous": "/opt/arcade-online/releases/20261024164249-77619",
+  "remoteUpload": "/root/arcade-deploy-20261025-boxhead-0dc30f33/release",
+  "nativeBuildMatchesSource": true,
+  "releaseManifestVerified": true,
+  "applicationLoopbackHealth": "ok",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "browserSha256": "ed8b45794873878eaee8c62fdcb4d4f0f49a9082edd83990e57b09a4e2ae2969",
+  "runtimeSha256": "661203e688394721c9439441ae4347fe1b9559a4aea980c135032674f93abad5",
+  "publicProbe": "PASS https://43.142.142.215: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.",
+  "hashedFiles": 157,
+  "publicFourPlayerGame": "50737-server",
+  "publicSuiteMethod": "Same assertions as tracked tests/expanded-e2e.cjs; public URL, DOMContentLoaded, 60s navigation and15s recovery readiness; installed headless Chrome, GPU disabled. Four browser contexts on one Windows workstation.",
+  "scopeLimits": [
+    "Natural44kill unlock/cluster grenade scenario is local, not replayed with public fixtures",
+    "No new public bandwidth or actual TURN relay measurement",
+    "Other seven games have resource/hash/WSS probe, not new gameplay suites",
+    "Remaining native fidelity gaps preserved in source-review.json"
+  ]
+}
