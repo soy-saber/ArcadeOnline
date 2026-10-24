@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-24T05:00:17.335Z",
+  "scope": "Authoritative core, same-tick two-human input reproduction; no browser or live-server claim",
+  "before": {
+    "bomb": {
+      "x": 5,
+      "y": 2,
+      "direction": 1
+    },
+    "secondPlayerCooldown": 14,
+    "pushSounds": 2
+  },
+  "after": {
+    "bomb": {
+      "x": 5,
+      "y": 3,
+      "direction": 2
+    },
+    "secondPlayerCooldown": 0,
+    "pushSounds": 1
+  }
+}

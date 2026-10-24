@@ -1,0 +1,326 @@
+{
+  "origin": "https://223.109.141.251",
+  "at": "2026-10-24T05:01:47.937Z",
+  "files": [
+    {
+      "file": "authority/assets/bomb1-rocket.mp3",
+      "bytes": 2496,
+      "sha256": "5bdfb1337688c2b48b2baac5f1299f88b1ca78c1bae1449c3d9e059fbe1292ab"
+    },
+    {
+      "file": "authority/assets/bomb1-grenade.mp3",
+      "bytes": 1664,
+      "sha256": "91cb39b280ec6c0178e9472348743b01dcfe21637dc2411acc3afdafce0913e7"
+    },
+    {
+      "file": "authority/assets/bomb1-mine.mp3",
+      "bytes": 7436,
+      "sha256": "98a72a089bf2441ee68f78c6842187ff31c0f9d6b1670eb903c0237ed85d8029"
+    },
+    {
+      "file": "authority/assets/bomb1-push.mp3",
+      "bytes": 1352,
+      "sha256": "7d9c05039c5998aa9ca5e3affe4f34c334947b5c23d2862aef477d401eebd687"
+    },
+    {
+      "file": "authority/assets/bomb1-complete.mp3",
+      "bytes": 47357,
+      "sha256": "774fae60c641cba14763fae5660f28239e9a8bc22529dd69df185d12aa24622b"
+    },
+    {
+      "file": "authority/assets/bomb1-failed.mp3",
+      "bytes": 49447,
+      "sha256": "2ec05450e783a4e4077606135ea33ab5b963f94d4a384f8183908422ee2dada1"
+    },
+    {
+      "file": "authority/assets/bomb1-menu.mp3",
+      "bytes": 248187,
+      "sha256": "7905a0b9a81896ff970a6413469dbf943b5a39b92cf3e73c377dac5c7f643f22"
+    },
+    {
+      "file": "authority/assets/bomb1-music1.mp3",
+      "bytes": 356647,
+      "sha256": "2710cd9b2600b1eccbbdc04b0626bea616367df937b3ee0559dbc9d26f8c8f6d"
+    },
+    {
+      "file": "authority/assets/bomb1-music2.mp3",
+      "bytes": 355811,
+      "sha256": "519120ca56b19dacdde22653f6eb36a3ffe86d5fdac7d396f1370a7af1242785"
+    },
+    {
+      "file": "authority/assets/bomb1-music3.mp3",
+      "bytes": 385486,
+      "sha256": "29343030fc049493e0ddd372ac751555adfa69121ee626b8922fab905678e88c"
+    },
+    {
+      "file": "authority/assets/bomb1-music4.mp3",
+      "bytes": 368141,
+      "sha256": "88180a304789403610279fc977005a66cecd39cbd4f0452191303bf70187ba4c"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-1.png",
+      "bytes": 2283,
+      "sha256": "f547fa5fc1d25ac1ace0eff721b395d32c5837b97b8518a9f365a054bd460f05"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-2.png",
+      "bytes": 1949,
+      "sha256": "ea8d6e627c6d8f09b3f2dde93cb97c9f8f1afee23452dedb265f37baa678554e"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-3.png",
+      "bytes": 2307,
+      "sha256": "34441cff7b8507bd79fd6d4ba1adfde6caddcdf415f2ac178765c3320fc77903"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-4.png",
+      "bytes": 2085,
+      "sha256": "7f0e83a440142fd16d659c9b98d771b1d1a3dd63f56101fd86b5ceccd1dbf2c5"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-5.png",
+      "bytes": 1744,
+      "sha256": "76c7fe52ac1b6357a52d3ded7285d7333df9c7bdb2a362c8210722ce783fe319"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-6.png",
+      "bytes": 1430,
+      "sha256": "7d8b46c820e3efcebb9d66fdb2c92d8636d9af1ab7ae0134ce336fc5a163cdd8"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-7.png",
+      "bytes": 1786,
+      "sha256": "10a32024a940a22578c601d20432654163713d1c65e3b7ba0213545d68237a32"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-8.png",
+      "bytes": 1516,
+      "sha256": "0f048239d73770a87c52041f79640d7f7fe05fd64350715e9af60a5d78acc476"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-9.png",
+      "bytes": 1995,
+      "sha256": "2e2934000042ff96118ca830130edde4a4fadcccedcf9cad3f3d85b00b52b7da"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-10.png",
+      "bytes": 1772,
+      "sha256": "7de7e324239e3aaffc8eff7022bae9596f6bffe5a1694d0732999da65b1c7183"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-11.png",
+      "bytes": 2025,
+      "sha256": "e656afb1a3cf36e0ebbe13130d4fcadf79aec8cb04bd34a440b0db26c97e2e2e"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-12.png",
+      "bytes": 1816,
+      "sha256": "cb43ed9ed1285f953fc2489c00888175246957fe51d2efd2185ba13a443acd21"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/-1.wav",
+      "bytes": 44,
+      "sha256": "ae8cd4d87061de84b556826a36ea6e209689ff2bb3632b9ac121aa34a5338a6c"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/1_loadingBomb.mp3",
+      "bytes": 6003,
+      "sha256": "8c011cb71d33cf71acfe8e08f262ad34056ac0c8a4a8930cd6ebfae46b431aa7"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4087_useThrower.mp3",
+      "bytes": 10701,
+      "sha256": "80055c0ae19539d4789be951fbcbafa709ceaa0054e574a2464c6d5d8a03e305"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4088_useSinker.mp3",
+      "bytes": 12528,
+      "sha256": "ed6201eca3f919b3f67afeb859ca2e9082710f3d3274684cb64c15be3b09db11"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4089_useShotgun.mp3",
+      "bytes": 7569,
+      "sha256": "4978f4d090e92a02e498ca47f355907403cd4a5e5c3cbba19100ffc870acaff6"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4090_useNombril.mp3",
+      "bytes": 7830,
+      "sha256": "86fc6d538577c29dfb1718100f360f8f79a9e389bdaf516c22f1c740fe9fcac0"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4091_useLauncher.mp3",
+      "bytes": 12267,
+      "sha256": "a2c43214467644bdcd89a8e34e6e226d0be392bdf7682d4ec1856b2e9ed63a3d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4092_useLaserShoot.mp3",
+      "bytes": 14355,
+      "sha256": "9f070a2b515b3fec2f1cd147f75aa8781a8e8c0b0cd3995e4e0f2f46f379b87d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4093_useLaserReady.mp3",
+      "bytes": 15660,
+      "sha256": "311e70ce3f4a558f778384774d660225a9f5dd4f14af0a32ff36b0d59bd20a00"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4094_selectTouch.mp3",
+      "bytes": 5220,
+      "sha256": "ce03a37cbb78ae7556b35ab660fdc0ce9083a2d9bc71133ef96de411db72ae4f"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4095_selectPress.mp3",
+      "bytes": 7830,
+      "sha256": "aea450a4cc8e4239923577fd5ec11ae0065b93bb34a3b831182a89a750afa6c0"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4096_menuTouch.mp3",
+      "bytes": 1827,
+      "sha256": "2f4beb37fb3be44df0328c43d750432a40b01244bb8abf4c9827baca992243fd"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4097_menuPress.mp3",
+      "bytes": 6525,
+      "sha256": "f990a27e34f2d4f2be9c31c6d41ff9d8c0a3885856570831190cf4a46b390549"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4098_levelFailed.mp3",
+      "bytes": 52200,
+      "sha256": "9ddff9688e839f78ca1897a065f4458637e94ed4e15b4afbbbbc9e2e599a0baf"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4099_levelComplete.mp3",
+      "bytes": 36018,
+      "sha256": "1c6a6965422df6fa795d2f33c4c4cc6405ff1bb836ad525dc9a02e084ad963a6"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4100_InvincibilitySound.mp3",
+      "bytes": 19314,
+      "sha256": "bfc84d2ad012a3d853c502adbf0fa7166879ff8e54467c0b94443940f776ce67"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4101_getFrog.mp3",
+      "bytes": 5220,
+      "sha256": "377d73bf1bacfb79db45ed229034deaebf8698794e6cbd6ea99a32a28820197e"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4102_getCar.mp3",
+      "bytes": 5742,
+      "sha256": "7c58d6af36319741ddea174c5415c3d4398edec491595a38ed138394b43e4d27"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4103_getBulldozer.mp3",
+      "bytes": 17487,
+      "sha256": "ee962cd2131e62234958200c987f39b08ec04d5a3eaa808a7d9a78144be1c87e"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4104_eatProp.mp3",
+      "bytes": 1950,
+      "sha256": "700d2b4e25265b6360755f72c4789d7541ab6ca69a3d801940939c7c6e317f12"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4105_dead.mp3",
+      "bytes": 7569,
+      "sha256": "ecb80d006d58e094a6e9ea5eec80565cfe777efa897fe717224369e02521a352"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4106_bulldozerProp.mp3",
+      "bytes": 14355,
+      "sha256": "9b696ea6c781f73595ac934f881a48e0ef77a3128518b96fdee52566a8c9d10f"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4107_bomb.mp3",
+      "bytes": 14094,
+      "sha256": "b12fa3f4b6cb10ec673cf32c51507dc9c32afb697ae7af04dbc2184881777807"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4108_addTeleBomb.mp3",
+      "bytes": 1300,
+      "sha256": "1e82b25651ae10e1c271585ba3281165f8c337c749cd111272d895e2b325d92d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4109_addMineBomb.mp3",
+      "bytes": 6003,
+      "sha256": "f125fa5e1b289ef94f530518c5464633572dddb5be4900e9f16ab46af2d16c3b"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4110_addBomb.mp3",
+      "bytes": 2610,
+      "sha256": "fdcfa687319b2e579a914c27192971b67966dea0581a3b29674526cc4629ec21"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4111_gameMusic_4.mp3",
+      "bytes": 639711,
+      "sha256": "03b7e690f85f44617f33c044ee0b2372125eb0e8914641b2c54a68e4a6db2420"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4112_gameMusic_3.mp3",
+      "bytes": 576027,
+      "sha256": "e24717278ab2c556e4fc8d4392282ad5a75c73d81b3e883e7173335067bc4bb2"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4113_gameMusic_2.mp3",
+      "bytes": 619353,
+      "sha256": "42b2f5f7c1081d1b777120cc71e3025ce83f28f3dc6354e544a4465faa9e41df"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4114_gameMusic_1.mp3",
+      "bytes": 576027,
+      "sha256": "ae9b3e21a4331299370add8868bbe6dafe2e3672e5f08dc02cb8ae65c4cb5bdb"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4115_uiMusic.mp3",
+      "bytes": 324945,
+      "sha256": "9d73d0d65c7fdc3127d5401872539c80da8103c9fd597c5a6c1b5738818d7531"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-normal.png",
+      "bytes": 16322,
+      "sha256": "359d580be71e7cf6e2fcecb899b3fa64f04af0be4a04d5fee4458f9fdfbd0d3b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-remote.png",
+      "bytes": 23738,
+      "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-mine.png",
+      "bytes": 2899,
+      "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
+    },
+    {
+      "file": "expanded/assets/bomb2/brick-burst.png",
+      "bytes": 5201,
+      "sha256": "a9018a59415102703496ac85a2e15bd605e6bb184107c0b9f72025e8a6e15cf3"
+    },
+    {
+      "file": "authority/assets/bomb1-restoration.json",
+      "bytes": 4812,
+      "sha256": "041defb50dc77074c514a02bf6e98ab739baf3920ed0548ee9c988e503cba621"
+    },
+    {
+      "file": "expanded/assets/bomb2/manifest.json",
+      "bytes": 530986,
+      "sha256": "0f7e24308615d3c47f3ac75096b9cedac830475b90dbfd70fded5de4385465da"
+    },
+    {
+      "file": "authority/game.js",
+      "bytes": 1009430,
+      "sha256": "a4899b3e431de38509a33cef33850039d2ce9d2eef4df12b96e7b4864bae225f"
+    },
+    {
+      "file": "authority/style.css",
+      "bytes": 8092,
+      "sha256": "cf127414dd5b63a33e70f54a4d2b35efaab6faf5cc26625adb5ed7787baf56aa"
+    },
+    {
+      "file": "authority-room.html",
+      "bytes": 6950,
+      "sha256": "2229aa909f056d493b86ef95c8417bb7bee2d07ec53d1b82938797789a632ed2"
+    },
+    {
+      "file": "games.json",
+      "bytes": 17614,
+      "sha256": "87cc087341080848828c6363fed023a22f8b8505f8d19153b764a0a761b864b5"
+    }
+  ]
+}
