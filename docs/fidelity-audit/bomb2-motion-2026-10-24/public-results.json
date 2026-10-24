@@ -1,0 +1,33 @@
+{
+  "origin": "https://223.109.141.251",
+  "at": "2026-10-24T04:37:20.521Z",
+  "results": [
+    {
+      "game": "3881-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true
+    },
+    {
+      "game": "9109-server",
+      "characters": [
+        3,
+        4
+      ],
+      "easyShield": true,
+      "remoteBombVisible": true,
+      "nativeSound": true,
+      "music": true,
+      "resyncDoesNotReplay": true,
+      "continuousMovement": true,
+      "remotePixelMovement": true
+    }
+  ],
+  "errors": []
+}
