@@ -86,6 +86,7 @@ export class Presentation {
           if (player.seat === seat || !player.alive || player.respawn || player.respawnAt > next.tick) continue;
           const a = before.state.players.find((p) => p.seat === player.seat), b = after.state.players.find((p) => p.seat === player.seat);
           if (!a || !b || !a.alive || !b.alive || a.respawn || b.respawn || a.respawnAt > before.state.tick || b.respawnAt > after.state.tick) continue;
+          if(a.travel?.kind==='sand'&&b.travel?.kind!=='sand')continue;
           const pose = (p: any) => {
             if(p.walking)return walkingPosition(p);
             const vector = p.moveDir >= 0 ? vectors[p.moveDir] : null, f = vector ? p.progress / Math.max(1, p.moveTicks) : 0;
@@ -95,6 +96,7 @@ export class Presentation {
           if (Math.hypot(end.x - start.x, end.y - start.y) > limit) continue;
           player.x = mix(start.x, end.x, amount); player.y = mix(start.y, end.y, amount);
           if(player.walking){player.walking.x=player.x*30;player.walking.y=player.y*30;}
+          if(player.travel?.kind==='sand'&&a.travel?.kind==='sand'&&b.travel?.kind==='sand'&&a.travel.born===b.travel.born)player.travel.alpha=mix(a.travel.alpha,b.travel.alpha,amount);
           if ("moveDir" in player) { player.progress = 0; if(!player.walking)player.moveDir = -1; }
           if (Number.isFinite(a.angle) && Number.isFinite(b.angle)) player.angle = a.angle + Math.atan2(Math.sin(b.angle - a.angle), Math.cos(b.angle - a.angle)) * amount;
         }

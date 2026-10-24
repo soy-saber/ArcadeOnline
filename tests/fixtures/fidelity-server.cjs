@@ -2,14 +2,17 @@
 // Isolated test process. This IPC fixture is never included in a release.
 const path=require('node:path'),root=path.resolve(__dirname,'../..'),{AuthorityEngine}=require(path.join(root,'runtime/authority.cjs'));
 const rooms=new Map(),onRoom=AuthorityEngine.prototype.onRoom;
-function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:y*30,vx:0,vy:0,gridX:x,gridY:y,transX:0,transY:0,blocked:false});}
+function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:y*30,vx:0,vy:0,gridX:x,gridY:y,transX:0,transY:0,blocked:false});if('travel'in p){p.travel=null;p.sandCell=-1;}}
 AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return onRoom.call(this,room);};
 process.on('message',m=>{try{
  const room=rooms.get(m.room),s=room?.auth?.state;if(!s||s.phase!=='playing')throw new Error('Test round not playing');
- if(s.gameId==='9109-server'&&['pickup','coin-duel','motion','conveyor','kick','flame-cross','flame-chain','mine-blast'].includes(m.action))s.blasts=[];
+ if(s.gameId==='9109-server'&&['pickup','coin-duel','motion','conveyor','kick','flame-cross','flame-chain','mine-blast'].includes(m.action)){
+   if(s.players.some(p=>p.travel))throw Error('Landform travel must finish naturally first');
+   s.blasts=[];
+ }
  if(m.action==='pickup'){
    s.board.fill(0);s.bombs=[];s.flames.fill(0);if(s.tiles)s.tiles.fill(0);
-   const [p,q]=s.players;if(p.actionLock||p.attack||p.moveDir>=0)throw new Error('Player action not recovered');pose(p,3,4);pose(q,11,8);
+   const [p,q]=s.players;if(p.actionLock||p.attack||p.travel||p.moveDir>=0)throw new Error('Player action not recovered');pose(p,3,4);pose(q,11,8);
    s.items.fill(s.gameId?0:null);s.items[4*('gameId'in s?17:15)+4]=m.kind;
  }else if(m.action==='coin-duel'){
    if(s.gameId!=='9109-server'||s.mode!=='collect')throw Error('Expected coin mode');
@@ -39,6 +42,13 @@ process.on('message',m=>{try{
    const [p,q]=s.players;pose(p,5,5);pose(q,m.action==='flame-chain'?6:m.action==='mine-blast'?6:12,m.action==='flame-chain'?5:m.action==='mine-blast'?6:10);
    if(m.action==='flame-chain'){s.board[3*17+5]=2;s.tiles[3*17+5]=11;s.board[2*17+5]=2;s.tiles[2*17+5]=11;}
    if(m.action==='mine-blast'){s.board[4*17+4]=2;s.tiles[4*17+4]=11;s.board[4*17+6]=1;s.tiles[4*17+6]=12;}
+ }else if(m.action==='landform-spring'||m.action==='landform-sand'){
+   if(s.gameId!=='9109-server'||s.mapId!==(m.action==='landform-spring'?'disce-one':'beach-one'))throw Error('Expected original landform map');
+   if(s.players.some(p=>p.travel||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.blasts=[];s.flames.fill(0);
+   const h=s.hazards.find(h=>h.kind===(m.action==='landform-spring'?'SpringBoard':'QuickSand')),[p,q]=s.players;pose(p,h.x-1,h.y);pose(q,10,8);
+   if(m.action==='landform-spring'){s.items[h.y*17+h.x]=19;s.board[h.y*17+h.x+1]=1;s.tiles[h.y*17+h.x+1]=37;s.items[h.y*17+h.x+2]=2;}
+   else {const target=s.hazards[h.target];s.items[target.y*17+target.x+1]=2;}
  }else if(m.action==='blast'){
    if(s.gameId)throw Error('Expected first Bomb It');
    if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');

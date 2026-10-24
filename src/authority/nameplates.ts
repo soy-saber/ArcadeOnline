@@ -5,8 +5,9 @@ import { camera as boxheadCamera } from "../expanded/boxhead-world";
 import { BOMB_FIELD_WIDTH } from './bomb-status';
 import { BOMB2_FIELD_WIDTH, bomb2Weapon } from '../expanded/bomb2-status';
 import {walkingPosition} from '../expanded/bomb2-walking';
+import {heroHead,travelAlpha} from '../expanded/bomb2-landforms';
 
-interface Anchor { seat: number; x: number; y: number }
+interface Anchor { seat: number; x: number; y: number; alpha?:number }
 export function nameAnchors(state: State, width: number, height: number): Anchor[] {
   return state.players.filter((p) => p.alive !== false && !p.respawn && !(p.respawnAt > state.tick) &&
     (!("options" in state) || state.options.mode !== "online" || state.options.activeSeats.includes(p.seat)))
@@ -17,7 +18,7 @@ export function nameAnchors(state: State, width: number, height: number): Anchor
         else { x *= 2; y = Math.max(108, y - 96) * 2; }
       } else if (state.gameId === "9109-server") {
         const pos=walkingPosition(p);
-        x = 45 + (pos.x + .5) * 30; y = 66 + (pos.y + 1) * 30 - (bomb2Weapon(state,p)?72:53);
+        x = 45 + (pos.x + .5) * 30; y = 66 + pos.y*30 + heroHead(p,state.tick)-16-(bomb2Weapon(state,p)?19:0);
       } else if (state.gameId === "137953-server") {
         const scale = Math.min(680 / (state.width * 50), 365 / (state.height * 50));
         x = (712 - state.width * 50 * scale) / 2 + p.x * scale;
@@ -32,7 +33,7 @@ export function nameAnchors(state: State, width: number, height: number): Anchor
       else if (state.gameId === "50737-server") { const cam=boxheadCamera(state,width,height);x=cam.x+p.x*cam.scale;y=cam.y+(p.y-87)*cam.scale; }
       else y -= 46;
       const fieldWidth='gameId' in state?state.gameId==='9109-server'?BOMB2_FIELD_WIDTH:width:'board' in state?BOMB_FIELD_WIDTH:width;
-      return { seat: p.seat, x: Math.max(36, Math.min(fieldWidth - 36, x)), y: Math.max(12, Math.min(height - 20, y)) };
+      return { seat: p.seat, x: Math.max(36, Math.min(fieldWidth - 36, x)), y: Math.max(12, Math.min(height - 20, y)),...('gameId' in state&&state.gameId==='9109-server'?{alpha:travelAlpha(p)}:{}) };
     });
 }
 
@@ -60,6 +61,7 @@ export class Nameplates {
       if (!label) { label = document.createElement("span"); label.className = "player-nameplate"; label.dataset.playerSeat = String(anchor.seat); this.labels.set(anchor.seat, label); this.layer.append(label); }
       if (label.textContent !== member.name) { label.textContent = member.name; label.title = member.name; }
       label.hidden = false; label.classList.toggle("mine", ownSeat === anchor.seat);
+      label.style.opacity=String(anchor.alpha??1);
       const half = label.offsetWidth / 2;
       const x = Math.max(half, Math.min(canvas.clientWidth - half, anchor.x / canvas.width * canvas.clientWidth));
       let top=Math.max(0,Math.min(canvas.clientHeight-label.offsetHeight,anchor.y/canvas.height*canvas.clientHeight));

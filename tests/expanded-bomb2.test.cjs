@@ -55,8 +55,10 @@ test('non-survival modes respawn indefinitely; kill mode penalizes suicide',()=>
 });
 test('original beach quicksand pair, disco two-cell spring, and mine tram are active',()=>{
  const beach=a.create(1,true,[1,2],32,'beach-one');beach.board.fill(0);const h=beach.hazards.find(h=>h.kind==='QuickSand'),target=beach.hazards[h.target],p=beach.players[0];
- p.x=h.x-1;p.y=h.y;for(let i=0;i<9;i++)a.step(beach,[input(i,0,{right:true}),input()]);assert.equal(p.x,target.x);assert.equal(p.y,target.y);assert.ok(p.teleportUntil>beach.tick);
+ p.x=h.x-1;p.y=h.y;for(let i=0;i<9;i++)a.step(beach,[input(i,0,{right:true}),input()]);assert.equal(p.travel.kind,'sand');assert.equal(p.x,h.x);assert(p.travel.alpha<1);
+ for(let i=0;i<20&&p.travel;i++)a.step(beach,[input(),input()]);assert.equal(p.x,target.x);assert.equal(p.y,target.y);assert.equal(p.sandCell,target.y*17+target.x);
  const disco=a.create(1,true,[1,2],32,'disce-one');disco.board.fill(0);const spring=disco.hazards.find(h=>h.kind==='SpringBoard'),q=disco.players[0];q.x=spring.x-1;q.y=spring.y;
- for(let i=0;i<9;i++)a.step(disco,[input(i,0,{right:true}),input()]);assert.equal(q.x,spring.x+2);
+ for(let i=0;i<9;i++)a.step(disco,[input(i,0,{right:true}),input()]);assert.equal(q.travel.kind,'spring');assert(q.x<spring.x+2);
+ for(let i=0;i<25&&q.travel;i++)a.step(disco,[input(),input()]);assert.equal(q.x,spring.x+2);
  const mine=a.create(1,true,[1,2],32,'mine-one');assert.ok(mine.hazards.some(h=>h.kind==='Rail'));for(let i=0;i<30;i++)a.step(mine,[input(),input()]);assert.ok(mine.tram>.9);assert.equal(a.valid(mine),true);
 });

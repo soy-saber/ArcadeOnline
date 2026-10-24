@@ -13,6 +13,8 @@ import {conveyorFrame,REMOTE_FUSE} from './bomb2-conveyor';
 import BOMB_ART from './bomb2-bomb-art.json';
 import FLAME_ART from './bomb2-blast-art.json';
 import {BLAST_TICKS,burningBombAt,blastSprite,validBlasts,type Blast} from './bomb2-blasts';
+import {enterLandform,advanceLandform,jumpSprite,heroHead,travelAlpha,sandFrame,validLandforms} from './bomb2-landforms';
+import LAND_ART from './bomb2-landform-art.json';
 import {stopWalking,walkingPosition} from './bomb2-walking';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
@@ -80,7 +82,8 @@ export function create(round:number,playing:boolean,seats:number[],seed:number,m
     s.players.push({seat,character,x,y,dir:3,moveDir:-1,progress:0,moveTicks:8,speed:8,alive:true,life:3,capacity:1,range:1,kick:false,shield:mode==='arcade'&&s.difficulty==='easy',invulnerable:mode==='kill'?RESPAWN_PROTECTION_TICKS:0,lastAttack:0,lastAlt:0,weapon:0,ammo:0,vehicle:0,vehicleUntil:0,respawnAt:0,teleportUntil:0,killedBy:0,points:0,kills:0,deaths:0,diedAt:0,actionLock:0,attack:null,weaponStock:[]});
   }
   if(mode==='collect')for(let i=0;i<5;i++)spawnCoin(s);
-  for(const p of s.players){p.invulnerable=RESPAWN_PROTECTION_TICKS;syncWalking(p);}
+  s.sandLights=s.hazards.map(()=>0);
+  for(const p of s.players){p.invulnerable=RESPAWN_PROTECTION_TICKS;p.travel=null;p.sandCell=-1;syncWalking(p);}
   return s;
 }
 function spawnCoin(s:State):void {
@@ -168,6 +171,7 @@ function hit(s:State,p:any,owner:number):void {
   if(s.mode==='arcade')p.life--;p.deaths++;p.diedAt=s.tick;p.killedBy=owner;p.moveDir=-1;p.progress=0;
   if(p.life<=0){p.alive=false;p.respawnAt=0;}else p.respawnAt=s.tick+RESPAWN_TICKS;
   sound(s,'dead');
+  p.travel=null;p.sandCell=-1;
   p.attack=null;p.actionLock=0;
   dropWeapons(s,p);
   if(s.mode==='collect'){
@@ -213,7 +217,7 @@ function updateAttacks(s:State):void {
       const tx=x+dx,ty=y+dy;
       if(inside(tx,ty)){const cell=index(tx,ty);if(s.board[cell]===2)breakCrate(s,cell);else if(s.board[cell]===0)s.items[cell]=0;
         for(const b of s.bombs)if(b.slide<0&&b.x===tx&&b.y===ty)b.explodeAt=s.tick;
-        for(const q of s.players)if(q.seat!==p.seat&&((q.x===tx&&q.y===ty)||(q.x===x&&q.y===y)))hit(s,q,p.seat);
+        for(const q of s.players)if(q.travel?.kind!=='sand'&&q.seat!==p.seat&&((q.x===tx&&q.y===ty)||(q.x===x&&q.y===y)))hit(s,q,p.seat);
       }
     }else if((kind===16||kind===19)&&s.shots.length<64){
       s.shots.push({id:s.nextId++,owner:p.seat,x:x+.5,y:y+.5,vx:dx*(kind===19?12/30:10/30),vy:dy*(kind===19?12/30:10/30),until:s.tick+HZ*4,kind});
@@ -241,20 +245,15 @@ function updateAttacks(s:State):void {
         if(s.board[cell]===2)breakCrate(s,cell);else s.items[cell]=0;
         for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=s.tick;
       }
-      for(const q of s.players)if(q.seat!==effect.owner&&q.x===x&&q.y===y)hit(s,q,effect.owner);
+      for(const q of s.players)if(q.travel?.kind!=='sand'&&q.seat!==effect.owner&&q.x===x&&q.y===y)hit(s,q,effect.owner);
     }
   }
   s.effects=s.effects.filter((effect:any)=>effect.until>s.tick);
 }
-function hazards(s:State,p:any):void {
-  if(p.teleportUntil>s.tick||p.vehicle===11)return;
-  const h=s.hazards.find((h:any)=>h.x===p.x&&h.y===p.y);if(!h)return;
-  if(h.kind==='QuickSand'&&h.target!==undefined){const t=s.hazards[h.target];if(t&&passable(s,t.x,t.y)){relocate(p,t.x,t.y);p.teleportUntil=s.tick+HZ;}}
-  else if(h.kind==='SpringBoard'&&!p.vehicle){const [dx,dy]=DIRS[p.dir];for(let d=2;d>0;d--)if(passable(s,p.x+dx*d,p.y+dy*d)){relocate(p,p.x+dx*d,p.y+dy*d);p.teleportUntil=s.tick+20;break;}}
-}
 export function step(s:State,inputs:Input[]):void {
   if(s.phase!=='playing')return;s.tick++;
   s.blasts=s.blasts.filter((b:Blast)=>b.until>s.tick);
+  s.sandLights=s.sandLights.map((born:number)=>born&&s.tick-born>=LAND_ART.rules.lightFrames?0:born);
   const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length)s.tram=(s.tram+1/30)%rails.length;
   for(const p of s.players){
     const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
@@ -263,6 +262,11 @@ export function step(s:State,inputs:Input[]):void {
     if(p.invulnerable>0)p.invulnerable--;
     if(p.actionLock>0)p.actionLock--;
     syncWalking(p);
+    if(p.travel){
+      if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
+      if(p.travel.kind==='sand')take(s,p);
+      advanceLandform(s,p);
+    }else{
     if(input){
       if(p.actionLock>0||p.attack){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
       else {
@@ -271,7 +275,9 @@ export function step(s:State,inputs:Input[]):void {
         if(input.alt>p.lastAlt){p.lastAlt=input.alt;useWeapon(s,p);}
       }
     }
-    const oldX=p.x,oldY=p.y,dir=input?direction(input):-1;
+    take(s,p);enterLandform(s,p);
+    const dir=input?direction(input):-1;
+    if(!p.travel){
     moveActor(s,p,dir,(x,y)=>{
       if(p.actionLock||p.attack||dir<0)return;const [dx,dy]=DIRS[dir];
       const bomb=s.bombs.find((b:any)=>b.slide<0&&b.x===x&&b.y===y);if(bomb&&p.kick&&!p.vehicle)bomb.slide=dir;
@@ -281,8 +287,9 @@ export function step(s:State,inputs:Input[]):void {
         relocate(p,x+dx,y+dy);p.teleportUntil=s.tick+20;
       }
     });
-    take(s,p);if(p.x!==oldX||p.y!==oldY)hazards(s,p);
-    if(s.mode==='color'&&!p.respawnAt&&s.board[index(p.x,p.y)]===0&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
+    }
+    }
+    if(s.mode==='color'&&!p.respawnAt&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
     if(s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
   }
   updateAttacks(s);
@@ -292,7 +299,7 @@ export function step(s:State,inputs:Input[]):void {
     if(b.kind==='mine'){
       const owner=s.players.find(p=>p.seat===b.owner);
       if(b.armedAt>s.tick&&(!owner||!owner.alive||owner.respawnAt||owner.x!==b.x||owner.y!==b.y))b.armedAt=s.tick;
-      if(b.armedAt<=s.tick&&s.players.some(p=>p.alive&&!p.respawnAt&&p.x===b.x&&p.y===b.y))b.explodeAt=s.tick;
+      if(b.armedAt<=s.tick&&s.players.some(p=>p.alive&&!p.respawnAt&&p.travel?.kind!=='sand'&&p.x===b.x&&p.y===b.y))b.explodeAt=s.tick;
     }
     if(s.flames[index(b.x,b.y)]>s.tick)b.explodeAt=s.tick;
   }
@@ -349,6 +356,7 @@ export function valid(value:unknown):value is State {
   if(!Array.isArray(s.ack)||s.ack.length!==4||!s.ack.every((n:any)=>int(n,0,1e9))||!Array.isArray(s.scores)||s.scores.length!==4||!s.scores.every((n:any)=>int(n,0,1000)))return false;
   const owns=(owner:any)=>s.players.some(p=>p.seat===owner);
   if(!validBlasts(s))return false;
+  if(!validLandforms(s))return false;
   if(Array.isArray(s.bombs)&&s.bombs.some((b:any)=>b&&(b.walking&&!validWalking(b)||b.born!==undefined&&!int(b.born,0,s.tick))))return false;
   if(!Array.isArray(s.bombs)||s.bombs.length>36||!s.bombs.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&int(b.x,0,16)&&int(b.y,0,14)&&int(b.range,1,10)&&['normal','remote','mine','thrown'].includes(b.kind)&&int(b.slide,-1,3)&&int(b.explodeAt,0,ROUND_TICKS+REMOTE_FUSE)&&int(b.armedAt,0,ROUND_TICKS+20)))return false;
   if(!Array.isArray(s.shots)||s.shots.length>64||!s.shots.every((b:any)=>b&&int(b.id,1,s.nextId-1)&&owns(b.owner)&&Number.isFinite(b.x)&&b.x>=0&&b.x<=17&&Number.isFinite(b.y)&&b.y>=0&&b.y<=15&&Number.isFinite(b.vx)&&Math.abs(b.vx)<=1&&Number.isFinite(b.vy)&&Math.abs(b.vy)<=1&&[16,19].includes(b.kind)&&int(b.until,0,ROUND_TICKS+HZ*4)))return false;
@@ -361,8 +369,13 @@ export function valid(value:unknown):value is State {
 }
 const images=new Map<string,HTMLImageElement>();
 let combatPreload=false;
+let landPreloadMap='';
 function asset(name:string):HTMLImageElement {let img=images.get(name);if(!img){img=new Image();img.src='/expanded/assets/bomb2/'+name+'.png';images.set(name,img);}return img;}
 function draw(ctx:CanvasRenderingContext2D,name:string,x:number,y:number,w:number,h:number):boolean {const img=asset(name);if(img.complete&&img.naturalWidth){ctx.drawImage(img,x,y,w,h);return true;}return false;}
+function landTimeline(ctx:CanvasRenderingContext2D,name:string,frame:number,x:number,y:number):void {
+  const meta=LAND_ART.timelines[name as keyof typeof LAND_ART.timelines],img=asset('native-'+name);if(!meta||!img.complete||!img.naturalWidth)return;
+  ctx.drawImage(img,Math.min(meta.frames-1,Math.max(0,frame))*meta.w,0,meta.w,meta.h,x+meta.x,y+meta.y,meta.w,meta.h);
+}
 function timeline(ctx:CanvasRenderingContext2D,name:string,frame:number,x:number,y:number,feet=false):boolean {
   const meta=KILL_ART[name],img=asset('kill-'+name);if(!meta||!img.complete||!img.naturalWidth)return false;
   const n=Math.max(0,Math.min(meta.frames-1,Math.floor(frame)));
@@ -373,6 +386,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   const ctx=canvas.getContext('2d')!;const cell=30,left=45,top=66;ctx.clearRect(0,0,BOMB2_CANVAS_WIDTH,550);ctx.fillStyle='#302f46';ctx.fillRect(0,0,BOMB2_CANVAS_WIDTH,550);
   ctx.fillStyle='#fff';ctx.font='bold 21px system-ui';ctx.fillText('泡泡堂 2',24,32);if(!s)return;
   if(!combatPreload){for(const name of Object.keys(BOMB_ART.timelines))asset('native-bomb-'+name);for(const name of Object.keys(FLAME_ART.timelines))asset('native-flame-'+name);combatPreload=true;}
+  if(landPreloadMap!==s.mapId){for(const name of Object.keys(LAND_ART.timelines))if(name.startsWith('jump-')?s.hazards.some((h:any)=>h.kind==='SpringBoard'):s.hazards.some((h:any)=>h.kind==='QuickSand'))asset('native-'+name);landPreloadMap=s.mapId;}
   ctx.font='15px system-ui';ctx.fillText(`${THEMES[s.theme]} · ${['生存','击杀 10','金币 10','占地 50'][MODES.indexOf(s.mode)]}`,180,31);ctx.fillText(`${Math.max(0,Math.ceil((ROUND_TICKS-s.tick)/HZ))} 秒`,500,31);
   draw(ctx,'background-'+s.theme,left,top,WIDTH*cell,HEIGHT*cell);
   for(const burst of s.crateBursts){
@@ -381,8 +395,12 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
       ctx.drawImage(im,frame*BRICK_BURST.w,0,BRICK_BURST.w,BRICK_BURST.h,left+(burst.cell%WIDTH+.5)*cell-BRICK_BURST.w/2,top+(Math.floor(burst.cell/WIDTH)+1)*cell-BRICK_BURST.h,BRICK_BURST.w,BRICK_BURST.h);
     }
   }
-  for(const h of s.hazards){const px=left+h.x*cell,py=top+h.y*cell;
-    if(h.kind==='QuickSand')draw(ctx,`quicksand-${h.dir}-1`,px,py,cell,cell);
+  for(const [i,h] of s.hazards.entries()){const px=left+h.x*cell,py=top+h.y*cell;
+    if(h.kind==='QuickSand'){
+      landTimeline(ctx,'sand-base-'+h.dir,sandFrame(s.tick),px,py);
+      const light=LAND_ART.lights[String(h.dir) as keyof typeof LAND_ART.lights],m=light.matrix;ctx.save();ctx.translate(px,py);ctx.transform(m[0],m[1],m[2],m[3],m[4],m[5]);
+      landTimeline(ctx,'sand-light-'+h.dir,s.sandLights[i]?s.tick-s.sandLights[i]:0,0,0);ctx.restore();
+    }
     else if(h.kind==='Transmittal')draw(ctx,'conveyor-'+conveyorFrame(h,s.tick),px,py,cell,cell);
     else if(h.kind==='Rail')draw(ctx,'rail-'+h.dir,px,py,cell,cell);
     else if(h.kind==='SpringBoard')draw(ctx,'brick-40',px,py,cell,cell);
@@ -421,19 +439,21 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const shot of s.shots){ctx.fillStyle=shot.kind===20?'#ff4aaa':'#ffe44e';ctx.beginPath();ctx.arc(left+shot.x*cell,top+shot.y*cell,shot.kind===20?3:5,0,Math.PI*2);ctx.fill();}
   const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length){const pos=Math.floor(s.tram),part=s.tram-pos,start=rails[pos%rails.length],end=rails[(pos+1)%rails.length];draw(ctx,'tramcar-1',left+(start.x+(end.x-start.x)*part)*cell,top+(start.y+(end.y-start.y)*part)*cell-10,cell,cell+10);}
   for(const p of [...s.players].sort((a,b)=>a.y-b.y)){
+    ctx.globalAlpha=1;
     if(!p.alive||p.respawnAt>s.tick){if(p.deaths>0&&s.tick-p.diedAt<RESPAWN_TICKS)timeline(ctx,'dead-'+(p.character-1),s.tick-p.diedAt,left+(p.x+.5)*cell,top+(p.y+1)*cell,true);continue;}
     const pos=walkingPosition(p),x=left+(pos.x+.5)*cell,y=top+(pos.y+1)*cell;
-    const img=asset(`hero-${p.character-1}-${['left','up','right','down'][p.dir]}`),frames=24,width=img.naturalWidth/frames;
-    ctx.globalAlpha=p.invulnerable>0&&s.tick%6<3?.5:1;
-    if(p.vehicle===12||p.vehicle===13||p.vehicle===14){draw(ctx,`vehicle-${p.character-1}-${p.vehicle===12?'bulldozer':p.vehicle===13?'car':'frog'}-${['left','up','right','down'][p.dir]}`,x-20,y-42,40,42);}
+    const img=asset(`hero-${p.character-1}-${['left','up','right','down'][p.dir]}`),frames=24,width=img.naturalWidth/frames,jump=jumpSprite(p,s.tick);
+    ctx.globalAlpha=(p.invulnerable>0&&s.tick%6<3?.5:1)*travelAlpha(p);
+    if(jump)landTimeline(ctx,jump.name.replace(/^native-/,''),jump.frame,left+pos.x*cell,top+pos.y*cell);
+    else if(p.vehicle===12||p.vehicle===13||p.vehicle===14){draw(ctx,`vehicle-${p.character-1}-${p.vehicle===12?'bulldozer':p.vehicle===13?'car':'frog'}-${['left','up','right','down'][p.dir]}`,x-20,y-42,40,42);}
     else if(img.complete&&img.naturalWidth){const h=37,w=width/img.naturalHeight*h;ctx.drawImage(img,(p.moveDir<0?0:s.tick%frames)*width,0,width,img.naturalHeight,x-w/2,y-h,w,h);}
-    ctx.globalAlpha=1;ctx.strokeStyle=p.seat===seat?'#fff':'#353352';ctx.lineWidth=2;if(p.shield||p.seat===seat){ctx.beginPath();ctx.ellipse(x,y-13,17,23,0,0,Math.PI*2);ctx.stroke();}
-    const equipped=bomb2Weapon(s,p);if(equipped)weaponBadge(ctx,equipped,x,y-43,15);
+    ctx.strokeStyle=p.seat===seat?'#fff':'#353352';ctx.lineWidth=2;if(!jump&&(p.shield||p.seat===seat)){ctx.beginPath();ctx.ellipse(x,y-13,17,23,0,0,Math.PI*2);ctx.stroke();}
+    const equipped=bomb2Weapon(s,p);if(equipped)weaponBadge(ctx,equipped,x,top+pos.y*cell+heroHead(p,s.tick)-6,15);
     if(p.attack){const names:Record<number,string>={15:'hammer',16:'launcher',19:'shotgun',20:'laser-ready'};
       const name=names[p.attack.kind];if(name){const [dx,dy]=DIRS[p.attack.dir];timeline(ctx,name+(p.attack.kind===20?'':'-'+['left','up','right','down'][p.attack.dir]),s.tick-p.attack.born,x+dx*10,y-17+dy*10);}
     }
   }
-  drawPlayerStatus(ctx,bomb2Status(s),600,top,BOMB2_CANVAS_WIDTH-600,450,seat);
+  ctx.globalAlpha=1;drawPlayerStatus(ctx,bomb2Status(s),600,top,BOMB2_CANVAS_WIDTH-600,450,seat);
   if(s.phase!=='playing'){ctx.fillStyle='#17162fd9';ctx.fillRect(45,180,510,170);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 30px system-ui';ctx.fillText(s.phase==='waiting'?'准备开局':s.winner===null?'平局':`P${s.winner} 获胜`,300,255);ctx.font='16px system-ui';ctx.fillText(s.phase==='waiting'?'至少两人入座并准备':s.mode==='kill'?s.players.map(p=>`P${p.seat} ${p.points}分`).join('  '):'本局结束，准备下一局',300,292);ctx.textAlign='left';}
 }
 export const adapter:Adapter={id:'9109-server',title:'Q版泡泡堂2',seats:4,hz:HZ,width:BOMB2_CANVAS_WIDTH,height:550,create,step,valid,render,
