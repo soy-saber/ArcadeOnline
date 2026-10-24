@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "41b60d0f7562eae211f0353acf544515d74d137f1ddc9675efa37aced7a5607c",
-    "runtime/authority.cjs": "f468aaecd95bb0927c6d5d9712eee6a6a1029f1b978f86082d5b053667c7731f",
+    "public/authority/game.js": "be749ea4ec0579710e23d31b40700b6f27e848b59f61abf49f6d96729662b9b1",
+    "runtime/authority.cjs": "03c979b00e6376d9126ff0173e1bb012b120d53c98c1378799c816c4eace61b1",
     "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
     "src/badminton/view.ts": "5daaad77c77d5f7ec7afad171cbb33c534c1a189ad5e397f29dad64cab7a1de8",
     "src/authority/bomb-core.ts": "0b840c45d1dddabf678b59b762ea77120ffa40c42fd01136dda469e8ed6ae2e9",
@@ -11,21 +11,25 @@
     "src/authority/bomb-view.ts": "999e3f197ecf5e226378f0d137c3092f5f4ea3dc55e6db59271d3410571b62c2",
     "src/authority/client.ts": "f93a4bcfec1ca2a30cf61779c4cb9eaeb8b9dd2f0c48831dfa2354fe6cc8d596",
     "src/authority/engine.ts": "9fce4937be2843ee9eb931364dd3d1212d3a69172244b6ad9f6bd85f0d34c828",
-    "src/authority/main.ts": "21c54b006241a9a85330df5fbf95724df303b582d65ff524e77019f3aae79f02",
+    "src/authority/main.ts": "c58d360df3069099c63471822b992d30fe65245bc90a7963fbc63bab76371050",
     "src/authority/maps.ts": "a76f8903f1a71004e81d3ed215d9a48fb190c11c86a7f5f4b3c3b7adae40e4d3",
-    "src/authority/nameplates.ts": "434ae662834a77143d44d3dc46d707279f196cc92740aed17095cf1adf562153",
+    "src/authority/nameplates.ts": "2949bcb5dad8560decca06d13445ce7b0f73fbcb303ff9023905f9cb7f01a09f",
     "src/authority/native-audio.ts": "095063838c015f8d1e4ad1fef5baf71c59547f23eb219a98251ac154c316ed36",
     "src/authority/player-status.ts": "102c36fd966b0ab3883dcee3a16b9e18413618a707fbdd2d6e3148b579ffd72e",
-    "src/authority/presentation.ts": "bd107d674dac566ab6f57efcb1bcabbe13a3c20fd2f51f6408ff7062a09866e9",
+    "src/authority/presentation.ts": "f817dce8c2b556afce9819eebbc832f58d93bcc0dbdacb8d88b9b98d5bc128a5",
     "src/authority/protocol.ts": "33f752b8cd7b861c77d40670dd08450ba8627e47dbe2172676ab636e555e9b6d",
     "src/expanded/bomb2-art.ts": "226d7e541dd60ecef15fd5daad6c46f4a1dbb29e918204179526dcdd55b8a23f",
     "src/expanded/bomb2-brick.json": "3623ca93b8cce1dc587393e55b092313ea05bd54542941d2b3e7a39661539d5e",
     "src/expanded/bomb2-kill-art.ts": "673d10cc984888410189c5809f6ae1c9dc562127c82f4771d9b0c6fe0172b6d3",
     "src/expanded/bomb2-maps.ts": "3b686d1a64b58d32e9b945df941bd8a5f35be7472d970eb2530be33e08b3fc75",
+    "src/expanded/bomb2-motion-provenance.json": "85bfe29cb9671d7f0a1fcc9ac042bf8d7f087cb7683f9bbc8dde92189b8096db",
+    "src/expanded/bomb2-motion.ts": "486d155a0936ca576bcd5392ed5d60ace6d67ab885c7de0dd02b0c93bd40f83d",
+    "src/expanded/bomb2-movement.ts": "289d342251a0759cb5420d4d64c64f91a8010e6de1943bf8878ba44fcae9d9d6",
     "src/expanded/bomb2-rules.json": "6a4b749804f49ce0991c72a82987c86dc13113fdf5bec245d3d3f83e1e2ca1cb",
     "src/expanded/bomb2-sound.ts": "bdeba56ca609769f63838d34747b592d9a9b788df4c835022e6ecf5a224494f4",
     "src/expanded/bomb2-status.ts": "b038fd8fbb657db2a84942e835cd662b47a6d7481b35a1314f2f380ee1ac7db1",
-    "src/expanded/bomb2.ts": "081f063b01f303144aebde1d36d8d3b2a735738fa551dbd2045a3da94eef2e4c",
+    "src/expanded/bomb2-walking.ts": "0007dfa376ba38d8e2620b309d816bb6016e4a60b21c65463b78aaebe1ce2bb7",
+    "src/expanded/bomb2.ts": "6fbe1c8aa12a64dd49498ffa3ef45c9beb762a024a78afb07989a5814f05ee34",
     "src/expanded/boxhead-core.ts": "ffd966b61bca8bf32b8b8808215ced14d31983aaf4103b7c79f61d38c7858ff0",
     "src/expanded/boxhead-data.json": "a474a5109ec76910b35ccf91a176d9f5a7be66a6dee738912e0e4cd9dbed3710",
     "src/expanded/boxhead-view.ts": "4eba8e77a058c5b1ba8ac630ba7bf613de835bc9ed986670747dfa00235bcbce",
@@ -39,6 +43,6 @@
     "src/expanded/gunmayhem.ts": "b3b75d5b6e1797fbc0b7847c28699b2370b361cfbaa553e40a1fe40bec5a6bbd",
     "src/expanded/registry.ts": "eee479727a876b758d628b62fe8368e914321ed2c6e13c0e55c080dcc5795a67",
     "src/expanded/tank.ts": "64f815650aedff432c7ce7380d21eb616895ae22cdde04801dadb43ae9c7da60",
-    "src/expanded/types.ts": "8a2e1abc5ee047192b862008a9b6478eb74825425e61f079b257d3ff173e11e3"
+    "src/expanded/types.ts": "f19fc018ee614cbe8c5cf5c5be0d9d2a79172c0e617cd2838e8acf5d5905a994"
   }
 }

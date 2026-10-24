@@ -31,7 +31,7 @@ test('native spawn protection and easy shields remain independent of life stock'
   for(let n=0;n<12;n++)one.step(s,[{...one.EMPTY_INPUT,seq:n+1,dir:2}]);assert.equal(s.players[0].capacity,9);assert.equal(s.players[0].life,6);assert(one.validState(s));
 });
 test('Bomb It 2 coin death drops half the acquired coins, preserves remaining score and revives naturally',()=>{
-  const s=arena2(),p=s.players[0];p.points=9;s.scores[0]=9;s.flames[two.index(p.x,p.y)]=2;s.owners[two.index(p.x,p.y)]=2;
+  const s=arena2(),p=s.players[0];p.x=5;p.y=4;p.points=9;s.scores[0]=9;s.flames[two.index(p.x,p.y)]=2;s.owners[two.index(p.x,p.y)]=2;
   step2(s);assert.equal(p.points,5);assert.equal(s.scores[0],5);assert.equal(s.items.filter(v=>v===9).length,4);assert.equal(p.respawnAt,s.tick+64);assert.equal(p.deaths,1);
   step2(s,64);assert.equal(p.respawnAt,0);assert.equal(p.points,5);assert(two.valid(s));
 });

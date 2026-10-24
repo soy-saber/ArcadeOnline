@@ -8,6 +8,8 @@ import { BOMB2_CANVAS_WIDTH, bomb2Weapon, bomb2Status } from './bomb2-status';
 import RULES from './bomb2-rules.json';
 import BRICK_BURST from './bomb2-brick.json';
 import { audio, sound, SOUND_FILES } from './bomb2-sound';
+import {moveActor,syncWalking,relocate,validWalking} from './bomb2-movement';
+import {stopWalking,walkingPosition} from './bomb2-walking';
 export const HZ = 40, WIDTH = 17, HEIGHT = 15, ROUND_TICKS = HZ * 180, FUSE = 62;
 const DIRS = [[-1,0],[0,-1],[1,0],[0,1]];
 const SPAWNS = [[1,1],[15,1],[1,13],[15,13]];
@@ -35,7 +37,10 @@ export function weaponLabel(s:State,p:any):string {
 export const index = (x:number,y:number):number => y * WIDTH + x;
 function random(s:State):number { let x=s.rng|0;x^=x<<13;x^=x>>>17;x^=x<<5;s.rng=x>>>0;return s.rng/4294967296; }
 const inside=(x:number,y:number)=>x>=0&&x<WIDTH&&y>=0&&y<HEIGHT;
-function direction(i:Input):number { return i.left?0:i.up?1:i.right?2:i.down?3:-1; }
+function direction(i:Input):number {
+  if(i.direction!==undefined&&i.direction>=0&&[i.left,i.up,i.right,i.down][i.direction])return i.direction;
+  return i.left?0:i.up?1:i.right?2:i.down?3:-1;
+}
 export function create(round:number,playing:boolean,seats:number[],seed:number,mapId?:string,gameMode?:string,settings?:{difficulty?:string;characters?:number[]}):State {
   const [legacyMode,selectedMap] = mapId?.includes(':')?mapId.split(':'):['arcade',mapId];
   const selectedMode=gameMode??legacyMode;
@@ -71,7 +76,7 @@ export function create(round:number,playing:boolean,seats:number[],seed:number,m
     s.players.push({seat,character,x,y,dir:3,moveDir:-1,progress:0,moveTicks:8,speed:8,alive:true,life:3,capacity:1,range:1,kick:false,shield:mode==='arcade'&&s.difficulty==='easy',invulnerable:mode==='kill'?RESPAWN_PROTECTION_TICKS:0,lastAttack:0,lastAlt:0,weapon:0,ammo:0,vehicle:0,vehicleUntil:0,respawnAt:0,teleportUntil:0,killedBy:0,points:0,kills:0,deaths:0,diedAt:0,actionLock:0,attack:null,weaponStock:[]});
   }
   if(mode==='collect')for(let i=0;i<5;i++)spawnCoin(s);
-  for(const p of s.players)p.invulnerable=RESPAWN_PROTECTION_TICKS;
+  for(const p of s.players){p.invulnerable=RESPAWN_PROTECTION_TICKS;syncWalking(p);}
   return s;
 }
 function spawnCoin(s:State):void {
@@ -155,7 +160,8 @@ function hit(s:State,p:any,owner:number):void {
   else if(s.mode==='kill'&&owner===p.seat&&p.points>0){p.points--;s.scores[p.seat-1]=p.points;}
 }
 function useWeapon(s:State,p:any):void {
-  if(p.actionLock>0||p.attack||p.moveDir>=0)return;
+  if(p.actionLock>0||p.attack)return;
+  stopWalking(syncWalking(p));p.moveDir=-1;
   const remote=s.bombs.filter((b:any)=>b.owner===p.seat&&b.kind==='remote');
   if(remote.length){for(const b of remote)b.explodeAt=s.tick;return;}
   const kind=p.weapon|| (s.mode==='kill'?15:0);if(!kind||p.weapon&&p.ammo<=0)return;
@@ -213,12 +219,10 @@ function updateAttacks(s:State):void {
   s.effects=s.effects.filter((effect:any)=>effect.until>s.tick);
 }
 function hazards(s:State,p:any):void {
-  if(p.teleportUntil>s.tick||p.vehicle)return;
+  if(p.teleportUntil>s.tick||p.vehicle===11)return;
   const h=s.hazards.find((h:any)=>h.x===p.x&&h.y===p.y);if(!h)return;
-  if(h.kind==='QuickSand'&&h.target!==undefined){const t=s.hazards[h.target];if(t&&passable(s,t.x,t.y)){p.x=t.x;p.y=t.y;p.teleportUntil=s.tick+HZ;}}
-  else if(h.kind==='SpringBoard'){const [dx,dy]=DIRS[p.dir];for(let d=2;d>0;d--)if(passable(s,p.x+dx*d,p.y+dy*d)){p.x+=dx*d;p.y+=dy*d;p.teleportUntil=s.tick+20;break;}}
-  else if(h.kind==='Transmittal'){const dir=[0,0,2,1,3][h.dir]??p.dir;const [dx,dy]=DIRS[dir];if(passable(s,p.x+dx,p.y+dy)){p.moveDir=dir;p.moveTicks=p.speed+2;p.progress=0;}}
-  else if(h.kind==='IceFace'){const [dx,dy]=DIRS[p.dir];if(passable(s,p.x+dx,p.y+dy)){p.moveDir=p.dir;p.moveTicks=Math.max(3,p.speed-2);p.progress=0;}}
+  if(h.kind==='QuickSand'&&h.target!==undefined){const t=s.hazards[h.target];if(t&&passable(s,t.x,t.y)){relocate(p,t.x,t.y);p.teleportUntil=s.tick+HZ;}}
+  else if(h.kind==='SpringBoard'&&!p.vehicle){const [dx,dy]=DIRS[p.dir];for(let d=2;d>0;d--)if(passable(s,p.x+dx*d,p.y+dy*d)){relocate(p,p.x+dx*d,p.y+dy*d);p.teleportUntil=s.tick+20;break;}}
 }
 export function step(s:State,inputs:Input[]):void {
   if(s.phase!=='playing')return;s.tick++;
@@ -226,27 +230,29 @@ export function step(s:State,inputs:Input[]):void {
   for(const p of s.players){
     const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
     if(!p.alive)continue;
-    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];p.x=x;p.y=y;p.respawnAt=0;p.invulnerable=RESPAWN_PROTECTION_TICKS;}
+    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];relocate(p,x,y);p.respawnAt=0;p.invulnerable=RESPAWN_PROTECTION_TICKS;}
     if(p.invulnerable>0)p.invulnerable--;
     if(p.actionLock>0)p.actionLock--;
-    if(p.moveDir>=0){if(++p.progress>=p.moveTicks){const [dx,dy]=DIRS[p.moveDir];p.x+=dx;p.y+=dy;p.progress=0;p.moveDir=-1;take(s,p);hazards(s,p);}}
+    syncWalking(p);
     if(input){
       if(p.actionLock>0||p.attack){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
-      else if(p.moveDir<0){
+      else {
         const dir=direction(input);if(dir>=0)p.dir=dir;
         if(input.attack>p.lastAttack){p.lastAttack=input.attack;if(s.mode==='kill'||p.weapon||s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat))useWeapon(s,p);else place(s,p);}
         if(input.alt>p.lastAlt){p.lastAlt=input.alt;useWeapon(s,p);}
-      }else if(s.mode!=='kill'&&!p.weapon&&!s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat)&&input.attack>p.lastAttack){p.lastAttack=input.attack;place(s,p);}
+      }
     }
-    if(p.moveDir<0&&input&&p.actionLock===0&&!p.attack){const dir=direction(input);if(dir>=0){p.dir=dir;const [dx,dy]=DIRS[dir],x=p.x+dx,y=p.y+dy;
+    const oldX=p.x,oldY=p.y,dir=input?direction(input):-1;
+    moveActor(s,p,dir,(x,y)=>{
+      if(p.actionLock||p.attack||dir<0)return;const [dx,dy]=DIRS[dir];
       const bomb=s.bombs.find((b:any)=>b.x===x&&b.y===y);if(bomb&&p.kick&&passable(s,x+dx,y+dy)){bomb.slide=dir;bomb.x+=dx;bomb.y+=dy;}
-      if(p.vehicle===12&&inside(x,y)&&s.board[index(x,y)]===2){breakCrate(s,index(x,y));p.actionLock=12;sound(s,'crush');continue;}
-      if(p.vehicle===14&&inside(x,y)&&!passable(s,x,y)&&passable(s,x+dx,y+dy)){
+      if(p.vehicle===12&&inside(x,y)&&s.board[index(x,y)]===2){breakCrate(s,index(x,y));p.actionLock=12;stopWalking(p.walking);sound(s,'crush');}
+      if(p.vehicle===14&&p.teleportUntil<=s.tick&&inside(x,y)&&!passable(s,x,y)&&passable(s,x+dx,y+dy)){
         // FrogProp crosses the blocked cell, landing one cell beyond it.
-        p.x=x+dx;p.y=y+dy;p.teleportUntil=s.tick+20;take(s,p);
-      }else if((passable(s,x,y)||(p.vehicle===11&&inside(x,y)&&!s.bombs.some((b:any)=>b.x===x&&b.y===y)))&&
-        !((p.vehicle===12||p.vehicle===13)&&s.hazards.some((h:any)=>h.kind==='SpringBoard'&&h.x===x&&h.y===y))){p.moveDir=dir;p.moveTicks=p.vehicle===12?12:p.vehicle===13?6:p.speed;p.progress=0;}}
-    }
+        relocate(p,x+dx,y+dy);p.teleportUntil=s.tick+20;
+      }
+    });
+    take(s,p);if(p.x!==oldX||p.y!==oldY)hazards(s,p);
     if(s.mode==='color'&&!p.respawnAt&&s.board[index(p.x,p.y)]===0&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
     if(s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
   }
@@ -269,7 +275,7 @@ export function step(s:State,inputs:Input[]):void {
         else {breakCrate(s,index(x,y));for(const b of s.bombs)if(b.x===x&&b.y===y)b.explodeAt=s.tick;}
         return false;
       }
-      const p=s.players.find(p=>p.alive&&!p.respawnAt&&p.seat!==shot.owner&&Math.hypot(p.x+.5-shot.x,p.y+.5-shot.y)<.4);
+      const p=s.players.find(p=>{const pos=walkingPosition(p);return p.alive&&!p.respawnAt&&p.seat!==shot.owner&&Math.hypot(pos.x+.5-shot.x,pos.y+.5-shot.y)<.4;});
       if(p){if(shot.kind===16){ignite(s,x,y,shot.owner);for(const [dx,dy]of DIRS)ignite(s,x+dx,y+dy,shot.owner);}else hit(s,p,shot.owner);return false;}
     }return shot.until>s.tick;
   });
@@ -307,7 +313,7 @@ export function step(s:State,inputs:Input[]):void {
 export function valid(value:unknown):value is State {
   if(!value||typeof value!=='object')return false;const s=value as State;
   const int=(n:any,lo:number,hi:number)=>Number.isSafeInteger(n)&&n>=lo&&n<=hi;
-  if(!['easy','normal','hard'].includes(s.difficulty)||!int(s.crateOffset,0,2)||!Array.isArray(s.players)||!s.players.every(p=>p&&int(p.character,1,4))||new Set(s.players.map(p=>p.character)).size!==s.players.length)return false;
+  if(!['easy','normal','hard'].includes(s.difficulty)||!int(s.crateOffset,0,2)||!Array.isArray(s.players)||!s.players.every(p=>p&&int(p.character,1,4)&&validWalking(p))||new Set(s.players.map(p=>p.character)).size!==s.players.length)return false;
   if(s.gameId!=='9109-server'||s.version!==1||!int(s.round,1,Number.MAX_SAFE_INTEGER)||!int(s.tick,0,ROUND_TICKS)||!int(s.rng,0,0xffffffff)||!int(s.nextId,1,1e7)||!MODES.includes(s.mode)||!MAPS.some(m=>m.id===s.mapId&&m.theme===s.theme)||!['waiting','playing','finished'].includes(s.phase))return false;
   if(!int(s.soundId,0,1e9)||!int(s.musicTrack,1,4)||!Array.isArray(s.sounds)||s.sounds.length>64||!s.sounds.every((e:any,i:number)=>e&&int(e.id,1,s.soundId)&&(i===0||e.id>s.sounds[i-1].id)&&(e.name==='result'||Object.prototype.hasOwnProperty.call(SOUND_FILES,e.name)))||
     !Array.isArray(s.vehiclePool)||s.vehiclePool.length!==(s.mode==='kill'?0:2)||new Set(s.vehiclePool).size!==s.vehiclePool.length||!s.vehiclePool.every((v:any)=>(s.theme==='disce'?[12,13]:[12,13,14]).includes(v))||!int(s.vehiclesLeft,0,4))return false;
@@ -379,11 +385,11 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length){const pos=Math.floor(s.tram),part=s.tram-pos,start=rails[pos%rails.length],end=rails[(pos+1)%rails.length];draw(ctx,'tramcar-1',left+(start.x+(end.x-start.x)*part)*cell,top+(start.y+(end.y-start.y)*part)*cell-10,cell,cell+10);}
   for(const p of [...s.players].sort((a,b)=>a.y-b.y)){
     if(!p.alive||p.respawnAt>s.tick){if(p.deaths>0&&s.tick-p.diedAt<RESPAWN_TICKS)timeline(ctx,'dead-'+(p.character-1),s.tick-p.diedAt,left+(p.x+.5)*cell,top+(p.y+1)*cell,true);continue;}
-    const delta=p.moveDir<0?[0,0]:DIRS[p.moveDir],x=left+(p.x+.5+delta[0]*p.progress/p.moveTicks)*cell,y=top+(p.y+1+delta[1]*p.progress/p.moveTicks)*cell;
+    const pos=walkingPosition(p),x=left+(pos.x+.5)*cell,y=top+(pos.y+1)*cell;
     const img=asset(`hero-${p.character-1}-${['left','up','right','down'][p.dir]}`),frames=24,width=img.naturalWidth/frames;
     ctx.globalAlpha=p.invulnerable>0&&s.tick%6<3?.5:1;
     if(p.vehicle===12||p.vehicle===13||p.vehicle===14){draw(ctx,`vehicle-${p.character-1}-${p.vehicle===12?'bulldozer':p.vehicle===13?'car':'frog'}-${['left','up','right','down'][p.dir]}`,x-20,y-42,40,42);}
-    else if(img.complete&&img.naturalWidth){const h=37,w=width/img.naturalHeight*h;ctx.drawImage(img,(p.moveDir<0?0:Math.floor(s.tick/2)%frames)*width,0,width,img.naturalHeight,x-w/2,y-h,w,h);}
+    else if(img.complete&&img.naturalWidth){const h=37,w=width/img.naturalHeight*h;ctx.drawImage(img,(p.moveDir<0?0:s.tick%frames)*width,0,width,img.naturalHeight,x-w/2,y-h,w,h);}
     ctx.globalAlpha=1;ctx.strokeStyle=p.seat===seat?'#fff':'#353352';ctx.lineWidth=2;if(p.shield||p.seat===seat){ctx.beginPath();ctx.ellipse(x,y-13,17,23,0,0,Math.PI*2);ctx.stroke();}
     const equipped=bomb2Weapon(s,p);if(equipped)weaponBadge(ctx,equipped,x,y-43,15);
     if(p.attack){const names:Record<number,string>={15:'hammer',16:'launcher',19:'shotgun',20:'laser-ready'};

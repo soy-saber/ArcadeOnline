@@ -4,6 +4,7 @@ import brawlerData from "../expanded/brawler-data.json";
 import { camera as boxheadCamera } from "../expanded/boxhead-world";
 import { BOMB_FIELD_WIDTH } from './bomb-status';
 import { BOMB2_FIELD_WIDTH, bomb2Weapon } from '../expanded/bomb2-status';
+import {walkingPosition} from '../expanded/bomb2-walking';
 
 interface Anchor { seat: number; x: number; y: number }
 export function nameAnchors(state: State, width: number, height: number): Anchor[] {
@@ -15,8 +16,8 @@ export function nameAnchors(state: State, width: number, height: number): Anchor
         if ("board" in state) { const pos = position(p); x = 28 + (pos.x + .5) * 44; y = 66 + (pos.y + 1) * 44 - (p.weapon&&p.ammo>0?87:67); }
         else { x *= 2; y = Math.max(108, y - 96) * 2; }
       } else if (state.gameId === "9109-server") {
-        const vectors = [[-1,0],[0,-1],[1,0],[0,1]], delta = vectors[p.moveDir] || [0,0], f = p.progress / p.moveTicks;
-        x = 45 + (p.x + .5 + delta[0] * f) * 30; y = 66 + (p.y + 1 + delta[1] * f) * 30 - (bomb2Weapon(state,p)?72:53);
+        const pos=walkingPosition(p);
+        x = 45 + (pos.x + .5) * 30; y = 66 + (pos.y + 1) * 30 - (bomb2Weapon(state,p)?72:53);
       } else if (state.gameId === "137953-server") {
         const scale = Math.min(680 / (state.width * 50), 365 / (state.height * 50));
         x = (712 - state.width * 50 * scale) / 2 + p.x * scale;

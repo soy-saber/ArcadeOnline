@@ -1782,6 +1782,463 @@ function sound(s, name) {
   emitSound(s, name);
 }
 
+// src/expanded/bomb2-motion.ts
+var CELL2 = 30;
+var point = (x, y) => ({ x, y });
+function overlap(a, b, d) {
+  return a.x + d.x + a.w > b.x && a.x < b.x + b.w && a.y + d.y + a.h > b.y && a.y < b.y + b.h;
+}
+function moveRight(body2, map, speed) {
+  const hitHandlers = map.onHit || [];
+  let xN = 0;
+  let midN = 0;
+  let yTop = 0;
+  let yButton = 0;
+  let yMiddle = 0;
+  let direct = point(0, 0);
+  let moveItemHit = () => {
+  };
+  let distance = NaN;
+  let j = 0;
+  moveItemHit = () => {
+    let _loc1_ = 0;
+    if (map.moving.length == 0) {
+      body2.x += speed;
+    } else {
+      _loc1_ = 0;
+      while (_loc1_ < map.moving.length) {
+        if (overlap(body2, map.moving[_loc1_], direct)) {
+          if (map.moving[_loc1_].aspect.x > 0) {
+            if (body2.x + body2.w < map.moving[_loc1_].x) {
+              body2.x += map.moving[_loc1_].x - (body2.x + body2.w);
+            } else {
+              body2.x += speed;
+            }
+          }
+          body2.blocked = true;
+        } else {
+          body2.x += speed;
+        }
+        _loc1_++;
+      }
+    }
+  };
+  xN = Math.floor((body2.x + body2.w + speed) / CELL2);
+  midN = Math.floor((body2.x + body2.w / 2) / CELL2);
+  yTop = Math.floor(body2.y / CELL2);
+  yButton = Math.floor((body2.y + body2.h - 1) / CELL2);
+  yMiddle = Math.floor((body2.y + body2.h / 2) / CELL2);
+  direct = point(speed, 0);
+  if (xN == midN) {
+    moveItemHit();
+  } else if (map.passable(xN, yMiddle)) {
+    if (yTop == yMiddle) {
+      if (yButton == yMiddle) {
+        moveItemHit();
+      } else if (map.passable(xN, yButton) || (body2.y + body2.h) % CELL2 == 0) {
+        moveItemHit();
+      } else {
+        distance = body2.y + body2.h - yButton * CELL2;
+        if (distance > Math.abs(speed)) {
+          body2.y -= Math.abs(speed);
+        } else {
+          body2.y -= distance + map.transSpeed.y;
+        }
+      }
+    } else if (map.passable(xN, yTop) || body2.y % CELL2 == 0) {
+      moveItemHit();
+    } else {
+      distance = yMiddle * CELL2 - body2.y;
+      if (distance > Math.abs(speed)) {
+        body2.y += Math.abs(speed);
+      } else {
+        body2.y += distance - map.transSpeed.y;
+      }
+    }
+  } else if (map.item(xN, yMiddle)) {
+    if (body2.x + body2.w < map.item(xN, yMiddle).x) {
+      if (map.item(xN, yMiddle).x - (body2.x + body2.w) >= speed) {
+        body2.x += speed;
+      } else {
+        body2.x += map.item(xN, yMiddle).x - (body2.x + body2.w);
+      }
+    } else {
+      body2.blocked = true;
+    }
+    j = 0;
+    while (j < hitHandlers.length) {
+      hitHandlers[j](xN, yMiddle);
+      j++;
+    }
+  } else {
+    body2.blocked = true;
+  }
+}
+function moveLeft(body2, map, speed) {
+  const hitHandlers = map.onHit || [];
+  let xN = 0;
+  let midN = 0;
+  let yTop = 0;
+  let yButton = 0;
+  let yMiddle = 0;
+  let direct = point(0, 0);
+  let moveItemHit = () => {
+  };
+  let distance = NaN;
+  let j = 0;
+  moveItemHit = () => {
+    let _loc1_ = 0;
+    if (map.moving.length == 0) {
+      body2.x += speed;
+    } else {
+      _loc1_ = 0;
+      while (_loc1_ < map.moving.length) {
+        if (overlap(body2, map.moving[_loc1_], direct)) {
+          if (map.moving[_loc1_].aspect.x < 0) {
+            if (body2.x > map.moving[_loc1_].x + map.moving[_loc1_].w) {
+              body2.x += map.moving[_loc1_].x + map.moving[_loc1_].w - body2.x;
+            }
+          }
+          body2.blocked = true;
+        } else {
+          body2.x += speed;
+        }
+        _loc1_++;
+      }
+    }
+  };
+  xN = Math.floor((body2.x + speed) / CELL2);
+  midN = Math.floor((body2.x + body2.w / 2) / CELL2);
+  yTop = Math.floor(body2.y / CELL2);
+  yButton = Math.floor((body2.y + body2.h - 1) / CELL2);
+  yMiddle = Math.floor((body2.y + body2.h / 2) / body2.w);
+  direct = point(speed, 0);
+  if (xN == midN) {
+    moveItemHit();
+  } else if (map.passable(xN, yMiddle)) {
+    if (yTop == yMiddle) {
+      if (yButton == yMiddle) {
+        moveItemHit();
+      } else if (map.passable(xN, yButton) || (body2.y + body2.h) % CELL2 == 0) {
+        moveItemHit();
+      } else {
+        distance = body2.y + body2.h - yButton * CELL2;
+        if (distance > Math.abs(speed)) {
+          body2.y -= Math.abs(speed);
+        } else {
+          body2.y -= distance + map.transSpeed.y;
+        }
+      }
+    } else if (map.passable(xN, yTop) || body2.y % CELL2 == 0) {
+      moveItemHit();
+    } else {
+      distance = yMiddle * CELL2 - body2.y;
+      if (distance > Math.abs(speed)) {
+        body2.y += Math.abs(speed);
+      } else {
+        body2.y += distance - map.transSpeed.y;
+      }
+    }
+  } else if (map.item(xN, yMiddle)) {
+    if (map.item(xN, yMiddle).x + map.item(xN, yMiddle).w < body2.x) {
+      if (map.item(xN, yMiddle).x + map.item(xN, yMiddle).w - body2.x <= speed) {
+        body2.x += speed;
+      } else {
+        body2.x += map.item(xN, yMiddle).x + map.item(xN, yMiddle).w - body2.x;
+      }
+    } else {
+      body2.blocked = true;
+    }
+    j = 0;
+    while (j < hitHandlers.length) {
+      hitHandlers[j](xN, yMiddle);
+      j++;
+    }
+  } else {
+    body2.blocked = true;
+  }
+}
+function moveUp(body2, map, speed) {
+  const hitHandlers = map.onHit || [];
+  let yN = 0;
+  let midN = 0;
+  let xLeft = 0;
+  let xRight = 0;
+  let xMiddle = 0;
+  let direct = point(0, 0);
+  let moveItemHit = () => {
+  };
+  let distance = NaN;
+  let j = 0;
+  moveItemHit = () => {
+    let _loc1_ = 0;
+    if (map.moving.length == 0) {
+      body2.y += speed;
+    } else {
+      _loc1_ = 0;
+      while (_loc1_ < map.moving.length) {
+        if (overlap(body2, map.moving[_loc1_], direct)) {
+          if (map.moving[_loc1_].aspect.y < 0) {
+            if (body2.y > map.moving[_loc1_].y + map.moving[_loc1_].h) {
+              body2.y += map.moving[_loc1_].y + map.moving[_loc1_].h - body2.y;
+            } else {
+              body2.y += speed;
+            }
+          }
+          body2.blocked = true;
+        } else {
+          body2.y += speed;
+        }
+        _loc1_++;
+      }
+    }
+  };
+  yN = Math.floor((body2.y + speed) / CELL2);
+  midN = Math.floor((body2.y + body2.h / 2) / CELL2);
+  xLeft = Math.floor(body2.x / CELL2);
+  xRight = Math.floor((body2.x + body2.w - 1) / CELL2);
+  xMiddle = Math.floor((body2.x + body2.w / 2) / CELL2);
+  direct = point(0, speed);
+  if (yN == midN) {
+    moveItemHit();
+  } else if (map.passable(xMiddle, yN)) {
+    if (xLeft == xMiddle) {
+      if (xRight == xMiddle) {
+        moveItemHit();
+      } else if (map.passable(xRight, yN) || (body2.x + body2.w) % CELL2 == 0) {
+        moveItemHit();
+      } else {
+        distance = body2.x + body2.w - xRight * CELL2;
+        if (distance > Math.abs(speed)) {
+          body2.x -= Math.abs(speed);
+        } else {
+          body2.x -= distance + map.transSpeed.x;
+        }
+      }
+    } else if (map.passable(xLeft, yN) || body2.x % CELL2 == 0) {
+      moveItemHit();
+    } else {
+      distance = xMiddle * CELL2 - body2.x;
+      if (distance > Math.abs(speed)) {
+        body2.x += Math.abs(speed);
+      } else {
+        body2.x += distance - map.transSpeed.x;
+      }
+    }
+  } else if (map.item(xMiddle, yN)) {
+    if (body2.y > map.item(xMiddle, yN).y + map.item(xMiddle, yN).h) {
+      if (map.item(xMiddle, yN).y + map.item(xMiddle, yN).h - body2.y <= speed) {
+        body2.y += speed;
+      } else {
+        body2.y += map.item(xMiddle, yN).y + map.item(xMiddle, yN).h - body2.y;
+      }
+    } else {
+      body2.blocked = true;
+    }
+    j = 0;
+    while (j < hitHandlers.length) {
+      hitHandlers[j](xMiddle, yN);
+      j++;
+    }
+  } else {
+    body2.blocked = true;
+  }
+}
+function moveDown(body2, map, speed) {
+  const hitHandlers = map.onHit || [];
+  let yN = 0;
+  let midN = 0;
+  let xLeft = 0;
+  let xRight = 0;
+  let xMiddle = 0;
+  let direct = point(0, 0);
+  let moveItemHit = () => {
+  };
+  let distance = NaN;
+  let j = 0;
+  moveItemHit = () => {
+    let _loc1_ = 0;
+    if (map.moving.length == 0) {
+      body2.y += speed;
+    } else {
+      _loc1_ = 0;
+      while (_loc1_ < map.moving.length) {
+        if (overlap(body2, map.moving[_loc1_], direct)) {
+          if (map.moving[_loc1_].aspect.y > 0) {
+            if (body2.y + body2.h < map.moving[_loc1_].y) {
+              body2.y += map.moving[_loc1_].y - (body2.y + body2.h);
+            } else {
+              body2.y += speed;
+            }
+          }
+          body2.blocked = true;
+        } else {
+          body2.y += speed;
+        }
+        _loc1_++;
+      }
+    }
+  };
+  yN = Math.floor((body2.y + body2.h + speed) / CELL2);
+  midN = Math.floor((body2.y + body2.h / 2) / CELL2);
+  xLeft = Math.floor(body2.x / CELL2);
+  xRight = Math.floor((body2.x + body2.w - 1) / CELL2);
+  xMiddle = Math.floor((body2.x + body2.w / 2) / CELL2);
+  direct = point(0, speed);
+  if (midN == yN) {
+    moveItemHit();
+  } else if (map.passable(xMiddle, yN)) {
+    if (xLeft == xMiddle) {
+      if (xRight == xMiddle) {
+        moveItemHit();
+      } else if (map.passable(xRight, yN) || (body2.x + body2.w) % CELL2 == 0) {
+        moveItemHit();
+      } else {
+        distance = body2.x + body2.w - xRight * CELL2;
+        if (distance > Math.abs(speed)) {
+          body2.x -= Math.abs(speed);
+        } else {
+          body2.x -= distance + map.transSpeed.x;
+        }
+      }
+    } else if (map.passable(xLeft, yN) || body2.x % CELL2 == 0) {
+      moveItemHit();
+    } else {
+      distance = xMiddle * CELL2 - body2.x;
+      if (distance > Math.abs(speed)) {
+        body2.x += Math.abs(speed);
+      } else {
+        body2.x += distance - map.transSpeed.x;
+      }
+    }
+  } else if (map.item(xMiddle, yN)) {
+    if (body2.y + body2.h < map.item(xMiddle, yN).y) {
+      if (map.item(xMiddle, yN).y - (body2.y + body2.h) >= speed) {
+        body2.y += speed;
+      } else {
+        body2.y += map.item(xMiddle, yN).y - (body2.y + body2.h);
+      }
+    } else {
+      body2.blocked = true;
+    }
+    j = 0;
+    while (j < hitHandlers.length) {
+      hitHandlers[j](xMiddle, yN);
+      j++;
+    }
+  } else {
+    body2.blocked = true;
+  }
+}
+
+// src/expanded/bomb2-walking.ts
+function walkingAt(x, y) {
+  return { x: x * CELL2, y: y * CELL2, w: CELL2, h: CELL2, vx: 0, vy: 0, blocked: false, gridX: x, gridY: y };
+}
+function stopWalking(body2) {
+  body2.vx = 0;
+  body2.vy = 0;
+  body2.blocked = false;
+}
+function moveWalking(body2, map, direction2, velocity, resistance) {
+  body2.blocked = false;
+  if (direction2 === 0 || direction2 === 2) {
+    body2.vx += (direction2 === 0 ? -1 : 1) * velocity / resistance;
+    body2.vx *= resistance;
+    body2.vy *= resistance;
+    body2.vy = 0;
+  } else if (direction2 === 1 || direction2 === 3) {
+    body2.vy += (direction2 === 1 ? -1 : 1) * velocity / resistance;
+    body2.vx *= resistance;
+    body2.vy *= resistance;
+    body2.vx = 0;
+  } else {
+    body2.vx *= resistance;
+    body2.vy *= resistance;
+  }
+  if (body2.vx > 0.1) moveRight(body2, map, body2.vx);
+  else if (body2.vx < -0.1) moveLeft(body2, map, body2.vx);
+  else if (body2.vy > 0.1) moveDown(body2, map, body2.vy);
+  else if (body2.vy < -0.1) moveUp(body2, map, body2.vy);
+  body2.gridX = Math.floor((body2.x + body2.w / 2) / CELL2);
+  body2.gridY = Math.floor((body2.y + body2.h / 2) / CELL2);
+}
+function walkingPosition(p) {
+  if (p.walking) return { x: p.walking.x / CELL2, y: p.walking.y / CELL2 };
+  const vector = [[-1, 0], [0, -1], [1, 0], [0, 1]][p.moveDir ?? -1] || [0, 0], fraction = (p.progress || 0) / Math.max(1, p.moveTicks || 1);
+  return { x: p.x + vector[0] * fraction, y: p.y + vector[1] * fraction };
+}
+
+// src/expanded/bomb2-movement.ts
+var dirs = [[-1, 0], [0, -1], [1, 0], [0, 1]];
+function syncWalking(p) {
+  if (!p.walking || p.walking.gridX !== p.x || p.walking.gridY !== p.y) p.walking = walkingAt(p.x, p.y);
+  return p.walking;
+}
+function relocate(p, x, y) {
+  p.x = x;
+  p.y = y;
+  p.walking = walkingAt(x, y);
+  p.progress = 0;
+  p.moveDir = -1;
+}
+function tramBody(s) {
+  const rail = s.hazards.filter((h) => h.kind === "Rail");
+  if (!rail.length) return null;
+  const n = Math.floor(s.tram), f = s.tram - n, a = rail[n % rail.length], b = rail[(n + 1) % rail.length];
+  return { x: (a.x + (b.x - a.x) * f) * CELL2, y: (a.y + (b.y - a.y) * f) * CELL2, w: CELL2, h: CELL2, blocked: false, aspect: { x: Math.sign(b.x - a.x), y: Math.sign(b.y - a.y) } };
+}
+function moveActor(s, p, direction2, onHit) {
+  const body2 = syncWalking(p), tram = tramBody(s), moving = tram ? [tram] : [];
+  const map = {
+    moving,
+    transSpeed: { x: 0, y: 0 },
+    onHit: [onHit],
+    passable(x, y) {
+      if (x < 0 || x >= 17 || y < 0 || y >= 15) return false;
+      const cell = s.board[y * 17 + x];
+      if (cell === 1 || cell === 2 && p.vehicle !== 11) return false;
+      if (s.bombs.some((b) => b.x === x && b.y === y && b.kind !== "mine")) return false;
+      if ((p.vehicle === 12 || p.vehicle === 13) && s.hazards.some((h) => h.kind === "SpringBoard" && h.x === x && h.y === y)) return false;
+      return !tram || Math.floor((tram.x + 15) / CELL2) !== x || Math.floor((tram.y + 15) / CELL2) !== y;
+    },
+    item(x, y) {
+      return tram && Math.floor((tram.x + 15) / CELL2) === x && Math.floor((tram.y + 15) / CELL2) === y ? tram : { x: x * CELL2, y: y * CELL2, w: CELL2, h: CELL2, blocked: false };
+    }
+  };
+  const ice = p.vehicle !== 11 && s.hazards.some((h) => h.kind === "IceFace" && h.x === p.x && h.y === p.y);
+  const velocity = p.vehicle === 12 ? 1 : p.vehicle === 13 ? 2.2 : p.vehicle ? 1.5 : 1.5 + (8 - p.speed) * 0.3;
+  if (p.actionLock > 0 || p.attack) {
+    stopWalking(body2);
+    p.progress = 0;
+    p.moveDir = -1;
+    return;
+  }
+  const oldX = body2.x, oldY = body2.y;
+  moveWalking(body2, map, direction2, velocity, ice ? 0.8 : 0.6);
+  if (p.walking !== body2) return;
+  const cx = Math.floor((body2.x + 15) / CELL2), cy = Math.floor((body2.y + 15) / CELL2);
+  const conveyor = p.vehicle !== 11 ? s.hazards.find((h) => h.kind === "Transmittal" && h.x === cx && h.y === cy) : null;
+  if (conveyor) {
+    const dir = [-1, 0, 2, 1, 3][conveyor.dir];
+    if (dir >= 0) {
+      const [dx, dy] = dirs[dir];
+      map.transSpeed = { x: dx, y: dy };
+      [moveLeft, moveUp, moveRight, moveDown][dir](body2, map, dx || dy);
+    }
+  }
+  body2.x = Math.max(0, Math.min(16 * CELL2, body2.x));
+  body2.y = Math.max(0, Math.min(14 * CELL2, body2.y));
+  p.x = body2.gridX = Math.floor((body2.x + 15) / CELL2);
+  p.y = body2.gridY = Math.floor((body2.y + 15) / CELL2);
+  p.moveDir = body2.x === oldX && body2.y === oldY ? -1 : Math.abs(body2.x - oldX) > Math.abs(body2.y - oldY) ? body2.x < oldX ? 0 : 2 : body2.y < oldY ? 1 : 3;
+  p.progress = 0;
+}
+function validWalking(p) {
+  const b = p.walking;
+  return !!b && [b.x, b.y, b.vx, b.vy, b.gridX, b.gridY].every(Number.isFinite) && b.x >= 0 && b.x <= 480 && b.y >= 0 && b.y <= 420 && Math.abs(b.vx) <= 50 && Math.abs(b.vy) <= 50 && b.w === CELL2 && b.h === CELL2 && typeof b.blocked === "boolean" && b.gridX === p.x && b.gridY === p.y;
+}
+
 // src/expanded/bomb2.ts
 var HZ4 = 40;
 var WIDTH2 = 17;
@@ -1815,6 +2272,7 @@ function random3(s) {
 }
 var inside2 = (x, y) => x >= 0 && x < WIDTH2 && y >= 0 && y < HEIGHT2;
 function direction(i) {
+  if (i.direction !== void 0 && i.direction >= 0 && [i.left, i.up, i.right, i.down][i.direction]) return i.direction;
   return i.left ? 0 : i.up ? 1 : i.right ? 2 : i.down ? 3 : -1;
 }
 function create2(round, playing2, seats, seed, mapId, gameMode, settings) {
@@ -1903,7 +2361,10 @@ function create2(round, playing2, seats, seed, mapId, gameMode, settings) {
     s.players.push({ seat, character, x, y, dir: 3, moveDir: -1, progress: 0, moveTicks: 8, speed: 8, alive: true, life: 3, capacity: 1, range: 1, kick: false, shield: mode === "arcade" && s.difficulty === "easy", invulnerable: mode === "kill" ? RESPAWN_PROTECTION_TICKS : 0, lastAttack: 0, lastAlt: 0, weapon: 0, ammo: 0, vehicle: 0, vehicleUntil: 0, respawnAt: 0, teleportUntil: 0, killedBy: 0, points: 0, kills: 0, deaths: 0, diedAt: 0, actionLock: 0, attack: null, weaponStock: [] });
   }
   if (mode === "collect") for (let i = 0; i < 5; i++) spawnCoin(s);
-  for (const p of s.players) p.invulnerable = RESPAWN_PROTECTION_TICKS;
+  for (const p of s.players) {
+    p.invulnerable = RESPAWN_PROTECTION_TICKS;
+    syncWalking(p);
+  }
   return s;
 }
 function spawnCoin(s) {
@@ -2055,7 +2516,9 @@ function hit(s, p, owner) {
   }
 }
 function useWeapon(s, p) {
-  if (p.actionLock > 0 || p.attack || p.moveDir >= 0) return;
+  if (p.actionLock > 0 || p.attack) return;
+  stopWalking(syncWalking(p));
+  p.moveDir = -1;
   const remote = s.bombs.filter((b) => b.owner === p.seat && b.kind === "remote");
   if (remote.length) {
     for (const b of remote) b.explodeAt = s.tick;
@@ -2131,38 +2594,21 @@ function updateAttacks(s) {
   s.effects = s.effects.filter((effect2) => effect2.until > s.tick);
 }
 function hazards(s, p) {
-  if (p.teleportUntil > s.tick || p.vehicle) return;
+  if (p.teleportUntil > s.tick || p.vehicle === 11) return;
   const h = s.hazards.find((h2) => h2.x === p.x && h2.y === p.y);
   if (!h) return;
   if (h.kind === "QuickSand" && h.target !== void 0) {
     const t = s.hazards[h.target];
     if (t && passable2(s, t.x, t.y)) {
-      p.x = t.x;
-      p.y = t.y;
+      relocate(p, t.x, t.y);
       p.teleportUntil = s.tick + HZ4;
     }
-  } else if (h.kind === "SpringBoard") {
+  } else if (h.kind === "SpringBoard" && !p.vehicle) {
     const [dx, dy] = DIRS[p.dir];
     for (let d = 2; d > 0; d--) if (passable2(s, p.x + dx * d, p.y + dy * d)) {
-      p.x += dx * d;
-      p.y += dy * d;
+      relocate(p, p.x + dx * d, p.y + dy * d);
       p.teleportUntil = s.tick + 20;
       break;
-    }
-  } else if (h.kind === "Transmittal") {
-    const dir = [0, 0, 2, 1, 3][h.dir] ?? p.dir;
-    const [dx, dy] = DIRS[dir];
-    if (passable2(s, p.x + dx, p.y + dy)) {
-      p.moveDir = dir;
-      p.moveTicks = p.speed + 2;
-      p.progress = 0;
-    }
-  } else if (h.kind === "IceFace") {
-    const [dx, dy] = DIRS[p.dir];
-    if (passable2(s, p.x + dx, p.y + dy)) {
-      p.moveDir = p.dir;
-      p.moveTicks = Math.max(3, p.speed - 2);
-      p.progress = 0;
     }
   }
 }
@@ -2182,31 +2628,20 @@ function step4(s, inputs) {
       }
       if (p.respawnAt > s.tick) continue;
       const [x, y] = SPAWNS[p.character - 1];
-      p.x = x;
-      p.y = y;
+      relocate(p, x, y);
       p.respawnAt = 0;
       p.invulnerable = RESPAWN_PROTECTION_TICKS;
     }
     if (p.invulnerable > 0) p.invulnerable--;
     if (p.actionLock > 0) p.actionLock--;
-    if (p.moveDir >= 0) {
-      if (++p.progress >= p.moveTicks) {
-        const [dx, dy] = DIRS[p.moveDir];
-        p.x += dx;
-        p.y += dy;
-        p.progress = 0;
-        p.moveDir = -1;
-        take(s, p);
-        hazards(s, p);
-      }
-    }
+    syncWalking(p);
     if (input) {
       if (p.actionLock > 0 || p.attack) {
         p.lastAttack = Math.max(p.lastAttack, input.attack);
         p.lastAlt = Math.max(p.lastAlt, input.alt);
-      } else if (p.moveDir < 0) {
-        const dir = direction(input);
-        if (dir >= 0) p.dir = dir;
+      } else {
+        const dir2 = direction(input);
+        if (dir2 >= 0) p.dir = dir2;
         if (input.attack > p.lastAttack) {
           p.lastAttack = input.attack;
           if (s.mode === "kill" || p.weapon || s.bombs.some((b) => b.kind === "remote" && b.owner === p.seat)) useWeapon(s, p);
@@ -2216,40 +2651,31 @@ function step4(s, inputs) {
           p.lastAlt = input.alt;
           useWeapon(s, p);
         }
-      } else if (s.mode !== "kill" && !p.weapon && !s.bombs.some((b) => b.kind === "remote" && b.owner === p.seat) && input.attack > p.lastAttack) {
-        p.lastAttack = input.attack;
-        place(s, p);
       }
     }
-    if (p.moveDir < 0 && input && p.actionLock === 0 && !p.attack) {
-      const dir = direction(input);
-      if (dir >= 0) {
-        p.dir = dir;
-        const [dx, dy] = DIRS[dir], x = p.x + dx, y = p.y + dy;
-        const bomb = s.bombs.find((b) => b.x === x && b.y === y);
-        if (bomb && p.kick && passable2(s, x + dx, y + dy)) {
-          bomb.slide = dir;
-          bomb.x += dx;
-          bomb.y += dy;
-        }
-        if (p.vehicle === 12 && inside2(x, y) && s.board[index2(x, y)] === 2) {
-          breakCrate2(s, index2(x, y));
-          p.actionLock = 12;
-          sound(s, "crush");
-          continue;
-        }
-        if (p.vehicle === 14 && inside2(x, y) && !passable2(s, x, y) && passable2(s, x + dx, y + dy)) {
-          p.x = x + dx;
-          p.y = y + dy;
-          p.teleportUntil = s.tick + 20;
-          take(s, p);
-        } else if ((passable2(s, x, y) || p.vehicle === 11 && inside2(x, y) && !s.bombs.some((b) => b.x === x && b.y === y)) && !((p.vehicle === 12 || p.vehicle === 13) && s.hazards.some((h) => h.kind === "SpringBoard" && h.x === x && h.y === y))) {
-          p.moveDir = dir;
-          p.moveTicks = p.vehicle === 12 ? 12 : p.vehicle === 13 ? 6 : p.speed;
-          p.progress = 0;
-        }
+    const oldX = p.x, oldY = p.y, dir = input ? direction(input) : -1;
+    moveActor(s, p, dir, (x, y) => {
+      if (p.actionLock || p.attack || dir < 0) return;
+      const [dx, dy] = DIRS[dir];
+      const bomb = s.bombs.find((b) => b.x === x && b.y === y);
+      if (bomb && p.kick && passable2(s, x + dx, y + dy)) {
+        bomb.slide = dir;
+        bomb.x += dx;
+        bomb.y += dy;
       }
-    }
+      if (p.vehicle === 12 && inside2(x, y) && s.board[index2(x, y)] === 2) {
+        breakCrate2(s, index2(x, y));
+        p.actionLock = 12;
+        stopWalking(p.walking);
+        sound(s, "crush");
+      }
+      if (p.vehicle === 14 && p.teleportUntil <= s.tick && inside2(x, y) && !passable2(s, x, y) && passable2(s, x + dx, y + dy)) {
+        relocate(p, x + dx, y + dy);
+        p.teleportUntil = s.tick + 20;
+      }
+    });
+    take(s, p);
+    if (p.x !== oldX || p.y !== oldY) hazards(s, p);
     if (s.mode === "color" && !p.respawnAt && s.board[index2(p.x, p.y)] === 0 && !s.hazards.some((h) => (h.kind === "SpringBoard" || h.kind === "QuickSand") && h.x === p.x && h.y === p.y)) s.colors[index2(p.x, p.y)] = p.seat;
     if (s.flames[index2(p.x, p.y)] > s.tick) hit(s, p, s.owners[index2(p.x, p.y)]);
   }
@@ -2287,7 +2713,10 @@ function step4(s, inputs) {
         }
         return false;
       }
-      const p = s.players.find((p2) => p2.alive && !p2.respawnAt && p2.seat !== shot2.owner && Math.hypot(p2.x + 0.5 - shot2.x, p2.y + 0.5 - shot2.y) < 0.4);
+      const p = s.players.find((p2) => {
+        const pos = walkingPosition(p2);
+        return p2.alive && !p2.respawnAt && p2.seat !== shot2.owner && Math.hypot(pos.x + 0.5 - shot2.x, pos.y + 0.5 - shot2.y) < 0.4;
+      });
       if (p) {
         if (shot2.kind === 16) {
           ignite2(s, x, y, shot2.owner);
@@ -2348,7 +2777,7 @@ function valid2(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
   const int = (n, lo, hi) => Number.isSafeInteger(n) && n >= lo && n <= hi;
-  if (!["easy", "normal", "hard"].includes(s.difficulty) || !int(s.crateOffset, 0, 2) || !Array.isArray(s.players) || !s.players.every((p) => p && int(p.character, 1, 4)) || new Set(s.players.map((p) => p.character)).size !== s.players.length) return false;
+  if (!["easy", "normal", "hard"].includes(s.difficulty) || !int(s.crateOffset, 0, 2) || !Array.isArray(s.players) || !s.players.every((p) => p && int(p.character, 1, 4) && validWalking(p)) || new Set(s.players.map((p) => p.character)).size !== s.players.length) return false;
   if (s.gameId !== "9109-server" || s.version !== 1 || !int(s.round, 1, Number.MAX_SAFE_INTEGER) || !int(s.tick, 0, ROUND_TICKS3) || !int(s.rng, 0, 4294967295) || !int(s.nextId, 1, 1e7) || !MODES.includes(s.mode) || !MAPS.some((m) => m.id === s.mapId && m.theme === s.theme) || !["waiting", "playing", "finished"].includes(s.phase)) return false;
   if (!int(s.soundId, 0, 1e9) || !int(s.musicTrack, 1, 4) || !Array.isArray(s.sounds) || s.sounds.length > 64 || !s.sounds.every((e, i) => e && int(e.id, 1, s.soundId) && (i === 0 || e.id > s.sounds[i - 1].id) && (e.name === "result" || Object.prototype.hasOwnProperty.call(SOUND_FILES, e.name))) || !Array.isArray(s.vehiclePool) || s.vehiclePool.length !== (s.mode === "kill" ? 0 : 2) || new Set(s.vehiclePool).size !== s.vehiclePool.length || !s.vehiclePool.every((v) => (s.theme === "disce" ? [12, 13] : [12, 13, 14]).includes(v)) || !int(s.vehiclesLeft, 0, 4)) return false;
   if (!Array.isArray(s.crateBursts) || s.crateBursts.length > 255 || !s.crateBursts.every((b) => b && int(b.cell, 0, 254) && int(b.born, 0, s.tick) && b.at === b.born + bomb2_brick_default.frames)) return false;
@@ -2484,14 +2913,14 @@ function render2(canvas, s, seat) {
       if (p.deaths > 0 && s.tick - p.diedAt < RESPAWN_TICKS) timeline(ctx, "dead-" + (p.character - 1), s.tick - p.diedAt, left + (p.x + 0.5) * cell, top + (p.y + 1) * cell, true);
       continue;
     }
-    const delta = p.moveDir < 0 ? [0, 0] : DIRS[p.moveDir], x = left + (p.x + 0.5 + delta[0] * p.progress / p.moveTicks) * cell, y = top + (p.y + 1 + delta[1] * p.progress / p.moveTicks) * cell;
+    const pos = walkingPosition(p), x = left + (pos.x + 0.5) * cell, y = top + (pos.y + 1) * cell;
     const img2 = asset2(`hero-${p.character - 1}-${["left", "up", "right", "down"][p.dir]}`), frames = 24, width = img2.naturalWidth / frames;
     ctx.globalAlpha = p.invulnerable > 0 && s.tick % 6 < 3 ? 0.5 : 1;
     if (p.vehicle === 12 || p.vehicle === 13 || p.vehicle === 14) {
       draw(ctx, `vehicle-${p.character - 1}-${p.vehicle === 12 ? "bulldozer" : p.vehicle === 13 ? "car" : "frog"}-${["left", "up", "right", "down"][p.dir]}`, x - 20, y - 42, 40, 42);
     } else if (img2.complete && img2.naturalWidth) {
       const h = 37, w = width / img2.naturalHeight * h;
-      ctx.drawImage(img2, (p.moveDir < 0 ? 0 : Math.floor(s.tick / 2) % frames) * width, 0, width, img2.naturalHeight, x - w / 2, y - h, w, h);
+      ctx.drawImage(img2, (p.moveDir < 0 ? 0 : s.tick % frames) * width, 0, width, img2.naturalHeight, x - w / 2, y - h, w, h);
     }
     ctx.globalAlpha = 1;
     ctx.strokeStyle = p.seat === seat ? "#fff" : "#353352";
@@ -2566,14 +2995,14 @@ var EMPTY_INPUT3 = { seq: 0, left: false, right: false, up: false, down: false, 
 function validInput3(value) {
   if (!value || typeof value !== "object") return false;
   const input = value;
-  return [input.seq, input.attack, input.alt].every((n) => Number.isSafeInteger(n) && n >= 0 && n < 1e9) && [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean") && (input.weapon === void 0 || Number.isInteger(input.weapon) && input.weapon >= 0 && input.weapon < 10) && (input.weaponStep === void 0 || input.weaponStep === -1 || input.weaponStep === 1) && (input.trigger === void 0 || typeof input.trigger === "boolean") && (input.cancelledAttack === void 0 || Number.isSafeInteger(input.cancelledAttack) && input.cancelledAttack >= 0 && input.cancelledAttack < 1e9);
+  return [input.seq, input.attack, input.alt].every((n) => Number.isSafeInteger(n) && n >= 0 && n < 1e9) && [input.left, input.right, input.up, input.down].every((n) => typeof n === "boolean") && (input.direction === void 0 || Number.isInteger(input.direction) && input.direction >= -1 && input.direction <= 3) && (input.weapon === void 0 || Number.isInteger(input.weapon) && input.weapon >= 0 && input.weapon < 10) && (input.weaponStep === void 0 || input.weaponStep === -1 || input.weaponStep === 1) && (input.trigger === void 0 || typeof input.trigger === "boolean") && (input.cancelledAttack === void 0 || Number.isSafeInteger(input.cancelledAttack) && input.cancelledAttack >= 0 && input.cancelledAttack < 1e9);
 }
 
 // src/expanded/boxhead-world.ts
 var WIDTH3 = 1280;
 var HEIGHT3 = 800;
 var HUD = 84;
-var CELL2 = 32;
+var CELL3 = 32;
 var MAPS2 = boxhead_data_default.maps;
 var CHARACTERS = ["swat", "bond", "gijoe", "bambo"];
 var WEAPONS3 = [
@@ -2592,7 +3021,7 @@ function room(s) {
   return MAPS2.find((m) => m.id === s.mapId) || MAPS2[0];
 }
 function solid(map, x, y) {
-  return map.collision[Math.floor(y / CELL2)]?.[Math.floor(x / CELL2)] !== "0";
+  return map.collision[Math.floor(y / CELL3)]?.[Math.floor(x / CELL3)] !== "0";
 }
 function blocked(s, x, y, radius = 11, ignore) {
   const map = room(s);
@@ -2606,7 +3035,7 @@ function move(s, p, dx, dy, radius = 11) {
 function openPosition(s, x, y, used = []) {
   const map = room(s), candidates = [];
   for (let row = 1; row < map.rows - 1; row++) for (let col = 1; col < map.columns - 1; col++) {
-    const px = col * CELL2 + 16, py = row * CELL2 + 16;
+    const px = col * CELL3 + 16, py = row * CELL3 + 16;
     if (!blocked(s, px, py) && !used.some((p) => Math.hypot(p.x - px, p.y - py) < 30)) candidates.push({ x: px, y: py, d: Math.hypot(px - x, py - y) });
   }
   candidates.sort((a, b) => a.d - b.d);
@@ -2791,7 +3220,7 @@ function explode(s, x, y, amount, owner, bang = 0, cluster = false) {
 function shot(s, p, angle, amount, range, pierce) {
   let x = p.x, y = p.y;
   const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
-  for (let n = 0; n < range * CELL2 / 4; n++) {
+  for (let n = 0; n < range * CELL3 / 4; n++) {
     x += dx;
     y += dy;
     if (solid(room(s), x, y)) {
@@ -2824,7 +3253,7 @@ function fire2(s, p) {
     return;
   }
   if (["barrel", "fakewall", "mine", "chargepack"].includes(gun.id)) {
-    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL2) * CELL2 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL2) * CELL2 + 16;
+    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL3) * CELL3 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL3) * CELL3 + 16;
     if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
     s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "fakewall" ? 100 : 60, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0 });
     sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
@@ -2876,7 +3305,7 @@ function upgrade(s) {
 function navigation(s) {
   const map = room(s), distances = new Int32Array(map.columns * map.rows).fill(-1), queue = [];
   for (const p of s.players) if (p.alive) {
-    const cell = Math.floor(p.y / CELL2) * map.columns + Math.floor(p.x / CELL2);
+    const cell = Math.floor(p.y / CELL3) * map.columns + Math.floor(p.x / CELL3);
     if (distances[cell] === -1) {
       distances[cell] = 0;
       queue.push(cell);
@@ -2903,14 +3332,14 @@ function enemies(s) {
     const distance = Math.hypot(p.x - z.x, p.y - z.y), visible = lineClear(s, z.x, z.y, p.x, p.y);
     let tx = p.x, ty = p.y;
     if (!visible) {
-      const cx = Math.floor(z.x / CELL2), cy = Math.floor(z.y / CELL2);
+      const cx = Math.floor(z.x / CELL3), cy = Math.floor(z.y / CELL3);
       let best = Infinity;
       for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
         const x = cx + dx, y = cy + dy, d = field[y * map.columns + x];
         if (map.collision[y]?.[x] === "0" && d >= 0 && d < best) {
           best = d;
-          tx = x * CELL2 + 16;
-          ty = y * CELL2 + 16;
+          tx = x * CELL3 + 16;
+          ty = y * CELL3 + 16;
         }
       }
     }
@@ -4102,7 +4531,7 @@ var levels = forest_data_default.levels;
 var T = 32;
 var HZ6 = 60;
 var clamp3 = (n, a, b) => Math.max(a, Math.min(b, n));
-function overlap(a, b) {
+function overlap2(a, b) {
   const r = b.rotation || 0;
   if (!r) return a.x - a.w / 2 < b.x + b.w / 2 && a.x + a.w / 2 > b.x - b.w / 2 && a.y - a.h < b.y && a.y > b.y - b.h;
   const ax = a.x, ay = a.y - a.h / 2, bx = b.x, by = b.y - b.h / 2, c = Math.cos(r), n = Math.sin(r), dx = ax - bx, dy = ay - by;
@@ -4194,7 +4623,7 @@ function solidAt(s, x, y) {
 var solidDevice = (d) => ["platform", "hanging", "pulley", "roman", "box", "boxheavy", "boxmirror", "ball"].includes(d.type);
 function collides2(s, b, others) {
   const points = [[b.x - b.w / 2 + 1, b.y - b.h + 1], [b.x + b.w / 2 - 1, b.y - b.h + 1], [b.x - b.w / 2 + 1, b.y - 1], [b.x + b.w / 2 - 1, b.y - 1], [b.x, b.y - 1], [b.x, b.y - b.h / 2]];
-  return points.some(([x, y]) => solidAt(s, x, y)) || others.some((o) => o.id !== b.id && overlap(b, o));
+  return points.some(([x, y]) => solidAt(s, x, y)) || others.some((o) => o.id !== b.id && overlap2(b, o));
 }
 function move3(s, b, others) {
   const steps = Math.max(1, Math.ceil(Math.max(Math.abs(b.vx), Math.abs(b.vy)) / 4));
@@ -4226,7 +4655,7 @@ function move3(s, b, others) {
       if (vy >= 0) {
         b.grounded = true;
         const below = { ...b, y: b.y + 2 };
-        b.support = others.find((o) => o.id !== b.id && overlap(below, o))?.id ?? -1;
+        b.support = others.find((o) => o.id !== b.id && overlap2(below, o))?.id ?? -1;
       }
       b.vy = 0;
     }
@@ -4236,7 +4665,7 @@ function move3(s, b, others) {
     if (collides2(s, b, others)) {
       b.grounded = true;
       b.vy = Math.max(0, b.vy);
-      b.support = others.find((o) => o.id !== b.id && overlap(b, o))?.id ?? -1;
+      b.support = others.find((o) => o.id !== b.id && overlap2(b, o))?.id ?? -1;
     }
     b.y -= 1.5;
   }
@@ -4386,7 +4815,7 @@ function step7(state, inputs) {
       }
     }
     for (const box of solids.filter((d) => ["box", "boxheavy", "boxmirror", "ball"].includes(d.type))) {
-      if (overlap({ ...p, x: p.x + p.vx }, box)) {
+      if (overlap2({ ...p, x: p.x + p.vx }, box)) {
         box.vx = p.vx * (box.type === "boxheavy" ? 0.4 : 0.9);
         move3(s, box, solids);
       }

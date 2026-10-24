@@ -1,0 +1,15 @@
+{
+  "source": "games/9109/game.swf",
+  "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+  "payload": "artifacts/swf-analysis/9109-restore/1_Ad_newgames_AdSWF.bin",
+  "payloadSha256": "69f4253cd97ecc1d0974ee7c6ba6d4d67495afa5b389f6df6f94ebb36b8634e4",
+  "sourceClass": "actionSprite.HitMove",
+  "normalizedSourceSha256": "220e001036b6f21b93737de23e149747aec902e20729da7f3c028f835b583535",
+  "methods": [
+    "rightAfoul",
+    "leftAfoul",
+    "upAfoul",
+    "downAfoul"
+  ],
+  "method": "Static syntax and property binding translation; original collision branch order retained; map/body/handlers supplied by native authority."
+}

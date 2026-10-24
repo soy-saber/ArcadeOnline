@@ -3,7 +3,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const output = path.join(__dirname, "../artifacts/authority-tests");
-for (const [name, source] of [["presentation", "authority/presentation"], ["bomb", "authority/bomb-core"], ["badminton", "badminton/core"]]) {
+for (const [name, source] of [["presentation", "authority/presentation"], ["bomb", "authority/bomb-core"], ["badminton", "badminton/core"], ["bomb2", "expanded/bomb2"]]) {
   require("esbuild").buildSync({ entryPoints: [path.join(__dirname, `../src/${source}.ts`)], outfile: path.join(output, `${name}.cjs`), bundle: true, platform: "node", format: "cjs" });
 }
 const { Presentation } = require(path.join(output, "presentation.cjs"));
@@ -82,4 +82,15 @@ test("unchanged waiting rooms do not repeatedly request expensive full snapshots
   presentation.receive(state,1000,1);
   for(let now=100;now<5000;now+=100)presentation.render(now,1000+now,null,null,35);
   assert.equal(requests,0);
+});
+
+test("Bomb It 2 remote interpolation keeps pixel poses and walking animation together", () => {
+  const core=require(path.join(output,"bomb2.cjs")),state=core.create(1,true,[1,2],123,"beach-one"),presentation=new Presentation(()=>{});
+  const p=state.players[1];p.walking.x=90;p.walking.gridX=p.x=3;p.moveDir=2;p.dir=2;
+  presentation.receive(copy(state),1000,1);
+  state.tick=4;p.walking.x=105;p.walking.gridX=p.x=4;
+  presentation.receive(copy(state),1100,100);
+  const frame=presentation.render(140,1140,1,null,40),remote=frame.players[1];
+  assert.equal(remote.walking.x,97.5);assert.equal(remote.x,3.25);assert.equal(remote.moveDir,2);
+  assert.equal(frame.tick,4);assert.deepEqual(frame.board,state.board);assert.equal(state.players[1].walking.x,105);
 });

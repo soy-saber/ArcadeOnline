@@ -135,9 +135,12 @@ function start(): void {
     }
   }
   function currentInput(now: number): Input {
+    let preferredDirection=-1,lastDirectionAt=-1;
+    if(bomb2)for(const [code,at]of keys)if(bombDirections[code]!==undefined&&at>=lastDirectionAt){preferredDirection=bombDirections[code];lastDirectionAt=at;}
     if (adapter && !boxhead && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
     if (adapter) return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"),
       up: keys.has("KeyW") || keys.has("ArrowUp"), down: keys.has("KeyS") || keys.has("ArrowDown"), attack: bomb, alt: jump,
+      ...(bomb2?{direction:preferredDirection}:{}),
       ...(boxhead ? {trigger:actions.some(code=>keys.has(code)),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
       if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) { hit++; lastHitAt = now; }

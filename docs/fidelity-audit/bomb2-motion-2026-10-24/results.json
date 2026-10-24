@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "map": "beach-one",
+      "startX": 180,
+      "movingX": 204.46947840000004,
+      "movingSpeed": 3.6870143999999994,
+      "stoppedX": 217.34348812459382,
+      "coast": 12.874009724593776,
+      "continuous": true,
+      "snapshotRecovery": true
+    },
+    {
+      "map": "snow-one",
+      "startX": 180,
+      "movingX": 215.03316479999998,
+      "movingSpeed": 6.241708800000001,
+      "stoppedX": 247.03210359389234,
+      "coast": 31.998938793892364,
+      "continuous": true,
+      "snapshotRecovery": true
+    }
+  ],
+  "keyOrder": true,
+  "errors": []
+}
