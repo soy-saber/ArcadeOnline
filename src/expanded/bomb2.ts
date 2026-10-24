@@ -12,7 +12,7 @@ import {moveActor,moveBomb,syncWalking,relocate,validWalking} from './bomb2-move
 import {conveyorFrame,REMOTE_FUSE} from './bomb2-conveyor';
 import BOMB_ART from './bomb2-bomb-art.json';
 import FLAME_ART from './bomb2-blast-art.json';
-import {BLAST_TICKS,burningBombAt,blastSprite,validBlasts,type Blast} from './bomb2-blasts';
+import {BLAST_TICKS,MAX_BLAST_DELAY,burningBombAt,expireBlasts,blastSprite,validBlasts,type Blast} from './bomb2-blasts';
 import {enterLandform,advanceLandform,jumpSprite,heroHead,travelAlpha,sandFrame,validLandforms} from './bomb2-landforms';
 import LAND_ART from './bomb2-landform-art.json';
 import VEHICLE_ART from './bomb2-vehicle-art.json';
@@ -118,15 +118,24 @@ function finishCrates(s:State):void {
   }
   s.crateBursts=s.crateBursts.filter((b:any)=>b.at>s.tick);
 }
-function ignite(s:State,x:number,y:number,owner:number,diagonal=false):void {
+function scoreHit(s:State,victim:any,owner:number):void {
+  if(s.mode!=='kill')return;const attacker=s.players.find(p=>p.seat===owner);if(!attacker)return;
+  attacker.points=owner===victim.seat?Math.max(0,attacker.points-1):attacker.points+1;s.scores[owner-1]=attacker.points;
+}
+function ignite(s:State,blast:Blast,x:number,y:number,credit=true,diagonal=false):void {
   if(!inside(x,y)||s.board[index(x,y)]===1&&!diagonal)return;
-  const cell=index(x,y);if(s.flames[cell]<=s.tick)s.owners[cell]=owner;s.flames[cell]=s.tick+BLAST_TICKS;
+  const cell=index(x,y);blast.fires.push(cell);
+  // Bomb.blast scores the registered robots present at creation, before their
+  // later fire check consumes a shield/vehicle or causes death. A prop takes
+  // priority over that score branch. Entering residual fire awards no point.
+  if(credit&&!s.items[cell])for(const p of s.players)if(p.alive&&!p.respawnAt&&p.invulnerable===0&&p.travel?.kind!=='sand'&&p.x===x&&p.y===y)scoreHit(s,p,blast.owner);
+  if(s.flames[cell]<=s.tick)s.owners[cell]=blast.owner;s.flames[cell]=s.tick+BLAST_TICKS;
   if(s.board[cell]===2)breakCrate(s,cell);else s.items[cell]=0;
   for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=Math.min(b.explodeAt,s.tick);
 }
 function burst(s:State,b:any,exploded:Set<number>,blocking=true):void {
-  const position=walkingPosition(b),blast:Blast={id:s.nextId++,owner:b.owner,x:b.x,y:b.y,px:position.x*30,py:position.y*30,born:s.tick,until:s.tick+BLAST_TICKS,kind:b.kind==='mine'?'mine':'normal',blocking,tiles:[{x:b.x,y:b.y,frame:1}]};
-  ignite(s,b.x,b.y,b.owner);
+  const position=walkingPosition(b),blast:Blast={id:s.nextId++,owner:b.owner,x:b.x,y:b.y,px:position.x*30,py:position.y*30,born:s.tick,until:s.tick+BLAST_TICKS,delay:0,kind:b.kind==='mine'?'mine':'normal',blocking,tiles:[{x:b.x,y:b.y,frame:1}],fires:[]};
+  ignite(s,blast,b.x,b.y,true,true);
   // Bomb.blast visits up/down/left/right once at each distance. A box or
   // registered bomb ends that arm; only empty cells and breakable boxes
   // receive its own flame art. The chained bomb supplies its own centre.
@@ -137,16 +146,16 @@ function burst(s:State,b:any,exploded:Set<number>,blocking=true):void {
     if(!inside(x,y)||s.board[index(x,y)]===1){active[a]=false;continue;}
     const other=s.bombs.find((q:any)=>q!==b&&q.slide<0&&q.x===x&&q.y===y);
     if(other){if(!exploded.has(other.id))other.explodeAt=Math.min(other.explodeAt,s.tick);active[a]=false;continue;}
-    if(burningBombAt(s,x,y)||tram&&tram.x===x&&tram.y===y){active[a]=false;continue;}
+    if(burningBombAt(s,x,y,false,true)||tram&&tram.x===x&&tram.y===y){active[a]=false;continue;}
     const crate=s.board[index(x,y)]===2;
-    blast.tiles.push({x,y,frame:distance===b.range?arm.end:arm.mid});ignite(s,x,y,b.owner);
+    blast.tiles.push({x,y,frame:distance===b.range?arm.end:arm.mid});ignite(s,blast,x,y,!crate);
     if(crate)active[a]=false;
   }
-  if(b.kind==='mine')for(const dx of [-1,1])for(const dy of [-1,1])ignite(s,b.x+dx,b.y+dy,b.owner,true);
+  if(b.kind==='mine')for(const dx of [-1,1])for(const dy of [-1,1]){const x=b.x+dx,y=b.y+dy,credit=inside(x,y)&&!s.board[index(x,y)]&&!burningBombAt(s,x,y,false,true)&&!s.bombs.some((q:any)=>q.slide<0&&q.x===x&&q.y===y)&&!(tram&&tram.x===x&&tram.y===y);ignite(s,blast,x,y,credit,true);}
   s.blasts.push(blast);
 }
 function place(s:State,p:any,kind='normal',x=p.x,y=p.y):boolean {
-  if(!inside(x,y)||s.board[index(x,y)]||burningBombAt(s,x,y)||s.bombs.length>=36||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
+  if(!inside(x,y)||s.board[index(x,y)]||burningBombAt(s,x,y,false,true)||s.bombs.length>=36||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)||s.bombs.filter((b:any)=>b.owner===p.seat).length>=p.capacity)return false;
   s.bombs.push({id:s.nextId++,owner:p.seat,x,y,range:kind==='mine'?2:p.range,kind,explodeAt:kind==='normal'?s.tick+FUSE:kind==='thrown'?s.tick+25:ROUND_TICKS+FUSE,armedAt:kind==='mine'?ROUND_TICKS+20:s.tick+20,slide:-1});
   if(kind==='remote')s.bombs[s.bombs.length-1].explodeAt=s.tick+REMOTE_FUSE;
   s.bombs[s.bombs.length-1].born=s.tick;
@@ -171,8 +180,11 @@ function dropWeapons(s:State,p:any):void {
     if(cells.length)s.items[cells[Math.floor(random(s)*cells.length)]]=item;
   }
 }
-function hit(s:State,p:any,owner:number):void {
+function hit(s:State,p:any,owner:number,scoring:'direct'|'fire'|'power'='direct'):void {
   if(!p.alive||p.respawnAt>s.tick||p.invulnerable>0)return;
+  // Sinker, bullets, laser and thrower score before ifDead; the power prop
+  // uniquely scores only when ifDead returns true. Grid fire is not a scorer.
+  if(scoring==='direct')scoreHit(s,p,owner);
   if(p.vehicle){if(!startWreck(s,p)){p.vehicle=0;p.vehicleUntil=0;}p.moveDir=-1;p.progress=0;beginProtection(s,p);return;}
   if(p.shield){p.shield=false;beginProtection(s,p);sound(s,'shield');return;}
   if(s.mode==='arcade')p.life--;p.deaths++;p.diedAt=s.tick;p.killedBy=owner;p.moveDir=-1;p.progress=0;
@@ -196,8 +208,8 @@ function hit(s:State,p:any,owner:number):void {
   }
   p.weaponStock=[];p.weapon=0;p.ammo=0;p.speed=8;p.moveTicks=8;p.capacity=1;p.range=1;p.kick=false;p.shield=false;p.vehicle=0;p.vehicleUntil=0;p.invulnerable=0;
   const killer=s.players.find(q=>q.seat===owner);
-  if(killer&&owner!==p.seat){killer.kills++;if(s.mode==='kill'){killer.points++;s.scores[owner-1]=killer.points;}}
-  else if(s.mode==='kill'&&owner===p.seat&&p.points>0){p.points--;s.scores[p.seat-1]=p.points;}
+  if(scoring==='power')scoreHit(s,p,owner);
+  if(killer&&owner!==p.seat)killer.kills++;
 }
 function useWeapon(s:State,p:any):void {
   if(p.actionLock>0||p.attack)return;
@@ -258,50 +270,7 @@ function updateAttacks(s:State):void {
   }
   s.effects=s.effects.filter((effect:any)=>effect.until>s.tick);
 }
-export function step(s:State,inputs:Input[]):void {
-  if(s.phase!=='playing')return;s.tick++;
-  s.blasts=s.blasts.filter((b:Blast)=>b.until>s.tick);
-  s.sandLights=s.sandLights.map((born:number)=>born&&s.tick-born>=LAND_ART.rules.lightFrames?0:born);
-  const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length)s.tram=(s.tram+1/30)%rails.length;
-  for(const p of s.players){
-    const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
-    if(!p.alive)continue;
-    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];relocate(p,x,y);p.respawnAt=0;resetBody(p);beginProtection(s,p);}
-    if(p.actionLock>0)p.actionLock--;
-    syncWalking(p);
-    const dir=input?direction(input):-1;
-    if(p.rideMotion){
-      if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
-      take(s,p);advanceRide(s,p);
-    }else if(p.travel){
-      if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
-      if(p.travel.kind==='sand')take(s,p);
-      advanceLandform(s,p);
-    }else{
-    if(input){
-      if(p.actionLock>0||p.attack){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
-      else {
-        const dir=direction(input);if(dir>=0)p.dir=dir;
-        if(input.attack>p.lastAttack){p.lastAttack=input.attack;if(s.mode==='kill'||p.weapon||s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat))useWeapon(s,p);else place(s,p);}
-        if(input.alt>p.lastAlt){p.lastAlt=input.alt;useWeapon(s,p);}
-      }
-    }
-    take(s,p);enterLandform(s,p);
-    if(!p.travel){
-    moveActor(s,p,dir,(x,y)=>{
-      if(p.actionLock||p.attack||p.rideMotion)return;
-      const bomb=s.bombs.find((b:any)=>b.slide<0&&b.x===x&&b.y===y);if(bomb&&p.kick&&!p.vehicle&&dir>=0)bomb.slide=dir;
-      if(p.vehicle===12&&inside(x,y)&&s.board[index(x,y)]===2){breakCrate(s,index(x,y));startCrush(s,p);sound(s,'crush');}
-      if(p.vehicle===14)startFrogJump(s,p,x,y);
-    });
-    }
-    }
-    updateRideAnimation(s,p,dir);
-    updateBody(s,p,dir);
-    if(s.mode==='color'&&!p.respawnAt&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
-    if(s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
-  }
-  updateAttacks(s);
+function advanceBombs(s:State):void {
   for(const b of s.bombs){
     if(b.explodeAt>s.tick||b.slide>=0)moveBomb(s,b);
     if(b.slide>=0)continue;
@@ -310,13 +279,12 @@ export function step(s:State,inputs:Input[]):void {
       if(b.armedAt>s.tick&&(!owner||!owner.alive||owner.respawnAt||owner.x!==b.x||owner.y!==b.y))b.armedAt=s.tick;
       if(b.armedAt<=s.tick&&s.players.some(p=>p.alive&&!p.respawnAt&&p.travel?.kind!=='sand'&&p.x===b.x&&p.y===b.y))b.explodeAt=s.tick;
     }
-    if(s.flames[index(b.x,b.y)]>s.tick)b.explodeAt=s.tick;
   }
   s.shots=s.shots.filter((shot:any)=>{
     for(let k=0;k<4;k++){
       const oldX=Math.floor(shot.x),oldY=Math.floor(shot.y);
       shot.x+=shot.vx/4;shot.y+=shot.vy/4;const x=Math.floor(shot.x),y=Math.floor(shot.y);
-      if(!inside(x,y))return false;if(s.board[index(x,y)]||burningBombAt(s,x,y)||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)){
+      if(!inside(x,y))return false;if(s.board[index(x,y)]||burningBombAt(s,x,y,false,true)||s.bombs.some((b:any)=>b.slide<0&&b.x===x&&b.y===y)){
         if(shot.kind===16){const tx=s.board[index(x,y)]===1?oldX:x,ty=s.board[index(x,y)]===1?oldY:y;burst(s,{x:tx,y:ty,owner:shot.owner,range:1,kind:'normal'},new Set(),false);}
         else {breakCrate(s,index(x,y));for(const b of s.bombs)if(b.slide<0&&b.x===x&&b.y===y)b.explodeAt=s.tick;}
         return false;
@@ -330,7 +298,62 @@ export function step(s:State,inputs:Input[]):void {
     const b=s.bombs.find((b:any)=>b.slide<0&&b.explodeAt<=s.tick&&!exploded.has(b.id));if(!b)break;exploded.add(b.id);sound(s,'explode');burst(s,b,exploded);
   }
   s.bombs=s.bombs.filter((b:any)=>!exploded.has(b.id));
-  for(const p of s.players)if(p.alive&&!p.respawnAt&&s.flames[index(p.x,p.y)]>s.tick)hit(s,p,s.owners[index(p.x,p.y)]);
+  expireBlasts(s);
+}
+function moveHuman(s:State,p:any,dir:number):void {
+  moveActor(s,p,dir,(x,y)=>{
+    if(p.actionLock||p.attack||p.rideMotion)return;
+    const bomb=s.bombs.find((b:any)=>b.slide<0&&b.x===x&&b.y===y);if(bomb&&p.kick&&!p.vehicle&&dir>=0)bomb.slide=dir;
+    if(p.vehicle===12&&inside(x,y)&&s.board[index(x,y)]===2){breakCrate(s,index(x,y));startCrush(s,p);sound(s,'crush');}
+    if(p.vehicle===14)startFrogJump(s,p,x,y);
+  });
+}
+export function step(s:State,inputs:Input[]):void {
+  if(s.phase!=='playing')return;s.tick++;
+  s.sandLights=s.sandLights.map((born:number)=>born&&s.tick-born>=LAND_ART.rules.lightFrames?0:born);
+  const rails=s.hazards.filter((h:any)=>h.kind==='Rail');if(rails.length)s.tram=(s.tram+1/30)%rails.length;
+  for(const p of s.players){
+    const input=inputs[p.seat-1];if(input)s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],input.seq);
+    if(!p.alive)continue;
+    if(p.respawnAt){if(input){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}if(p.respawnAt>s.tick)continue;const [x,y]=SPAWNS[p.character-1];relocate(p,x,y);p.respawnAt=0;resetBody(p);beginProtection(s,p);}
+    if(p.actionLock>0)p.actionLock--;
+    syncWalking(p);
+    if(input){
+      if(p.rideMotion||p.travel||p.actionLock>0||p.attack){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);}
+      else {
+        const dir=direction(input);if(dir>=0)p.dir=dir;
+        if(input.attack>p.lastAttack){p.lastAttack=input.attack;if(s.mode==='kill'||p.weapon||s.bombs.some((b:any)=>b.kind==='remote'&&b.owner===p.seat))useWeapon(s,p);else place(s,p);}
+        if(input.alt>p.lastAlt){p.lastAlt=input.alt;useWeapon(s,p);}
+      }
+    }
+  }
+  // Source Control runs bomb callbacks and their cleanup before robot engines.
+  // In particular a fresh blast destroys ground props before eatProp can run.
+  advanceBombs(s);
+  for(const p of s.players){
+    if(!p.alive||p.respawnAt>s.tick)continue;
+    const input=inputs[p.seat-1],dir=input?direction(input):-1;
+    if(s.flames[index(p.x,p.y)]>s.tick&&p.invulnerable===0){
+      hit(s,p,s.owners[index(p.x,p.y)],'fire');
+      // The source skips robot-engine callbacks on this frame. A surviving
+      // walking robot still participates in Control's later movement phase.
+      if(p.alive&&!p.respawnAt&&!p.travel&&!p.rideMotion){moveHuman(s,p,dir);updateBody(s,p,dir);}
+      continue;
+    }
+    if(p.rideMotion){
+      take(s,p);advanceRide(s,p);
+    }else if(p.travel){
+      if(p.travel.kind==='sand')take(s,p);
+      advanceLandform(s,p);
+    }else{
+    take(s,p);enterLandform(s,p);
+    if(!p.travel)moveHuman(s,p,dir);
+    }
+    updateRideAnimation(s,p,dir);
+    updateBody(s,p,dir);
+    if(s.mode==='color'&&!p.respawnAt&&!s.hazards.some((h:any)=>(h.kind==='SpringBoard'||h.kind==='QuickSand')&&h.x===p.x&&h.y===p.y))s.colors[index(p.x,p.y)]=p.seat;
+  }
+  updateAttacks(s);
   for(const h of s.hazards)if(h.kind==='TurnTable'&&s.tick%(HZ*23)===0){
     const cells=s.board.map((v:number,i:number)=>v===0&&!s.items[i]&&Math.abs(i%WIDTH-h.x)+Math.abs(Math.floor(i/WIDTH)-h.y)<=4?i:-1).filter((i:number)=>i>=0);
       const pool=PROP_POOLS[s.mode];
@@ -338,7 +361,7 @@ export function step(s:State,inputs:Input[]):void {
   }
   if(s.mode==='collect'&&s.tick%COIN_INTERVAL===0)spawnCoin(s);
   finishCrates(s);
-  advanceProtections(s,(victim,owner)=>hit(s,victim,owner));
+  advanceProtections(s,(victim,owner)=>hit(s,victim,owner,'power'));
   if(s.mode==='color')for(const p of s.players){p.points=s.colors.filter((v:number)=>v===p.seat).length;s.scores[p.seat-1]=p.points;}
   const alive=s.players.filter(p=>p.alive),target=s.mode==='color'?50:s.mode==='arcade'?Infinity:10;
   const reached=s.players.filter(p=>p.points>=target);
@@ -362,7 +385,7 @@ export function valid(value:unknown):value is State {
   if(!Array.isArray(s.crateBursts)||s.crateBursts.length>255||!s.crateBursts.every((b:any)=>b&&int(b.cell,0,254)&&int(b.born,0,s.tick)&&b.at===b.born+BRICK_BURST.frames))return false;
   if(!Array.isArray(s.players)||s.players.length>4||new Set(s.players.map(p=>p?.seat)).size!==s.players.length||!s.players.every(p=>p&&int(p.seat,1,4)&&int(p.x,0,16)&&int(p.y,0,14)&&typeof p.alive==='boolean'&&int(p.life,0,255)&&int(p.dir,0,3)&&int(p.moveDir,-1,3)&&int(p.progress,0,19)&&int(p.moveTicks,3,20)&&p.progress<p.moveTicks&&int(p.speed,4,8)&&int(p.capacity,1,9)&&int(p.range,1,10)&&int(p.lastAttack,0,1e9)&&int(p.lastAlt,0,1e9)&&int(p.invulnerable,0,POWER_TICKS)&&int(p.weapon,0,22)&&int(p.ammo,0,3)&&int(p.respawnAt,0,ROUND_TICKS+RESPAWN_TICKS)&&int(p.teleportUntil,0,ROUND_TICKS+HZ)&&int(p.points,0,255)&&int(p.kills,0,1000)&&int(p.deaths,0,1000)&&int(p.killedBy,0,4)&&int(p.vehicle,0,14)&&int(p.vehicleUntil,0,ROUND_TICKS+HZ*15)&&typeof p.kick==='boolean'&&typeof p.shield==='boolean'))return false;
   if(s.winner!==null&&!s.players.some(p=>p.seat===s.winner))return false;
-  for(const [key,max] of [['board',2],['tiles',59],['items',22],['flames',ROUND_TICKS+16],['owners',4],['colors',4]] as const)if(!Array.isArray(s[key])||s[key].length!==255||!s[key].every((v:any)=>int(v,0,max)))return false;
+  for(const [key,max] of [['board',2],['tiles',59],['items',22],['flames',ROUND_TICKS+BLAST_TICKS+MAX_BLAST_DELAY],['owners',4],['colors',4]] as const)if(!Array.isArray(s[key])||s[key].length!==255||!s[key].every((v:any)=>int(v,0,max)))return false;
   if(!Array.isArray(s.ack)||s.ack.length!==4||!s.ack.every((n:any)=>int(n,0,1e9))||!Array.isArray(s.scores)||s.scores.length!==4||!s.scores.every((n:any)=>int(n,0,1000)))return false;
   const owns=(owner:any)=>s.players.some(p=>p.seat===owner);
   if(!validBlasts(s))return false;

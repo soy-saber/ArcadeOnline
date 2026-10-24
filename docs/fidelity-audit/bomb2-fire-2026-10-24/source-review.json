@@ -1,0 +1,105 @@
+{
+  "source": "games/9109/game.swf",
+  "sha256": "788c15ad1661e576cd004688785175ef62c2e0ef211db0fe83b5475625262ae1",
+  "sourceClasses": {
+    "Grid": "48786f86410c48ef628a59b1f8ab65d75d4a1b63c1024ca0d96a75dc1a49085e",
+    "Bomb": "f25510058ceb4bd8be2cf81108f05385db824adf4b18e2153e62fce64712b3ed",
+    "Control": "0ad454e65a1d1867f01306184a5f262e731c99bfdfd66477262eca0a39a82be1",
+    "AbstractRobot": "3a949518c5d7d635cebfb83bf2c80161ae216d7f267bf779a8fd51f43d30f6dc",
+    "Player": "b81b76b6eee55875b09c9e5d941bc34e1ac3864e72d0699eb9e72d9103ed2558",
+    "SinkerProp": "34574444356b7eede923a2e3f1da08f3a2200a61b9d21d3fa6b3ac2633a6d891",
+    "Bullet": "3b425c1e01e4095232c896a0ad1368b80c35f1024583d77f6b956ba0bc7cc7b7",
+    "Laser": "79d2612a91015ddc11d4e80d15b29bf75f2ad1c3f408487937373b11682f0406",
+    "ThrowerFire": "733d7238f66133674a3e89dba049b9e2bebbbac3b86b4f8f10d3a4ed09dac13c",
+    "InvincibilityProp": "d7968e9768996eda352f7a605c91b8ea4c2499a4a859016682c72b99ad075096"
+  },
+  "evidence": [
+    {
+      "class": "Grid",
+      "methodLine": 179,
+      "interpretation": "fire is one boolean per grid, without per-explosion ownership/refcounts",
+      "methodSha256": "a50850db29d6a7f1d9833097f10886102fe889d16810e8b2da62acde4e5c30d7"
+    },
+    {
+      "class": "Bomb",
+      "methodLine": 216,
+      "interpretation": "ending a blast clears every original fire cell unconditionally",
+      "methodSha256": "990ec11b68ef995305f7e36ece789f32ee4f1305af8e6552da46ca9c4c674990"
+    },
+    {
+      "class": "Bomb",
+      "methodLine": 118,
+      "interpretation": "the base lifetime ends when the continued callback counter exceeds 15",
+      "methodSha256": "cdb59125669232777399ab5b88aa94ea119ccd0a4aa996e9c7fe8c36bb1624f5"
+    },
+    {
+      "class": "Control",
+      "methodLine": 165,
+      "interpretation": "bombs run before blast cleanup, followed by robot engines and movement",
+      "methodSha256": "88f4481304bce508c7eb5b835d4a3f0cbfe7a6d5dfe46443ecc156ad5f624a24"
+    },
+    {
+      "class": "Control",
+      "methodLine": 218,
+      "interpretation": "cleanup splices its callback from the same live enumerated array",
+      "methodSha256": "9e45dee27643be15c1e637cb766b55d00c12426763b9e6c803f9127f2015453f"
+    },
+    {
+      "class": "Bomb",
+      "methodLine": 135,
+      "interpretation": "normal fuse engine does not query residual grid fire",
+      "methodSha256": "abc0f5ba45b4ee07d0eb8cde1fc26d6add31c2e2d8551aeaa28caf2bfcacd103"
+    },
+    {
+      "class": "Bomb",
+      "methodLine": 291,
+      "interpretation": "creation checks props before robot scoring; it sets fire but does not directly call robot ifDead",
+      "methodSha256": "52644554c68885ac6e3a941563eedbc9427ef3556ea1d6f0a060c6d1d4d00cf7"
+    },
+    {
+      "class": "AbstractRobot",
+      "methodLine": 998,
+      "interpretation": "the robot engine later consumes the shared fire flag",
+      "methodSha256": "8aaa02ad39ae9cee982b07090f02faef179ced7a3d54d1e322c704451447f97f"
+    },
+    {
+      "class": "AbstractRobot",
+      "methodLine": 391,
+      "interpretation": "native killNum increases at the score event",
+      "methodSha256": "ef86f0f57aa8dcb198f04be331082d0595703eaf4a4abf44f57df604b6acd680"
+    },
+    {
+      "class": "Player",
+      "methodLine": 325,
+      "interpretation": "native self-score penalty runs in kill mode, clamped by positive score",
+      "methodSha256": "bdd6eccc8af403d99568d32da54c8a6f21baf259aaa72ff86e5a4090a194ff21"
+    }
+  ],
+  "weaponRules": {
+    "SinkerProp": {
+      "line": 15,
+      "score": "before ifDead, when ifBurst is true"
+    },
+    "Bullet": {
+      "line": 91,
+      "score": "before ifDead, when ifBurst is true"
+    },
+    "Laser": {
+      "line": 101,
+      "score": "before ifDead, when ifBurst is true"
+    },
+    "ThrowerFire": {
+      "line": 30,
+      "score": "before ifDead, when ifBurst is true"
+    }
+  },
+  "invincibility": {
+    "line": 88,
+    "score": "only after ifDead returns true"
+  },
+  "enumeration": {
+    "basis": "Original Control.run/minBlast plus AVM2 index enumeration; inferred source behavior, not a Flash-player runtime trace",
+    "reference": "https://github.com/ruffle-rs/ruffle/blob/045db00b393aed22a462d29cb6c25efa26be90a0/core/src/avm2/array.rs",
+    "behavior": "splicing current callback skips the callback shifted into its index for this frame"
+  }
+}

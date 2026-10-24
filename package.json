@@ -28,6 +28,8 @@
     "test:bomb:landforms:e2e": "node scripts/build-native.cjs && node tests/bomb2-landforms-e2e.cjs",
     "test:bomb:vehicles:e2e": "node scripts/build-native.cjs && node tests/bomb2-vehicles-e2e.cjs",
     "test:bomb:protection:e2e": "node scripts/build-native.cjs && node tests/bomb2-protection-e2e.cjs",
+    "test:bomb:fire:e2e": "node scripts/build-native.cjs && node tests/bomb2-fire-e2e.cjs",
+    "test:keyboard:e2e": "node scripts/build-native.cjs && node tests/authority-keyboard-e2e.cjs",
     "test:expanded:kill:e2e": "node scripts/build-native.cjs && node tests/expanded-kill-e2e.cjs",
     "test:lobby:e2e": "node tests/lobby-e2e.cjs",
     "package:linux": "node scripts/package-linux.cjs",

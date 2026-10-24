@@ -36,21 +36,21 @@ export function moveActor(s:State,p:any,direction:number,onHit:(x:number,y:numbe
   p.moveDir=body.x===oldX&&body.y===oldY?-1:Math.abs(body.x-oldX)>Math.abs(body.y-oldY)?body.x<oldX?0:2:body.y<oldY?1:3;
   p.progress=0;
 }
-function motionMap(s:State,actor:any,ignore:any,onHit?:(x:number,y:number)=>void):MotionMap {
+function motionMap(s:State,actor:any,ignore:any,onHit?:(x:number,y:number)=>void,ending=false):MotionMap {
   const tram=tramBody(s);
   return {moving:tram?[tram]:[],transSpeed:{x:actor?.walking?.transX||0,y:actor?.walking?.transY||0},onHit:onHit?[onHit]:[],
     passable(x,y){
       if(x<0||x>=17||y<0||y>=15)return false;
       const cell=s.board[y*17+x];if(cell===1||cell===2&&actor?.vehicle!==11)return false;
       if(s.bombs.some((b:any)=>b!==ignore&&b.slide<0&&b.x===x&&b.y===y&&b.kind!=='mine'))return false;
-      if(burningBombAt(s,x,y,true))return false;
+      if(burningBombAt(s,x,y,true,ending))return false;
       if((actor?.vehicle===12||actor?.vehicle===13)&&s.hazards.some((h:any)=>h.kind==='SpringBoard'&&h.x===x&&h.y===y))return false;
       return !tram||Math.floor((tram.x+15)/CELL)!==x||Math.floor((tram.y+15)/CELL)!==y;
     },
     item(x,y){
       if(tram&&Math.floor((tram.x+15)/CELL)===x&&Math.floor((tram.y+15)/CELL)===y)return tram;
       const bomb=s.bombs.find((b:any)=>b!==ignore&&b.slide<0&&b.kind!=='mine'&&b.x===x&&b.y===y);
-      const blast=burningBombAt(s,x,y,true);
+      const blast=burningBombAt(s,x,y,true,ending);
       return bomb?syncWalking(bomb):blast?{x:blast.px,y:blast.py,w:CELL,h:CELL,blocked:false}:{x:x*CELL,y:y*CELL,w:CELL,h:CELL,blocked:false};
     }
   };
@@ -66,7 +66,7 @@ function register(p:any,body:Walking):void {
   p.x=body.gridX=Math.floor((body.x+15)/CELL);p.y=body.gridY=Math.floor((body.y+15)/CELL);
 }
 export function moveBomb(s:State,bomb:any):void {
-  const body=syncWalking(bomb),map=motionMap(s,null,bomb);
+  const body=syncWalking(bomb),map=motionMap(s,null,bomb,undefined,true);
   body.blocked=false;
   if(bomb.slide>=0){
     // BombShoes removes the bomb from the grid and replaces its engine with

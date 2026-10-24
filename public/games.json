@@ -21,7 +21,11 @@
           "KeyD",
           "KeyW",
           "KeyS",
-          "Space"
+          "Space",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowDown",
+          "ArrowRight"
         ]
       },
       {
@@ -33,7 +37,11 @@
           "ArrowRight",
           "ArrowUp",
           "ArrowDown",
-          "Enter"
+          "Enter",
+          "KeyW",
+          "KeyA",
+          "KeyS",
+          "KeyD"
         ]
       },
       {
@@ -45,7 +53,11 @@
           "KeyD",
           "KeyW",
           "KeyS",
-          "Space"
+          "Space",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowDown",
+          "ArrowRight"
         ]
       },
       {
@@ -57,7 +69,11 @@
           "KeyD",
           "KeyW",
           "KeyS",
-          "Space"
+          "Space",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowDown",
+          "ArrowRight"
         ]
       }
     ]
@@ -78,23 +94,31 @@
       {
         "seat": 1,
         "label": "P1",
-        "hint": "A/D 移动 · W 跳跃 · S 挥拍",
+        "hint": "A/D ? ?/? ?? ? W/? ?? ? S/? ??",
         "keys": [
           "KeyA",
           "KeyD",
           "KeyW",
-          "KeyS"
+          "KeyS",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowDown",
+          "ArrowRight"
         ]
       },
       {
         "seat": 2,
         "label": "P2",
-        "hint": "←/→ 移动 · ↑ 跳跃 · ↓ 挥拍",
+        "hint": "A/D ? ?/? ?? ? W/? ?? ? S/? ??",
         "keys": [
           "ArrowLeft",
           "ArrowRight",
           "ArrowUp",
-          "ArrowDown"
+          "ArrowDown",
+          "KeyW",
+          "KeyA",
+          "KeyS",
+          "KeyD"
         ]
       }
     ]

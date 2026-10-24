@@ -47,9 +47,10 @@ test('normal, remote and mine bombs ride the same native conveyor one pixel per 
 test('an actual kick uses seven pixel motion, removes its grid barrier and pauses the fuse until collision',()=>{
   const s=world(),p=s.players[0];p.kick=true;s.board[core.index(5,1)]=1;const b=bomb(s,2,1);
   core.step(s,[neutral(1,{right:true}),neutral()]);
-  assert.equal(b.walking.x,67);assert.equal(b.slide,2);assert.equal(b.x,2);assert.equal(b.explodeAt,core.FUSE+1);
+  assert.equal(b.walking.x,60,'kick happens in movement after this frame of bomb callbacks');assert.equal(b.slide,2);assert.equal(b.x,2);assert.equal(b.explodeAt,core.FUSE);
   const q=s.players[1];q.kick=true;relocate(q,2,2);
   core.step(s,[neutral(2,{right:true}),neutral(2,{up:true})]);assert(p.walking.x>30,'kicked bomb no longer forms a stationary grid barrier');
+  assert.equal(b.walking.x,67,'flight starts on the next bomb callback');
   assert.equal(b.slide,2,'a second player cannot kick an already moving bomb in another direction');assert.equal(b.walking.y,30);
   const remaining=b.explodeAt-s.tick;
   for(let n=0;n<20&&b.slide>=0;n++){core.step(s,[neutral(),neutral()]);assert.equal(b.explodeAt-s.tick,remaining);assert(core.valid(s));}

@@ -40,7 +40,7 @@ test('powerups change authoritative capacity, range and remote bomb detonation',
 test('kill, collect and color modes have full score targets',()=>{
  for(const mode of ['kill','collect','color']){const s=arena(mode),p=s.players[0];if(mode==='color'){for(let i=0;i<49;i++)s.colors[i+51]=1;}else p.points=9;
  if(mode==='collect'){s.items[core.index(2,1)]=9;for(let i=0;i<9;i++)a.step(s,[input(i,0,{right:true}),input()]);}
- else if(mode==='kill'){p.invulnerable=50;s.players[1].life=1;s.players[1].x=2;s.players[1].y=1;s.flames[core.index(2,1)]=20;s.owners[core.index(2,1)]=1;a.step(s,[input(),input()]);}
+ else if(mode==='kill'){p.invulnerable=50;s.players[1].life=1;s.players[1].x=2;s.players[1].y=1;s.bombs.push({id:s.nextId++,owner:1,x:2,y:1,range:1,kind:'remote',explodeAt:1,armedAt:0,slide:-1});a.step(s,[input(),input()]);}
  else {p.x=10;p.y=10;a.step(s,[input(),input()]);}
  assert.equal(s.phase,'finished',mode);assert.equal(s.winner,1,mode);assert.equal(p.points,mode==='color'?50:10,mode);}
 });
@@ -50,7 +50,7 @@ test('full timeout and hostile state validation',()=>{
  const fresh=a.create(2,true,[1,2],55);assert.equal(fresh.tick,0);assert.equal(fresh.bombs.length,0);assert.ok(fresh.players.every(p=>p.life===3));
 });
 test('non-survival modes respawn indefinitely; kill mode penalizes suicide',()=>{
- const s=arena('kill'),p=s.players[0];p.points=2;p.life=1;s.flames[core.index(p.x,p.y)]=10;s.owners[core.index(p.x,p.y)]=p.seat;
+ const s=arena('kill'),p=s.players[0];p.points=2;p.life=1;s.bombs.push({id:s.nextId++,owner:p.seat,x:p.x,y:p.y,range:1,kind:'remote',explodeAt:1,armedAt:0,slide:-1});
  a.step(s,[input(),input()]);assert.equal(p.alive,true);assert.equal(p.life,1);assert.equal(p.points,1);assert.ok(p.respawnAt>s.tick);assert.equal(s.phase,'playing');
 });
 test('original beach quicksand pair, disco two-cell spring, and mine tram are active',()=>{

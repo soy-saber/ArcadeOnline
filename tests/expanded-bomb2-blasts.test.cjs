@@ -66,5 +66,6 @@ test('a real launcher impact uses native capped flame segments without registeri
  for(let n=0;n<50&&!s.blasts.length;n++)core.step(s,[input(n+1,{attack:1}),input()]);
  assert.equal(s.blasts.length,1);const b=s.blasts[0];assert.equal(b.blocking,false);assert.equal(b.x,6);assert.equal(b.y,3);assert.equal(s.board[core.index(6,3)],0);
  assert.deepEqual(b.tiles.map(t=>t.frame).sort((a,b)=>a-b),[1,3,5,7,9]);assert.equal(blasts.burningBombAt(s,6,3),undefined);
- relocate(p,6,3);p.invulnerable=100;core.step(s,[input(100,{attack:2}),input()]);assert.equal(s.bombs.length,0);assert.equal(s.blasts.length,2,'placement succeeds, then the live fire immediately detonates the new bomb');assert(blasts.burningBombAt(s,6,3));assert(core.valid(s));
+ relocate(p,6,3);p.invulnerable=100;core.step(s,[input(100,{attack:2}),input()]);assert.equal(s.bombs.length,1);assert.equal(s.blasts.length,1,'residual fire does not dispatch a second blast event to a newly placed bomb');const due=s.bombs[0].explodeAt;
+ while(s.tick<b.until)core.step(s,[]);assert.equal(s.bombs.length,1);assert.equal(s.bombs[0].explodeAt,due);assert.equal(s.blasts.length,0);assert(core.valid(s));
 });

@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-24T16:01:01.702Z",
+  "carried": {
+    "x": 92,
+    "originX": 90
+  },
+  "kicked": {
+    "x": 201,
+    "initialFuse": 432,
+    "extendedFuse": 435
+  },
+  "rotationFrames": [
+    2,
+    4
+  ],
+  "actualBootPickup": true,
+  "nativeBombs": [
+    "normal",
+    "remote",
+    "mine"
+  ],
+  "snapshotRecovery": true,
+  "errors": []
+}

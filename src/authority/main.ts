@@ -10,6 +10,7 @@ import { getAdapter } from "../expanded/registry";
 import type { State as ExpandedState } from "../expanded/types";
 import { Nameplates } from "./nameplates";
 import { weaponLabel as bomb2WeaponLabel } from "../expanded/bomb2";
+import {directionKeys,directionState,heldDirectionAt} from './key-bindings';
 
 declare function ensureName(next?: string): boolean;
 declare function arcadeName(): string;
@@ -38,7 +39,7 @@ function start(): void {
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
   let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
   const keys = new Map<string, number>();
-  const bombDirections: Record<string, BombInput["dir"]> = { KeyA: 0, ArrowLeft: 0, KeyW: 1, ArrowUp: 1, KeyD: 2, ArrowRight: 2, KeyS: 3, ArrowDown: 3 };
+  const bombDirections=directionKeys;
   const tank = adapter?.id === "137953-server", bomb2 = adapter?.id === "9109-server", shooters = adapter?.id === "50737-server" || adapter?.id === "97734-server";
   const boxhead = adapter?.id === '50737-server';
   const actions = badminton ? ["KeyS", "ArrowDown", "Space", "Enter"] : adapter ? ["Space", "Enter", ...(boxhead?[]:["KeyE"]), ...(tank || bomb2 ? [] : ["KeyJ", "KeyZ"])] : ["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"];
@@ -135,16 +136,16 @@ function start(): void {
     }
   }
   function currentInput(now: number): Input {
+    const directions=directionState(keys);
     let preferredDirection=-1,lastDirectionAt=-1;
     if(bomb2)for(const [code,at]of keys)if(bombDirections[code]!==undefined&&at>=lastDirectionAt){preferredDirection=bombDirections[code];lastDirectionAt=at;}
     if (adapter && !boxhead && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
-    if (adapter) return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"),
-      up: keys.has("KeyW") || keys.has("ArrowUp"), down: keys.has("KeyS") || keys.has("ArrowDown"), attack: bomb, alt: jump,
+    if (adapter) return { seq: ++seq, ...directions, attack: bomb, alt: jump,
       ...(bomb2?{direction:preferredDirection}:{}),
       ...(boxhead ? {trigger:actions.some(code=>keys.has(code)),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
       if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) { hit++; lastHitAt = now; }
-      return { seq: ++seq, left: keys.has("KeyA") || keys.has("ArrowLeft"), right: keys.has("KeyD") || keys.has("ArrowRight"), jump, hit };
+      return { seq: ++seq, left: directions.left, right: directions.right, jump, hit };
     }
     let dir: BombInput["dir"] = -1, time = -1;
     for (const [code, at] of keys) if (bombDirections[code] !== undefined && at >= time) { dir = bombDirections[code]; time = at; }
@@ -158,12 +159,16 @@ function start(): void {
   function press(code: string, down: boolean): void {
     if (!down) { keys.delete(code); return; }
     if (!seat || net.authority?.phase !== "playing" || keys.has(code)) return;
-    const now = performance.now(); keys.set(code, now); inputAt = now;
+    const now = performance.now(),aliasAt=heldDirectionAt(keys,code);keys.set(code,aliasAt??now);inputAt=now;
+    // Pressing the alternative for an already-held direction is not a second
+    // jump/swing, and does not steal the latest-direction priority.
+    if(aliasAt!==undefined)return;
     if (actions.includes(code)) { if (badminton) { hit++; lastHitAt = now; play("whoosh"); } else { bomb++; lastHitAt = now; } }
     if ((badminton || adapter) && jumps.includes(code)) { jump++; selectedWeapon=undefined; weaponStep=code==='KeyQ'?-1:1; }
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {
+    if(!down&&keys.has(event.code)){press(event.code,false);return;}
     if ((event.target as HTMLElement)?.matches("input, textarea, select, button")) return;
     if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code) && !(adapter?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
     event.preventDefault(); press(event.code, down);

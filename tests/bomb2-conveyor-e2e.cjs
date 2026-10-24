@@ -40,7 +40,7 @@ async function leaveConveyor(p){
  await fixture(room,'pickup',6);await focus(a);await a.keyboard.down('ArrowRight');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].kick);await a.keyboard.up('ArrowRight');await leaveConveyor(a);
  await fixture(room,'kick');await focus(b);await b.keyboard.press('Space');await a.waitForFunction(()=>window.__authorityTest.authority.bombs.some(b=>b.owner===2));
  const fuse=await a.evaluate(()=>window.__authorityTest.authority.bombs.find(b=>b.owner===2).explodeAt);
- await focus(a);await a.keyboard.down('ArrowRight');await a.waitForFunction(()=>window.__authorityTest.authority.bombs.some(b=>b.owner===2&&b.slide===2));
+ await focus(a);await a.keyboard.down('ArrowRight');await a.waitForFunction(()=>window.__authorityTest.authority.bombs.some(b=>b.owner===2&&b.slide===2&&b.walking.x>180));
  const kicked=await a.evaluate(()=>({...window.__authorityTest.authority.bombs.find(b=>b.owner===2)}));assert(kicked.walking.x>180&&kicked.walking.x<240);assert(kicked.walking.x%30!==0);assert(kicked.explodeAt>fuse);
  await a.keyboard.up('ArrowRight');await a.keyboard.down('ArrowDown');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].y>=8);await a.keyboard.up('ArrowDown');
  await b.waitForFunction(()=>window.__authorityTest.authority.bombs.some(b=>b.owner===2&&b.slide===-1&&b.walking.x===240));

@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-24T16:04:26.662Z",
+  "games": 8,
+  "pairsPerGame": 4,
+  "realKeyboard": true,
+  "independentBrowsersPerGame": 2,
+  "serverAcknowledgments": true,
+  "noAuthorityStateInjection": true,
+  "scope": "Local WebSocket; validates input equivalence and acknowledgments, not every game physics rule or public deployment",
+  "browserSha256": "ca720f3b8ba364a66674e356a20c6e25facdc5e1c48fccadc9fb502897ed0174",
+  "catalogSha256": "cd539f8507ff7ed0beae59cbff76822da23c183c68cacd6d441486975f166f8f"
+}

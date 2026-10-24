@@ -12,7 +12,7 @@ process.on('message',m=>{try{
  }
  if(m.action==='pickup'){
    s.board.fill(0);s.bombs=[];s.flames.fill(0);if(s.tiles)s.tiles.fill(0);
-   const [p,q]=s.players;if(p.actionLock||p.attack||p.travel||p.moveDir>=0)throw new Error('Player action not recovered');pose(p,3,4);pose(q,11,8);
+   const p=s.players.find(p=>p.seat===(m.seat??1)),q=s.players.find(q=>q!==p);if(!p||!q||p.actionLock||p.attack||p.travel||p.moveDir>=0)throw new Error('Player action not recovered');pose(p,3,4);pose(q,11,8);
    s.items.fill(s.gameId?0:null);s.items[4*('gameId'in s?17:15)+4]=m.kind;
  }else if(m.action==='coin-duel'){
    if(s.gameId!=='9109-server'||s.mode!=='collect')throw Error('Expected coin mode');
@@ -42,6 +42,23 @@ process.on('message',m=>{try{
    const [p,q]=s.players;pose(p,5,5);pose(q,m.action==='flame-chain'?6:m.action==='mine-blast'?6:12,m.action==='flame-chain'?5:m.action==='mine-blast'?6:10);
    if(m.action==='flame-chain'){s.board[3*17+5]=2;s.tiles[3*17+5]=11;s.board[2*17+5]=2;s.tiles[2*17+5]=11;}
    if(m.action==='mine-blast'){s.board[4*17+4]=2;s.tiles[4*17+4]=11;s.board[4*17+6]=1;s.tiles[4*17+6]=12;}
+ }else if(['fire-overlap','fire-points','fire-late'].includes(m.action)){
+   if(s.gameId!=='9109-server'||s.mapId!=='beach-one')throw Error('Expected original beach map');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0||p.invulnerable))throw Error('Players and protection must recover naturally first');
+   const [p,q]=s.players;if(m.action==='fire-points'&&(!p.shield||q.weapon!==17||q.ammo!==1)||m.action==='fire-late'&&(q.weapon!==17||q.ammo!==1))throw Error('Required items must be collected through real pickups');
+   s.board.fill(0);s.tiles.fill(0);s.items.fill(0);s.bombs=[];s.blasts=[];s.flames.fill(0);s.owners.fill(0);
+   if(m.action==='fire-overlap'){pose(p,5,6);pose(q,6,5);}
+   else {pose(p,m.action==='fire-points'?5:11,m.action==='fire-points'?5:8);pose(q,6,5);}
+ }else if(m.action==='fire-overlap-approach'){
+   if(s.gameId!=='9109-server'||s.mapId!=='beach-one'||s.flames[7*17+6]>s.tick)throw Error('Expected safe approach beside the original overlap');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0||p.invulnerable))throw Error('Players must recover naturally first');
+   pose(s.players[0],6,7);
+ }else if(m.action==='fire-late-entry'){
+   if(s.gameId!=='9109-server'||s.mapId!=='beach-one')throw Error('Expected original beach map');
+   if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0||p.invulnerable))throw Error('Players must recover naturally first');
+   const cell=5*17+5;
+   if(!s.blasts.some(b=>b.fires.includes(cell))||s.flames[cell]<=s.tick)throw Error('Expected the actual residual flame state');
+   pose(s.players[0],5,6);
  }else if(['protection-hit','protection-contact'].includes(m.action)){
    if(s.gameId!=='9109-server'||s.mapId!=='mine-one')throw Error('Expected original mine map');
    if(s.players.some(p=>p.travel||p.rideMotion||p.actionLock||p.attack||p.respawnAt||p.moveDir>=0))throw Error('Players must recover naturally first');

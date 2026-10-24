@@ -61,14 +61,14 @@ test('laser warmup, fixed-wall shielding, direct scoring and immunity prevent re
 test('death drops at most two restored pickups, resets inventory, keeps score and discards dead-period attacks',()=>{
   const s=arena(),p=s.players[0],q=s.players[1];p.weapon=19;p.ammo=1;p.weaponStock=[16,19,20];p.points=3;p.speed=4;p.range=5;p.capacity=5;s.flames[core.index(p.x,p.y)]=s.tick+2;s.owners[core.index(p.x,p.y)]=q.seat;
   tick(s);const until=p.respawnAt;assert.equal(until,s.tick+64);assert.equal(p.points,3);assert.equal(p.weapon,0);assert.equal(p.speed,8);assert.equal(p.range,1);assert.equal(p.capacity,1);assert.equal(s.items.filter(Boolean).length,2);assert.deepEqual(p.weaponStock,[]);
-  while(s.tick<until)tick(s,input(20,8,{alt:9}));assert.equal(p.x,1);assert.equal(p.y,1);assert.equal(p.invulnerable,82);assert.equal(p.lastAttack,8);assert.equal(p.lastAlt,9);assert.equal(p.attack,null);assert.equal(q.points,1);
+  while(s.tick<until)tick(s,input(20,8,{alt:9}));assert.equal(p.x,1);assert.equal(p.y,1);assert.equal(p.invulnerable,82);assert.equal(p.lastAttack,8);assert.equal(p.lastAlt,9);assert.equal(p.attack,null);assert.equal(q.points,0);assert.equal(q.kills,1,'room death attribution is separate from original creation-time mode points');
   s.flames[core.index(p.x,p.y)]=s.tick+10;tick(s,input(21,8));assert.equal(p.deaths,1);
 });
 test('ten real hammer kills settle the round once; suicide penalty cannot go below zero; timeout ranks ties',()=>{
   const s=arena(),p=s.players[0],q=s.players[1];p.dir=2;
   for(let n=1;n<=10;n++){q.x=4;q.y=3;q.invulnerable=0;q.respawnAt=0;tick(s,input(n*30,n));wait(s,25,input(n*30+1,n));assert.equal(p.points,n);}
   assert.equal(s.phase,'finished');assert.equal(s.winner,1);const final=structuredClone(s);wait(s,200);assert.deepEqual(s,final);
-  for(const points of [0,1]){const t=arena(),r=t.players[0];r.points=points;t.flames[core.index(r.x,r.y)]=10;t.owners[core.index(r.x,r.y)]=1;tick(t);assert.equal(r.points,0);assert.equal(r.kills,0);assert.equal(r.deaths,1);}
+  for(const points of [0,1]){const t=arena(),r=t.players[0];r.points=points;t.bombs.push({id:t.nextId++,owner:1,x:r.x,y:r.y,range:1,kind:'normal',explodeAt:1,armedAt:0,slide:-1});tick(t);assert.equal(r.points,0);assert.equal(r.kills,0);assert.equal(r.deaths,1);}
   for(const tie of [false,true]){const t=arena();t.tick=core.ROUND_TICKS-1;t.players[0].points=5;t.players[1].points=tie?5:4;tick(t);assert.equal(t.winner,tie?null:1);}
 });
 test('mine waits until its owner leaves, then senses all players and includes diagonal blast cells',()=>{
@@ -76,7 +76,7 @@ test('mine waits until its owner leaves, then senses all players and includes di
   tick(s,input(1,1));wait(s,40,input(2,1));assert.equal(p.deaths,0);assert.equal(s.bombs.length,1);
   wait(s,9,input(3,1,{left:true}));assert.equal(p.x,2);assert(s.bombs[0].armedAt<=s.tick);
   p.x=1;q.x=3;q.y=3;s.players[2].x=4;s.players[2].y=4;s.board[core.index(2,2)]=2;
-  tick(s,input(4,1));assert.equal(s.bombs.length,0);assert.equal(q.deaths,1);assert.equal(s.players[2].deaths,1);assert.equal(p.points,2);assert.equal(s.board[core.index(2,2)],0);assert(s.flames[core.index(4,4)]>s.tick);
+  tick(s,input(4,1));assert.equal(s.bombs.length,0);assert.equal(q.deaths,1);assert.equal(s.players[2].deaths,1);assert.equal(p.points,1,'source scores centre, then the owner penalty on its left arm, then the diagonal target');assert.equal(s.board[core.index(2,2)],0);assert(s.flames[core.index(4,4)]>s.tick);
 });
 test('laser stops at first destructible obstruction for its whole lifetime',()=>{
   for(const bomb of [false,true]){const s=arena();pickup(s,20);const p=s.players[0],q=s.players[1];p.moveDir=-1;p.progress=0;p.dir=2;q.x=9;

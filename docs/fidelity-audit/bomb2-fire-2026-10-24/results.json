@@ -1,0 +1,139 @@
+{
+  "at": "2026-10-24T15:48:21.219Z",
+  "results": [
+    {
+      "case": "overlap",
+      "realNormalBombs": true,
+      "old": {
+        "id": 3,
+        "owner": 1,
+        "x": 5,
+        "y": 6,
+        "px": 150,
+        "py": 180,
+        "born": 149,
+        "until": 165,
+        "delay": 0,
+        "kind": "normal",
+        "blocking": true,
+        "tiles": [
+          {
+            "x": 5,
+            "y": 6,
+            "frame": 1
+          },
+          {
+            "x": 5,
+            "y": 5,
+            "frame": 3
+          },
+          {
+            "x": 5,
+            "y": 7,
+            "frame": 9
+          },
+          {
+            "x": 4,
+            "y": 6,
+            "frame": 7
+          },
+          {
+            "x": 6,
+            "y": 6,
+            "frame": 5
+          }
+        ],
+        "fires": [
+          107,
+          90,
+          124,
+          106,
+          108
+        ]
+      },
+      "recent": {
+        "id": 4,
+        "owner": 2,
+        "x": 6,
+        "y": 5,
+        "px": 180,
+        "py": 150,
+        "born": 160,
+        "until": 176,
+        "delay": 0,
+        "kind": "normal",
+        "blocking": true,
+        "tiles": [
+          {
+            "x": 6,
+            "y": 5,
+            "frame": 1
+          },
+          {
+            "x": 6,
+            "y": 4,
+            "frame": 3
+          },
+          {
+            "x": 6,
+            "y": 6,
+            "frame": 9
+          },
+          {
+            "x": 5,
+            "y": 5,
+            "frame": 7
+          },
+          {
+            "x": 7,
+            "y": 5,
+            "frame": 5
+          }
+        ],
+        "fires": [
+          91,
+          74,
+          108,
+          90,
+          92
+        ]
+      },
+      "overlap": {
+        "tick": 162,
+        "fire": 176,
+        "owners": 1
+      },
+      "clearedAt": 166,
+      "recovery": {
+        "tick": 166,
+        "fire": 0,
+        "visibleGroup": 4,
+        "until": 177,
+        "delay": 1
+      },
+      "entry": {
+        "tick": 173,
+        "deaths": 0,
+        "invulnerable": 0,
+        "newerFlameStillVisible": true,
+        "until": 177
+      }
+    },
+    {
+      "case": "original-scoring",
+      "actualShieldPickup": true,
+      "actualRemoteBombs": true,
+      "shieldContact": {
+        "nativePoints": 1,
+        "roomKills": 0,
+        "victimDeaths": 0
+      },
+      "lateEntry": {
+        "nativePoints": 1,
+        "roomKills": 1,
+        "victimDeaths": 1
+      }
+    }
+  ],
+  "errors": []
+}
