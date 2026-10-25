@@ -1,0 +1,157 @@
+{
+  "sourceCommit": "9c624800bbb5368c2676933497bfb2d05df2412f",
+  "base": "https://43.142.142.215",
+  "passed": false,
+  "assertion": "reset.tick - award.resetAt <= 3",
+  "reason": "Observer did not receive every server tick. Snapshots297to306 skipped the scheduled301 transition. This observation does not prove when the server reset.",
+  "normalInputControlsAndNaturalMatchReached": true,
+  "stateAtFailure": {
+    "round": 1792937597108,
+    "tick": 693,
+    "phase": "finished",
+    "rally": "point",
+    "serve": 0,
+    "winner": 1,
+    "score": [
+      7,
+      0
+    ],
+    "players": [
+      {
+        "jumping": false,
+        "jumps": 0,
+        "motion": "normal",
+        "racket": {
+          "frame": 1,
+          "playing": false,
+          "serveFrame": 1,
+          "servePlaying": false,
+          "ready": true,
+          "active": false,
+          "consumed": false,
+          "strokes": 0,
+          "strokeAt": -1
+        },
+        "x": 132.85,
+        "y": 376.25,
+        "vy": 692,
+        "swing": 0,
+        "swingHit": false,
+        "servePose": 0,
+        "underhand": 0,
+        "lastJump": 0,
+        "lastHit": 7,
+        "facing": 1
+      },
+      {
+        "jumping": false,
+        "jumps": 0,
+        "motion": "normal",
+        "racket": {
+          "frame": 1,
+          "playing": false,
+          "serveFrame": 1,
+          "servePlaying": false,
+          "ready": true,
+          "active": false,
+          "consumed": false,
+          "strokes": 0,
+          "strokeAt": -1
+        },
+        "x": 416.85,
+        "y": 376.25,
+        "vy": 692,
+        "swing": 0,
+        "swingHit": false,
+        "servePose": 0,
+        "underhand": 0,
+        "lastJump": 0,
+        "lastHit": 0,
+        "facing": -1
+      }
+    ],
+    "birdie": {
+      "x": 499.55971049947135,
+      "y": 376.25,
+      "vx": 3.4790432236209754e-34,
+      "vy": 0,
+      "lastHitter": 1
+    },
+    "ack": [
+      686,
+      686
+    ],
+    "inputs": [
+      {
+        "seq": 686,
+        "left": false,
+        "right": false,
+        "jump": 0,
+        "hit": 7,
+        "jumpHeld": false,
+        "hitHeld": false,
+        "cancelledJump": 0,
+        "cancelledHit": 0
+      },
+      {
+        "seq": 686,
+        "left": false,
+        "right": false,
+        "jump": 0,
+        "hit": 0,
+        "jumpHeld": false,
+        "hitHeld": false,
+        "cancelledJump": 0,
+        "cancelledHit": 0
+      }
+    ],
+    "pointTicks": 0,
+    "lastPoint": 1,
+    "resetAt": null,
+    "finishAt": null
+  },
+  "resetObservations": [
+    {
+      "point": 1,
+      "scheduledResetAt": 107,
+      "lastPointSnapshotTick": 105,
+      "firstServeSnapshotTick": 108,
+      "observationGapTicks": 3
+    },
+    {
+      "point": 2,
+      "scheduledResetAt": 203,
+      "lastPointSnapshotTick": 202,
+      "firstServeSnapshotTick": 205,
+      "observationGapTicks": 3
+    },
+    {
+      "point": 3,
+      "scheduledResetAt": 301,
+      "lastPointSnapshotTick": 297,
+      "firstServeSnapshotTick": 306,
+      "observationGapTicks": 9
+    },
+    {
+      "point": 4,
+      "scheduledResetAt": 404,
+      "lastPointSnapshotTick": 403,
+      "firstServeSnapshotTick": 404,
+      "observationGapTicks": 1
+    },
+    {
+      "point": 5,
+      "scheduledResetAt": 500,
+      "lastPointSnapshotTick": 498,
+      "firstServeSnapshotTick": 500,
+      "observationGapTicks": 2
+    },
+    {
+      "point": 6,
+      "scheduledResetAt": 595,
+      "lastPointSnapshotTick": 594,
+      "firstServeSnapshotTick": 597,
+      "observationGapTicks": 3
+    }
+  ]
+}

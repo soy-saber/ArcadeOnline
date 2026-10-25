@@ -27,7 +27,7 @@ export interface GameState {
   rally: "serve" | "flight" | "point"; serve: 0 | 1 | 2; winner: 0 | 1 | 2;
   score: [number, number]; players: [Player, Player]; birdie: Birdie;
   ack: [number, number]; inputs: [Input, Input]; pointTicks: number; lastPoint: 0 | 1 | 2;
-  resetAt:number|null; finishAt:number|null;
+  resetAt:number|null; finishAt:number|null; lastResetAt:number|null;
 }
 export const EMPTY_INPUT: Input = { seq: 0, left: false, right: false, jump: 0, hit: 0 };
 const clamp = (value: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, value));
@@ -40,7 +40,7 @@ export function createGame(round: number, playing: boolean): GameState {
   const point=servePoint(1,1);
   return { round, tick: 0, phase: playing ? "playing" : "waiting", rally: "serve", serve: 1,
     winner: 0, score: [0, 0], players, birdie: { x: players[0].x+point.x, y: players[0].y+point.y, vx: 0, vy: 0, lastHitter: 0 },
-    ack: [0, 0], inputs: [{ ...EMPTY_INPUT }, { ...EMPTY_INPUT }], pointTicks: 0, lastPoint: 0, resetAt:null, finishAt:null };
+    ack: [0, 0], inputs: [{ ...EMPTY_INPUT }, { ...EMPTY_INPUT }], pointTicks: 0, lastPoint: 0, resetAt:null, finishAt:null, lastResetAt:null };
 }
 
 export function cloneState(state: GameState): GameState { return JSON.parse(JSON.stringify(state)) as GameState; }
@@ -64,6 +64,7 @@ export function validState(value: unknown): value is GameState {
     ["serve", "flight", "point"].includes(s.rally) && [0, 1, 2].includes(s.serve) &&
     [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) &&
     [s.resetAt,s.finishAt].every(v=>v===null||(Number.isSafeInteger(v)&&v>s.tick)) &&
+    (s.lastResetAt===null||(Number.isSafeInteger(s.lastResetAt)&&s.lastResetAt>=0&&s.lastResetAt<=s.tick)) &&
     Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) &&
     Array.isArray(s.players) && s.players.length === 2 && s.players.every((p,i) => p && validControl(p,s.tick)&&(i===0||p.racket.frame<=15)&&[p.x, p.y, p.vy, p.lastJump, p.lastHit, p.facing].every(finite)) &&
     !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) &&
@@ -82,7 +83,7 @@ function beginServe(state: GameState): void {
   const point=servePoint(state.serve,1);
   state.birdie = { x: server.x + point.x,
     y: server.y + point.y, vx: 0, vy: 0, lastHitter: 0 };
-  state.resetAt=null;state.pointTicks=0;
+  state.resetAt=null;state.pointTicks=0;state.lastResetAt=state.tick;
 }
 
 function award(state: GameState, player: 1 | 2): void {

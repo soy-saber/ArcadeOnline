@@ -1,10 +1,10 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "758ea6ab942820817bebe9d07e5f2a74f2a6f99a24f0a80f6602a5c2863aab0d",
-    "runtime/authority.cjs": "e6cb54b3d764a858a40ef090edda28b5ea0bdfd501397a93e18d53a0efbb54ad",
+    "public/authority/game.js": "bcedc0f34c0ef263ff54b7922f3f770c80c37a1f1bcddcc0cfc4dd62b8329749",
+    "runtime/authority.cjs": "036dd6050df07a41c430bab5abce7976a5e6968c78b81ac49bae2055b863468e",
     "src/badminton/control.ts": "482283eaa7e7cedd62c800290dc7787e6667a26ff02daec1edc56c689029788c",
-    "src/badminton/core.ts": "37699595c5a16996839b7caa0b2e5ecece7f762f172023a1ceac0a9d9a5055f8",
+    "src/badminton/core.ts": "1e7961a482d7f00423f8685a32efd655f8278a630ba87438d5de5bb13aadb4e9",
     "src/badminton/geometry.json": "92b7b424c7bf13f90df189457528a2dfb32147a7e038edba8857f3d72b8ec431",
     "src/badminton/geometry.ts": "4921debf18d8edb6b8e1180756e949d3935b682b021fd4513cd306f49f71fac0",
     "src/badminton/main.ts": "05a7766f7916984af499d95717036d47f560ac22f73b03a4500a2f71460fe941",

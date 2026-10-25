@@ -2670,7 +2670,8 @@ function createGame2(round, playing2) {
     pointTicks: 0,
     lastPoint: 0,
     resetAt: null,
-    finishAt: null
+    finishAt: null,
+    lastResetAt: null
   };
 }
 function validInput2(input) {
@@ -2693,6 +2694,7 @@ function beginServe(state) {
   };
   state.resetAt = null;
   state.pointTicks = 0;
+  state.lastResetAt = state.tick;
 }
 function award(state, player) {
   if (state.rally !== "flight") return;

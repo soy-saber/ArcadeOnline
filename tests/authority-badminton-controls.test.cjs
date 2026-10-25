@@ -67,7 +67,7 @@ test('normal points reset exactly45callbacks after award and retain live player/
  for(const seat of [1,2]){const s=idle();land(s,seat);const at=s.tick;assert.equal(s.resetAt,at+45);assert.equal(s.pointTicks,45);
   for(let n=1;n<=44;n++)c.step(s,[]);assert.equal(s.rally,'point');assert.equal(s.pointTicks,1);
   const p=s.players[seat-1];p.x=seat===1?210:340;p.y=290;p.vy=-1;p.jumping=true;Object.assign(p.racket,{frame:5,playing:true,ready:false,active:true});
-  c.step(s,[]);assert.equal(s.rally,'serve');assert.equal(s.serve,seat);assert.equal(s.resetAt,null);assert.equal(s.pointTicks,0);assert.equal(p.racket.frame,6);assert(p.jumping);close(p.y,290);
+  c.step(s,[]);assert.equal(s.rally,'serve');assert.equal(s.serve,seat);assert.equal(s.resetAt,null);assert.equal(s.lastResetAt,at+45);assert.equal(s.pointTicks,0);assert.equal(p.racket.frame,6);assert(p.jumping);close(p.y,290);
   close(p.x,274.95+(seat===1?-1:1)*(10.5*6.177414+65));assert.deepEqual(s.score,seat===1?[1,0]:[0,1]);assert(c.validState(s));
  }
 });
@@ -83,5 +83,5 @@ test('full/delta recovery preserves both held tracks, service wrap and round tim
  const s=idle();let client=protocol.applyUpdate(null,protocol.createUpdate(null,s,1,true));
  for(let n=1;n<=120;n++){const controls=[input(n,{hit:1,hitHeld:true}),input(n,{jump:1,jumpHeld:true,hit:1,hitHeld:true})],before=JSON.parse(JSON.stringify(s)),recovered=JSON.parse(JSON.stringify(client));c.step(s,controls);c.step(recovered,controls);assert.deepEqual(recovered,s);client=protocol.applyUpdate(client,JSON.parse(JSON.stringify(protocol.createUpdate(before,s,n+1,n%17===0))));assert.deepEqual(client,s);assert(c.validState(s));}
  for(const patch of [{jumpHeld:1},{hitHeld:0},{cancelledJump:2,jump:1},{cancelledHit:-1}])assert(!c.validInput(input(1,patch)));
- for(const edit of [s=>delete s.resetAt,s=>s.finishAt=NaN,s=>s.players[0].racket.ready=1,s=>s.players[0].racket.frame=30,s=>s.players[0].racket.serveFrame=14,s=>s.players[0].racket.strokeAt=s.tick+1,s=>s.players[0].jumps=-1,s=>s.players[0].servePose=3]){const bad=JSON.parse(JSON.stringify(s));edit(bad);assert(!c.validState(bad));}
+ for(const edit of [s=>delete s.resetAt,s=>s.finishAt=NaN,s=>s.lastResetAt=s.tick+1,s=>delete s.lastResetAt,s=>s.players[0].racket.ready=1,s=>s.players[0].racket.frame=30,s=>s.players[0].racket.serveFrame=14,s=>s.players[0].racket.strokeAt=s.tick+1,s=>s.players[0].jumps=-1,s=>s.players[0].servePose=3]){const bad=JSON.parse(JSON.stringify(s));edit(bad);assert(!c.validState(bad));}
 });
