@@ -1,0 +1,30 @@
+Authenticated to 43.142.142.215 as root
+arcade-online-linux.tar.gz: OK
+Release verified (5172 files).
+
+[arcade-online] 发布应用文件到 /opt/arcade-online/releases/20261025133052-364112。
+Native build matches source.
+Release verified (5172 files).
+
+added 1 package, and audited 2 packages in 635ms
+
+found 0 vulnerabilities
+
+[arcade-online] 等待服务健康检查 http://127.0.0.1:8000/healthz。
+
+[arcade-online] 服务已就绪。
+
+[arcade-online] 部署完成。
+本机访问:  http://127.0.0.1:8000
+局域网访问: http://10.0.0.17:8000
+日志命令:  bash /root/arcade-deploy-20261025-badminton-0b58b1f9/release/deploy-linux.sh logs
+/opt/arcade-online/releases/20261025133052-364112
+/opt/arcade-online/releases/20261025125402-355326
+active
+active
+active
+enabled
+enabled
+enabled
+{"status":"ok","rooms":0}74137d74c75aa524c8f3f85a98319f29bb890f446f4a747e7e264ea4acdaf241  /opt/arcade-online/current/public/authority/game.js
+53396a15b277f55da08efa9d30ad0acfb1bd61e22145951615775b4444e43431  /opt/arcade-online/current/runtime/authority.cjs

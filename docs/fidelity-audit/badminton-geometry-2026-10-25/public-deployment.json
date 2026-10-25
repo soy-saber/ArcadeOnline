@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-10-25T13:40:41.290034+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "fdce943fb252286c7a0aff6156f4e5e84fcdc13b",
+  "archiveSha256": "0b58b1f942f9000908eb2e82f3e2bb9fd5e94c6bf48e8c5b119caaddaa13f26c",
+  "archiveBytes": 64554376,
+  "releaseFiles": 5172,
+  "current": "/opt/arcade-online/releases/20261025133052-364112",
+  "previous": "/opt/arcade-online/releases/20261025125402-355326",
+  "upload": "/root/arcade-deploy-20261025-badminton-0b58b1f9/release",
+  "bundleSha256": "74137d74c75aa524c8f3f85a98319f29bb890f446f4a747e7e264ea4acdaf241",
+  "authorityRuntimeSha256": "53396a15b277f55da08efa9d30ad0acfb1bd61e22145951615775b4444e43431",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 258,
+  "nativeRacketPngHashesMatched": 70,
+  "publicBadminton": {
+    "report": "public-match-results.json",
+    "normalInputOnly": true,
+    "seats": 2,
+    "spectators": 1,
+    "finishScore": [
+      0,
+      7
+    ],
+    "winner": 2,
+    "points": 7,
+    "returnedStrokeConsumed": true,
+    "fullRecovery": {
+      "tick": 54,
+      "swing": 12,
+      "swingHit": true,
+      "score": [
+        0,
+        0
+      ]
+    },
+    "automaticRematch": true,
+    "testSha256": "00bbdab3b1b17a3bc72a82e2225a635071cb6399a2a1479eab8af4422d4db45e"
+  },
+  "publicBoxhead": "public-boxhead-four-results.json",
+  "publicBoxheadRttSamplesMs": [
+    45.5,
+    51.800000071525574,
+    52.09999990463257,
+    55.200000047683716
+  ],
+  "probe": "health, all8game resources/covers/background, retired paths404, temporary TURN credentials and WSS joins",
+  "sourceScope": "Native badminton hitbox matrices/service markers/contact recovery and frame registration changed. Boxhead gameplay source unchanged; both local and public4Chrome regression passed.",
+  "browserHost": "All Chrome contexts ran on same Windows workstation. No game state fixtures in badminton local/public full matches.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "completeGoal": false,
+  "remainingPlans": [
+    "../../../BADMINTON_RESTORATION_PLAN.md",
+    "../../../BOXHEAD_RESTORATION_PLAN.md"
+  ]
+}

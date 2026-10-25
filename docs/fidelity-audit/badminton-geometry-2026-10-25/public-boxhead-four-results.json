@@ -1,0 +1,222 @@
+{
+  "results": [
+    {
+      "game": "50737-server",
+      "seats": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "names": 4,
+      "maps": 18,
+      "nativeEnemy": {
+        "tick": 20,
+        "wave": 1,
+        "id": 9,
+        "x": 1680,
+        "y": 2766.5919999999996,
+        "ai": {
+          "state": "cell",
+          "base": "goto",
+          "previous": "enter",
+          "counter": 43.45454545454545,
+          "born": 16,
+          "registered": true,
+          "collidable": true,
+          "reserved": 7447,
+          "entry": 7447,
+          "targetSeat": null,
+          "targetDir": 0,
+          "targetAngle": 0,
+          "angleDelta": 0,
+          "dx": 0,
+          "dy": -0.7040000000000001,
+          "speed": 0.022000000000000002,
+          "radius": 14.4,
+          "action": "walk",
+          "frame": 0.68,
+          "canAttack": false,
+          "fireRateCount": 0,
+          "attackAngle": 0,
+          "multiply": false
+        },
+        "body": {
+          "phase": "normal",
+          "counter": 0,
+          "action": "stand",
+          "frame": 0,
+          "alpha": 1,
+          "vx": 0,
+          "vy": 0,
+          "returnAngle": 0,
+          "radius": 14.4,
+          "mass": 1,
+          "collidable": true,
+          "affectEnabled": true,
+          "deadFlag": false,
+          "floor": false,
+          "loggedKill": false,
+          "disposeAt": null,
+          "affects": [],
+          "damageSample": 0,
+          "deathSample": 3
+        },
+        "players": [
+          {
+            "seat": 1,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 2,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 3,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 4,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          }
+        ],
+        "navigationPhase": "resume"
+      },
+      "nativeShots": [
+        {
+          "tick": 44,
+          "id": 26,
+          "x": 399.805555,
+          "y": 444.81895583863457,
+          "z": 34.197485,
+          "tx": 399.65484289720274,
+          "ty": 448.06056722190726,
+          "tz": 32.884985,
+          "angle": 0,
+          "vx": 0,
+          "vy": 2.25,
+          "vz": 1.125,
+          "owner": 4,
+          "parent": 18,
+          "weapon": 0,
+          "damage": 26,
+          "life": 0,
+          "born": 42,
+          "ray": true,
+          "rayPhase": "delete"
+        }
+      ],
+      "pauseEvidence": {
+        "tickBefore": 45,
+        "tickAfter": 77,
+        "observedMs": 691
+      },
+      "transport": [
+        {
+          "rtt": 45.5,
+          "snapshotAge": 56.799999952316284,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 51.800000071525574,
+          "snapshotAge": 79.89999997615814,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 52.09999990463257,
+          "snapshotAge": 83.80000007152557,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 55.200000047683716,
+          "snapshotAge": 39.700000047683716,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        }
+      ],
+      "full": 17,
+      "delta": 43,
+      "bytes": 1820536
+    }
+  ],
+  "errors": []
+}
