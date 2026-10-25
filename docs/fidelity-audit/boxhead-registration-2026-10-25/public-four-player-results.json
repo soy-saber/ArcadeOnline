@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "game": "50737-server",
+      "seats": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "names": 4,
+      "maps": 18,
+      "full": 15,
+      "delta": 49,
+      "bytes": 230336
+    }
+  ],
+  "errors": []
+}

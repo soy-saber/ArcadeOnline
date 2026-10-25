@@ -1,0 +1,162 @@
+{
+  "origin": "https://43.142.142.215",
+  "at": "2026-10-25T04:41:55.470Z",
+  "sourceCommit": "b4f763a",
+  "noFixturesOrStateMutations": true,
+  "actualSelfBombs": 5,
+  "rounds": [
+    {
+      "round": 1792903286314,
+      "map": "forest",
+      "life": 0,
+      "alive": false,
+      "rotation": {
+        "every": 5,
+        "completed": 1
+      },
+      "records": [
+        {
+          "id": "c8837fa4-e19a-4f8c-8f80-85615d7d895b",
+          "name": "Map check P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 1,
+          "rounds": 1
+        },
+        {
+          "id": "d2218ceb-b12e-4bce-847d-c2272c4618f3",
+          "name": "Map check P1",
+          "kills": 0,
+          "deaths": 1,
+          "wins": 0,
+          "rounds": 1
+        }
+      ]
+    },
+    {
+      "round": 1792903291977,
+      "map": "forest",
+      "life": 0,
+      "alive": false,
+      "rotation": {
+        "every": 5,
+        "completed": 2
+      },
+      "records": [
+        {
+          "id": "c8837fa4-e19a-4f8c-8f80-85615d7d895b",
+          "name": "Map check P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 2,
+          "rounds": 2
+        },
+        {
+          "id": "d2218ceb-b12e-4bce-847d-c2272c4618f3",
+          "name": "Map check P1",
+          "kills": 0,
+          "deaths": 2,
+          "wins": 0,
+          "rounds": 2
+        }
+      ]
+    },
+    {
+      "round": 1792903297703,
+      "map": "forest",
+      "life": 0,
+      "alive": false,
+      "rotation": {
+        "every": 5,
+        "completed": 3
+      },
+      "records": [
+        {
+          "id": "c8837fa4-e19a-4f8c-8f80-85615d7d895b",
+          "name": "Map check P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 3,
+          "rounds": 3
+        },
+        {
+          "id": "d2218ceb-b12e-4bce-847d-c2272c4618f3",
+          "name": "Map check P1",
+          "kills": 0,
+          "deaths": 3,
+          "wins": 0,
+          "rounds": 3
+        }
+      ]
+    },
+    {
+      "round": 1792903303368,
+      "map": "forest",
+      "life": 0,
+      "alive": false,
+      "rotation": {
+        "every": 5,
+        "completed": 4
+      },
+      "records": [
+        {
+          "id": "c8837fa4-e19a-4f8c-8f80-85615d7d895b",
+          "name": "Map check P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 4,
+          "rounds": 4
+        },
+        {
+          "id": "d2218ceb-b12e-4bce-847d-c2272c4618f3",
+          "name": "Map check P1",
+          "kills": 0,
+          "deaths": 4,
+          "wins": 0,
+          "rounds": 4
+        }
+      ]
+    },
+    {
+      "round": 1792903308997,
+      "map": "forest",
+      "life": 0,
+      "alive": false,
+      "rotation": {
+        "every": 5,
+        "completed": 5
+      },
+      "records": [
+        {
+          "id": "c8837fa4-e19a-4f8c-8f80-85615d7d895b",
+          "name": "Map check P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 5,
+          "rounds": 5
+        },
+        {
+          "id": "d2218ceb-b12e-4bce-847d-c2272c4618f3",
+          "name": "Map check P1",
+          "kills": 0,
+          "deaths": 5,
+          "wins": 0,
+          "rounds": 5
+        }
+      ]
+    }
+  ],
+  "sixth": {
+    "round": 1792903314690,
+    "map": "city",
+    "rotation": {
+      "every": 5,
+      "completed": 0
+    },
+    "ready": [
+      true,
+      true
+    ]
+  },
+  "errors": []
+}

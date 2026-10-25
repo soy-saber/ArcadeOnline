@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-25T04:43:15.627576+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "b4f763a2306d2cc769bc6c8ab255a7fccb00ea57",
+  "archiveSha256": "a5c618229a1011cd29b6469470460d158b3271b86933980176fdc062e623d4c4",
+  "archiveBytes": 55300512,
+  "releaseFiles": 5003,
+  "current": "/opt/arcade-online/releases/20261025043950-240848",
+  "previous": "/opt/arcade-online/releases/20261024185954-109244",
+  "upload": "/root/arcade-deploy-20261025-registration-a5c61822/release",
+  "bundleSha256": "aa4ac935a14877637c800c6e91a5adec577a7ff384036f5e6f6a0d9c40b47bd0",
+  "authorityRuntimeSha256": "d5269b573d16ec68c3233e8313c543b5ab57d0212d85610ea75189eae5573b46",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicProbe": "health, eight game resources/covers/background, retired paths404, temporary TURN credentials, WSS join all eight",
+  "publicFileHashesMatched": 160,
+  "publicBoxheadFourPlayers": "public-four-player-results.json",
+  "publicBomb1Rotation": "../bomb1-life-rotation-2026-10-25/public-rotation-results.json",
+  "browserHost": "All Chrome contexts on the same Windows workstation; not four independent Internet hosts",
+  "complexObjectAndLifeScenarios": "local browser evidence plus deployed matching bundles; not fixture-driven public damage/life tests",
+  "bandwidthRetested": false,
+  "actualTurnRelayRetested": false,
+  "fullRestorationGoalComplete": false,
+  "remainingPlan": "../../../BOXHEAD_RESTORATION_PLAN.md"
+}
