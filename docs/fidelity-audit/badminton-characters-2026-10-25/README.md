@@ -4,6 +4,8 @@
 
 新增 [静态导入脚本](../../../scripts/import-badminton-characters.py)，读取 `games/46923/game.swf` 的XML，解析P1 `306`、P2 `268` 的五个原动作标签与完整显示列表。每个标签单独建立临时导出包装层，去掉独立控制的gun/gunServe，保留其余原图、父子矩阵、alpha和滤镜；独立推进身体子动画，使用原SVG注册点生成十张横向图集，共114帧。源SWF未修改，临时XML/SWF只在忽略目录中静态导出，不进入运行或发布包。`--cached` 可从已有原PNG/SVG重建十图及元数据，本地逐文件哈希复现一致。
 
+导入使用JPEXS 26.2.1、Python与Pillow。在项目根目录先用 `java -jar <ffdec.jar> -swf2xml games/46923/game.swf artifacts/swf-analysis/46923/game.xml` 准备原XML，再运行 `python scripts/import-badminton-characters.py --ffdec <ffdec.jar>`；缓存重建为 `python scripts/import-badminton-characters.py --cached`。不同工具版本的XML格式/抗锯齿可能不同，来源哈希与本批精确输出记录在元数据中。
+
 P1标签normal/walkbackward/walkforward/walkup/walkdown位于根帧1/12/23/32/43，身体子图279/294/302/305/279，对应11/8/8/32/11帧。P2标签normal/walkforward/walkbackward/walkdown/walkup位于1/13/23/33/45，子图200/220/229/238及原静态形状212，对应11/8/8/16/1帧。P1跳跃子图305原帧1有stop，所以运行时固定帧1；其余原绘制帧仍保留在图集中。P1头部276按原普通状态脚本停在帧1，避免静态导出错误地交替普通/berserk脸。CPU/机器人与原可选模式尚未接入，不能用双人素材替代它们。
 
 新motionAt由服务器保存。动作标签改变时从子图帧1开始；连续向同一方向移动或受墙阻挡时，原子动画继续，不按全局tick重新选两张图。同时按左右时仍按原右→左处理，可能在同回调替换两次子图；落地后是否换姿态取决于实际移动/按键。原gameOver调用把地面人物切回normal，空中跳跃保持。普通换发不清相位。完整/增量快照、观战和恢复保存相位并校验，客户端只预览位置/跳跃高度，不预测人物标签、相位或动作计数；预测也改为先重力、后移动检测，避免网边高度判定错一帧。
@@ -15,3 +17,7 @@ P1标签normal/walkbackward/walkforward/walkup/walkdown位于根帧1/12/23/32/43
 新 `npm run test:badminton:characters:e2e` 使用三个独立Chrome和正常房间/按键，没有游戏状态夹具，验证双方前后走路、跳跃/空中挥拍、步行中完整恢复、十图解码、原帧裁剪/定位、人物/球拍/球层级和全屏。对每次实际身体drawImage核对权威动作相位与原注册点，本地实际观察到双方前后走路全部八帧；跳跃均固定帧1。截图从当前Canvas直接导出，避免元素截图等待使短跳跃已经结束。既有按住控制/取消/精确换发与自然7:0、P2实际回球/完整恢复及0:7、观战/重开和僵尸四Chrome回归继续通过。
 
 此批仍未证明Flash全局MovieClip回调逐帧等价。当前以平台30Hz和动作变化时点推进子图；CPU/机器人完整动作/选择、原菜单/暂停/HUD/结算淡入、声音、单人六级流程、精确球物理与特效继续按清单推进。当前平台结束后冻结与3秒自动重开仍为已保留的平台流程。僵尸危机3没有本批机制变更，其剩余全局集合/Mapwho历史、波次/补给/升级/原模式等同样继续。
+
+`2e66971` 已于北京时间2026-10-25 22:55发布腾讯云，5253文件清单与268公网文件哈希（含十张新图集和70张原拍图）通过，三项服务/八款入口健康。最终 [公网人物过程](public-characters-results.json) 在三个独立Chrome实际绘制双方前后步行全部八帧、跳跃固定帧1，累计645条身体帧样本逐次核对裁剪/位置/层级无误，十图解码、步行中相位恢复和全屏通过。另 [控制及7:0比赛](public-controls-results.json)、[实际回球及0:7比赛](public-match-results.json) 与 [僵尸四人回归](public-boxhead-four-results.json) 均通过；三套羽毛球无游戏状态夹具。
+
+发布路径/包哈希/服务/脚本哈希与验证范围见 [发布证据](public-deployment.json)，268项逐文件记录见 [公网哈希](public-hashes.json)。使用JPEXS26.2.1从原SWF全新导出的XML与既有分析XML哈希/字节完全一致，见 [原XML重导证据](source-reexport.json)。全局运行时等价及两个完整复原清单仍未完成。

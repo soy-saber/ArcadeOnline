@@ -1,0 +1,222 @@
+{
+  "results": [
+    {
+      "game": "50737-server",
+      "seats": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "names": 4,
+      "maps": 18,
+      "nativeEnemy": {
+        "tick": 18,
+        "wave": 1,
+        "id": 9,
+        "x": 208,
+        "y": 2768,
+        "ai": {
+          "state": "cell",
+          "base": "goto",
+          "previous": "enter",
+          "counter": 45.45454545454545,
+          "born": 16,
+          "registered": true,
+          "collidable": true,
+          "reserved": 7401,
+          "entry": 7401,
+          "targetSeat": null,
+          "targetDir": 0,
+          "targetAngle": 0,
+          "angleDelta": 0,
+          "dx": 0,
+          "dy": -0.7040000000000001,
+          "speed": 0.022000000000000002,
+          "radius": 14.4,
+          "action": "walk",
+          "frame": 0,
+          "canAttack": false,
+          "fireRateCount": 0,
+          "attackAngle": 0,
+          "multiply": false
+        },
+        "body": {
+          "phase": "normal",
+          "counter": 0,
+          "action": "stand",
+          "frame": 0,
+          "alpha": 1,
+          "vx": 0,
+          "vy": 0,
+          "returnAngle": 0,
+          "radius": 14.4,
+          "mass": 1,
+          "collidable": true,
+          "affectEnabled": true,
+          "deadFlag": false,
+          "floor": false,
+          "loggedKill": false,
+          "disposeAt": null,
+          "affects": [],
+          "damageSample": 1,
+          "deathSample": 3
+        },
+        "players": [
+          {
+            "seat": 1,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 2,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 3,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          },
+          {
+            "seat": 4,
+            "body": {
+              "phase": "control",
+              "counter": 0,
+              "action": "stand",
+              "frame": 0,
+              "alpha": 1,
+              "vx": 0,
+              "vy": 0,
+              "returnAngle": 0,
+              "radius": 14.4,
+              "mass": 2,
+              "collidable": true,
+              "affectEnabled": true,
+              "deadFlag": false,
+              "floor": false,
+              "loggedKill": false,
+              "disposeAt": null,
+              "affects": [],
+              "damageSample": 0,
+              "deathSample": 0
+            }
+          }
+        ],
+        "navigationPhase": "resume"
+      },
+      "nativeShots": [
+        {
+          "tick": 39,
+          "id": 25,
+          "x": 389.245555,
+          "y": 439.56895583863457,
+          "z": 31.572484999999997,
+          "tx": 645.245555,
+          "ty": 439.56895583863457,
+          "tz": 31.572484999999997,
+          "angle": 0,
+          "vx": 0,
+          "vy": 2,
+          "vz": 3,
+          "owner": 4,
+          "parent": 18,
+          "weapon": 0,
+          "damage": 26,
+          "life": 2,
+          "born": 39,
+          "ray": true,
+          "rayPhase": "init"
+        }
+      ],
+      "pauseEvidence": {
+        "tickBefore": 44,
+        "tickAfter": 69,
+        "observedMs": 714
+      },
+      "transport": [
+        {
+          "rtt": 64.69999992847443,
+          "snapshotAge": 151.80000007152557,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 53.10000002384186,
+          "snapshotAge": 72.20000004768372,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 93.39999997615814,
+          "snapshotAge": 84.10000002384186,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 38.89999997615814,
+          "snapshotAge": 48,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        }
+      ],
+      "full": 13,
+      "delta": 54,
+      "bytes": 1713032
+    }
+  ],
+  "errors": []
+}

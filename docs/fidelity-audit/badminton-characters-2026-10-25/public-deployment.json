@@ -1,0 +1,215 @@
+{
+  "checkedAt": "2026-10-25T15:05:37.702095+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "2e669716254148e64e810ee6c6cd19617f8c3b7e",
+  "archiveSha256": "906bd5e1558c08ee3ccc9926842a29bcdcd7916b791f96fb53f72283e5f46adf",
+  "archiveBytes": 88300056,
+  "releaseFiles": 5253,
+  "current": "/opt/arcade-online/releases/20261025145507-384447",
+  "previous": "/opt/arcade-online/releases/20261025141931-375954",
+  "upload": "/root/arcade-deploy-20261025-characters-906bd5e1/release",
+  "bundleSha256": "40e0cd2c342eb9650a13aaafbe6c14a5e8f79cda4dca0886eb5941413994fcc7",
+  "authorityRuntimeSha256": "5846d60381bfd9e0ff26ae0cca3aab559d8561bc9c0254c8f9690f0af234b158",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 268,
+  "nativeRacketPngHashesMatched": 70,
+  "nativeBodySheetHashesMatched": 10,
+  "nativeBodyFrames": 114,
+  "publicCharacters": {
+    "report": "public-characters-results.json",
+    "normalInputOnly": true,
+    "observedNativeBodyFrames": {
+      "p1-normal": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "p1-walkforward": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "p1-walkbackward": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "p1-walkup": [
+        1
+      ],
+      "p2-normal": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "p2-walkforward": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "p2-walkbackward": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "p2-walkup": [
+        1
+      ]
+    },
+    "bodyDrawSamplesByBrowser": [
+      217,
+      222,
+      206
+    ],
+    "bodyDrawErrorsByBrowser": [
+      0,
+      0,
+      0
+    ],
+    "decodedSheets": 10,
+    "fullPhaseRecoveries": 1,
+    "fullscreen": true,
+    "testSha256": "f5c8679fbb9272721117da48cdd15a2f3a9ba3767db4e0ca08bacc6aed565997"
+  },
+  "publicControls": {
+    "report": "public-controls-results.json",
+    "normalInputOnly": true,
+    "finishScore": [
+      7,
+      0
+    ],
+    "winner": 1,
+    "resetObservations": [
+      {
+        "point": 1,
+        "scheduledResetAt": 97,
+        "actualResetAt": 97
+      },
+      {
+        "point": 2,
+        "scheduledResetAt": 193,
+        "actualResetAt": 193
+      },
+      {
+        "point": 3,
+        "scheduledResetAt": 289,
+        "actualResetAt": 289
+      },
+      {
+        "point": 4,
+        "scheduledResetAt": 383,
+        "actualResetAt": 383
+      },
+      {
+        "point": 5,
+        "scheduledResetAt": 480,
+        "actualResetAt": 480
+      },
+      {
+        "point": 6,
+        "scheduledResetAt": 578,
+        "actualResetAt": 578
+      }
+    ],
+    "seventhPointObservedTick": 632,
+    "finishTick": 676,
+    "automaticRematch": true,
+    "testSha256": "5ede1cc39499a3883cb48829b84b8b0f3b0b97b6876381f789ce3ed14f4fb187"
+  },
+  "publicReturnedMatch": {
+    "report": "public-match-results.json",
+    "normalInputOnly": true,
+    "returnedHit": true,
+    "finishScore": [
+      0,
+      7
+    ],
+    "winner": 2,
+    "fullRecovery": {
+      "tick": 48,
+      "swing": 13,
+      "swingHit": true,
+      "frame": 3,
+      "ready": false,
+      "score": [
+        0,
+        0
+      ]
+    },
+    "automaticRematch": true,
+    "testSha256": "2680128ade889fc4d6a99edced9729239b26fda0510ea12f5032ffdf0db43885"
+  },
+  "publicBoxhead": "public-boxhead-four-results.json",
+  "probe": "health, all8game resources/covers/background, retired paths404, temporary TURN credentials and WSS joins",
+  "localChecks": {
+    "defaultTests": 410,
+    "legacyBadmintonTests": 8,
+    "deployTests": 5,
+    "lastTargetedTests": 24,
+    "typecheck": true,
+    "sourceBuildAndPackage": true,
+    "threeBadmintonBrowserSuites": true,
+    "fourChromeBoxheadRegression": true,
+    "cachedArtImportByteIdentical": true,
+    "freshSourceXmlExportByteIdentical": true
+  },
+  "browserHost": "All Chrome contexts ran on the same Windows workstation. Badminton suites use normal room/input events only; no game world state grants.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "callbackOrderingRuntimeProven": false,
+  "completeGoal": false,
+  "remainingPlans": [
+    "../../../BADMINTON_RESTORATION_PLAN.md",
+    "../../../BOXHEAD_RESTORATION_PLAN.md"
+  ]
+}
