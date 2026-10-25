@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-25T05:13:46.992625+00:00",
+  "baseline": "f3404dc",
+  "originalSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "modelScriptSha256": "efc101c78c4af50f8d18ee12042b8831c3eac753e7cd027ad66581c2e236fc3d",
+  "gunMetadataSha256": "0d2bd408395c50d9566b56870c383e8ae3b376ec55f2edff406e114166e76189",
+  "sourceClasses": {
+    "DrawPrimitive/XSI/CDrawPrimitive_XSI_DI": "8f69180b02da5f1ac5275a39be7ccbef47732ea809d0e1afeb93826daa5c1286",
+    "DrawPrimitive/XSI/CDrawPrimitive_XSI_Animation": "6fae497185c19174bb429077a725f67d5cb36f9fa3c5c5d2c04d907ab7df6f95",
+    "DrawPrimitive/XSI/CDrawPrimitive_XSI_Collection": "7989dadb53b14dcb18449010463a813bc87bbeadaa6475e0a8cda4b7ea37f496",
+    "DrawPrimitive/XSI/CDrawPrimitive_XSI_StyleSheet": "f900e0e2fc8d3f7b865950fcc1a6fd4923feb3b7e63cb2564226d16017638678",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "Thing/Math/CThing_Angle": "1bb643849b70c98667158e86e5086929458e1e6be17d64d6ea2d6e5946fab5d9",
+    "Thing/Math/CThing_Position": "0e4f90e6039964383e861106b1dba403f10eafcbb5bcdca663a85c832b23af97",
+    "CInput": "71dfc609c152d4d01c85b5a14bcf97f574d9b68a869175fdbb367aa45c1b48b7",
+    "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1",
+    "Thing/Weapon/CThing_Weapon_Barrel": "238e817b76fcc6a55ecb0e2770df9cf7867d6a36f382f5cccb1c42c0c1e4ab0e",
+    "Thing/Weapon/CThing_Weapon_FakeWall": "f0ae7de4b8cd7097b9e4a46615066627889bce18107a065284bff80635a6f7b9",
+    "Thing/Weapon/CThing_Weapon_Mine": "260b43292dd4852681fed5308ba6423bf5395c6d86708b4cf06902f48d790efc",
+    "Thing/Weapon/CThing_Weapon_ChargePack": "f18c019958ad79e94d22b966123111d4f6fea0730a4a46cde8b94ff43fa2fdcc",
+    "Thing/Effect/CThing_Effect_MuzzleFlash": "f21fe131550b49db095f030c3f0756a6715f58f1f23484ff9dda523111d44ebd",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "World/Map/CMap_Cell": "8de8f3174669da35efbc59b838f51ef05f6fd4a718f76a5058eace5c99553e87",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a",
+    "Thing/Object/CThing_Object_Barrel": "b822a0fa02c486ba7980b187d630c1227f05046b0dd09c482ca3745d051d81b8",
+    "Thing/Object/CThing_Object_Wall": "237e9b7ec5e9de32924931f8643c5b7196a4124af8b7499a7616d43e7e16fa9a"
+  },
+  "poseDimensions": {
+    "stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "handgun-stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "handgun-walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "uzi-stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "uzi-walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "shotgun-stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "shotgun-walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "rocketlauncher-stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "rocketlauncher-walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "railgun-stand": {
+      "directions": 16,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    },
+    "railgun-walk": {
+      "directions": 8,
+      "rawFrames": 5,
+      "logicalFrames": 8
+    },
+    "hitfront": {
+      "directions": 8,
+      "rawFrames": 2,
+      "logicalFrames": 2
+    },
+    "hitrear": {
+      "directions": 8,
+      "rawFrames": 2,
+      "logicalFrames": 2
+    },
+    "dying": {
+      "directions": 4,
+      "rawFrames": 5,
+      "logicalFrames": 5
+    },
+    "dead": {
+      "directions": 4,
+      "rawFrames": 1,
+      "logicalFrames": 1
+    }
+  },
+  "pcodeCheck": {
+    "file": "CDrawPrimitive_XSI_DI.pcode",
+    "sha256": "a5c007ded76ab041cb557872f1906c4ae4c038767a3b311a53c23b998ba683cf",
+    "finding": "LoadAnimation loop at loc142b explicitly pushes undefined and stores register2 before each frame. Clean decompiler omitted this reset. Native walk sequence caches raw frames0,1,2,3,4,3,2,1 rather than reusing frame0 for everything.",
+    "exportScope": "The target class was exported completely; whole-SWF pcode export exited1 after an unrelated sprite274 script timeout. This is static original-bytecode/source evidence, not a Flash runtime trace."
+  },
+  "rules": [
+    "Per-direction/per-frame nPosition: rawX*.35, rawY*-.sin45*.35, -rawZ*.35; missing GunPosition_Right falls back to feet",
+    "State_PlayerControl determines the old-weapon logical animation, selects weapon, updates/fires before SetAnimation or Animate(.32)",
+    "MimicItem shares animation identity: alias change preserves the phase and skips Animate on that callback",
+    "GetWeaponPosition preupdates the firing drawing frame before later animation changes",
+    "CInput.UpdateKey retains pressed/released flags until their getters read them; cooldown must not consume edges. Manual selection Renew clears both flags and internal down state; auto IsDown still sees the physical hold",
+    "Placement Fire only checks mChildCount<=1 and centers XY while retaining Z; no extra radial/static rejection",
+    "Noncollidable live effects, shots, pickups and corpses occupy cells; decals do not. Newborns wait for registration. Active entities cannot be trimmed as visual history"
+  ],
+  "scopeLimits": [
+    "Cell child counts use current represented actor/death/projectile lifecycles; full original global callback enumeration, enemy registration/reservation and native dying/dead timing remain to be restored",
+    "Hitscan impact timing and sampled line geometry remain approximate; grenade birth initialization, map normals/heights, fireball handling and weapon-empty callbacks still need a full source pass",
+    "Muzzle position and lifetime are corrected, but native eight-way Top/Front OmniDirectional art transforms remain pending",
+    "Hit/death/respawn/control states, full AI, difficulty/character/modes and original HUD remain incomplete",
+    "Monotonic network edge counters still preserve complete quick taps missed by server sampling; focus/expiry/reconnect intentionally clear pending input",
+    "No new Flash runtime frame trace; browser evidence is local Chrome on this Windows workstation"
+  ]
+}

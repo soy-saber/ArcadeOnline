@@ -4,7 +4,7 @@ function load(file){const name=path.resolve(__dirname,file),source=require('esbu
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),reg=load('../src/expanded/boxhead-registration.ts'),walls=load('../src/expanded/boxhead-walls.ts'),blast=load('../src/expanded/boxhead-explosions.ts'),protocol=load('../src/authority/protocol.ts');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
 function arena(){const s=a.create(1,true,[1,2,3,4],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*120;p.y=272;p.dir=0;p.invul=100000;});return s;}
-function object(s,kind='barrel',x=176,y=272){const b={id:++s.nextId,x,y,kind,hp:1,damage:150,owner:1,armed:s.tick,exploded:false,...(kind==='wall'?walls.wallState():{}),...reg.objectRegistration()};s.barrels.push(b);return b;}
+function object(s,kind='barrel',x=176,y=272){const b={id:++s.nextId,x,y,z:0,kind,hp:1,damage:150,owner:1,armed:s.tick,exploded:false,...(kind==='wall'?walls.wallState():{}),...reg.objectRegistration()};s.barrels.push(b);return b;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function close(actual,expected){assert(Math.abs(actual-expected)<1e-10,`${actual} vs ${expected}`);}
 

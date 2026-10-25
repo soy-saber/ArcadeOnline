@@ -7,7 +7,7 @@ const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,att
 function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=272;p.dir=0;p.invul=100000;});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];return p;}
-function placedWall(){const s=arena(),p=equip(s,5);a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,4);p.weapon=0;p.ammo=-1;return {s,p,b:s.barrels[0]};}
+function placedWall(){const s=arena(),p=equip(s,5);ticks(s,2);a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,4);const b=s.barrels[0];assert.equal(b.x,p.x);assert.equal(b.y,p.y);p.x=b.x-40;p.weapon=0;p.ammo=-1;ticks(s,12);assert.equal(b.objectPhase,'normal');return {s,p,b};}
 function shoot(s,p,count){let seq=s.inputs[0].seq,attack=p.lastAttack;for(let i=0;i<count;i++){while(p.cooldown>0)a.step(s,[input(++seq,{attack})]);a.step(s,[input(++seq,{attack:++attack})]);}}
 function hit(s,b,amount,owner=1){walls.affectWall(b,amount,owner);a.step(s,[]);}
 

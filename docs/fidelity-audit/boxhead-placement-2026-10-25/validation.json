@@ -1,0 +1,21 @@
+{
+  "defaultUnitSuite": {
+    "command": "npm test",
+    "passed": 314,
+    "failed": 0
+  },
+  "deploySuite": {
+    "passed": 5,
+    "failed": 0
+  },
+  "newPlacementPoseAndInputTests": 22,
+  "typecheck": true,
+  "nativeBuildMatchesSource": true,
+  "gunImportSourceCheck": true,
+  "localChromeSuites": [
+    "walls-results.json",
+    "packs-results.json",
+    "explosions-results.json"
+  ],
+  "fullGoalComplete": false
+}

@@ -7,7 +7,7 @@ function fixture(room,action,extra={}){return new Promise((resolve,reject)=>{con
 async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
 async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
 async function move(p,key,predicate){await focus(p);await p.keyboard.down(key);await p.waitForFunction(predicate);await p.keyboard.up(key);}
-async function select(p,key,index,seat=1){await focus(p);await p.keyboard.press(key);await p.waitForFunction((index,seat)=>window.__authorityTest.authority.players.find(p=>p.seat===seat).weapon===index,{},index,seat);}
+async function select(p,key,index,seat=1){await focus(p);const before=await p.evaluate(seat=>window.__authorityTest.authority.players.find(p=>p.seat===seat).lastAlt,seat);await p.keyboard.press(key);await p.waitForFunction((index,seat,before)=>{const p=window.__authorityTest.authority.players.find(p=>p.seat===seat);return p.weapon===index&&p.lastAlt>before;},{},index,seat,before);}
 (async()=>{
  for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
  browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='objects-'+Date.now().toString(36).slice(-6);

@@ -62,7 +62,7 @@ test('grenade launch power scales both axes, birth does not consume fuse, ground
 
 test('a new complete grenade tap uses minimum charge rather than an old gun press timestamp',()=>{
  const s=arena(),p=equip(s,1);a.step(s,[input(1,{attack:1,trigger:true})]);a.step(s,[input(2,{attack:1,trigger:false})]);ticks(s,30);
- equip(s,4);a.step(s,[input(3,{attack:2,trigger:false})]);const b=s.bullets.find(b=>b.weapon===4);assert.equal(b.vx,8);assert.equal(b.vz,4);assert.equal(b.life,60);
+ equip(s,4);p.weapon=1;p.ammo=p.inventory[1];a.step(s,[input(3,{alt:1,weapon:4,attack:1,trigger:false})]);a.step(s,[input(4,{attack:2,trigger:false})]);const b=s.bullets.find(b=>b.weapon===4);assert.equal(b.vx,8);assert.equal(b.vz,4);assert.equal(b.life,60);
 });
 
 test('grounded subthreshold bounce is silent; a wall bounce damps both horizontal components',()=>{
@@ -97,7 +97,7 @@ test('map barrels keep damage 100 and one-hit life; placed barrel damage is capt
 });
 
 test('explosion damage does not detonate mines or charge packs lacking native affect flags',()=>{
- const s=arena();s.barrels=[{id:++s.nextId,x:320,y:272,kind:'mine',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateAt:0},{id:++s.nextId,x:336,y:272,kind:'chargepack',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateCounter:null}];explosions.queueExplosion(s,320,272,250,1);ticks(s);assert.equal(s.barrels.length,2);assert(s.barrels.every(b=>b.hp===60));assert(a.valid(s));
+ const s=arena();s.barrels=[{id:++s.nextId,x:320,y:272,z:0,kind:'mine',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateAt:0},{id:++s.nextId,x:336,y:272,z:0,kind:'chargepack',hp:60,owner:1,armed:0,exploded:false,animation:0,detonating:false,detonateCounter:null}];explosions.queueExplosion(s,320,272,250,1);ticks(s);assert.equal(s.barrels.length,2);assert(s.barrels.every(b=>b.hp===60));assert(a.valid(s));
 });
 
 test('snapshot validation rejects corrupt delayed explosion and native projectile metadata',()=>{

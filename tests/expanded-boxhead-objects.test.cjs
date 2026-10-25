@@ -17,8 +17,8 @@ test('charge pack second trigger runs three callbacks before queuing an explosio
 test('reselecting the same charge weapon permits several owned packs and a later trigger detonates only that owner',()=>{
  const s=arena(),p=equip(s,8),q=s.players[1];q.weapon=8;q.unlocked[8]=true;q.inventory[8]=10;q.ammo=10;
  a.step(s,[input(1,{attack:1}),input(1,{attack:1})]);assert.equal(s.barrels.length,2);p.x+=64;
- a.step(s,[input(2,{alt:1,weapon:8,attack:2}),input(2,{attack:1})]);assert.equal(s.barrels.length,3);assert.equal(p.ammo,8);assert.equal(p.chargeDetonate,true);
- a.step(s,[input(3,{attack:3}),input(3,{attack:1})]);assert.equal(s.barrels.filter(b=>b.detonating).length,2);assert(s.barrels.filter(b=>b.detonating).every(b=>b.owner===1));
+ a.step(s,[input(2,{alt:1,weapon:8,attack:1}),input(2,{attack:1})]);a.step(s,[input(3,{attack:2}),input(3,{attack:1})]);assert.equal(s.barrels.length,3);assert.equal(p.ammo,8);assert.equal(p.chargeDetonate,true);
+ a.step(s,[input(4,{attack:3}),input(4,{attack:1})]);assert.equal(s.barrels.filter(b=>b.detonating).length,2);assert(s.barrels.filter(b=>b.detonating).every(b=>b.owner===1));
  ticks(s,2);assert.equal(s.barrels.length,1);assert.equal(s.barrels[0].owner,2);assert.equal(s.barrels[0].detonating,false);assert.equal(q.ammo,9);assert(a.valid(s));
 });
 
@@ -30,12 +30,12 @@ test('last charge pack remains selectable after ammo reaches zero and returns to
 
 test('weapon switch Reset clears native fire cooldown but does not refill ammunition',()=>{
  const s=arena(),p=equip(s,1);a.step(s,[input(1,{attack:1})]);assert(p.cooldown>0);assert.equal(p.ammo,99);
- a.step(s,[input(2,{alt:1,weapon:1,attack:2})]);assert.equal(p.ammo,98);assert.equal(p.fireAt,s.tick);assert.equal(p.inventory[0],-1);
+ a.step(s,[input(2,{alt:1,weapon:1,attack:2,trigger:true})]);assert.equal(p.ammo,98);assert.equal(p.fireAt,s.tick);assert.equal(p.inventory[0],-1);
 });
 
 test('charge placement uses the native mine placement cue, including occupied attempts without consuming ammo',()=>{
- const s=arena(),p=equip(s,8);a.step(s,[input(1,{attack:1})]);assert.equal(s.sounds.filter(e=>e.name==='Weapon.Mine.Place.wav').length,1);assert(!s.sounds.some(e=>e.name==='Object.Barrel.Place.wav'));
- a.step(s,[input(2,{alt:1,weapon:8,attack:2})]);assert.equal(p.ammo,9);assert.equal(s.barrels.length,1);assert.equal(p.chargeDetonate,false);assert.equal(s.sounds.filter(e=>e.name==='Weapon.Mine.Place.wav').length,2);assert(!s.sounds.some(e=>e.name==='Object.Mine.Detonate.wav'));
+ const s=arena(),p=equip(s,8);ticks(s,2);a.step(s,[input(1,{attack:1})]);assert.equal(s.sounds.filter(e=>e.name==='Weapon.Mine.Place.wav').length,1);assert(!s.sounds.some(e=>e.name==='Object.Barrel.Place.wav'));
+ a.step(s,[input(2,{alt:1,weapon:8,attack:1})]);a.step(s,[input(3,{attack:2})]);assert.equal(p.ammo,9);assert.equal(s.barrels.length,1);assert.equal(p.chargeDetonate,false);assert.equal(s.sounds.filter(e=>e.name==='Weapon.Mine.Place.wav').length,2);assert(!s.sounds.some(e=>e.name==='Object.Mine.Detonate.wav'));
 });
 
 test('mine and charge idle animation advances .04 per callback; detonation preserves phase and accelerates to one',()=>{

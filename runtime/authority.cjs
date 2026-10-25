@@ -27263,6 +27263,122 @@ function drawBrightness(c, brightness, width, height, hud) {
   c.restore();
 }
 
+// src/expanded/boxhead-gun-positions.json
+var boxhead_gun_positions_default = { sourceSha256: "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90", modelScriptSha256: "efc101c78c4af50f8d18ee12042b8831c3eac753e7cd027ad66581c2e236fc3d", classHashes: { "DrawPrimitive/XSI/CDrawPrimitive_XSI_DI": "8f69180b02da5f1ac5275a39be7ccbef47732ea809d0e1afeb93826daa5c1286", "DrawPrimitive/XSI/CDrawPrimitive_XSI_Animation": "6fae497185c19174bb429077a725f67d5cb36f9fa3c5c5d2c04d907ab7df6f95", "DrawPrimitive/XSI/CDrawPrimitive_XSI_Collection": "7989dadb53b14dcb18449010463a813bc87bbeadaa6475e0a8cda4b7ea37f496", "DrawPrimitive/XSI/CDrawPrimitive_XSI_StyleSheet": "f900e0e2fc8d3f7b865950fcc1a6fd4923feb3b7e63cb2564226d16017638678", "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61", "Thing/Math/CThing_Angle": "1bb643849b70c98667158e86e5086929458e1e6be17d64d6ea2d6e5946fab5d9", "Thing/Math/CThing_Position": "0e4f90e6039964383e861106b1dba403f10eafcbb5bcdca663a85c832b23af97", CInput: "71dfc609c152d4d01c85b5a14bcf97f574d9b68a869175fdbb367aa45c1b48b7", "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1" }, scale: 0.35, projection: -0.7071067811865476, poses: { stand: { model: "mPlayer_Default_Stand", directions: 16, sequence: [0], anchors: [[null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null], [null]] }, walk: { model: "mPlayer_Default_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null]] }, "handgun-stand": { model: "mPlayer_Default_Handgun_Stand", directions: 16, sequence: [0], anchors: [[[27.645555, 7.5689558386345475, 31.572484999999997]], [[21.444885, 14.47363081828511, 31.572484999999997]], [[11.979415, 19.174826717469966, 31.572484999999997]], [[0.6901999999999999, 20.956834801009432, 31.572484999999997]], [[-10.70412, 19.548359410165666, 31.572484999999997]], [[-20.468805, 15.163823605265675, 31.572484999999997]], [[-27.117299999999997, 8.470725581147846, 31.572484999999997]], [[-29.637439999999998, 0.4880451003749551, 31.572484999999997]], [[-27.645555, -7.5689558386345475, 31.572484999999997]], [[-21.444885, -14.47363081828511, 31.572484999999997]], [[-11.979415, -19.174826717469966, 31.572484999999997]], [[-0.6901999999999999, -20.956834801009432, 31.572484999999997]], [[10.70412, -19.548359410165666, 31.572484999999997]], [[20.468805, -15.163823605265675, 31.572484999999997]], [[27.117299999999997, -8.470725581147846, 31.572484999999997]], [[29.637439999999998, -0.4880451003749551, 31.572484999999997]]] }, "handgun-walk": { model: "mPlayer_Default_Handgun_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[[27.645555, 7.5689558386345475, 32.202484999999996], [27.645555, 7.5689558386345475, 31.887484999999998], [27.645555, 7.5689558386345475, 31.572484999999997], [27.645555, 7.5689558386345475, 31.887484999999998], [27.645555, 7.5689558386345475, 32.202484999999996]], [[11.979415, 19.174826717469966, 32.202484999999996], [11.979415, 19.174826717469966, 31.887484999999998], [11.979415, 19.174826717469966, 31.572484999999997], [11.979415, 19.174826717469966, 31.887484999999998], [11.979415, 19.174826717469966, 32.202484999999996]], [[-10.70412, 19.548359410165666, 32.202484999999996], [-10.70412, 19.548359410165666, 31.887484999999998], [-10.70412, 19.548359410165666, 31.572484999999997], [-10.70412, 19.548359410165666, 31.887484999999998], [-10.70412, 19.548359410165666, 32.202484999999996]], [[-27.117299999999997, 8.470725581147846, 32.202484999999996], [-27.117299999999997, 8.470725581147846, 31.887484999999998], [-27.117299999999997, 8.470725581147846, 31.572484999999997], [-27.117299999999997, 8.470725581147846, 31.887484999999998], [-27.117299999999997, 8.470725581147846, 32.202484999999996]], [[-27.645555, -7.5689558386345475, 32.202484999999996], [-27.645555, -7.5689558386345475, 31.887484999999998], [-27.645555, -7.5689558386345475, 31.572484999999997], [-27.645555, -7.5689558386345475, 31.887484999999998], [-27.645555, -7.5689558386345475, 32.202484999999996]], [[-11.979415, -19.174826717469966, 32.202484999999996], [-11.979415, -19.174826717469966, 31.887484999999998], [-11.979415, -19.174826717469966, 31.572484999999997], [-11.979415, -19.174826717469966, 31.887484999999998], [-11.979415, -19.174826717469966, 32.202484999999996]], [[10.70412, -19.548359410165666, 32.202484999999996], [10.70412, -19.548359410165666, 31.887484999999998], [10.70412, -19.548359410165666, 31.572484999999997], [10.70412, -19.548359410165666, 31.887484999999998], [10.70412, -19.548359410165666, 32.202484999999996]], [[27.117299999999997, -8.470725581147846, 32.202484999999996], [27.117299999999997, -8.470725581147846, 31.887484999999998], [27.117299999999997, -8.470725581147846, 31.572484999999997], [27.117299999999997, -8.470725581147846, 31.887484999999998], [27.117299999999997, -8.470725581147846, 32.202484999999996]]] }, "uzi-stand": { model: "mPlayer_Default_UZI_Stand", directions: 16, sequence: [0], anchors: [[[26.55317, 7.555467776783414, 31.471649999999997]], [[20.44294, 14.165583284595098, 31.471649999999997]], [[11.220475, 18.619118569203273, 31.471649999999997]], [[0.289765, 20.2380572223994, 31.471649999999997]], [[-10.685044999999999, 18.7759265689992, 31.471649999999997]], [[-20.03316, 14.45534150138972, 31.471649999999997]], [[-26.33141, 7.9340739606341275, 31.471649999999997]], [[-28.620935, 0.20489479645051992, 31.471649999999997]], [[-26.55317, -7.555467776783414, 31.471649999999997]], [[-20.44294, -14.165583284595098, 31.471649999999997]], [[-11.220475, -18.619118569203273, 31.471649999999997]], [[-0.289765, -20.2380572223994, 31.471649999999997]], [[10.685044999999999, -18.7759265689992, 31.471649999999997]], [[20.03316, -14.45534150138972, 31.471649999999997]], [[26.33141, -7.9340739606341275, 31.471649999999997]], [[28.620935, -0.20489479645051992, 31.471649999999997]]] }, "uzi-walk": { model: "mPlayer_Default_UZI_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[[26.55317, 7.555467776783414, 32.10165], [26.55317, 7.555467776783414, 31.786649999999998], [26.55317, 7.555467776783414, 31.471649999999997], [26.55317, 7.555467776783414, 31.786649999999998], [26.55317, 7.555467776783414, 32.10165]], [[11.220475, 18.619118569203273, 32.10165], [11.220475, 18.619118569203273, 31.786649999999998], [11.220475, 18.619118569203273, 31.471649999999997], [11.220475, 18.619118569203273, 31.786649999999998], [11.220475, 18.619118569203273, 32.10165]], [[-10.685044999999999, 18.7759265689992, 32.10165], [-10.685044999999999, 18.7759265689992, 31.786649999999998], [-10.685044999999999, 18.7759265689992, 31.471649999999997], [-10.685044999999999, 18.7759265689992, 31.786649999999998], [-10.685044999999999, 18.7759265689992, 32.10165]], [[-26.33141, 7.9340739606341275, 32.10165], [-26.33141, 7.9340739606341275, 31.786649999999998], [-26.33141, 7.9340739606341275, 31.471649999999997], [-26.33141, 7.9340739606341275, 31.786649999999998], [-26.33141, 7.9340739606341275, 32.10165]], [[-26.55317, -7.555467776783414, 32.10165], [-26.55317, -7.555467776783414, 31.786649999999998], [-26.55317, -7.555467776783414, 31.471649999999997], [-26.55317, -7.555467776783414, 31.786649999999998], [-26.55317, -7.555467776783414, 32.10165]], [[-11.220475, -18.619118569203273, 32.10165], [-11.220475, -18.619118569203273, 31.786649999999998], [-11.220475, -18.619118569203273, 31.471649999999997], [-11.220475, -18.619118569203273, 31.786649999999998], [-11.220475, -18.619118569203273, 32.10165]], [[10.685044999999999, -18.7759265689992, 32.10165], [10.685044999999999, -18.7759265689992, 31.786649999999998], [10.685044999999999, -18.7759265689992, 31.471649999999997], [10.685044999999999, -18.7759265689992, 31.786649999999998], [10.685044999999999, -18.7759265689992, 32.10165]], [[26.33141, -7.9340739606341275, 32.10165], [26.33141, -7.9340739606341275, 31.786649999999998], [26.33141, -7.9340739606341275, 31.471649999999997], [26.33141, -7.9340739606341275, 31.786649999999998], [26.33141, -7.9340739606341275, 32.10165]]] }, "shotgun-stand": { model: "mPlayer_Default_Shotgun_Stand", directions: 16, sequence: [0], anchors: [[[28.392629999999997, 7.47916741955948, 22.642129999999998]], [[22.183664999999998, 14.592845486059256, 22.642129999999998]], [[12.597444999999999, 19.484878898884645, 22.642129999999998]], [[1.0934, 21.410528653954344, 22.642129999999998]], [[-10.57714, 20.076621208720603, 22.642129999999998]], [[-20.6374, 15.686219953070674, 22.642129999999998]], [[-27.55578, 8.907738785124568, 22.642129999999998]], [[-30.279059999999998, 0.7731505545493711, 22.642129999999998]], [[-28.392629999999997, -7.47916741955948, 22.642129999999998]], [[-22.183664999999998, -14.592845486059256, 22.642129999999998]], [[-12.597444999999999, -19.484878898884645, 22.642129999999998]], [[-1.0934, -21.410528653954344, 22.642129999999998]], [[10.57714, -20.076621208720603, 22.642129999999998]], [[20.6374, -15.686219953070674, 22.642129999999998]], [[27.55578, -8.907738785124568, 22.642129999999998]], [[30.279059999999998, -0.7731505545493711, 22.642129999999998]]] }, "shotgun-walk": { model: "mPlayer_Default_Shotgun_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[[28.392629999999997, 7.47916741955948, 23.272129999999997], [28.392629999999997, 7.47916741955948, 22.95713], [28.392629999999997, 7.47916741955948, 22.642129999999998], [28.392629999999997, 7.47916741955948, 22.95713], [28.392629999999997, 7.47916741955948, 23.272129999999997]], [[12.597444999999999, 19.484878898884645, 23.272129999999997], [12.597444999999999, 19.484878898884645, 22.95713], [12.597444999999999, 19.484878898884645, 22.642129999999998], [12.597444999999999, 19.484878898884645, 22.95713], [12.597444999999999, 19.484878898884645, 23.272129999999997]], [[-10.57714, 20.076621208720603, 23.272129999999997], [-10.57714, 20.076621208720603, 22.95713], [-10.57714, 20.076621208720603, 22.642129999999998], [-10.57714, 20.076621208720603, 22.95713], [-10.57714, 20.076621208720603, 23.272129999999997]], [[-27.55578, 8.907738785124568, 23.272129999999997], [-27.55578, 8.907738785124568, 22.95713], [-27.55578, 8.907738785124568, 22.642129999999998], [-27.55578, 8.907738785124568, 22.95713], [-27.55578, 8.907738785124568, 23.272129999999997]], [[-28.392629999999997, -7.47916741955948, 23.272129999999997], [-28.392629999999997, -7.47916741955948, 22.95713], [-28.392629999999997, -7.47916741955948, 22.642129999999998], [-28.392629999999997, -7.47916741955948, 22.95713], [-28.392629999999997, -7.47916741955948, 23.272129999999997]], [[-12.597444999999999, -19.484878898884645, 23.272129999999997], [-12.597444999999999, -19.484878898884645, 22.95713], [-12.597444999999999, -19.484878898884645, 22.642129999999998], [-12.597444999999999, -19.484878898884645, 22.95713], [-12.597444999999999, -19.484878898884645, 23.272129999999997]], [[10.57714, -20.076621208720603, 23.272129999999997], [10.57714, -20.076621208720603, 22.95713], [10.57714, -20.076621208720603, 22.642129999999998], [10.57714, -20.076621208720603, 22.95713], [10.57714, -20.076621208720603, 23.272129999999997]], [[27.55578, -8.907738785124568, 23.272129999999997], [27.55578, -8.907738785124568, 22.95713], [27.55578, -8.907738785124568, 22.642129999999998], [27.55578, -8.907738785124568, 22.95713], [27.55578, -8.907738785124568, 23.272129999999997]]] }, "rocketlauncher-stand": { model: "mPlayer_Default_RocketLauncher_Stand", directions: 16, sequence: [0], anchors: [[[25.029339999999998, 7.437639038300394, 34.989464999999996]], [[19.098869999999998, 13.644374876182491, 34.989464999999996]], [[10.260775, 17.773874942778026, 34.989464999999996]], [[-0.13943999999999998, 19.197471812137465, 34.989464999999996]], [[-10.51841, 17.698416042623702, 34.989464999999996]], [[-19.296059999999997, 13.504940490000317, 34.989464999999996]], [[-25.136055, 7.255463582729397, 34.989464999999996]], [[-27.149325, -0.09859896956865219, 34.989464999999996]], [[-25.029339999999998, -7.437639038300394, 34.989464999999996]], [[-19.098869999999998, -13.644374876182491, 34.989464999999996]], [[-10.260775, -17.773874942778026, 34.989464999999996]], [[0.13943999999999998, -19.197471812137465, 34.989464999999996]], [[10.51841, -17.698416042623702, 34.989464999999996]], [[19.296059999999997, -13.504940490000317, 34.989464999999996]], [[25.136055, -7.255463582729397, 34.989464999999996]], [[27.149325, 0.09859896956865219, 34.989464999999996]]] }, "rocketlauncher-walk": { model: "mPlayer_Default_RocketLauncher_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[[25.029339999999998, 7.437639038300394, 35.619465], [25.029339999999998, 7.437639038300394, 35.304465], [25.029339999999998, 7.437639038300394, 34.989464999999996], [25.029339999999998, 7.437639038300394, 35.304465], [25.029339999999998, 7.437639038300394, 35.619465]], [[10.260775, 17.773874942778026, 35.619465], [10.260775, 17.773874942778026, 35.304465], [10.260775, 17.773874942778026, 34.989464999999996], [10.260775, 17.773874942778026, 35.304465], [10.260775, 17.773874942778026, 35.619465]], [[-10.51841, 17.698416042623702, 35.619465], [-10.51841, 17.698416042623702, 35.304465], [-10.51841, 17.698416042623702, 34.989464999999996], [-10.51841, 17.698416042623702, 35.304465], [-10.51841, 17.698416042623702, 35.619465]], [[-25.136055, 7.255463582729397, 35.619465], [-25.136055, 7.255463582729397, 35.304465], [-25.136055, 7.255463582729397, 34.989464999999996], [-25.136055, 7.255463582729397, 35.304465], [-25.136055, 7.255463582729397, 35.619465]], [[-25.029339999999998, -7.437639038300394, 35.619465], [-25.029339999999998, -7.437639038300394, 35.304465], [-25.029339999999998, -7.437639038300394, 34.989464999999996], [-25.029339999999998, -7.437639038300394, 35.304465], [-25.029339999999998, -7.437639038300394, 35.619465]], [[-10.260775, -17.773874942778026, 35.619465], [-10.260775, -17.773874942778026, 35.304465], [-10.260775, -17.773874942778026, 34.989464999999996], [-10.260775, -17.773874942778026, 35.304465], [-10.260775, -17.773874942778026, 35.619465]], [[10.51841, -17.698416042623702, 35.619465], [10.51841, -17.698416042623702, 35.304465], [10.51841, -17.698416042623702, 34.989464999999996], [10.51841, -17.698416042623702, 35.304465], [10.51841, -17.698416042623702, 35.619465]], [[25.136055, -7.255463582729397, 35.619465], [25.136055, -7.255463582729397, 35.304465], [25.136055, -7.255463582729397, 34.989464999999996], [25.136055, -7.255463582729397, 35.304465], [25.136055, -7.255463582729397, 35.619465]]] }, "railgun-stand": { model: "mPlayer_Default_Railgun_Stand", directions: 16, sequence: [0], anchors: [[[29.161475, 7.587665884064743, 29.810024999999996]], [[22.835295, 14.901115758385343, 29.810024999999996]], [[13.032634999999999, 19.946022121769353, 29.810024999999996]], [[1.24586, 21.954332659559764, 29.810024999999996]], [[-10.73058, 20.620276721901977, 29.810024999999996]], [[-21.07336, 16.146991944895262, 29.810024999999996]], [[-28.207934999999996, 9.21546458522914, 29.810024999999996]], [[-31.048115, 0.8809560544090722, 29.810024999999996]], [[-29.161475, -7.587665884064743, 29.810024999999996]], [[-22.835295, -14.901115758385343, 29.810024999999996]], [[-13.032634999999999, -19.946022121769353, 29.810024999999996]], [[-1.24586, -21.954332659559764, 29.810024999999996]], [[10.73058, -20.620276721901977, 29.810024999999996]], [[21.07336, -16.146991944895262, 29.810024999999996]], [[28.207934999999996, -9.21546458522914, 29.810024999999996]], [[31.048115, -0.8809560544090722, 29.810024999999996]]] }, "railgun-walk": { model: "mPlayer_Default_Railgun_Walk", directions: 8, sequence: [0, 1, 2, 3, 4, 3, 2, 1], anchors: [[[29.161475, 7.587665884064743, 30.440025], [29.161475, 7.587665884064743, 30.125024999999997], [29.161475, 7.587665884064743, 29.810024999999996], [29.161475, 7.587665884064743, 30.125024999999997], [29.161475, 7.587665884064743, 30.440025]], [[13.032634999999999, 19.946022121769353, 30.440025], [13.032634999999999, 19.946022121769353, 30.125024999999997], [13.032634999999999, 19.946022121769353, 29.810024999999996], [13.032634999999999, 19.946022121769353, 30.125024999999997], [13.032634999999999, 19.946022121769353, 30.440025]], [[-10.73058, 20.620276721901977, 30.440025], [-10.73058, 20.620276721901977, 30.125024999999997], [-10.73058, 20.620276721901977, 29.810024999999996], [-10.73058, 20.620276721901977, 30.125024999999997], [-10.73058, 20.620276721901977, 30.440025]], [[-28.207934999999996, 9.21546458522914, 30.440025], [-28.207934999999996, 9.21546458522914, 30.125024999999997], [-28.207934999999996, 9.21546458522914, 29.810024999999996], [-28.207934999999996, 9.21546458522914, 30.125024999999997], [-28.207934999999996, 9.21546458522914, 30.440025]], [[-29.161475, -7.587665884064743, 30.440025], [-29.161475, -7.587665884064743, 30.125024999999997], [-29.161475, -7.587665884064743, 29.810024999999996], [-29.161475, -7.587665884064743, 30.125024999999997], [-29.161475, -7.587665884064743, 30.440025]], [[-13.032634999999999, -19.946022121769353, 30.440025], [-13.032634999999999, -19.946022121769353, 30.125024999999997], [-13.032634999999999, -19.946022121769353, 29.810024999999996], [-13.032634999999999, -19.946022121769353, 30.125024999999997], [-13.032634999999999, -19.946022121769353, 30.440025]], [[10.73058, -20.620276721901977, 30.440025], [10.73058, -20.620276721901977, 30.125024999999997], [10.73058, -20.620276721901977, 29.810024999999996], [10.73058, -20.620276721901977, 30.125024999999997], [10.73058, -20.620276721901977, 30.440025]], [[28.207934999999996, -9.21546458522914, 30.440025], [28.207934999999996, -9.21546458522914, 30.125024999999997], [28.207934999999996, -9.21546458522914, 29.810024999999996], [28.207934999999996, -9.21546458522914, 30.125024999999997], [28.207934999999996, -9.21546458522914, 30.440025]]] }, hitfront: { model: "mPlayer_Default_HitFront", directions: 8, sequence: [0, 1], anchors: [[null, null], [null, null], [null, null], [null, null], [null, null], [null, null], [null, null], [null, null]] }, hitrear: { model: "mPlayer_Default_HitRear", directions: 8, sequence: [0, 1], anchors: [[null, null], [null, null], [null, null], [null, null], [null, null], [null, null], [null, null], [null, null]] }, dying: { model: "mPlayer_Default_Dying", directions: 4, sequence: [0, 1, 2, 3, 4], anchors: [[null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null], [null, null, null, null, null]] }, dead: { model: "mPlayer_Default_Dead", directions: 4, sequence: [0], anchors: [[null], [null], [null], [null]] } } };
+
+// src/expanded/boxhead-player-pose.ts
+var poses = boxhead_gun_positions_default.poses;
+var PROJECTION = boxhead_gun_positions_default.projection;
+function nativeDirection(angle, directions2) {
+  const normalized = (angle % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+  return Math.round((Math.trunc(normalized * 256 / (Math.PI * 2)) & 255) / (256 / directions2)) % directions2;
+}
+function poseAction(logical) {
+  const walking = logical.endsWith("walk"), weapon = logical.slice(0, walking ? -4 : -5);
+  const prefix = { pistol: "handgun", uzi: "uzi", shotgun: "shotgun", rocket: "rocketlauncher", railgun: "railgun" }[weapon];
+  return (prefix ? prefix + "-" : "") + (walking ? "walk" : "stand");
+}
+function rawPoseFrame(action, frame) {
+  const sequence = poses[action].sequence;
+  return sequence[Math.floor(frame) % sequence.length];
+}
+function playerPose() {
+  return {
+    poseName: "",
+    poseAction: "handgun-stand",
+    poseFrame: 0,
+    drawAction: "handgun-stand",
+    drawFrame: 0,
+    fireKeyDown: false,
+    firePressed: false,
+    fireReleased: false,
+    fireTap: false
+  };
+}
+function updateFireKey(p, held, pressed, cancelled, tick) {
+  if (cancelled) {
+    renewFireKey(p);
+    return;
+  }
+  if (pressed && !held) p.fireTap = true;
+  if (held && !p.fireKeyDown || pressed) {
+    if (!p.firePressed) {
+      p.firePressed = true;
+      p.triggerAt = tick;
+    }
+    if (!held) p.fireReleased = true;
+  }
+  if (!held && p.fireKeyDown) p.fireReleased = true;
+  p.fireKeyDown = held;
+}
+function renewFireKey(p) {
+  p.fireKeyDown = false;
+  p.firePressed = false;
+  p.fireReleased = false;
+  p.fireTap = false;
+}
+function consumeFireKey(p, auto, onRelease) {
+  if (auto) {
+    const firing = p.triggerDown || p.fireTap;
+    if (firing) p.fireTap = false;
+    return firing;
+  }
+  if (onRelease) {
+    if (!p.fireReleased) return false;
+    p.fireReleased = false;
+    p.firePressed = false;
+    p.fireTap = false;
+    return true;
+  }
+  if (!p.firePressed) return false;
+  p.firePressed = false;
+  p.fireTap = false;
+  return true;
+}
+function weaponPosition(p) {
+  const pose2 = poses[p.poseAction], direction2 = nativeDirection(p.dir, pose2.directions);
+  const offset = pose2.anchors[direction2][rawPoseFrame(p.poseAction, p.poseFrame)];
+  p.drawAction = p.poseAction;
+  p.drawFrame = p.poseFrame;
+  return offset ? { x: p.x + offset[0], y: p.y + offset[1], z: offset[2] } : { x: p.x, y: p.y, z: 0 };
+}
+function advancePlayerPose(p, logical, fired) {
+  if (logical !== p.poseName) {
+    p.poseName = logical;
+    const action = poseAction(logical);
+    if (p.poseAction !== action) {
+      p.poseAction = action;
+      p.poseFrame = 0;
+    }
+  } else p.poseFrame = (p.poseFrame + 0.16 * 2) % poses[p.poseAction].sequence.length;
+  if (!fired) {
+    p.drawAction = p.poseAction;
+    p.drawFrame = p.poseFrame;
+  }
+}
+function validPlayerPose(p) {
+  return [p.fireKeyDown, p.firePressed, p.fireReleased, p.fireTap].every((v) => typeof v === "boolean") && typeof p.poseName === "string" && (p.poseName === "" || /^(pistol|uzi|shotgun|barrel|grenade|fakewall|mine|rocket|chargepack|railgun)(stand|walk)$/.test(p.poseName) && poseAction(p.poseName) === p.poseAction) && [p.poseAction, p.drawAction].every((action) => Object.prototype.hasOwnProperty.call(poses, action)) && Number.isFinite(p.poseFrame) && p.poseFrame >= 0 && p.poseFrame < poses[p.poseAction].sequence.length && Number.isFinite(p.drawFrame) && p.drawFrame >= 0 && p.drawFrame < poses[p.drawAction].sequence.length;
+}
+
+// src/expanded/boxhead-placement.ts
+function cellChildCount(s, position2) {
+  const things = [
+    ...s.players,
+    ...s.zombies,
+    ...s.corpses,
+    ...s.barrels.filter((b) => ["barrel", "wall"].includes(b.kind) ? b.registered : b.armed < s.tick),
+    ...s.pickups.filter((p) => p.life > 0 && (p.born ?? -1) < s.tick),
+    ...s.bullets.filter((b) => b.life > 0 && (b.born ?? -1) < s.tick),
+    ...s.effects.filter((e) => e.life > 0 && ["Effect.MuzzleFlash", "Effect.BulletHit", "Effect.RocketSmoke", "Effect.SmokeCloud", "Effect.Explosion"].includes(e.kind) && (e.kind === "Effect.Explosion" ? e.born <= s.tick : e.kind === "Effect.SmokeCloud" ? e.born <= s.tick : (e.born ?? -1) < s.tick))
+  ];
+  return things.filter((thing) => sameCell(thing, position2)).length;
+}
+function placementCell(s, position2, columns, rows) {
+  const x = Math.floor(position2.x / 32), y = Math.floor(position2.y / 32);
+  if (x < 0 || y < 0 || x >= columns || y >= rows || cellChildCount(s, position2) > 1) return null;
+  return { x: x * 32 + 16, y: y * 32 + 16, z: position2.z };
+}
+
 // src/expanded/boxhead-core.ts
 var ID = "50737-server";
 function random4(s) {
@@ -27273,7 +27389,7 @@ function sound2(s, name) {
   s.sounds.push({ id: ++s.soundId, tick: s.tick, name });
 }
 function effect(s, kind, x, y, life = 12, extra = {}) {
-  s.effects.push({ id: ++s.nextId, kind, x, y, life, total: life, ...extra });
+  s.effects.push({ id: ++s.nextId, kind, x, y, life, total: life, born: s.tick, ...extra });
 }
 function accept(s, p, candidate) {
   const at = p.seat - 1, current = s.inputs[at];
@@ -27323,9 +27439,9 @@ function create3(round, playing2, seats, seed, mapId) {
     message: "",
     messageUntil: 0
   };
-  for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0, ...objectRegistration() });
-  for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0, ...objectRegistration() });
-  for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250 });
+  for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, z: 0, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0, ...objectRegistration() });
+  for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, z: 0, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0, ...objectRegistration() });
+  for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250, born: 0 });
   const primary = map.playerSpawns[0] || { x: map.width / 2, y: map.height / 2, dir: 0 };
   const spawns = [primary, ...map.otherSpawns].sort((a, b) => Math.hypot(a.x - primary.x, a.y - primary.y) - Math.hypot(b.x - primary.x, b.y - primary.y));
   for (const seat of [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort()) {
@@ -27357,7 +27473,8 @@ function create3(round, playing2, seats, seed, mapId) {
       hitAt: -99,
       deadAt: 0,
       triggerDown: false,
-      triggerAt: 0
+      triggerAt: 0,
+      ...playerPose()
     });
   }
   return s;
@@ -27416,8 +27533,8 @@ function explode(s, e) {
   for (const b of s.barrels) if (b.hp > 0 && ["barrel", "wall"].includes(b.kind) && amountAt(b)) damage(s, b, amountAt(b), owner);
   for (const p of s.players) if (amountAt(p)) hurt(s, p, amountAt(p), owner);
 }
-function shot(s, p, angle, amount, range, pierce) {
-  let x = p.x, y = p.y;
+function shot(s, p, origin, angle, amount, range, pierce) {
+  let x = origin.x, y = origin.y;
   const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
   for (let n = 0; n < range * CELL4 / 4; n++) {
     x += dx;
@@ -27434,10 +27551,10 @@ function shot(s, p, angle, amount, range, pierce) {
       if (!pierce || target.kind === "wall") break;
     }
   }
-  s.bullets.push({ id: ++s.nextId, x: p.x, y: p.y, tx: x, ty: y, vx: 0, vy: 0, owner: p.seat, weapon: p.weapon, damage: amount, life: 2 });
+  s.bullets.push({ id: ++s.nextId, ...origin, tx: x, ty: y, vx: 0, vy: 0, owner: p.seat, weapon: p.weapon, damage: amount, life: 2, born: s.tick });
 }
 function fire2(s, p) {
-  const gun = weaponStats(s, p.weapon);
+  const gun = weaponStats(s, p.weapon), origin = weaponPosition(p);
   if (gun.id === "chargepack" && p.chargeDetonate) {
     for (const b of ownedPacks(s, p.seat)) b.detonating = true;
     p.chargeDetonate = false;
@@ -27450,17 +27567,19 @@ function fire2(s, p) {
   }
   if (["barrel", "fakewall", "mine", "chargepack"].includes(gun.id)) {
     if (gun.id === "chargepack") sound2(s, "Weapon.Mine.Place.wav");
-    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL4) * CELL4 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL4) * CELL4 + 16;
-    if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
-    s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
+    const map = room(s), position2 = placementCell(s, origin, map.columns, map.rows);
+    if (!position2) return;
+    s.barrels.push({ id: ++s.nextId, ...position2, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
     if (gun.id === "chargepack") p.chargeDetonate = true;
     else sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
   } else if (gun.id === "grenade" || gun.id === "rocket") {
     const speed = gun.id === "grenade" ? Math.min(0.75, Math.max(0.25, (s.tick - p.triggerAt) / 25)) * 32 : 16;
-    s.bullets.push({ id: ++s.nextId, x: p.x + Math.cos(p.dir) * 20, y: p.y + Math.sin(p.dir) * 20, z: gun.id === "grenade" ? 40 : 18, vz: gun.id === "grenade" ? speed * 0.5 : 0, vx: Math.cos(p.dir) * speed, vy: Math.sin(p.dir) * speed, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: gun.id === "grenade" ? 60 : 100, bang: gun.bang, cluster: gun.cluster, born: s.tick });
+    s.bullets.push({ id: ++s.nextId, ...origin, z: gun.id === "grenade" ? 40 : origin.z, vz: gun.id === "grenade" ? speed * 0.5 : 0, vx: Math.cos(p.dir) * speed, vy: Math.sin(p.dir) * speed, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: gun.id === "grenade" ? 60 : 100, bang: gun.bang, cluster: gun.cluster, born: s.tick });
   } else {
     const count = gun.id === "shotgun" ? gun.spread ? 5 : 3 : 1, spacing = 1.25 * (gun.spread + 1) * Math.PI / 180;
-    for (let i = 0; i < count; i++) shot(s, p, p.dir + (i - (count - 1) / 2) * spacing + (gun.id === "uzi" ? (random4(s) - 0.5) * 0.06 : 0), gun.damage, gun.range, gun.id === "railgun");
+    const spriteKey = gun.id === "uzi" ? "UZI.MuzzleFlash" : gun.id === "shotgun" ? "Shotgun.MuzzleFlash" : gun.id === "railgun" ? "Railgun.MuzzleFlash" : "Pistol.MuzzleFlash";
+    effect(s, "Effect.MuzzleFlash", origin.x, origin.y, 2, { z: origin.z, angle: p.dir, spriteKey });
+    for (let i = 0; i < count; i++) shot(s, p, origin, p.dir + (i - (count - 1) / 2) * spacing + (gun.id === "uzi" ? (random4(s) - 0.5) * 0.06 : 0), gun.damage, gun.range, gun.id === "railgun");
   }
   if (p.inventory[p.weapon] > 0) p.inventory[p.weapon]--;
   p.ammo = p.inventory[p.weapon];
@@ -27557,7 +27676,7 @@ function enemies(s) {
       z.dir = Math.atan2(p.y - z.y, p.x - z.x);
       z.attack = 60;
       z.attackAt = s.tick;
-      s.bullets.push({ id: ++s.nextId, x: z.x, y: z.y, z: 18, vx: Math.cos(z.dir) * 7, vy: Math.sin(z.dir) * 7, owner: -1, weapon: -1, damage: 50, life: 40 });
+      s.bullets.push({ id: ++s.nextId, x: z.x, y: z.y, z: 18, vx: Math.cos(z.dir) * 7, vy: Math.sin(z.dir) * 7, owner: -1, weapon: -1, damage: 50, life: 40, born: s.tick });
     } else if (distance > 27 && s.tick - z.attackAt > 8) {
       const speed = (z.devil ? 1.28 : 0.64) * Math.min(1 + s.wave * 0.1, 5);
       const length = Math.max(1, Math.hypot(tx - z.x, ty - z.y));
@@ -27644,9 +27763,9 @@ function step5(s, inputs) {
     const input = accept(s, p, inputs[p.seat - 1]);
     s.ack[p.seat - 1] = Math.max(s.ack[p.seat - 1], input.seq);
     const attack = input.attack > p.lastAttack, alt = input.alt > p.lastAlt;
-    const wasDown = p.triggerDown;
     p.triggerDown = input.trigger === true;
-    if (p.triggerDown && !wasDown || attack && !p.triggerDown && !wasDown) p.triggerAt = s.tick;
+    const cancelled = input.cancelledAttack !== void 0 && input.cancelledAttack >= input.attack && input.attack > 0;
+    updateFireKey(p, p.triggerDown, attack, cancelled, s.tick);
     p.lastAttack = Math.max(p.lastAttack, input.attack);
     p.lastAlt = Math.max(p.lastAlt, input.alt);
     p.cooldown = Math.max(0, p.cooldown - 1);
@@ -27664,29 +27783,36 @@ function step5(s, inputs) {
         p.ammo = -1;
         p.invul = 125;
         p.inventory = WEAPONS3.map((_, i) => i === 0 ? -1 : 0);
+        Object.assign(p, playerPose());
       }
       continue;
     }
-    const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
-    p.moving = !!(dx || dy);
-    if (p.moving) p.dir = Math.atan2(dy, dx);
+    const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up), oldX = p.x, oldY = p.y;
+    if (dx || dy) p.dir = Math.atan2(dy, dx);
     move(s, p, dx * 5.12, dy * 5.12);
+    p.moving = p.x !== oldX || p.y !== oldY;
+    const nextPose = WEAPONS3[p.weapon].id + (p.moving ? "walk" : "stand");
     if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
     if (alt) {
       if (input.weapon !== void 0) {
-        if (p.unlocked[input.weapon] && !weaponEmpty(s, p, input.weapon)) selectWeapon(s, p, input.weapon);
+        if (p.unlocked[input.weapon] && !weaponEmpty(s, p, input.weapon)) {
+          selectWeapon(s, p, input.weapon);
+          renewFireKey(p);
+        }
       } else for (let i = 1; i <= 10; i++) {
         const index3 = (p.weapon + i * (input.weaponStep ?? 1) + 10) % 10;
         if (p.unlocked[index3] && !weaponEmpty(s, p, index3)) {
           selectWeapon(s, p, index3);
+          renewFireKey(p);
           break;
         }
       }
     }
     if (weaponEmpty(s, p, p.weapon)) selectWeapon(s, p, 0);
     const gun = weaponStats(s, p.weapon);
-    const wantsFire = input.trigger === void 0 ? attack : gun.auto ? p.triggerDown || attack : gun.onRelease ? !p.triggerDown && (wasDown || attack) : attack;
-    if (wantsFire && p.cooldown === 0 && (input.cancelledAttack === void 0 || input.cancelledAttack < input.attack)) fire2(s, p);
+    const firing = p.cooldown === 0 && !cancelled && consumeFireKey(p, gun.auto, gun.onRelease);
+    if (firing) fire2(s, p);
+    advancePlayerPose(p, nextPose, firing);
   }
   if (s.waveReady && s.tick >= s.waveReady) beginWave(s);
   if (s.spawnLeft > 0 && s.tick >= s.nextSpawn && s.zombies.filter((z) => !z.devil && z.hp > 0).length < Math.min(10 + 5 * (s.wave - 1), 60)) {
@@ -27704,7 +27830,7 @@ function step5(s, inputs) {
   enemies(s);
   processWallAffects(s, (b) => {
     const frames2 = boxhead_data_default.objects["Effect.SmokeCloud"].frames;
-    effect(s, "Effect.SmokeCloud", b.x, b.y, frames2 + 1, { born: s.tick + 1, scale: 1 });
+    effect(s, "Effect.SmokeCloud", b.x, b.y, frames2 + 1, { born: s.tick + 1, scale: 1, z: b.z });
     effect(s, "Effect.ScorchMark", b.x, b.y, 500);
   });
   stepExplosiveObjects(s, sound2);
@@ -27713,7 +27839,7 @@ function step5(s, inputs) {
     b.exploded = true;
     if (b.kind !== "wall") {
       const index3 = b.kind === "mine" ? 6 : b.kind === "chargepack" ? 8 : 3, gun = weaponStats(s, index3);
-      queueExplosion(s, b.x, b.y, b.damage ?? 100, b.owner, gun.bang, gun.cluster);
+      queueExplosion(s, b.x, b.y, b.damage ?? 100, b.owner, gun.bang, gun.cluster, b.z);
     }
   }
   s.barrels = s.barrels.filter((b) => b.hp > 0 || wallBlocks(b, s.tick));
@@ -27726,12 +27852,12 @@ function step5(s, inputs) {
     upgrade(s);
     s.corpses.push({ x: z.x, y: z.y, dir: z.dir, character: z.devil ? "devil" : "zombie", deadAt: s.tick });
     effect(s, "Effect.BloodPool", z.x, z.y, 500);
-    if (random4(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250 });
+    if (random4(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250, born: s.tick });
     sound2(s, "Creature.Zombie.Hit.wav");
   }
   s.zombies = s.zombies.filter((z) => z.hp > 0);
   for (const item of s.pickups) {
-    for (const p of s.players) if (item.life > 0 && p.alive && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
+    for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && p.alive && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
       const available = p.unlocked.map((v, i) => v && p.inventory[i] >= 0 && p.inventory[i] < weaponStats(s, i).ammo ? i : -1).filter((i) => i >= 0);
       if (p.hp >= 200 && !available.length) continue;
       if (p.hp < 200 && (!available.length || random4(s) < 1 - p.hp / 200)) p.hp = 200;
@@ -27756,6 +27882,7 @@ function step5(s, inputs) {
     p.ammo = -1;
     p.inventory = WEAPONS3.map((_, i) => i === 0 ? -1 : 0);
     p.triggerDown = false;
+    renewFireKey(p);
     p.chargeDetonate = false;
     p.cooldown = 0;
     sound2(s, "Creature.Player.Scream.1.wav");
@@ -27766,9 +27893,9 @@ function step5(s, inputs) {
     sound2(s, "World.End.wav");
   }
   if (s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
-  s.effects = s.effects.slice(-180);
+  const decals = new Set(s.effects.filter((e) => ["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)).slice(-180));
+  s.effects = s.effects.filter((e) => !["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind) || decals.has(e));
   s.sounds = s.sounds.slice(-40);
-  s.corpses = s.corpses.slice(-60);
   stepFeedback(s);
 }
 function nums(v, keys) {
@@ -27777,7 +27904,7 @@ function nums(v, keys) {
 function valid3(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
-  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (b.born === void 0 || Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
 }
 
 // src/expanded/boxhead-view.ts
@@ -27821,13 +27948,13 @@ function sprite2(c, key, x, y, frame = 0, scale = 1, rotation = 0) {
   c.drawImage(im, Math.min(meta.frames - 1, Math.max(0, Math.floor(frame))) * meta.w, 0, meta.w, meta.h, meta.x, meta.y, meta.w, meta.h);
   c.restore();
 }
-function person(c, character, action, p, tick, age) {
+function person(c, character, action, p, tick, age, poseFrame) {
   const meta = boxhead_data_default.animations[character + "-" + action];
   if (!meta) return;
   const im = image(meta.file);
   if (!ready(im)) return;
-  const direction2 = (Math.round(p.dir / (Math.PI * 2) * meta.directions) % meta.directions + meta.directions) % meta.directions;
-  const frame = age === void 0 ? Math.floor(tick / (action.includes("walk") ? 3 : 2)) % meta.frames : Math.min(meta.frames - 1, Math.floor(age / 3));
+  const direction2 = nativeDirection(p.dir, meta.directions);
+  const frame = poseFrame !== void 0 ? rawPoseFrame(action, poseFrame) : age === void 0 ? Math.floor(tick / (action.includes("walk") ? 3 : 2)) % meta.frames : Math.min(meta.frames - 1, Math.floor(age / 3));
   c.drawImage(im, frame * meta.w, direction2 * meta.h, meta.w, meta.h, p.x + meta.x, p.y + meta.y, meta.w * meta.scale, meta.h * meta.scale);
 }
 function health(c, p, seat) {
@@ -27874,7 +28001,7 @@ function render3(canvas, s, seat) {
     sprite2(c, e.kind, e.x, e.y);
     c.globalAlpha = 1;
   }
-  for (const b of s.barrels) if (b.kind === "mine" || b.kind === "chargepack") sprite2(c, b.kind === "mine" ? "Object.Mine" : "Object.ChargePack", b.x, b.y, b.animation);
+  for (const b of s.barrels) if (b.kind === "mine" || b.kind === "chargepack") sprite2(c, b.kind === "mine" ? "Object.Mine" : "Object.ChargePack", b.x, b.y + b.z * PROJECTION, b.animation);
   for (const corpse of s.corpses) {
     const age = s.tick - corpse.deadAt;
     person(c, corpse.character, age < 15 ? "dying" : "dead", corpse, s.tick, age);
@@ -27885,19 +28012,15 @@ function render3(canvas, s, seat) {
   for (const p of entities2) {
     if (p.entity === "object") {
       c.globalAlpha = p.kind === "wall" ? p.wallAlpha / 100 : 1;
-      sprite2(c, p.kind === "barrel" ? "Object.Barrel" : "Object.Wall", p.x, p.y, p.kind === "wall" ? p.wallFrame : 0);
+      sprite2(c, p.kind === "barrel" ? "Object.Barrel" : "Object.Wall", p.x, p.y + p.z * PROJECTION, p.kind === "wall" ? p.wallFrame : 0);
       c.globalAlpha = 1;
       continue;
     }
     if (p.entity === "human") {
-      const gun = WEAPONS3[p.weapon], action = s.tick - p.hitAt < 5 ? "hitfront" : (gun.pose ? gun.pose + "-" : "") + (p.moving ? "walk" : "stand");
+      const hit4 = s.tick - p.hitAt < 5, action = hit4 ? "hitfront" : p.drawAction;
       c.globalAlpha = p.invul > 0 && s.tick % 4 < 2 ? 0.55 : 1;
-      person(c, p.character, action, p, s.tick);
+      person(c, p.character, action, p, s.tick, void 0, hit4 ? void 0 : p.drawFrame);
       c.globalAlpha = 1;
-      if (s.tick - p.fireAt < 2 && gun.pose) {
-        const muzzle = gun.id === "uzi" ? "UZI.MuzzleFlash" : gun.id === "shotgun" ? "Shotgun.MuzzleFlash" : gun.id === "railgun" ? "Railgun.MuzzleFlash" : "Pistol.MuzzleFlash";
-        sprite2(c, muzzle, p.x + Math.cos(p.dir) * 24, p.y - 24 + Math.sin(p.dir) * 18, 0, 1, p.dir);
-      }
     } else {
       const action = s.tick - p.hitAt < 5 ? "hitfront" : s.tick - p.attackAt < 12 ? "attack" : "walk";
       person(c, p.devil ? "devil" : "zombie", action, p, s.tick);
@@ -27908,16 +28031,20 @@ function render3(canvas, s, seat) {
       c.strokeStyle = b.weapon === 9 ? "#9f80ef" : "#f3f0cf";
       c.lineWidth = b.weapon === 9 ? 2 : 1;
       c.beginPath();
-      c.moveTo(b.x, b.y - 23);
-      c.lineTo(b.tx, b.ty - 23);
+      c.moveTo(b.x, b.y + b.z * PROJECTION);
+      c.lineTo(b.tx, b.ty + b.z * PROJECTION);
       c.stroke();
     } else if (b.owner < 0) sprite2(c, "Effect.FireBall", b.x, b.y - 18, 0, 1, Math.atan2(b.vy, b.vx));
-    else sprite2(c, b.clusterShell ? "Shot.ClusterShell" : b.weapon === 4 ? "Shot.Grenade" : "Shot.Rocket", b.x, b.y - (b.z || 0), s.tick / 2, 1, b.weapon === 7 ? Math.atan2(b.vy, b.vx) : 0);
+    else sprite2(c, b.clusterShell ? "Shot.ClusterShell" : b.weapon === 4 ? "Shot.Grenade" : "Shot.Rocket", b.x, b.y + (b.z || 0) * PROJECTION, s.tick / 2, 1, b.weapon === 7 ? Math.atan2(b.vy, b.vx) : 0);
   }
   for (const e of s.effects) if (!["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
+    if (e.kind === "Effect.MuzzleFlash") {
+      sprite2(c, e.spriteKey, e.x, e.y + e.z * PROJECTION, 0, 1, e.angle);
+      continue;
+    }
     if (e.kind === "Effect.SmokeCloud" && s.tick < e.born) continue;
     const meta = boxhead_data_default.objects[e.kind], frame = e.kind === "Effect.Explosion" ? explosionFrame(s.tick, e.born) : e.kind === "Effect.SmokeCloud" ? smokeFrame(s.tick, e.born, meta.frames) : (1 - e.life / e.total) * (meta?.frames || 1);
-    sprite2(c, e.kind, e.x, e.y - (e.z || 0), frame, e.scale || 1);
+    sprite2(c, e.kind, e.x, e.y + (e.z || 0) * PROJECTION, frame, e.scale || 1);
   }
   if (coverBitmap) c.drawImage(coverBitmap, 0, 0, map.width, map.height);
   for (const p of s.players.filter((p2) => p2.alive)) health(c, p, seat);
@@ -28079,6 +28206,7 @@ var adapter3 = {
       p.lastAttack = Math.max(p.lastAttack, input.attack);
       p.lastAlt = Math.max(p.lastAlt, input.alt);
       p.triggerDown = false;
+      renewFireKey(p);
     }
   },
   predict(s, seat, input, fraction) {
