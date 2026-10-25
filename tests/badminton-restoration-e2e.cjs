@@ -1,0 +1,33 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{spawn}=require('child_process'),puppeteer=require('puppeteer-core');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/badminton-restoration-e2e'),port=55000+Math.floor(Math.random()*1000),base=process.env.BADMINTON_BASE_URL||`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],wait=ms=>new Promise(r=>setTimeout(r,ms));let browser;
+const server=process.env.BADMINTON_BASE_URL?null:spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe']});server?.stderr.on('data',d=>errors.push(d.toString()));
+async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='badminton-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<3;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(15000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
+  await p.evaluateOnNewDocument(i=>{localStorage.setItem('arcade_name','Badminton '+i);window.__racketDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(...args){if(this.canvas.id==='game-canvas'&&/\/badminton\/p[12]-(swing|serve)-/.test(args[0]?.src||''))window.__racketDraws.push({file:args[0].src.split('/').pop(),x:args[1],y:args[2],tick:window.__authorityTest?.authority.tick});return draw.apply(this,args);};},i);
+  await p.goto(`${base}/authority-room.html?game=46923-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);if(i<2){await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);}
+ }
+ const [a,b,v]=pages;for(const p of [a,b])await p.click('#start-game');await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');const round=await a.evaluate(()=>window.__authorityTest.authority.round);
+ await v.evaluate(()=>{window.__match={snapshots:[],request:null,recovery:null};const net=window.__authorityTest.network,original=net.onSnapshot;net.onSnapshot=function(s,...args){original.call(this,s,...args);const w=window.__match;w.snapshots.push(JSON.parse(JSON.stringify(s)));
+  const p=s.players[1];if(p.swingHit&&p.swing>0&&!w.request){const before=this.resyncs,candidate={tick:s.tick,full:this.fullUpdates,swing:p.swing,swingHit:p.swingHit,score:s.score};this.requestFull();if(this.resyncs>before)w.request=candidate;}
+  if(w.request&&!w.recovery&&this.fullUpdates>w.request.full)w.recovery={tick:s.tick,swing:p.swing,swingHit:p.swingHit,score:s.score};
+ };});
+ await focus(b);await b.keyboard.down('ArrowRight');await b.waitForFunction(()=>window.__authorityTest.authority.players[1].x>=440);await b.keyboard.up('ArrowRight');await focus(a);await a.keyboard.press('KeyS');
+ await b.waitForFunction(()=>{const s=window.__authorityTest.authority,p=s.players[1],b=s.birdie;return s.rally==='flight'&&b.vy>0&&b.y>=p.y-140&&b.y<p.y-80&&b.x>p.x+8&&b.x<p.x+60;});await focus(b);await b.keyboard.press('ArrowDown');
+ await v.waitForFunction(()=>window.__match.snapshots.some(s=>s.birdie.lastHitter===2&&s.players[1].swingHit&&s.players[1].swing>0));await v.waitForFunction(()=>window.__match.recovery);await screenshot(v,'native-return.png');
+ let points=0;const scores=[];while(true){await v.waitForFunction(points=>{const s=window.__authorityTest.authority;return s.score[0]+s.score[1]>points;},{},points);const s=await v.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority)));scores.push({tick:s.tick,score:s.score,lastPoint:s.lastPoint});points=s.score[0]+s.score[1];if(s.phase==='finished')break;assert(points<=13);
+  await a.waitForFunction(()=>window.__authorityTest.authority.rally==='serve');const seat=await a.evaluate(()=>window.__authorityTest.authority.serve);await focus(seat===1?a:b);await (seat===1?a:b).keyboard.press('KeyS');}
+ const finish=await v.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority)));assert.equal(Math.max(...finish.score),7);assert(finish.winner===1||finish.winner===2);await screenshot(v,'natural-seven-point-finish.png');
+ const watch=await v.evaluate(()=>window.__match),draws=await v.evaluate(()=>window.__racketDraws);assert(watch.request&&watch.recovery);assert(watch.recovery.swingHit);assert.equal(watch.recovery.swing,Math.max(0,watch.request.swing-(watch.recovery.tick-watch.request.tick)));
+ const hit=watch.snapshots.find(s=>s.birdie.lastHitter===2&&s.players[1].swingHit),after=watch.snapshots.find(s=>s.tick>hit.tick&&s.players[1].swing>0&&s.players[1].swingHit);assert(after);assert(after.players[1].swing<hit.players[1].swing);
+ const meta=require('../src/badminton/geometry.json').art;assert(draws.length>0);for(const d of draws){const m=meta[d.file.replace('.png','')];assert(m);assert.equal(d.x,m.x);assert.equal(d.y,m.y);}
+ assert(watch.snapshots.some(s=>s.players[0].servePose>0));assert(watch.snapshots.some(s=>s.players[1].servePose>0));assert.deepEqual(errors,[]);
+ await v.waitForFunction(round=>window.__authorityTest.authority.round>round&&window.__authorityTest.authority.phase==='playing',{},round);
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),base,normalInputOnly:true,returnedHit:true,finish,scores,watch,draws,automaticRematch:true,errors},null,2));console.log('Natural two-human return, retained stroke/recovery, original frame registration, seven-point match, spectator and rematch passed.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),watch:window.__match})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

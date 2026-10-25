@@ -1,0 +1,5 @@
+
+> arcade-online@0.1.0 test:badminton:e2e
+> node scripts/build-native.cjs && node tests/badminton-restoration-e2e.cjs
+
+Natural two-human return, retained stroke/recovery, original frame registration, seven-point match, spectator and rematch passed.

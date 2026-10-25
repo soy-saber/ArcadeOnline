@@ -1,0 +1,16 @@
+✔ serve starts the rally; a landing on the right awards P1 and the scorer serves next (2.7851ms)
+✔ movement stays on each side; jump and hit counters act once while held (0.5762ms)
+✔ original service area checks the scaled netLimit and keeps the server behind it (0.2796ms)
+✔ the server cannot jump until serve clip frame 13, then regains jump and net reach (0.2212ms)
+✔ timed racket contact sends the shuttle back; own side landing awards opponent (0.3644ms)
+✔ original overhand hit window closes at frame nine; P1 underhand hits low shuttles (0.1727ms)
+✔ first to seven finishes the match and ignores further input (0.1502ms)
+✔ snapshot validation and local reconciliation reject stale movement (0.4209ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 288.437

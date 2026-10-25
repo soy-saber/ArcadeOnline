@@ -1,4 +1,5 @@
 import { GameState, GROUND, HEIGHT, WIDTH } from "./core";
+import geometry from './geometry.json';
 
 const ASSET_ROOT = "/authority/assets/badminton/";
 type ImageKey = "court" | "birdie" | "p1-body" | "p1-body-alt" | "p2-body" | "p2-head" | `${"p1" | "p2"}-${"swing" | "serve"}-${string}` | `p1-underhand-${string}`;
@@ -81,10 +82,10 @@ export class BadmintonView {
     const frame = p.swing > 0 ? (serving ? 15 - p.swing : 16 - p.swing) : 1;
     const bounded = Math.max(1, Math.min(serving ? 13 : kind === "underhand" ? 14 : 15, kind === "underhand" ? frame - 1 : frame));
     const key = `${side}-${kind}-${String(bounded).padStart(2, "0")}` as ImageKey;
-    ctx.save(); ctx.translate(p.x, p.y - 58);
-    if (index === 1) ctx.scale(-1, 1);
-    if (serving) ctx.scale(1, -1);
-    this.draw(key, serving ? (index === 0 ? -77 : -101) : (index === 0 ? -67 : -69), -(serving ? 108 : 95));
+    const meta=(geometry.art as Record<string,{x:number;y:number}>)[key];
+    const matrix=geometry.gunMatrices[`${side}-${serving?'serve':'swing'}` as keyof typeof geometry.gunMatrices];
+    ctx.save(); ctx.translate(p.x, p.y);ctx.transform(matrix[0],matrix[1],matrix[2],matrix[3],matrix[4],matrix[5]);
+    this.draw(key,meta.x,meta.y);
     ctx.restore();
   }
 

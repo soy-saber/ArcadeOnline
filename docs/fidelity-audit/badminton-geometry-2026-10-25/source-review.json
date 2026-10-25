@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-25T13:27:06.155149+00:00",
+  "baseline": "bb56f97d4413acc39ecb57e63791df2f7fb722d2",
+  "goal": "Complete badminton and Boxhead3 restoration",
+  "sourceSwf": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "sourceClasses": {
+    "frame_38/DoAction.as": "5366272533e09090da751adcbe2f2ce9c0b958f256c71d936cff3795272f6935",
+    "DefineSprite_283/frame_1/DoAction.as": "46d565aaa7c54ddd87bd9fd37f00543ca412c92eb1c5b6de42da29a7aebe252f",
+    "DefineSprite_283/frame_2/DoAction.as": "899804f9e41f38abf736aee692609d652ba32d27d79c37c5bf7e5ee6219739ab",
+    "DefineSprite_283/frame_9/DoAction.as": "1d6a323c72a524eaf4049e7183714725d3c4ad5a02f5e33974bae0f315f56446",
+    "DefineSprite_283/frame_15/DoAction.as": "55dce39f090c5441a4949d9ab2a508787b7d92251a983c6c1ec98eb194c53556",
+    "DefineSprite_283/frame_16/DoAction.as": "ffa7e58f5503a0a5b27c695a33e673aa6ff1c34eae6f7e6f8cfc84978d4db2b3",
+    "DefineSprite_283/frame_23/DoAction.as": "3c02f75d16f4779e4edfaf5eb369f5eda3c3cd725f6468d10e4f34c173b9cc21",
+    "DefineSprite_283/frame_29/DoAction.as": "4725f15dd1f142189da53e9f5bc322b738d15a155a0646b726e833fc12d4c0f7",
+    "DefineSprite_205/frame_1/DoAction.as": "dfb4deabc3de11a3b7397df1321d65188f2901208f0f42ac1b63265d41c0ca45",
+    "DefineSprite_205/frame_2/DoAction.as": "ecedf4b41144cd47517bc1f1bab6b7c60f139ad5dc3bfaa7698b67366642e094",
+    "DefineSprite_285/frame_4/DoAction.as": "79d0975634de72bb68920791ca4f818493be318d080f2216a68b5f99fdf03747",
+    "DefineSprite_211/frame_4/DoAction.as": "0ad5290fdb0fa168df2d3bfa0c64d6a2e4d8617c6bc982d3b0fb0a06069bd090",
+    "DefineSprite_190/frame_1/DoAction.as": "db10cdcdd7ec90ccfb5ce59ebf1284c7672c6f2958c636b40ccf0a6f311fd6d1"
+  },
+  "nativeGeometry": "src/badminton/geometry.json",
+  "rules": {
+    "hitbox": "hitTest(point,false) transformed21x21transparent square through hero gun / animated racket / nested racket / hitbox matrices; stage-axis bounds",
+    "serviceRelease": "gunServe frame4, mc.Point localToGlobal; P1 offset23.8,-29.5; P2 -21.65,-28.5",
+    "hit": "consume swing contact flag; animation continues until ready; preserve bool in snapshots",
+    "dualPlayer": "setupHero1 always frame2 overhand; low-ball underhand branch belongs to single-player setupHero",
+    "art": "70 existing PNG files statically re-exported and byte hashes matched; original gun matrices/SVG offsets replace manual registration"
+  },
+  "remainingBadminton": "BADMINTON_RESTORATION_PLAN.md",
+  "remainingBoxhead": "BOXHEAD_RESTORATION_PLAN.md",
+  "runtimeEquivalenceProven": false,
+  "completeGoal": false
+}

@@ -1,10 +1,13 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "d68d6372a5934dc01c733a766e597818855ffab9794ee91f0e87e9a2a981280c",
-    "runtime/authority.cjs": "a759d5b5fe2e923dd2ca28e9cce4ab0079f1b6f9079985e384313b3c5f2450ef",
-    "src/badminton/core.ts": "6e2c426061d6520f09b3dabe5738c19ce7ccc984d2b6c391b154e302106141bc",
-    "src/badminton/view.ts": "5daaad77c77d5f7ec7afad171cbb33c534c1a189ad5e397f29dad64cab7a1de8",
+    "public/authority/game.js": "74137d74c75aa524c8f3f85a98319f29bb890f446f4a747e7e264ea4acdaf241",
+    "runtime/authority.cjs": "53396a15b277f55da08efa9d30ad0acfb1bd61e22145951615775b4444e43431",
+    "src/badminton/core.ts": "b1ec1bfc2f18f8052a47a45bdb864a77f2e696ea2a40c5b2c6110eec5aaa7e31",
+    "src/badminton/geometry.json": "92b7b424c7bf13f90df189457528a2dfb32147a7e038edba8857f3d72b8ec431",
+    "src/badminton/geometry.ts": "04f3a07d2dd2e9b7a57fbbed047442aec2f45ecac673e42c9c41b4b8bd54a3f5",
+    "src/badminton/main.ts": "05a7766f7916984af499d95717036d47f560ac22f73b03a4500a2f71460fe941",
+    "src/badminton/view.ts": "e2059cb861b8cf939ccee138b42d364ca3ff67a0f6074e1cf5d77fa936e4194b",
     "src/authority/bomb-core.ts": "7bc0c6ec3bd4845c6b0ea908ffc5664a447af27cdd58ee6781d370510e4cf15b",
     "src/authority/bomb-sound.ts": "3804d8525f1a918b23b04d255fc467dea62a903c32ee098e6cf3485a900b8465",
     "src/authority/bomb-status.ts": "58977f8d5645c1ce0845a7c8aea210e9d9fff7d4d310d12aeb17cc3acf2ddb72",
