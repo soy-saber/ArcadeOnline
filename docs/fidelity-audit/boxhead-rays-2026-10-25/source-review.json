@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-25T08:21:29.416926+00:00",
+  "baseline": "4ae43e0cf36572535d0fe1e9951e4948d0856cdf",
+  "originalSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "World/Map/CMap_Cell": "8de8f3174669da35efbc59b838f51ef05f6fd4a718f76a5058eace5c99553e87",
+    "World/Map/CMap_Affect": "44c0271c004f1934b89ba9024fe5ee53405c31edec40d42a7c90fc76ddc3e5e9",
+    "World/Map/CMap": "bc93816e8d32c503c16cfdb394bb63587dcdae3adef939a3299e2427e3f74ee9",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a",
+    "scidd/Math/CLine": "24a398a6aa64a5a63c597c52c9b29f45049b5d7960961f51514dca9ca17ebda0",
+    "Thing/Shot/CThing_Shot_Bullet": "3881bfe424499e2ba0020bdf399c341dab979107786a3606b749f0026bf003c4",
+    "Thing/Shot/CThing_Shot_Railgun": "19b3b1a3cf085e313670ee8c91c8b7d113acdda64e491e16ebb364bdff4c8ca7",
+    "Thing/Shot/CThing_Shot_Rocket": "9e2514f8b4106ea2121f4aa55862af2dc613a03feaec048296b3dc888812a66d",
+    "Thing/Effect/CThing_Effect_RocketSmoke": "5413e5303fa52b30551094f7f8cb53ea33a32df6755c14e174271b67d869bf82",
+    "Thing/Effect/CThing_Effect_BulletHit": "e49caa66a13d58af1e22159b14d8d9a25a39c4e838dfa1a57aec2abd582d1e16",
+    "Thing/Effect/CThing_Effect_Explosion": "22cedb97e9124974343d9ecc3849ef711b7ed14163a2b443b39604a5e9044dce",
+    "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1",
+    "Thing/Weapon/CThing_Weapon_Pistol": "040d1d1787ca16fbd7861e2eb407310c8e14e735b5f2cd7c88d5b40a529cfa5c",
+    "Thing/Weapon/CThing_Weapon_UZI": "73f87753cc4c821b58890a105100a7910fc2ff2c1692109cba011dec182a7313",
+    "Thing/Weapon/CThing_Weapon_Shotgun": "7db19857919667f5928c4f0c88e94d16abfeb2e6930cd80c526a56d405e46449",
+    "Thing/Weapon/CThing_Weapon_Railgun": "2819c172a9fe2869e277d37e488040a050c5771b7091a911bd9c1224cad6737c",
+    "Thing/Weapon/CThing_Weapon_Rocket": "f343a438911f9c75f2d7bb4292bc1752600d3a6e2a4718d9007914a60f7c0ea7",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "Thing/CThing": "8a6fab0dee85a00895f4a01a58946fbc10a23eb6f583393c34c1413f72dbe47f",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip_Animation": "170799518ff80397a21e73f67e23dcece0d50020378573e3d2770356918c2da1"
+  },
+  "rules": {
+    "lineQuery": "one-cell step, rounded expanded cell bounds, unique cells, reverse cells; first thing per cell, nearest candidate within each step; infinite-line squared distance < target radius squared; retreat POI by target radius toward source",
+    "railgun": "static map only Collide_Line then Affect_Line; destructible walls do not stop beam",
+    "rayCallbacks": [
+      "construct full destination and native2..5pixel sideways/Z drift",
+      "next callback Init: collision then Normal",
+      "Normal: drift*.75; start+=drift; destination+=drift*.5; --life",
+      "two callbacks to Delete; dispose on following callback"
+    ],
+    "uzi": "no added random angle",
+    "shotgun": "center,-spacing,+spacing,-2spacing,+2spacing; outer two delayed by one additional callback; spacing1.25*(wideShot+1)degrees",
+    "rocket": "16pixel initial velocity, *=1.1 before collision; no fuse; collision keeps pre-Move XYZ; explosion initializes next callback",
+    "smoke": "random(2), backward16pixel delta *=1.2; full native size;6callbacks and next disposal",
+    "nestedFrames": {
+      "Shot.Rocket": 3,
+      "Effect.BulletHit": 13
+    },
+    "draw": "bullet .5px #cccccc alpha.75; railgun2px #9966ff alpha.5625; original height projection for each endpoint"
+  },
+  "remaining": [
+    "full global collection and Mapwho reinsertion order",
+    "exact Flash enumeration/shared temporary POI behavior not independently runtime traced",
+    "grenade height and collision normals",
+    "AI native line-of-sight integration",
+    "waves/combo/upgrades/pickups/difficulty",
+    "native menus/modes/characters/HUD and permanent floor decals"
+  ]
+}

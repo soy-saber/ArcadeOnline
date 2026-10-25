@@ -25,5 +25,13 @@
     "frames": 16,
     "metadata": "src/expanded/boxhead-fireball-art.json",
     "method": "Static JPEXS PNG/SVG export; fireball wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+  },
+  "shotTimelines": {
+    "frames": {
+      "Shot.Rocket": 3,
+      "Effect.BulletHit": 13
+    },
+    "metadata": "src/expanded/boxhead-shot-art.json",
+    "method": "Static JPEXS PNG/SVG export; rocket and bullet-hit wrappers extended to step all native _Contents frames including original filters; source SWF unchanged."
   }
 }

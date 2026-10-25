@@ -1,0 +1,36 @@
+[
+  {
+    "suite": "walls",
+    "code": 0,
+    "seconds": 44.26,
+    "log": "artifacts\\boxhead-rays-regression-walls.log"
+  },
+  {
+    "suite": "objects",
+    "code": 0,
+    "seconds": 66.27,
+    "log": "artifacts\\boxhead-rays-regression-objects.log"
+  },
+  {
+    "suite": "explosions",
+    "code": 0,
+    "seconds": 48.59,
+    "log": "artifacts\\boxhead-rays-regression-explosions.log"
+  },
+  {
+    "suite": "creature",
+    "code": 0,
+    "seconds": 31.06,
+    "log": "artifacts\\boxhead-rays-regression-creature.log"
+  },
+  {
+    "suite": "ai",
+    "code": 0,
+    "seconds": 18.67,
+    "log": "artifacts\\boxhead-rays-regression-ai.log"
+  },
+  {
+    "suite": "assets",
+    "code": 0
+  }
+]

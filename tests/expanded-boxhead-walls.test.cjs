@@ -8,7 +8,7 @@ function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.waveReady=0;s
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];return p;}
 function placedWall(){const s=arena(),p=equip(s,5);ticks(s,2);a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,4);const b=s.barrels[0];assert.equal(b.x,p.x);assert.equal(b.y,p.y);p.x=b.x-40;p.weapon=0;p.ammo=-1;ticks(s,12);assert.equal(b.objectPhase,'normal');return {s,p,b};}
-function shoot(s,p,count){let seq=s.inputs[0].seq,attack=p.lastAttack;for(let i=0;i<count;i++){while(p.cooldown>0)a.step(s,[input(++seq,{attack})]);a.step(s,[input(++seq,{attack:++attack})]);}}
+function shoot(s,p,count){let seq=s.inputs[0].seq,attack=p.lastAttack;for(let i=0;i<count;i++){while(p.cooldown>0)a.step(s,[input(++seq,{attack})]);a.step(s,[input(++seq,{attack:++attack})]);a.step(s,[input(++seq,{attack})]);}}
 function hit(s,b,amount,owner=1){walls.affectWall(b,amount,owner);a.step(s,[]);}
 
 test('all original map walls and player fake walls use native1000HP with frame0 and full opacity',()=>{
@@ -30,7 +30,7 @@ test('native AS2 callback applies newest affects first, keeps the prior frame at
 
 test('a shotgun burst queues all wall affects before applying them and does not leak its last ray into a teammate',()=>{
  const {s,p,b}=placedWall();hit(s,b,900);assert.equal(b.hp,100);equip(s,2);const q=s.players[1];q.x=b.x+90;q.y=b.y;q.invul=0;
- a.step(s,[input(2,{attack:2})]);assert.equal(s.bullets.filter(b=>b.weapon===2).length,3);assert.equal(b.hp,-2);assert.equal(b.wallFrame,9);assert.equal(q.hp,200);assert.equal(b.affects.length,0);assert(a.valid(s));
+ a.step(s,[input(2,{attack:2})]);assert.equal(s.bullets.filter(b=>b.weapon===2).length,3);assert.equal(b.hp,100);ticks(s);assert.equal(b.hp,-2);assert.equal(b.wallFrame,9);assert.equal(q.hp,200);assert.equal(b.affects.length,0);assert(a.valid(s));
 });
 
 test('fade lasts five callbacks including immediate80 percent, with collision released only at following disposal',()=>{
@@ -44,7 +44,7 @@ test('fade lasts five callbacks including immediate80 percent, with collision re
 
 test('fading wall has no damage flags, so later hitscan passes through while its movement collider remains',()=>{
  const {s,p,b}=placedWall();hit(s,b,1000);const q=s.players[1];q.x=b.x+80;q.y=b.y;q.invul=0;
- a.step(s,[input(2,{attack:2})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,1);assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,60);ticks(s);assert.equal(q.hp,174);assert.equal(b.wallAlpha,40);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);
+ a.step(s,[input(2,{attack:2})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,0);assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,60);ticks(s);assert.equal(q.hp,174);assert.equal(b.wallAlpha,40);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);
 });
 
 test('native rocket bullet-affect ray passes a fading wall while the movement collider remains',()=>{

@@ -1,6 +1,6 @@
 import data from './boxhead-data.json';
 import { EMPTY_INPUT, validInput, type Input, type State } from './types';
-import { MAPS, WEAPONS, CHARACTERS, CELL, room, solid, blocked, move, openPosition, weaponStats } from './boxhead-world';
+import { MAPS, WEAPONS, CHARACTERS, CELL, room, blocked, move, openPosition, weaponStats } from './boxhead-world';
 import { queueExplosion, processExplosions, validExplosions, type Explosion } from './boxhead-explosions';
 import { ownedPacks, weaponEmpty, selectWeapon, stepExplosiveObjects, validExplosiveObject } from './boxhead-objects';
 import { explosionFeedback, stepFeedback } from './boxhead-feedback';
@@ -11,7 +11,8 @@ import { placementCell } from './boxhead-placement';
 import { navigationState, stepNavigation, validNavigation, cell, adjacent, flags, CREATURE, OBJECT, SOLID } from './boxhead-navigation';
 import { enemyBrain, stepEnemy, transition, validEnemyAI } from './boxhead-ai';
 import { stepFireball, validFireball } from './boxhead-fireball';
-import { creatureBody, queueAffect, canAffect, stepCreature, validCreature, type HitKind } from './boxhead-creature';
+import { creatureBody, queueAffect, stepCreature, validCreature, type HitKind } from './boxhead-creature';
+import { rayShot, stepRay, stepRocket, validShot } from './boxhead-shots';
 
 export const ID = '50737-server';
 export function random(s: State): number { s.rng=(Math.imul(s.rng,1664525)+1013904223)>>>0;return s.rng/4294967296; }
@@ -88,17 +89,6 @@ function explode(s: State,e:Explosion): void {
   // The original default enables bullet/explosion damage, including friendly fire and self explosions.
   for(const p of s.players)if(amountAt(p))hurt(s,p,amount,owner,'explosion',e,radius);
 }
-function shot(s: State,p: any,origin:{x:number;y:number;z:number},angle: number,amount: number,range: number,pierce: boolean): void {
-  const bullet={id:++s.nextId,...origin,tx:origin.x,ty:origin.y,angle,vx:0,vy:0,owner:p.seat,weapon:p.weapon,damage:amount,life:2,born:s.tick};s.bullets.push(bullet);
-  let x=origin.x,y=origin.y;const hits=new Set<any>(), dx=Math.cos(angle)*4,dy=Math.sin(angle)*4;
-  for(let n=0;n<range*CELL/4;n++) {
-    x+=dx;y+=dy;
-    if(solid(room(s),x,y)){effect(s,'Effect.BulletHit',x,y-18,5);break;}
-    const target=[...s.barrels.filter((b:any)=>b.registered&&Number.isFinite(b.radius)&&(b.kind==='barrel'||b.kind==='wall')),...s.zombies.filter((z:any)=>canAffect(z)),...s.players.filter(q=>q.seat!==p.seat&&canAffect(q))].find(t=>(t.body||t.hp>0)&&!hits.has(t)&&Math.hypot(t.x-x,t.y-y)<(t.kind?t.radius:t.body.radius));
-    if(target){if(target.seat)hurt(s,target,amount,p.seat,'bullet',bullet);else damage(s,target,amount,p.seat,'bullet',bullet);hits.add(target);if(!pierce||target.kind==='wall')break;}
-  }
-  bullet.tx=x;bullet.ty=y;
-}
 function fire(s: State,p: any): void {
   const gun=weaponStats(s,p.weapon),origin=weaponPosition(p);
   if(gun.id==='chargepack'&&p.chargeDetonate) {
@@ -116,12 +106,14 @@ function fire(s: State,p: any): void {
     else sound(s,gun.id==='mine'?'Weapon.Mine.Place.wav':'Object.Barrel.Place.wav');
   } else if(gun.id==='grenade'||gun.id==='rocket') {
     const speed=gun.id==='grenade'?Math.min(.75,Math.max(.25,(s.tick-p.triggerAt)/25)) * 32:16;
-    s.bullets.push({id:++s.nextId,...origin,z:gun.id==='grenade'?40:origin.z,vz:gun.id==='grenade'?speed*.5:0,vx:Math.cos(p.dir)*speed,vy:Math.sin(p.dir)*speed,owner:p.seat,weapon:p.weapon,damage:gun.damage,life:gun.id==='grenade'?60:100,bang:gun.bang,cluster:gun.cluster,born:s.tick});
+    s.bullets.push({id:++s.nextId,...origin,z:gun.id==='grenade'?40:origin.z,vz:gun.id==='grenade'?speed*.5:0,vx:Math.cos(p.dir)*speed,vy:Math.sin(p.dir)*speed,angle:p.dir,parent:p.id,owner:p.seat,weapon:p.weapon,damage:gun.damage,life:gun.id==='grenade'?60:1,bang:gun.bang,cluster:gun.cluster,born:s.tick});
   } else {
-    const count=gun.id==='shotgun'?(gun.spread?5:3):1, spacing=1.25*(gun.spread+1)*Math.PI/180;
+    const spacing=1.25*(gun.spread+1)*Math.PI/180;
     const spriteKey=gun.id==='uzi'?'UZI.MuzzleFlash':gun.id==='shotgun'?'Shotgun.MuzzleFlash':gun.id==='railgun'?'Railgun.MuzzleFlash':'Pistol.MuzzleFlash';
     effect(s,'Effect.MuzzleFlash',origin.x,origin.y,2,{z:origin.z,angle:p.dir,spriteKey});
-    for(let i=0;i<count;i++)shot(s,p,origin,p.dir+(i-(count-1)/2)*spacing+(gun.id==='uzi'?(random(s)-.5)*.06:0),gun.damage,gun.range,gun.id==='railgun');
+    rayShot(s,p,origin,p.dir,gun.damage,gun.range,()=>random(s));
+    if(gun.id==='shotgun')for(let i=0;i<(gun.spread?2:1);i++)for(const sign of [-1,1])
+      rayShot(s,p,origin,p.dir+sign*spacing*(i+1),gun.damage,gun.range,()=>random(s),i>=1);
   }
   if(p.inventory[p.weapon]>0)p.inventory[p.weapon]--;
   p.ammo=p.inventory[p.weapon];p.cooldown=gun.rate;p.fireAt=s.tick;
@@ -143,11 +135,15 @@ function upgrade(s: State): void {
   }
 }
 function projectiles(s: State): void {
-  for(const b of s.bullets) {
+  const hooks={random:()=>random(s),damage:(target:any,amount:number,b:any)=>target.seat?hurt(s,target,amount,b.owner,'bullet',b):damage(s,target,amount,b.owner,'bullet',b),
+    sound:(name:string)=>sound(s,name),effect:(kind:string,x:number,y:number,life:number,extra:any)=>effect(s,kind,x,y,life,extra)};
+  s.bullets=s.bullets.filter((b:any)=>b.life>0);
+  for(const b of [...s.bullets].sort((a,b)=>b.id-a.id)) {
     if(b.life<=0)continue;
-    if(b.tx!==undefined){b.life--;continue;}
-    if(b.fireball){if(b.born<s.tick)stepFireball(s,b,{hurt:(p,amount)=>hurt(s,p,amount,0,'fireball',b),damage:(target,amount)=>damage(s,target,amount,0,'fireball',b)});continue;}
     if(b.born>=s.tick)continue;
+    if(b.ray){stepRay(s,b,hooks);continue;}
+    if(b.fireball){if(b.born<s.tick)stepFireball(s,b,{hurt:(p,amount)=>hurt(s,p,amount,0,'fireball',b),damage:(target,amount)=>damage(s,target,amount,0,'fireball',b)});continue;}
+    if(b.weapon===7){if(stepRocket(s,b,hooks)){b.life=0;queueExplosion(s,b.x,b.y,b.damage,b.owner,b.bang,b.cluster,b.z);}continue;}
     if(b.weapon===4){
       let bounced=false;b.vz-=1.92;
       if(b.z+b.vz<0){b.vz=Math.abs(b.vz);if(b.vz<=1.92)b.vz=0;b.vz*=.5;b.vx*=.5;b.vy*=.5;b.z=0;bounced=true;}
@@ -160,27 +156,17 @@ function projectiles(s: State): void {
       }
       if(bounced&&Math.hypot(b.vx,b.vy,b.vz)>1.92)sound(s,'Shot.Grenade.Bounce.wav');
       b.x+=b.vx;b.y+=b.vy;b.z+=b.vz;
-    }else{
-      if(b.weapon===7){b.vx*=1.1;b.vy*=1.1;if(s.tick%2===0)effect(s,'Effect.RocketSmoke',b.x,b.y-16,12,{scale:.25});}
-      const steps=Math.ceil(Math.hypot(b.vx,b.vy)/5);
-      for(let n=0;n<steps;n++){
-        b.x+=b.vx/steps;b.y+=b.vy/steps;
-        if(solid(room(s),b.x,b.y)){b.life=0;break;}
-        if(b.owner<0){const p=s.players.find(p=>p.alive&&Math.hypot(p.x-b.x,p.y-b.y)<16);if(p){hurt(s,p,b.damage);b.life=0;break;}}
-        // Rocket Collide_Line uses bullet affect flags, not movement flags:
-        // a dying wall has already cleared those flags but still blocks feet.
-        else if(s.zombies.some((z:any)=>canAffect(z)&&Math.hypot(z.x-b.x,z.y-b.y)<z.body.radius)||s.barrels.some((z:any)=>z.registered&&z.hp>0&&['barrel','wall'].includes(z.kind)&&Number.isFinite(z.radius)&&Math.hypot(z.x-b.x,z.y-b.y)<z.radius)||s.players.some(p=>canAffect(p)&&p.seat!==b.owner&&Math.hypot(p.x-b.x,p.y-b.y)<p.body.radius)){b.life=0;break;}
-      }
     }
-    if(--b.life<=0&&(b.weapon===4||b.weapon===7))queueExplosion(s,b.x,b.y,b.damage,b.owner,b.bang,b.cluster,b.z||0);
+    if(--b.life<=0&&b.weapon===4)queueExplosion(s,b.x,b.y,b.damage,b.owner,b.bang,b.cluster,b.z||0);
   }
-  s.bullets=s.bullets.filter((b:any)=>b.life>0);
+  s.bullets=s.bullets.filter((b:any)=>b.life>0||b.rayPhase==='delete');
 }
 export function step(s: State,inputs: Input[]): void {
   if(s.phase!=='playing')return;s.tick++;
   stepWalls(s);
   stepRegistration(s);
   s.effects=s.effects.filter((e:any)=>--e.life>0);s.corpses=s.corpses.filter((e:any)=>s.tick-e.deadAt<100);
+  for(const e of s.effects)if(e.kind==='Effect.RocketSmoke'){e.vx*=1.2;e.vy*=1.2;e.x+=e.vx;e.y+=e.vy;}
   s.zombies=s.zombies.filter((z:any)=>z.body.disposeAt===null||z.body.disposeAt>s.tick);
   s.sounds=s.sounds.filter((e:any)=>s.tick-e.tick<10);
   if(s.combo>1&&s.tick>s.comboUntil){s.combo--;s.comboUntil=s.tick+Math.max(3,Math.round(Math.pow(101-Math.min(s.combo,100),2.5)/100000*72+3));}
@@ -285,11 +271,13 @@ export function valid(value: unknown): value is State {
     Array.isArray(s.ack)&&s.ack.length===4&&s.ack.every(n=>Number.isSafeInteger(n)&&n>=0)&&Array.isArray(s.inputs)&&s.inputs.length===4&&s.inputs.every(validInput)&&
     Array.isArray(s.players)&&s.players.length<=4&&new Set(s.players.map(p=>p?.seat)).size===s.players.length&&s.players.every(p=>[1,2,3,4].includes(p?.seat)&&typeof p.alive==='boolean'&&typeof p.triggerDown==='boolean'&&typeof p.chargeDetonate==='boolean'&&CHARACTERS.includes(p.character)&&validPlayerPose(p)&&validCreature(s,p)&&nums(p,['id','x','y','dir','hp','lives','respawn','kills','deaths','killedBy','lastAttack','lastAlt','cooldown','invul','ammo','fireAt','hitAt','deadAt','triggerAt'])&&typeof p.selectionPending==='boolean'&&(p.selectionWeapon===null||Number.isInteger(p.selectionWeapon)&&p.selectionWeapon>=0&&p.selectionWeapon<10)&&[-1,1].includes(p.selectionStep)&&Number.isInteger(p.weapon)&&p.weapon>=0&&p.weapon<10&&Array.isArray(p.inventory)&&p.inventory.length===10&&p.inventory.every((v:any)=>Number.isSafeInteger(v)&&v>=-1)&&p.ammo===p.inventory[p.weapon]&&Array.isArray(p.unlocked)&&p.unlocked.length===10&&p.unlocked.every((v:any)=>typeof v==='boolean'))&&
     ['zombies','bullets','barrels','pickups','effects','corpses'].every(k=>Array.isArray(s[k])&&s[k].length<1500&&s[k].every((e:any)=>nums(e,['x','y'])))&&
-    validNavigation(s)&&validExplosions(s)&&s.zombies.every((z:any)=>nums(z,['id','hp','dir','attack','owner','hitAt','attackAt'])&&typeof z.devil==='boolean'&&validEnemyAI(s,z)&&validCreature(s,z))&&s.bullets.every((b:any)=>validFireball(b)&&nums(b,['id','vx','vy','damage','weapon','owner','life'])&&
+    validNavigation(s)&&validExplosions(s)&&s.zombies.every((z:any)=>nums(z,['id','hp','dir','attack','owner','hitAt','attackAt'])&&typeof z.devil==='boolean'&&validEnemyAI(s,z)&&validCreature(s,z))&&s.bullets.every((b:any)=>validShot(b)&&validFireball(b)&&nums(b,['id','vx','vy','damage','weapon','owner','life'])&&
       (b.weapon!==4&&b.weapon!==7||nums(b,['z','vz'])&&b.z>=0&&[0,1,2].includes(b.bang)&&typeof b.cluster==='boolean'&&(b.clusterShell===undefined||typeof b.clusterShell==='boolean'))&&
       (Number.isSafeInteger(b.born)&&b.born>=0&&b.born<=s.tick))&&
     s.barrels.every((b:any)=>nums(b,['id','hp','owner','armed','z'])&&b.z>=0&&['barrel','wall','mine','chargepack'].includes(b.kind)&&typeof b.exploded==='boolean'&&validRegistration(b,s.tick)&&validExplosiveObject(b)&&validWall(b,s.tick)&&(b.damage===undefined||Number.isFinite(b.damage)&&b.damage>0))&&s.pickups.every((p:any)=>nums(p,['id','life'])&&Number.isSafeInteger(p.born)&&p.born>=0&&p.born<=s.tick)&&s.effects.every((e:any)=>nums(e,['life','total'])&&typeof e.kind==='string'&&Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick+(e.kind==='Effect.SmokeCloud'?1:0)&&
       (e.floor===undefined||e.floor===true&&e.kind==='Effect.BloodSplat'&&[0,1,5].includes(e.bloodCount))&&
+      (e.kind!=='Effect.RocketSmoke'||nums(e,['z','vx','vy'])&&e.z>=0&&e.total===7&&e.life===7-(s.tick-e.born))&&
+      (e.kind!=='Effect.BulletHit'||Number.isFinite(e.z)&&e.z>=0&&e.total===14&&e.life===14-(s.tick-e.born))&&
       (e.kind!=='Effect.MuzzleFlash'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick&&nums(e,['z','angle'])&&e.z>=0&&['Pistol.MuzzleFlash','UZI.MuzzleFlash','Shotgun.MuzzleFlash','Railgun.MuzzleFlash'].includes(e.spriteKey)&&e.total===2&&e.life===2-(s.tick-e.born))&&
       (e.kind!=='Effect.Explosion'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick&&Number.isFinite(e.z)&&e.z>=0&&e.scale===1)&&
       (e.kind!=='Effect.SmokeCloud'||Number.isSafeInteger(e.born)&&e.born>=0&&e.born<=s.tick+1&&e.scale===1&&e.total===data.objects['Effect.SmokeCloud'].frames+1&&e.life===e.total-(s.tick-e.born+1)))&&s.corpses.every((e:any)=>nums(e,['dir','deadAt'])&&['zombie','devil'].includes(e.character))&&

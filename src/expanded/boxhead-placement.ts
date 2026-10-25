@@ -9,7 +9,7 @@ export function cellChildCount(s:State,position:{x:number;y:number}):number {
     ...s.players,...s.zombies.filter((z:any)=>z.ai.registered),...s.corpses,
     ...s.barrels.filter((b:any)=>['barrel','wall'].includes(b.kind)?b.registered:b.armed<s.tick),
     ...s.pickups.filter((p:any)=>p.life>0&&(p.born??-1)<s.tick),
-    ...s.bullets.filter((b:any)=>b.life>0&&(b.born??-1)<s.tick),
+    ...s.bullets.filter((b:any)=>b.ray?['normal','delete'].includes(b.rayPhase):b.life>0&&(b.born??-1)<s.tick),
     ...s.effects.filter((e:any)=>e.life>0&&['Effect.MuzzleFlash','Effect.BulletHit','Effect.RocketSmoke','Effect.SmokeCloud','Effect.Explosion'].includes(e.kind)&&
       (e.kind==='Effect.Explosion'?e.born<=s.tick:e.kind==='Effect.SmokeCloud'?e.born<=s.tick:(e.born??-1)<s.tick))
   ];

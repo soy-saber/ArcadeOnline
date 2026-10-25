@@ -9,7 +9,7 @@ function arena(){const s=box.create(1,true,[1,2,3,4],42);s.waveReady=0;s.spawnLe
 function equip(s,w){const p=s.players[0];p.weapon=w;p.unlocked[w]=true;p.inventory[w]=world.weaponStats(s,w).ammo;p.ammo=p.inventory[w];return p;}
 const ticks=(s,n,controls=[])=>{for(let i=0;i<n;i++)box.step(s,controls);};
 test('original default friendly bullets hit the nearer teammate, not the zombie behind; invulnerability remains effective',()=>{
- const s=arena(),[p,q]=s.players;q.hp=200;s.zombies=[attachEnemy(s,{id:999,x:p.x+140,y:p.y,hp:100,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,1);ticks(s,1);assert.equal(q.hp,174);assert.equal(s.zombies[0].hp,100);assert.equal(p.hp,200);assert.equal(p.kills,0);
+ const s=arena(),[p,q]=s.players;q.hp=200;s.zombies=[attachEnemy(s,{id:999,x:p.x+140,y:p.y,hp:100,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,0);ticks(s,1);assert.equal(q.hp,174);assert.equal(s.zombies[0].hp,100);assert.equal(p.hp,200);assert.equal(p.kills,0);
  q.invul=50;p.cooldown=0;box.step(s,[input(2,{attack:2})]);ticks(s,1);assert.equal(q.hp,174);assert(box.valid(s));
 });
 test('railguns damage teammates and enemies along the same ray; friendly kills are deaths, not zombie score',()=>{

@@ -1,0 +1,151 @@
+{
+  "source": "games/50737/game.swf",
+  "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "timelines": {
+    "Shot.Rocket": {
+      "file": "shot-rocket.png",
+      "frames": 3,
+      "w": 52,
+      "h": 53,
+      "x": -10.05,
+      "y": -9.3,
+      "symbol": 673,
+      "bounds": [
+        [
+          10,
+          9,
+          43,
+          42
+        ],
+        [
+          10,
+          14,
+          43,
+          40
+        ],
+        [
+          9,
+          11,
+          44,
+          45
+        ]
+      ],
+      "frameSha256": [
+        "4c118274f5309a6ebcf4e39cc9fc8ed689d6fdb861f981d4f86f586b9582db69",
+        "5f059ca1f48930c6c6a7dbee8d2556632a529b63292fec7ab79127634680a486",
+        "5c9156fa6520005f3fee4cf961a9191fbef9b6a14f7c65e6a46afb4173d9ee0e"
+      ],
+      "sha256": "83d445931a77448f2e52d2bf20cce42fa5c38fa8cfd62f779a5386eb5613aad8"
+    },
+    "Effect.BulletHit": {
+      "file": "effect-bullethit.png",
+      "frames": 13,
+      "w": 23,
+      "h": 34,
+      "x": -8.3,
+      "y": -23.8,
+      "symbol": 611,
+      "bounds": [
+        [
+          7,
+          22,
+          16,
+          31
+        ],
+        [
+          4,
+          18,
+          19,
+          33
+        ],
+        [
+          3,
+          17,
+          20,
+          34
+        ],
+        [
+          3,
+          15,
+          20,
+          32
+        ],
+        [
+          3,
+          13,
+          20,
+          30
+        ],
+        [
+          4,
+          12,
+          19,
+          29
+        ],
+        [
+          4,
+          10,
+          19,
+          27
+        ],
+        [
+          4,
+          9,
+          19,
+          25
+        ],
+        [
+          5,
+          7,
+          18,
+          24
+        ],
+        [
+          5,
+          6,
+          18,
+          22
+        ],
+        [
+          5,
+          4,
+          18,
+          21
+        ],
+        [
+          6,
+          3,
+          17,
+          19
+        ],
+        [
+          6,
+          2,
+          16,
+          17
+        ]
+      ],
+      "frameSha256": [
+        "b3d1954c66e07454f219cd50eb2f8342a847800c0648007d27ef66afa8018747",
+        "843cf947b828d70b4ae5688d7d3dae556ef0ac67cd04a605839d262b1f2126fe",
+        "cbbd05b06661306cf147acf2fc046c6e2176e3766ec7644d5c5ad56263a243e1",
+        "479ec1c8f12dc9f713c6a00edebea3d0601d49d1ee2b583e491935430785c439",
+        "5a93a2e47aa1147688daa55a4bd09e01b18282c03df96dc3d5c27aba02e8f644",
+        "13ffc82cad792fd26975bab0f6c01ac7505a9862dbde5980c3c331e8f2f45360",
+        "db4f1b7074aff031766c6ae4006946e61bc087ce1b13f7b086058f92a9ff1729",
+        "b584c3e38046fcf3eace8b007959328665d6e53a887cf3e517802c9236913daf",
+        "ee1964bf2b9d877bd1a3509a3a5100b1add5cbb857d2574fb4de01efb87a5b47",
+        "d58c34568f55982ad7c33241eae4f02c5f02f1b55c85bf9893fa53bcd6dd6dec",
+        "5fba8d631cd705d5753540e5a993e5689c5db47cb6dcd3753e874dcb6132e2ea",
+        "4617633db61faabae3df4666534c8acfa9eb2485c149f445dbb406c68b3b7a1a",
+        "f94861e54b4960e2bbfbe14baa374609cbeb2fe3c51a1e9b6db43284112e311d"
+      ],
+      "sha256": "79dbaca1754b673a1fd2c87dc406368168fa59a6a9ca93c3bc9d7536a233cec8"
+    }
+  },
+  "contentsSymbols": {
+    "Shot.Rocket": 672,
+    "Effect.BulletHit": 610
+  },
+  "method": "Static JPEXS PNG/SVG export; rocket and bullet-hit wrappers extended to step all native _Contents frames including original filters; source SWF unchanged."
+}

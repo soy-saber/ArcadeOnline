@@ -4,12 +4,12 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 module.exports=async({a,b,room,fixture,kills,peakRequired})=>{
  const minimumPeak=peakRequired??(kills>=55?55:kills>=45?45:30);let total=0,peak=0;
  async function focus(){await a.bringToFront();await a.evaluate(()=>document.querySelector('#game-canvas').focus());}
- async function select(index){await focus();const before=await a.evaluate(()=>window.__authorityTest.authority.players[0].lastAlt);await a.keyboard.press(index===0?'Digit1':'Digit2');await a.waitForFunction((index,before)=>{const p=window.__authorityTest.authority.players[0];return p.weapon===index&&p.lastAlt>before;},{},index,before);}
+ async function select(index){await focus();const before=await a.evaluate(()=>window.__authorityTest.authority.players[0].lastAlt);await a.keyboard.press(`Digit${index+1}`);await a.waitForFunction((index,before)=>{const p=window.__authorityTest.authority.players[0];return p.weapon===index&&p.lastAlt>before;},{},index,before);}
  while(total<kills||peak<minimumPeak){
   assert(total<200,'Earn required native combo through real kills before the bounded training limit');
-  const pistol=await a.evaluate(()=>!window.__authorityTest.authority.players[0].unlocked[1]),autoPistol=pistol&&peak>=3;
-  await fixture(room,pistol?'boxhead-target':'boxhead-training-horde');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.some(z=>z.ai.collidable&&!z.body.deadFlag));
-  const goal=total+(pistol?1:3);
+  const pistol=await a.evaluate(()=>!window.__authorityTest.authority.players[0].unlocked[1]),autoPistol=pistol&&peak>=3,dense=minimumPeak>=70&&peak>=61;
+  await fixture(room,pistol?'boxhead-target':dense?'boxhead-training-dense':'boxhead-training-horde');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.some(z=>z.ai.collidable&&!z.body.deadFlag));
+  const goal=total+(pistol?1:dense?5:3);
   if(pistol&&!autoPistol){
    await select(0);await a.waitForFunction(()=>window.__authorityTest.authority.players[0].poseAction==='handgun-stand');
    while((await a.evaluate(()=>window.__authorityTest.authority.players[0].kills))<goal){
@@ -20,7 +20,7 @@ module.exports=async({a,b,room,fixture,kills,peakRequired})=>{
     await a.waitForFunction((id,hp)=>window.__authorityTest.authority.zombies.find(z=>z.id===id)?.hp<hp,{},target,hp);
    }
   }else{
-   const index=pistol?0:1;await select(index);await a.waitForFunction(index=>window.__authorityTest.authority.players[0].poseAction===(index?'uzi-stand':'handgun-stand'),{},index);await a.keyboard.down('Space');const deadline=Date.now()+12000;
+   const index=pistol?0:dense?2:1;await select(index);await a.waitForFunction(index=>window.__authorityTest.authority.players[0].poseAction===(index===2?'shotgun-stand':index?'uzi-stand':'handgun-stand'),{},index);await a.keyboard.down('Space');const deadline=Date.now()+12000;
    while(Date.now()<deadline){const p=await a.evaluate(()=>{const p=window.__authorityTest.authority.players[0];return {kills:p.kills,weapon:p.weapon,alive:p.alive};});assert(p.alive);if(p.kills>=goal)break;if(p.weapon!==index)await select(index);await wait(40);}
    await a.keyboard.up('Space');
   }

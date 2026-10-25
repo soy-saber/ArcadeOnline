@@ -1,0 +1,41 @@
+
+> arcade-online@0.1.0 test:boxhead:rays:e2e
+> node scripts/build-native.cjs && node tests/boxhead-rays-e2e.cjs
+
+Natural kills: 1; peak combo: 2; tick: 59
+Natural kills: 2; peak combo: 3; tick: 123
+Natural kills: 3; peak combo: 4; tick: 172
+Natural kills: 4; peak combo: 5; tick: 225
+Natural kills: 7; peak combo: 8; tick: 283
+Natural kills: 10; peak combo: 11; tick: 342
+Natural kills: 13; peak combo: 14; tick: 400
+Natural kills: 16; peak combo: 17; tick: 450
+Natural kills: 19; peak combo: 20; tick: 495
+Natural kills: 22; peak combo: 23; tick: 539
+Natural kills: 25; peak combo: 26; tick: 583
+Natural kills: 28; peak combo: 29; tick: 625
+Natural kills: 31; peak combo: 31; tick: 737
+Natural kills: 34; peak combo: 33; tick: 782
+Natural kills: 37; peak combo: 35; tick: 829
+Natural kills: 40; peak combo: 37; tick: 872
+Natural kills: 43; peak combo: 39; tick: 929
+Natural kills: 46; peak combo: 41; tick: 973
+Natural kills: 49; peak combo: 43; tick: 1018
+Natural kills: 52; peak combo: 45; tick: 1063
+Natural kills: 55; peak combo: 47; tick: 1110
+Natural kills: 58; peak combo: 49; tick: 1152
+Natural kills: 61; peak combo: 51; tick: 1197
+Natural kills: 64; peak combo: 52; tick: 1236
+Natural kills: 67; peak combo: 54; tick: 1273
+Natural kills: 70; peak combo: 55; tick: 1312
+Natural kills: 73; peak combo: 56; tick: 1350
+Natural kills: 76; peak combo: 57; tick: 1389
+Natural kills: 79; peak combo: 58; tick: 1430
+Natural kills: 82; peak combo: 59; tick: 1470
+Natural kills: 85; peak combo: 60; tick: 1512
+Natural kills: 88; peak combo: 61; tick: 1552
+Natural kills: 93; peak combo: 64; tick: 1590
+Natural kills: 98; peak combo: 67; tick: 1626
+Natural kills: 103; peak combo: 69; tick: 1662
+Natural kills: 108; peak combo: 71; tick: 1710
+Natural railgun unlock, native delayed shotgun rays, destructible-wall penetration, rocket flight/impact, rendering and full recovery passed.

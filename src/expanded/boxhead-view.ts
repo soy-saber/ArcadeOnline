@@ -73,14 +73,14 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     }else{const normal=p.body.phase==='normal',action=normal?p.ai.action:p.body.action;c.globalAlpha=p.body.alpha;person(c,p.devil?'devil':'zombie',action,p,s.tick,undefined,undefined,normal?enemyRawFrame(p):Math.floor(p.body.frame));c.globalAlpha=1;}
   }
   for(const b of s.bullets){
-    if(b.tx!==undefined){c.strokeStyle=b.weapon===9?'#9f80ef':'#f3f0cf';c.lineWidth=b.weapon===9?2:1;c.beginPath();c.moveTo(b.x,b.y+b.z*PROJECTION);c.lineTo(b.tx,b.ty+b.z*PROJECTION);c.stroke();}
+    if(b.ray){c.strokeStyle=b.weapon===9?'#9966ff':'#cccccc';c.globalAlpha=b.weapon===9?.5625:.75;c.lineWidth=b.weapon===9?2:.5;c.beginPath();c.moveTo(b.x,b.y+b.z*PROJECTION);c.lineTo(b.tx,b.ty+b.tz*PROJECTION);c.stroke();c.globalAlpha=1;}
     else if(b.fireball)sprite(c,'Effect.FireBall',b.x,b.y+b.z*PROJECTION,b.animation);
-    else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y+(b.z||0)*PROJECTION,s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
+    else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y+(b.z||0)*PROJECTION,b.weapon===7?(s.tick-b.born)%3:s.tick/2);
   }
   for(const e of s.effects)if(!e.floor&&!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){
     if(e.kind==='Effect.MuzzleFlash'){sprite(c,e.spriteKey,e.x,e.y+e.z*PROJECTION,0,1,e.angle);continue;}
     if(e.kind==='Effect.SmokeCloud'&&s.tick<e.born)continue;
-    const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):e.kind==='Effect.SmokeCloud'?smokeFrame(s.tick,e.born,meta.frames):(1-e.life/e.total)*(meta?.frames||1);
+    const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):e.kind==='Effect.SmokeCloud'?smokeFrame(s.tick,e.born,meta.frames):['Effect.RocketSmoke','Effect.BulletHit'].includes(e.kind)?Math.min(meta.frames-1,s.tick-e.born):(1-e.life/e.total)*(meta?.frames||1);
     sprite(c,e.kind,e.x,e.y+(e.z||0)*PROJECTION,frame,e.scale||1);
   }
   if(coverBitmap)c.drawImage(coverBitmap,0,0,map.width,map.height);
