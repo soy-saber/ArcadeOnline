@@ -1,0 +1,131 @@
+{
+  "checkedAt": "2026-10-25T14:24:24.992668+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "827030aba142bc376798380fe712ef0e82cc55e2",
+  "implementationCommits": [
+    "9c624800bbb5368c2676933497bfb2d05df2412f",
+    "827030aba142bc376798380fe712ef0e82cc55e2"
+  ],
+  "archiveSha256": "ed28917d2994f25e7c360d2577397ee9ce7908e224d93de7228bfe5bcd3e79a1",
+  "archiveBytes": 74041729,
+  "releaseFiles": 5205,
+  "current": "/opt/arcade-online/releases/20261025141931-375954",
+  "previous": "/opt/arcade-online/releases/20261025141132-373818",
+  "priorStableBeforeBatch": "/opt/arcade-online/releases/20261025133052-364112",
+  "upload": "/root/arcade-deploy-20261025-controls-ed28917d/release",
+  "bundleSha256": "bcedc0f34c0ef263ff54b7922f3f770c80c37a1f1bcddcc0cfc4dd62b8329749",
+  "authorityRuntimeSha256": "036dd6050df07a41c430bab5abce7976a5e6968c78b81ac49bae2055b863468e",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 258,
+  "nativeRacketPngHashesMatched": 70,
+  "publicControls": {
+    "report": "public-controls-results.json",
+    "normalInputOnly": true,
+    "finishScore": [
+      7,
+      0
+    ],
+    "winner": 1,
+    "seventhPointObservedTick": 632,
+    "finishTick": 677,
+    "resetObservations": [
+      {
+        "point": 1,
+        "scheduledResetAt": 95,
+        "actualResetAt": 95,
+        "firstObservedServeTick": 96
+      },
+      {
+        "point": 2,
+        "scheduledResetAt": 191,
+        "actualResetAt": 191,
+        "firstObservedServeTick": 193
+      },
+      {
+        "point": 3,
+        "scheduledResetAt": 287,
+        "actualResetAt": 287,
+        "firstObservedServeTick": 288
+      },
+      {
+        "point": 4,
+        "scheduledResetAt": 383,
+        "actualResetAt": 383,
+        "firstObservedServeTick": 384
+      },
+      {
+        "point": 5,
+        "scheduledResetAt": 478,
+        "actualResetAt": 478,
+        "firstObservedServeTick": 479
+      },
+      {
+        "point": 6,
+        "scheduledResetAt": 582,
+        "actualResetAt": 582,
+        "firstObservedServeTick": 582
+      }
+    ],
+    "automaticRematch": true,
+    "testSha256": "5ede1cc39499a3883cb48829b84b8b0f3b0b97b6876381f789ce3ed14f4fb187"
+  },
+  "publicReturnedMatch": {
+    "report": "public-match-results.json",
+    "normalInputOnly": true,
+    "returnedHit": true,
+    "finishScore": [
+      0,
+      7
+    ],
+    "winner": 2,
+    "fullRecovery": {
+      "tick": 51,
+      "swing": 13,
+      "swingHit": true,
+      "frame": 3,
+      "ready": false,
+      "score": [
+        0,
+        0
+      ]
+    },
+    "automaticRematch": true,
+    "testSha256": "2680128ade889fc4d6a99edced9729239b26fda0510ea12f5032ffdf0db43885"
+  },
+  "publicBoxhead": "public-boxhead-four-results.json",
+  "probe": "health, all8game resources/covers/background, retired paths404, temporary TURN credentials and WSS joins",
+  "localChecks": {
+    "defaultTests": 402,
+    "legacyBadmintonTests": 8,
+    "deployTests": 5,
+    "typecheck": true,
+    "sourceBuildAndPackage": true,
+    "eightGameKeyboardBrowserRegression": true,
+    "bothBadmintonBrowserSuites": true,
+    "fourChromeBoxheadRegression": true
+  },
+  "firstPublicAttempt": "public-controls-first-attempt.json",
+  "browserHost": "All Chrome contexts on same Windows workstation. Badminton suites use normal room/input events only; no world state grants.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "callbackOrderingRuntimeProven": false,
+  "completeGoal": false,
+  "remainingPlans": [
+    "../../../BADMINTON_RESTORATION_PLAN.md",
+    "../../../BOXHEAD_RESTORATION_PLAN.md"
+  ]
+}

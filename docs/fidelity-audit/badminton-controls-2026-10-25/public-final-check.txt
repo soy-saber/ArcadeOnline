@@ -1,0 +1,11 @@
+Authenticated to 43.142.142.215 as root
+server.js: OK
+public/authority/game.js: OK
+runtime/authority.cjs: OK
+active
+active
+active
+enabled
+enabled
+enabled
+{"status":"ok","rooms":12}
