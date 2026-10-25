@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-10-25T12:57:52.214075+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "ff7d33b909eeae45582f15bf95f6c08a3dee4a4a",
+  "archiveSha256": "cc13b65702e2563d43c260fcdcf3f54865d683fdb6329bec0db26bf58b1baa79",
+  "archiveBytes": 60766482,
+  "releaseFiles": 5147,
+  "current": "/opt/arcade-online/releases/20261025125402-355326",
+  "previous": "/opt/arcade-online/releases/20261025082917-294616",
+  "upload": "/root/arcade-deploy-20261025-grenades-cc13b657/release",
+  "bundleSha256": "d68d6372a5934dc01c733a766e597818855ffab9794ee91f0e87e9a2a981280c",
+  "authorityRuntimeSha256": "a759d5b5fe2e923dd2ca28e9cce4ab0079f1b6f9079985e384313b3c5f2450ef",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 188,
+  "probe": "health, eight game resources/covers/background, retired paths404, temporary TURN credentials and WSS room join all eight",
+  "publicBoxheadFourPlayers": "public-four-player-results.json",
+  "publicNativeRaySnapshots": {
+    "count": 6,
+    "phases": [
+      "delete",
+      "init"
+    ],
+    "owners": [
+      2,
+      3,
+      4
+    ]
+  },
+  "publicCompression": {
+    "clients": 4,
+    "map": "original-18",
+    "wireBytes": 416316,
+    "decodedBytes": 7043260,
+    "wireFraction": 0.05910842422400991,
+    "reductionFraction": 0.9408915757759901,
+    "measurements": [
+      {
+        "compressed": true,
+        "wireBytes": 107817,
+        "decodedBytes": 1836713,
+        "full": 6,
+        "delta": 23
+      },
+      {
+        "compressed": true,
+        "wireBytes": 112100,
+        "decodedBytes": 1880919,
+        "full": 6,
+        "delta": 24
+      },
+      {
+        "compressed": true,
+        "wireBytes": 107665,
+        "decodedBytes": 1789620,
+        "full": 6,
+        "delta": 23
+      },
+      {
+        "compressed": true,
+        "wireBytes": 88734,
+        "decodedBytes": 1536008,
+        "full": 6,
+        "delta": 18
+      }
+    ],
+    "scope": "Short live-production4client WSS sample; socket bytes after handshake versus decoded JSON. Not link capacity or sustained load."
+  },
+  "browserRttSamplesMs": [
+    33.5,
+    77.89999997615814,
+    127.39999997615814,
+    42.40000009536743
+  ],
+  "browserHost": "All four Chrome contexts ran on the same Windows workstation",
+  "complexScenarioScope": "Natural34kill/33peak grenade Init, low oblique wall/teammate contact, high overflight, terminal frame/next disposal, original art, ammo and phase recovery tested locally, plus8Chrome regression suites. Deployed bundles match. Public4Chrome verifies real native pistol rays and creature fields, seats/ready/movement/fire/fullscreen/pause recovery/maps/rematch; largest-map4WSS full/delta/recovery verified. No public training fixtures or claim of actual public grenade unlock.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "fullRestorationGoalComplete": false,
+  "remainingPlan": "../../../BOXHEAD_RESTORATION_PLAN.md"
+}

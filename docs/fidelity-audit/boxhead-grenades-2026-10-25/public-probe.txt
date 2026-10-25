@@ -1,0 +1,2 @@
+Authenticated to 43.142.142.215 as root
+PASS https://43.142.142.215: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.

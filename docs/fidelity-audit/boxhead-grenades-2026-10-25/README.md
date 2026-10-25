@@ -18,4 +18,6 @@
 
 八套既有Chrome回归也全部通过：脚下假墙/成长/拆除/渐隐恢复，多包/最后一发/地雷，强化/集束爆炸，人物与僵尸受击/死亡/尸体/复活，AI入口/转身/近战/恶魔火球，正常111击杀/70连击后的高级射线/轨道炮/火箭，178图/26音频与18图镜头，以及实际四人全屏/射线字段/暂停恢复/换图。连同本批手雷场景共九套本地Chrome过程，逐套结果见 [regressions.json](regressions.json) 及对应日志、结果文件。
 
-公网结果在部署完成后追加。可复核命令：`npm test`、`npm run typecheck`、`npm run test:deploy`、`node scripts/verify-native-build.cjs`、`npm run test:boxhead:grenades:e2e`，以及各 `test:boxhead:*:e2e` 和 `EXPANDED_GAME=50737-server node tests/expanded-e2e.cjs`。各浏览器套件顺序运行。
+`ff7d33b` 已于北京时间2026-10-25 20:54发布腾讯云。5147文件包、188公网文件哈希、应用/Caddy/coturn与健康、八款资源/WSS入房通过。[公网四Chrome](public-four-player-results.json) 验证实际四人操作/全屏/暂停恢复/换图、原手枪射线及最大图原AI/角色字段。结束时RTT采样约34～127ms。独立最大图四WSS线路416316字节、解码JSON7043260字节，减少约94.09%，完整/增量/恢复验证通过；见 [发布证据](public-deployment.json)、[公网文件哈希](public-hashes.json) 及 [传输样本](compression-public.txt)。这是同工作机短时样本；复杂手雷/高级武器过程仍为本地验证，发布包哈希一致，公网没有训练夹具。
+
+可复核命令：`npm test`、`npm run typecheck`、`npm run test:deploy`、`node scripts/verify-native-build.cjs`、`npm run test:boxhead:grenades:e2e`，以及各 `test:boxhead:*:e2e` 和 `EXPANDED_GAME=50737-server node tests/expanded-e2e.cjs`。各浏览器套件顺序运行。
