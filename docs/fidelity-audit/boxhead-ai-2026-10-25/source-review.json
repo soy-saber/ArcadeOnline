@@ -1,0 +1,183 @@
+{
+  "at": "2026-10-25T06:16:43.591793+00:00",
+  "baseline": "359b4df9ff0cbd5dc70449abff20b0563345200a",
+  "originalSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/Creature/CThing_Creature": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99",
+    "Thing/Creature/CThing_Creature_Zombie": "7a99ad5ebd5e9e8024c2495d578c2c9be065e50f502f8a9c8caeff25cd5bf8b0",
+    "Thing/Creature/CThing_Creature_Devil": "1dfa13a54d7b8ec71ab0e48cbd05743019fc6ade34ef75c2f6b6109b08187b3b",
+    "Thing/Shot/CThing_Shot_FireBall": "b590629a5303c8eac40fba536adcae1513481b1271796b2a37071bc313231618",
+    "Thing/Object/CThing_Object_Mine": "859ba08ff12517ff7c9f76e247ff4856b6fc2321d54b4180192f0d551bd8b128",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "World/CWorld": "acbc9bcbd52bc1bfa12c62708e9c1949e71e7453dc480957201a6f548d15522f",
+    "World/CUpgrades": "c1fc0dc277b6c4458de8cc25894c26eb7c98684fb4fc7a6d9e61fce13a03c2ca",
+    "World/Map/CMap": "bc93816e8d32c503c16cfdb394bb63587dcdae3adef939a3299e2427e3f74ee9",
+    "World/Map/CMap_Cell": "8de8f3174669da35efbc59b838f51ef05f6fd4a718f76a5058eace5c99553e87",
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "World/Map/CMap_Affect": "44c0271c004f1934b89ba9024fe5ee53405c31edec40d42a7c90fc76ddc3e5e9",
+    "DrawPrimitive/MovieClip/CDrawPrimitive_MovieClip_Animation": "170799518ff80397a21e73f67e23dcece0d50020378573e3d2770356918c2da1"
+  },
+  "modelScriptSha256": "efc101c78c4af50f8d18ee12042b8831c3eac753e7cd027ad66581c2e236fc3d",
+  "devilAttackAnchors": {
+    "directions": 8,
+    "framesPerDirection": 4,
+    "hands": 2,
+    "slots": 64,
+    "withXSIInfo": 0,
+    "fallback": "body + attack direction * radius * 1.5; Z0.84cells"
+  },
+  "fireballArt": {
+    "source": "games/50737/game.swf",
+    "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+    "timelines": {
+      "Effect.FireBall": {
+        "file": "effect-fireball.png",
+        "frames": 16,
+        "w": 39,
+        "h": 42,
+        "x": -6.25,
+        "y": -9.55,
+        "symbol": 591,
+        "bounds": [
+          [
+            8,
+            11,
+            33,
+            37
+          ],
+          [
+            8,
+            11,
+            33,
+            37
+          ],
+          [
+            8,
+            10,
+            33,
+            37
+          ],
+          [
+            8,
+            10,
+            33,
+            37
+          ],
+          [
+            8,
+            10,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            10,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            8,
+            33,
+            37
+          ],
+          [
+            8,
+            8,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            9,
+            33,
+            37
+          ],
+          [
+            8,
+            8,
+            33,
+            37
+          ]
+        ],
+        "frameSha256": [
+          "f18436a96b7334c148bc0c0f83b1d9c98ee01e7e4a81571a3df831a19a7d806d",
+          "23c291bd23c72cd78098a640040ca8fa12f531a220f02f2e45c077c1f8915e57",
+          "b939399334045117ab8a46f5c3f81d4ddffc58fe265deb165d50ffad927a31ae",
+          "ddc1e85b5369131b731ce80c0d6f8db34d46b597a64f0a8b199e737ae8170208",
+          "bece2f918c04834412e5aadfc74ea13bd288c44480f09f2758bc87b366d10bf7",
+          "272207fab87510c2cda730157f424e22fc96c21655f5c63174734807156bd7df",
+          "f1a5f388837db942749e55ec54bb65a84847e5c2a40323166e41573ad27e3126",
+          "1f56bd6c5507a120e2ca6fb694be684a57e37533768fd92cb2155caa00426b74",
+          "321517ad7fdc85290a17a851664ce275fb47bc85c8f46fa25d6b3a4b1b73ce33",
+          "3425dc69a61a5dbb52274108840e2673c3c876076454f9aec3336e5a0b682722",
+          "35577dd24e0f0fc53816e94ba74cfde24734ab2582ee20b8042a0d46bcf08fe9",
+          "dcc9304ac37b1b9806ecb8d46679b7e530aead5525941ceae15f7630248ed19b",
+          "88072f1c2efc492b3b419b6c5934b6b5130df3b161a07435ea44287f9e4f51dc",
+          "3fc9d0b76102c1a16ac65ef65256f06a1bef83e3b1c8e620533df0de55ddf2e7",
+          "aecf98c054f1f3248975d4c253c7f3a12d7b110a464fab924237136f8bfab02e",
+          "27a727cfcd3b5e6108a4fc83034c9a5baeefb10f327cc6e516f1bc64657d685e"
+        ],
+        "sha256": "de481292c939d48c8c3015fbbcdf71fe12e33fedcfab8477d582edc6e5d05a1b"
+      }
+    },
+    "fireballContentsSymbol": 590,
+    "method": "Static JPEXS PNG/SVG export; fireball wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+  },
+  "nativeRules": {
+    "enemyFlags": "destination reserved before moving; boolean clear/set, not refcount",
+    "entry": "next-callback init; first clear cardinal; wait25 if entry occupied; devil RemoveObject",
+    "movement": "1/speed or sqrt2/speed callbacks; decrement before move; snap/return base on last callback",
+    "turn": "speed*10 signed angle; return base; repeated turn sleeps25/3",
+    "zombieAttack": "four frames at min(.3*speed*25*1.5,1); affect facing neighbor after animation; sleep10",
+    "devilAttack": "facing,<=160px, living target and LoS; four frames at min(.2*speed*25*1.5,1); fire on entering frame3; native fireRate0",
+    "devilRegistrationQuirk": "Register_Creature_Zombie means no attack-speed upgrade, default fireball speed.15cell",
+    "fireball": "accelerates1.02; radius.25 or1cell; no40tick fuse; collision including parent; apply old-position expanded grid AoE without radial falloff",
+    "clearingFireball": "10000 DevilAttack; objects only, no direct player/creature damage",
+    "mine": "Creature flag on reserved cell triggers50callback countdown"
+  },
+  "adaptationsAndLimits": [
+    "4 humans, server authority, enlarged shared camera and alternate arrow keys retained",
+    "Navigation advances deterministic maximum5layers/callback; native additional3ms CPU timeout deliberately omitted for deterministic authority",
+    "Native sortOn tie order inferred using stable JS sort + reverse traversal; no Flash runtime tracing",
+    "Line-of-sight and ray intersection geometry still partly sampled/approximate",
+    "Global collection callback phases and full player/creature hit/death/revive states remain unported; current immediateHP/legacy hit visualization retained",
+    "Native difficulty, modes, character UI, complete wave/combo rules, HUD and other checklist items remain incomplete"
+  ]
+}

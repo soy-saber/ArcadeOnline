@@ -1,4 +1,5 @@
 'use strict';
+const attachEnemy=require('./helpers/boxhead-enemy.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),Module=require('node:module');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),reg=load('../src/expanded/boxhead-registration.ts'),walls=load('../src/expanded/boxhead-walls.ts'),blast=load('../src/expanded/boxhead-explosions.ts'),protocol=load('../src/authority/protocol.ts');
@@ -44,8 +45,9 @@ test('wall affects wake a growing wall immediately and freeze its current radius
  const s=arena(),p=s.players[0],b=object(s,'wall');p.x=b.x;ticks(s);p.x=b.x+64;ticks(s,3);close(b.radius,4.8);walls.affectWall(b,100,2);assert.equal(b.objectPhase,'normal');ticks(s);assert.equal(b.hp,900);assert.equal(b.wallFrame,0);close(b.radius,4.8);ticks(s,10);close(b.radius,4.8);assert(a.valid(s));
 });
 
-test('normal zombie attack leaves a barrel intact but still damages walls; a devil can detonate a barrel',()=>{
- for(const [kind,devil] of [['barrel',false],['wall',false],['barrel',true]]){const s=arena(),b=object(s,kind);s.players[0].x=250;s.zombies=[{id:++s.nextId,x:b.x+28,y:b.y,hp:devil?1000:100,devil,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99}];ticks(s);if(kind==='barrel'&&devil){assert(!s.barrels.includes(b));assert.equal(s.explosions.length,1);}else assert.equal(b.hp,kind==='wall'?950:1);assert(a.valid(s));}
+test('normal zombies do not deliberately attack free walls or barrels; entering devils clear their blocked entrance',()=>{
+ for(const kind of ['barrel','wall']){const s=arena(),b=object(s,kind);s.players[0].x=250;s.zombies=[attachEnemy(s,{id:++s.nextId,x:b.x+28,y:b.y,hp:100,devil:false,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99})];ticks(s);assert.equal(b.hp,kind==='wall'?1000:1);assert(a.valid(s));}
+ const s=arena(),b=object(s);s.players[0].x=400;const z=attachEnemy(s,{id:++s.nextId,x:b.x+32,y:b.y,hp:1000,devil:true,attack:0,dir:Math.PI,owner:0,hitAt:-99,attackAt:-99});z.ai.state='remove';s.zombies=[z];ticks(s);assert(!s.barrels.includes(b));assert.equal(s.explosions.length,1);assert(a.valid(s));
 });
 
 test('full and delta recovery preserve pending registration, waiting, growth and queued barrel damage',()=>{

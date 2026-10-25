@@ -1,0 +1,134 @@
+{
+  "source": "games/50737/game.swf",
+  "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "timelines": {
+    "Effect.FireBall": {
+      "file": "effect-fireball.png",
+      "frames": 16,
+      "w": 39,
+      "h": 42,
+      "x": -6.25,
+      "y": -9.55,
+      "symbol": 591,
+      "bounds": [
+        [
+          8,
+          11,
+          33,
+          37
+        ],
+        [
+          8,
+          11,
+          33,
+          37
+        ],
+        [
+          8,
+          10,
+          33,
+          37
+        ],
+        [
+          8,
+          10,
+          33,
+          37
+        ],
+        [
+          8,
+          10,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          10,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          8,
+          33,
+          37
+        ],
+        [
+          8,
+          8,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          9,
+          33,
+          37
+        ],
+        [
+          8,
+          8,
+          33,
+          37
+        ]
+      ],
+      "frameSha256": [
+        "f18436a96b7334c148bc0c0f83b1d9c98ee01e7e4a81571a3df831a19a7d806d",
+        "23c291bd23c72cd78098a640040ca8fa12f531a220f02f2e45c077c1f8915e57",
+        "b939399334045117ab8a46f5c3f81d4ddffc58fe265deb165d50ffad927a31ae",
+        "ddc1e85b5369131b731ce80c0d6f8db34d46b597a64f0a8b199e737ae8170208",
+        "bece2f918c04834412e5aadfc74ea13bd288c44480f09f2758bc87b366d10bf7",
+        "272207fab87510c2cda730157f424e22fc96c21655f5c63174734807156bd7df",
+        "f1a5f388837db942749e55ec54bb65a84847e5c2a40323166e41573ad27e3126",
+        "1f56bd6c5507a120e2ca6fb694be684a57e37533768fd92cb2155caa00426b74",
+        "321517ad7fdc85290a17a851664ce275fb47bc85c8f46fa25d6b3a4b1b73ce33",
+        "3425dc69a61a5dbb52274108840e2673c3c876076454f9aec3336e5a0b682722",
+        "35577dd24e0f0fc53816e94ba74cfde24734ab2582ee20b8042a0d46bcf08fe9",
+        "dcc9304ac37b1b9806ecb8d46679b7e530aead5525941ceae15f7630248ed19b",
+        "88072f1c2efc492b3b419b6c5934b6b5130df3b161a07435ea44287f9e4f51dc",
+        "3fc9d0b76102c1a16ac65ef65256f06a1bef83e3b1c8e620533df0de55ddf2e7",
+        "aecf98c054f1f3248975d4c253c7f3a12d7b110a464fab924237136f8bfab02e",
+        "27a727cfcd3b5e6108a4fc83034c9a5baeefb10f327cc6e516f1bc64657d685e"
+      ],
+      "sha256": "de481292c939d48c8c3015fbbcdf71fe12e33fedcfab8477d582edc6e5d05a1b"
+    }
+  },
+  "fireballContentsSymbol": 590,
+  "method": "Static JPEXS PNG/SVG export; fireball wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+}

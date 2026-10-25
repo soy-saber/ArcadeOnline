@@ -20,5 +20,10 @@
     "Effect.SmokeCloud": 15,
     "metadata": "src/expanded/boxhead-wall-art.json",
     "method": "Static JPEXS PNG/SVG export; smoke wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
+  },
+  "fireballTimeline": {
+    "frames": 16,
+    "metadata": "src/expanded/boxhead-fireball-art.json",
+    "method": "Static JPEXS PNG/SVG export; fireball wrapper extended to step all native _Contents frames including original filters; source SWF unchanged."
   }
 }

@@ -1,4 +1,5 @@
 'use strict';
+const train=require('./helpers/boxhead-training.cjs');
 const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{fork}=require('child_process'),puppeteer=require('puppeteer-core');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/boxhead-explosions-e2e'),port=46000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
 const errors=[],pending=new Map(),wait=ms=>new Promise(r=>setTimeout(r,ms));let browser,id=0;
@@ -15,16 +16,8 @@ async function screenshot(p,name){const png=await p.evaluate(()=>document.queryS
   await p.goto(`${base}/authority-room.html?game=50737-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);
  }
  const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
- await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await fixture(room,'boxhead-horde');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].x===144);await focus(a);
- for(let n=0;n<16;n++){await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await a.keyboard.press('Space');await a.waitForFunction(n=>window.__authorityTest.authority.players[0].lastAttack>=n,{},n+1);}
- await a.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===4);
- for(let group=1;group<=10;group++){
-  await fixture(room,'boxhead-horde');await focus(a);await a.keyboard.press('Digit2');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].weapon===1);await a.keyboard.down('Space');
-  const target=(group+1)*4,deadline=Date.now()+10000;
-  while(Date.now()<deadline){const s=await a.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,weapon:s.players[0].weapon,alive:s.players[0].alive};});assert(s.alive);if(s.kills>=target)break;if(s.weapon!==1){await focus(a);await a.keyboard.press('Digit2');}await wait(80);}
-  await a.keyboard.up('Space');await a.waitForFunction(target=>window.__authorityTest.authority.players[0].kills===target,{},target);console.log('Natural kills: '+target);
- }
- await a.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=45);await b.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===44);
+ await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await train({a,b,room,fixture,kills:48});
+ await a.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=45);await b.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===48);
  const earned=await a.evaluate(()=>{const s=window.__authorityTest.authority,p=s.players[0];return {kills:p.kills,peakCombo:s.peakCombo,unlocked:p.unlocked,grenades:p.inventory[4]};});await screenshot(a,'earned-upgrades.png');
  await fixture(room,'boxhead-grenade-scene');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.length===0&&window.__authorityTest.authority.bullets.length===0);
  await b.evaluate(()=>{

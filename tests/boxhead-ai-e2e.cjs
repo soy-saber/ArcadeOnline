@@ -1,0 +1,35 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{fork}=require('child_process'),puppeteer=require('puppeteer-core');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/boxhead-ai-e2e'),port=51000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],pending=new Map(),wait=ms=>new Promise(r=>setTimeout(r,ms));let browser,id=0;
+const server=fork(path.join(__dirname,'fixtures/fidelity-server.cjs'),[],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});server.stderr.on('data',d=>errors.push(d.toString()));server.on('message',m=>{const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve();}});
+function fixture(room,action){return new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});server.send({id:key,room,action});setTimeout(()=>{if(pending.delete(key))reject(Error('Fixture timeout'));},5000).unref();});}
+async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='ai-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<2;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(20000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.message));
+  await p.evaluateOnNewDocument(i=>{localStorage.setItem('arcade_name','AI check P'+(i+1));window.__fireballDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(...args){if(this.canvas.id==='game-canvas'&&args[0]?.src?.endsWith('/effect-fireball.png'))window.__fireballDraws.push({args:args.slice(1),tick:window.__authorityTest?.authority.tick});return draw.apply(this,args);};},i);
+  await p.goto(`${base}/authority-room.html?game=50737-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);
+ }
+ const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await fixture(room,'boxhead-ai-prepare');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].invul===0&&window.__authorityTest.authority.players[1].invul===0);
+ await b.evaluate(()=>{
+  window.__watch={states:[],hits:[],shots:{},previousHP:null,previousHit:-99};const net=window.__authorityTest.network,original=net.onSnapshot;
+  net.onSnapshot=function(s,...args){original.call(this,s,...args);const w=window.__watch,p=s.players[0];
+   for(const z of s.zombies){if(!w.states.some(v=>v.id===z.id&&v.state===z.ai.state))w.states.push({id:z.id,devil:z.devil,state:z.ai.state,x:z.x,y:z.y,dir:z.dir,tick:s.tick,frame:z.ai.frame,reserved:z.ai.reserved});
+    if(!z.devil&&z.ai.state==='turn'&&!w.turnRequest){const before=this.resyncs,candidate={tick:s.tick,id:z.id,full:this.fullUpdates,ai:JSON.parse(JSON.stringify(z.ai))};this.requestFull();if(this.resyncs>before)w.turnRequest=candidate;}
+   }
+   if(w.turnRequest&&!w.turnRecovery&&this.fullUpdates>w.turnRequest.full){const z=s.zombies.find(z=>z.id===w.turnRequest.id);w.turnRecovery={tick:s.tick,ai:z?.ai};}
+   if(p.hitAt>w.previousHit){w.hits.push({tick:s.tick,hitAt:p.hitAt,before:w.previousHP,after:p.hp,damageBetweenSnapshots:w.previousHP===null?null:w.previousHP-p.hp});w.previousHit=p.hitAt;}
+   for(const shot of s.bullets)if(shot.fireball&&!w.shots[shot.id])w.shots[shot.id]=JSON.parse(JSON.stringify(shot));w.previousHP=p.hp;
+  };
+ });
+ await fixture(room,'boxhead-ai-zombie');await b.waitForFunction(()=>window.__watch.turnRecovery);const recovery=await b.evaluate(()=>({request:window.__watch.turnRequest,recovered:window.__watch.turnRecovery}));assert.equal(recovery.recovered.ai.state,'turn');assert.equal(recovery.recovered.ai.reserved,recovery.request.ai.reserved);assert(Math.abs(recovery.recovered.ai.counter-(recovery.request.ai.counter-(recovery.recovered.tick-recovery.request.tick)))<1e-10);await screenshot(b,'zombie-turn.png');
+ await b.waitForFunction(()=>window.__watch.hits.length>=1);const zombie=await b.evaluate(()=>({states:window.__watch.states.filter(v=>!v.devil),hit:window.__watch.hits[0]}));assert(zombie.hit.damageBetweenSnapshots>=48&&zombie.hit.damageBetweenSnapshots<=50);assert(zombie.states.some(v=>v.state==='cell'));assert(zombie.states.some(v=>v.state==='attack'));await fixture(room,'boxhead-ai-prepare');
+ const previousHit=await b.evaluate(()=>window.__authorityTest.authority.players[0].hitAt);await fixture(room,'boxhead-ai-devil');await b.waitForFunction(()=>Object.keys(window.__watch.shots).length>0);await screenshot(b,'devil-fireball.png');
+ await b.waitForFunction(previous=>window.__authorityTest.authority.players[0].hitAt>previous,{},previousHit);await fixture(room,'boxhead-ai-prepare');
+ const result=await b.evaluate(()=>({states:window.__watch.states,hits:window.__watch.hits,shots:Object.values(window.__watch.shots),draws:window.__fireballDraws,alive:window.__authorityTest.authority.players.every(p=>p.alive)}));assert(result.alive);assert(result.hits.length>=2);assert(result.hits[1].damageBetweenSnapshots>=48&&result.hits[1].damageBetweenSnapshots<=50);assert(result.shots.every(b=>b.parent>0&&b.multiply===false&&b.radius===8&&b.z===26.88));assert(result.draws.length>0);const art=require('../src/expanded/boxhead-data.json').objects['Effect.FireBall'],drawn=[...new Set(result.draws.map(v=>v.args[0]/art.w))];assert(drawn.length>=3);assert(drawn.every(frame=>frame>=0&&frame<16));assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),spawnProtectionExpiredNaturally:true,zombie,recovery,devil:result,fireballFramesDrawn:drawn,errors},null,2));console.log('Native entry, movement, zombie attack, turn recovery and devil frame3 fireball/damage passed.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),watch:window.__watch})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();});

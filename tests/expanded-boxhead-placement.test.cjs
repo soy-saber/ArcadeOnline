@@ -82,7 +82,7 @@ test('a blocked movement key chooses stand while its direction still changes aim
 test('cell occupancy rejects two children but permits one enemy or an adjacent-cell human without extra radial rejection',()=>{
  const s=arena(),p=s.players[0],q=s.players[1];s.tick=10;p.x=159;q.x=161;assert.equal(placement.cellChildCount(s,p),1);assert.deepEqual(placement.placementCell(s,{x:p.x,y:p.y,z:0},22,17),{x:144,y:272,z:0});
  q.x=158;assert.equal(placement.cellChildCount(s,p),2);assert.equal(placement.placementCell(s,{...p,z:0},22,17),null);q.x=264;
- s.zombies=[{x:200,y:272,hp:100}];assert.equal(placement.cellChildCount(s,{x:200,y:272}),1);assert(placement.placementCell(s,{x:200,y:272,z:12},22,17));
+ s.zombies=[{x:200,y:272,hp:100,ai:{registered:true}}];assert.equal(placement.cellChildCount(s,{x:200,y:272}),1);assert(placement.placementCell(s,{x:200,y:272,z:12},22,17));
 });
 
 test('occupancy includes noncollidable registered objects, pickups, corpses, bullets and live effects, but excludes decals and newborns',()=>{

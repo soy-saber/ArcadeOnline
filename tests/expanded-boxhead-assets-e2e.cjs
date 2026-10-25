@@ -5,6 +5,7 @@ fs.mkdirSync(out,{recursive:true});
 const entry=path.join(out,'preview.ts'),bundle=path.join(out,'preview.js');
 fs.writeFileSync(entry,`import {adapter as a} from '../../src/expanded/boxhead';
 import {camera,room,openPosition,weaponStats} from '../../src/expanded/boxhead-world';
+import {enemyBrain} from '../../src/expanded/boxhead-ai';
 import {nameAnchors} from '../../src/authority/nameplates';
 import data from '../../src/expanded/boxhead-data.json';
 let state:any;const canvas=document.querySelector('canvas')!;
@@ -12,7 +13,7 @@ let state:any;const canvas=document.querySelector('canvas')!;
  if(spread){const map=room(state);const corners=[[80,120],[map.width-80,120],[80,map.height-80],[map.width-80,map.height-80]];
  state.players.forEach((p:any,i:number)=>Object.assign(p,openPosition(state,...corners[i] as [number,number]),{invul:0}));}
  else {state.players.forEach((p:any,i:number)=>{p.weapon=[0,1,2,7][i];p.invul=0;});
- const p=state.players[0];state.zombies.push({id:999,x:p.x+100,y:p.y+100,hp:100,devil:false,attack:0,dir:-2,owner:0,hitAt:-99,attackAt:-99});}
+ const p=state.players[0];const z:any={id:999,x:p.x+100,y:p.y+100,hp:100,devil:false,attack:0,dir:-2,owner:0,hitAt:-99,attackAt:-99};z.ai=enemyBrain(state,z,false);state.zombies.push(z);}
  a.render(canvas,state,1);return {camera:camera(state),map:room(state),players:state.players,anchors:nameAnchors(state,1280,800)};};
 (window as any).redraw=()=>a.render(canvas,state,1);
 (window as any).preload=async()=>{const files=[...data.maps.flatMap(m=>[m.id+'-floor.svg',m.id+'-cover.svg']),...Object.values(data.animations).map(a=>a.file),...Object.values(data.objects).map(a=>a.file)];await Promise.all(files.map(file=>new Promise<void>((resolve,reject)=>{const im=new Image();im.onload=()=>resolve();im.onerror=()=>reject(file);im.src='/expanded/assets/boxhead/'+file;})));const context=new AudioContext();await Promise.all(Object.values(data.audio).map(async file=>{const response=await fetch('/expanded/assets/boxhead/'+file);if(!response.ok)throw new Error(file);const audio=await context.decodeAudioData(await response.arrayBuffer());if(!audio.length)throw new Error(file);}));await context.close();return {images:files.length,sounds:Object.keys(data.audio).length};};
@@ -22,7 +23,7 @@ const server=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,
 const wait=ms=>new Promise(r=>setTimeout(r,ms));let browser;
 (async()=>{
  for(let i=0;i<100;i++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
- browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--no-sandbox']});
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});
  const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewport({width:1280,height:800});await page.goto(base);
  await page.evaluate(()=>{document.head.innerHTML='';document.body.innerHTML='<canvas width="1280" height="800"></canvas>';document.body.style.cssText='margin:0;background:#222';});await page.addScriptTag({path:bundle});

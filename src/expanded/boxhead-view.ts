@@ -5,6 +5,7 @@ import { explosionFrame } from './boxhead-explosions';
 import { drawBrightness } from './boxhead-feedback';
 import { smokeFrame } from './boxhead-walls';
 import { nativeDirection, rawPoseFrame, PROJECTION } from './boxhead-player-pose';
+import { enemyRawFrame } from './boxhead-ai';
 
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
@@ -30,12 +31,13 @@ function sprite(c:CanvasRenderingContext2D,key:string,x:number,y:number,frame=0,
   c.save();c.translate(x,y);c.rotate(rotation);c.scale(scale,scale);
   c.drawImage(im,Math.min(meta.frames-1,Math.max(0,Math.floor(frame)))*meta.w,0,meta.w,meta.h,meta.x,meta.y,meta.w,meta.h);c.restore();
 }
-function person(c:CanvasRenderingContext2D,character:string,action:string,p:any,tick:number,age?:number,poseFrame?:number):void {
+function person(c:CanvasRenderingContext2D,character:string,action:string,p:any,tick:number,age?:number,poseFrame?:number,enemyFrame?:number):void {
   const meta=(data.animations as Record<string,{file:string;frames:number;directions:number;w:number;h:number;x:number;y:number;scale:number}>)[character+'-'+action];if(!meta)return;
   const im=image(meta.file);if(!ready(im))return;
   const direction=nativeDirection(p.dir,meta.directions);
-  const frame=poseFrame!==undefined?rawPoseFrame(action,poseFrame):age===undefined?Math.floor(tick/(action.includes('walk')?3:2))%meta.frames:Math.min(meta.frames-1,Math.floor(age/3));
-  c.drawImage(im,frame*meta.w,direction*meta.h,meta.w,meta.h,p.x+meta.x,p.y+meta.y,meta.w*meta.scale,meta.h*meta.scale);
+  const frame=enemyFrame!==undefined?enemyFrame:poseFrame!==undefined?rawPoseFrame(action,poseFrame):age===undefined?Math.floor(tick/(action.includes('walk')?3:2))%meta.frames:Math.min(meta.frames-1,Math.floor(age/3));
+  const scale=character==='devil'?.42/.44:1;
+  c.drawImage(im,frame*meta.w,direction*meta.h,meta.w,meta.h,p.x+meta.x*scale,p.y+meta.y*scale,meta.w*meta.scale*scale,meta.h*meta.scale*scale);
 }
 function health(c:CanvasRenderingContext2D,p:any,seat:number|null):void {
   c.fillStyle='#171a17';c.fillRect(p.x-19,p.y-55,38,5);c.fillStyle=p.seat===seat?'#74dd71':'#53a94c';c.fillRect(p.x-18,p.y-54,36*Math.max(0,p.hp)/200,3);
@@ -57,17 +59,17 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const corpse of s.corpses){const age=s.tick-corpse.deadAt;person(c,corpse.character,age<15?'dying':'dead',corpse,s.tick,age);}
   for(const p of s.players.filter(p=>!p.alive))person(c,p.character,s.tick-p.deadAt<15?'dying':'dead',p,s.tick,s.tick-p.deadAt);
   for(const p of s.pickups)if(p.life>50||s.tick%6<3)sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
-  const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
+  const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.filter((z:any)=>z.ai.registered).map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
     if(p.entity==='object'){c.globalAlpha=p.kind==='wall'?p.wallAlpha/100:1;sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y+p.z*PROJECTION,p.kind==='wall'?p.wallFrame:0);c.globalAlpha=1;continue;}
     if(p.entity==='human'){
       const hit=s.tick-p.hitAt<5,action=hit?'hitfront':p.drawAction;
       c.globalAlpha=p.invul>0&&s.tick%4<2?.55:1;person(c,p.character,action,p,s.tick,undefined,hit?undefined:p.drawFrame);c.globalAlpha=1;
-    }else{const action=s.tick-p.hitAt<5?'hitfront':s.tick-p.attackAt<12?'attack':'walk';person(c,p.devil?'devil':'zombie',action,p,s.tick);}
+    }else{const hit=s.tick-p.hitAt<5,action=hit?'hitfront':p.ai.action;person(c,p.devil?'devil':'zombie',action,p,s.tick,undefined,undefined,hit?undefined:enemyRawFrame(p));}
   }
   for(const b of s.bullets){
     if(b.tx!==undefined){c.strokeStyle=b.weapon===9?'#9f80ef':'#f3f0cf';c.lineWidth=b.weapon===9?2:1;c.beginPath();c.moveTo(b.x,b.y+b.z*PROJECTION);c.lineTo(b.tx,b.ty+b.z*PROJECTION);c.stroke();}
-    else if(b.owner<0)sprite(c,'Effect.FireBall',b.x,b.y-18,0,1,Math.atan2(b.vy,b.vx));
+    else if(b.fireball)sprite(c,'Effect.FireBall',b.x,b.y+b.z*PROJECTION,b.animation);
     else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y+(b.z||0)*PROJECTION,s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
   }
   for(const e of s.effects)if(!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){

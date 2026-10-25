@@ -1,0 +1,346 @@
+{
+  "at": "2026-10-25T06:14:09.054Z",
+  "earned": {
+    "kills": 48,
+    "peakCombo": 49,
+    "unlocked": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    "grenades": 40
+  },
+  "grenadeConsumed": 1,
+  "nativeCluster8x5": true,
+  "nativeExplosion217x163": true,
+  "plainImpacts": 7,
+  "watch": {
+    "shells": {
+      "594": {
+        "id": 594,
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "z": 0.6400040435791015,
+        "vz": 16,
+        "vx": 2.1491767393274106,
+        "vy": 0.03302556012722306,
+        "owner": 1,
+        "weapon": 4,
+        "damage": 150,
+        "life": 17,
+        "bang": 0,
+        "cluster": false,
+        "clusterShell": true,
+        "born": 761
+      },
+      "595": {
+        "id": 595,
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "z": 0.6400040435791015,
+        "vz": 16,
+        "vx": 0.6040958538813285,
+        "vy": 2.5743217615838936,
+        "owner": 1,
+        "weapon": 4,
+        "damage": 150,
+        "life": 20,
+        "bang": 0,
+        "cluster": false,
+        "clusterShell": true,
+        "born": 761
+      },
+      "596": {
+        "id": 596,
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "z": 0.6400040435791015,
+        "vz": 16,
+        "vx": -1.7408917609228618,
+        "vy": 0.5444563248009746,
+        "owner": 1,
+        "weapon": 4,
+        "damage": 150,
+        "life": 21,
+        "bang": 0,
+        "cluster": false,
+        "clusterShell": true,
+        "born": 761
+      },
+      "597": {
+        "id": 597,
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "z": 0.6400040435791015,
+        "vz": 16,
+        "vx": 0.19204274837526106,
+        "vy": -2.5488469216247034,
+        "owner": 1,
+        "weapon": 4,
+        "damage": 150,
+        "life": 16,
+        "bang": 0,
+        "cluster": false,
+        "clusterShell": true,
+        "born": 761
+      }
+    },
+    "impacts": {
+      "600": {
+        "id": 600,
+        "kind": "Effect.Explosion",
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "life": 8,
+        "total": 8,
+        "born": 761,
+        "scale": 1,
+        "z": 0.6400040435791015
+      },
+      "602": {
+        "id": 602,
+        "kind": "Effect.Explosion",
+        "x": 306.1107277640571,
+        "y": 270.05623463085857,
+        "life": 7,
+        "total": 8,
+        "born": 766,
+        "scale": 1,
+        "z": 0.6400040435791015
+      },
+      "604": {
+        "id": 604,
+        "kind": "Effect.Explosion",
+        "x": 255.54903074501183,
+        "y": 254.57878734710067,
+        "life": 7,
+        "total": 8,
+        "born": 766,
+        "scale": 1,
+        "z": 0.6400040435791015
+      },
+      "608": {
+        "id": 608,
+        "kind": "Effect.Explosion",
+        "x": 278.52982878511966,
+        "y": 240.04834049160033,
+        "life": 8,
+        "total": 8,
+        "born": 778,
+        "scale": 1,
+        "z": 7.359999999999999
+      },
+      "610": {
+        "id": 610,
+        "kind": "Effect.Explosion",
+        "x": 309.93999401454124,
+        "y": 280.0838767388189,
+        "life": 7,
+        "total": 8,
+        "born": 779,
+        "scale": 1,
+        "z": 12.799999999999999
+      },
+      "614": {
+        "id": 614,
+        "kind": "Effect.Explosion",
+        "x": 286.1248436282262,
+        "y": 324.6060986045018,
+        "life": 7,
+        "total": 8,
+        "born": 782,
+        "scale": 1,
+        "z": 17.6
+      },
+      "616": {
+        "id": 616,
+        "kind": "Effect.Explosion",
+        "x": 244.2171144886912,
+        "y": 289.35568162320124,
+        "life": 8,
+        "total": 8,
+        "born": 783,
+        "scale": 1,
+        "z": 15.360000000000001
+      }
+    },
+    "pending": {
+      "593": {
+        "id": 593,
+        "x": 275.55316618530276,
+        "y": 279.5554677767834,
+        "z": 0.6400040435791015,
+        "damage": 150,
+        "owner": 1,
+        "bang": 1,
+        "cluster": true,
+        "born": 760,
+        "delay": 0,
+        "initialized": false
+      },
+      "598": {
+        "id": 598,
+        "x": 306.1107277640571,
+        "y": 270.05623463085857,
+        "z": 0.6400040435791015,
+        "damage": 150,
+        "owner": 1,
+        "bang": 0,
+        "cluster": false,
+        "born": 761,
+        "delay": 4,
+        "initialized": false
+      },
+      "599": {
+        "id": 599,
+        "x": 255.54903074501183,
+        "y": 254.57878734710067,
+        "z": 0.6400040435791015,
+        "damage": 150,
+        "owner": 1,
+        "bang": 0,
+        "cluster": false,
+        "born": 761,
+        "delay": 4,
+        "initialized": false
+      },
+      "606": {
+        "id": 606,
+        "x": 278.52982878511966,
+        "y": 240.04834049160033,
+        "z": 7.359999999999999,
+        "damage": 150,
+        "owner": 1,
+        "bang": 0,
+        "cluster": false,
+        "born": 777,
+        "delay": 0,
+        "initialized": false
+      },
+      "607": {
+        "id": 607,
+        "x": 309.93999401454124,
+        "y": 280.0838767388189,
+        "z": 12.799999999999999,
+        "damage": 150,
+        "owner": 1,
+        "bang": 0,
+        "cluster": false,
+        "born": 778,
+        "delay": 0,
+        "initialized": false
+      },
+      "612": {
+        "id": 612,
+        "x": 286.1248436282262,
+        "y": 324.6060986045018,
+        "z": 17.6,
+        "damage": 150,
+        "owner": 1,
+        "bang": 0,
+        "cluster": false,
+        "born": 781,
+        "delay": 0,
+        "initialized": false
+      }
+    },
+    "sounds": {
+      "214": {
+        "id": 214,
+        "tick": 761,
+        "name": "Effect.Explosion.wav"
+      },
+      "215": {
+        "id": 215,
+        "tick": 766,
+        "name": "Effect.Explosion.wav"
+      },
+      "216": {
+        "id": 216,
+        "tick": 766,
+        "name": "Effect.Explosion.wav"
+      },
+      "221": {
+        "id": 221,
+        "tick": 778,
+        "name": "Effect.Explosion.wav"
+      },
+      "222": {
+        "id": 222,
+        "tick": 779,
+        "name": "Effect.Explosion.wav"
+      },
+      "223": {
+        "id": 223,
+        "tick": 782,
+        "name": "Effect.Explosion.wav"
+      },
+      "224": {
+        "id": 224,
+        "tick": 783,
+        "name": "Effect.Explosion.wav"
+      }
+    },
+    "request": {
+      "tick": 761,
+      "full": 10,
+      "children": [
+        {
+          "id": 598,
+          "x": 306.1107277640571,
+          "y": 270.05623463085857,
+          "z": 0.6400040435791015,
+          "damage": 150,
+          "owner": 1,
+          "bang": 0,
+          "cluster": false,
+          "born": 761,
+          "delay": 4,
+          "initialized": false,
+          "due": 766
+        },
+        {
+          "id": 599,
+          "x": 255.54903074501183,
+          "y": 254.57878734710067,
+          "z": 0.6400040435791015,
+          "damage": 150,
+          "owner": 1,
+          "bang": 0,
+          "cluster": false,
+          "born": 761,
+          "delay": 4,
+          "initialized": false,
+          "due": 766
+        }
+      ]
+    },
+    "recovery": {
+      "tick": 761,
+      "children": [
+        {
+          "id": 598,
+          "due": 766,
+          "preserved": true
+        },
+        {
+          "id": 599,
+          "due": 766,
+          "preserved": true
+        }
+      ]
+    }
+  },
+  "net": {
+    "full": 11,
+    "delta": 535
+  },
+  "errors": []
+}

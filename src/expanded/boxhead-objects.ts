@@ -1,4 +1,5 @@
 import type { State } from './types';
+import { cell, flags, CREATURE } from './boxhead-navigation';
 
 export function ownedPacks(s:State,seat:number):any[] {
   return s.barrels.filter((b:any)=>b.kind==='chargepack'&&b.owner===seat&&b.hp>0);
@@ -20,7 +21,7 @@ export function stepExplosiveObjects(s:State,sound:(s:State,name:string)=>void):
     if(b.kind==='mine') {
       if(!b.detonating) {
         b.animation=(b.animation+1/25)%2;
-        if(s.zombies.some((z:any)=>z.hp>0&&Math.hypot(z.x-b.x,z.y-b.y)<27)) {
+        if(flags(s,cell(s,b.x,b.y))&CREATURE) {
           b.detonating=true;b.detonateAt=s.tick+50;sound(s,'Object.Mine.Detonate.wav');
         }
       }

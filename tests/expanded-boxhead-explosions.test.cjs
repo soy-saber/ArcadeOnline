@@ -1,4 +1,5 @@
 'use strict';
+const attachEnemy=require('./helpers/boxhead-enemy.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),Module=require('node:module');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),explosions=load('../src/expanded/boxhead-explosions.ts');
@@ -7,7 +8,7 @@ const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,att
 function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=400;p.invul=100000;});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];return p;}
-function zombie(s,x,y,hp=10000){const z={id:++s.nextId,x,y,hp,devil:false,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99};s.zombies.push(z);return z;}
+function zombie(s,x,y,hp=10000){const z=attachEnemy(s,{id:++s.nextId,x,y,hp,devil:false,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99});s.zombies.push(z);return z;}
 
 test('BigBang/BiggerBang create two/three delayed independent same-damage blasts at one cell radius',()=>{
  for(const [bang,count] of [[1,2],[2,3]]){

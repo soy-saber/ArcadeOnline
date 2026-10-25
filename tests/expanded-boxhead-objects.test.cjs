@@ -1,4 +1,5 @@
 'use strict';
+const attachEnemy=require('./helpers/boxhead-enemy.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),Module=require('node:module');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),protocol=load('../src/authority/protocol.ts');
@@ -41,7 +42,7 @@ test('charge placement uses the native mine placement cue, including occupied at
 test('mine and charge idle animation advances .04 per callback; detonation preserves phase and accelerates to one',()=>{
  for(const weapon of [6,8]){
   const s=arena(),p=equip(s,weapon);a.step(s,[input(1,{attack:1})]);const b=s.barrels[0];ticks(s,24);assert(Math.abs(b.animation-.96)<1e-12);assert.equal(Math.floor(b.animation),0);ticks(s);assert(Math.abs(b.animation-1)<1e-12);assert.equal(Math.floor(b.animation),1);
-  if(weapon===6){s.zombies=[{id:++s.nextId,x:b.x,y:b.y,hp:100,dir:0,attack:9999,owner:0,devil:false,hitAt:-99,attackAt:s.tick}];ticks(s);assert.equal(b.detonateAt,s.tick+50);}
+  if(weapon===6){s.zombies=[attachEnemy(s,{id:++s.nextId,x:b.x,y:b.y,hp:100,dir:0,attack:9999,owner:0,devil:false,hitAt:-99,attackAt:s.tick})];ticks(s);assert.equal(b.detonateAt,s.tick+50);}
   else a.step(s,[input(2,{attack:2})]);
   assert(Math.abs(b.animation-.04)<1e-10);assert.equal(Math.floor(b.animation),0);ticks(s);assert(Math.abs(b.animation-1.04)<1e-10);assert.equal(Math.floor(b.animation),1);assert(a.valid(s));
  }

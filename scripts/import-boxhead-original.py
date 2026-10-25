@@ -294,3 +294,4 @@ manifest={'source':'games/50737/game.swf','sha256':data['sourceSha256'],'tool':r
 print(json.dumps(manifest,ensure_ascii=False),flush=True)
 subprocess.run(['python',str(ROOT/'scripts/import-boxhead-gun-positions.py')],check=True,cwd=ROOT)
 subprocess.run(['python',str(ROOT/'scripts/import-boxhead-wall-art.py'),'--ffdec',JAR],check=True,cwd=ROOT)
+subprocess.run(['python',str(ROOT/'scripts/import-boxhead-fireball-art.py'),'--ffdec',JAR],check=True,cwd=ROOT)

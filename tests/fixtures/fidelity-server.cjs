@@ -1,6 +1,7 @@
 'use strict';
 // Isolated test process. This IPC fixture is never included in a release.
 const path=require('node:path'),root=path.resolve(__dirname,'../..'),{AuthorityEngine}=require(path.join(root,'runtime/authority.cjs'));
+const attachEnemy=require('../helpers/boxhead-enemy.cjs');
 const rooms=new Map(),onRoom=AuthorityEngine.prototype.onRoom;
 function pose(p,x,y){p.x=x;p.y=y;if(p.walking)Object.assign(p.walking,{x:x*30,y:y*30,vx:0,vy:0,gridX:x,gridY:y,transX:0,transY:0,blocked:false});if('travel'in p){p.travel=null;p.sandCell=-1;}}
 AuthorityEngine.prototype.onRoom=function(room){rooms.set(room.name,room);return onRoom.call(this,room);};
@@ -88,20 +89,25 @@ process.on('message',m=>{try{
  }else if(m.action==='boxhead-pack-pose'){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01'||s.peakCombo<55||s.players.some(p=>!p.alive)||!Number.isInteger(m.index)||m.index<0||m.index>8)throw Error('Expected living players after actual charge-pack unlock');
    const p=s.players[0];p.x=m.index===8?144:80+m.index*64;p.y=m.index===8?400:144;p.dir=m.index===8?0:Math.PI/2;
- }else if(m.action==='boxhead-horde'||m.action==='boxhead-grenade-scene'||m.action==='boxhead-objects-scene'||m.action==='boxhead-wall-scene'){
+ }else if(['boxhead-horde','boxhead-target','boxhead-ai-prepare','boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene','boxhead-grenade-scene','boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01')throw Error('Expected native BOXY room');
-   if(s.zombies.length&&m.action==='boxhead-horde'&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
+   if(s.zombies.length&&['boxhead-horde','boxhead-target'].includes(m.action)&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
    if(s.players.some(p=>!p.alive))throw Error('Players must remain alive');
    if(m.action==='boxhead-grenade-scene'&&s.peakCombo<45)throw Error('Earn the native grenade upgrades through actual kills first');
    if(m.action==='boxhead-objects-scene'&&s.peakCombo<55)throw Error('Earn the native charge-pack unlock through actual kills first');
+   if(m.action==='boxhead-mine-scene'&&s.peakCombo<40)throw Error('Earn the native mine unlock through actual kills first');
    if(m.action==='boxhead-wall-scene'&&s.peakCombo<30)throw Error('Earn the native fake-wall unlock through actual kills first');
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];s.bullets=[];s.explosions=[];s.effects=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?544:624;q.y=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?400:464;
-   s.zombies=m.action==='boxhead-horde'?Array.from({length:4},()=>({id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})):[];
+   for(const z of s.zombies)if(z.ai?.reserved!=null)s.enemyCells[z.ai.reserved]=false;
+   const count=m.action==='boxhead-horde'?4:m.action==='boxhead-target'||['boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene'].includes(m.action)?1:0;
+   const devil=m.action==='boxhead-ai-devil',x=devil?272:m.action==='boxhead-ai-zombie'?176:m.action==='boxhead-mine-scene'?208:355;
+   if(m.action==='boxhead-mine-scene')p.x=176;
+   s.zombies=Array.from({length:count},()=>attachEnemy(s,{id:++s.nextId,x,y:272,hp:devil?1000:100,dir:Math.PI,owner:0,attack:0,devil,hitAt:-99,attackAt:-99},true));
  }else if(m.action==='zombies'){
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;
-   s.zombies=Array.from({length:4},()=>({id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99}));
+   s.zombies=Array.from({length:4},()=>attachEnemy(s,{id:++s.nextId,x:355,y:272,hp:100,dir:Math.PI,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99},true));
  }else if(m.action==='friendly'){
    if(s.zombies.length)throw new Error('Enemies must be defeated through real attacks first');const [p,q]=s.players;if(p.invul||q.invul)throw new Error('Spawn protection still active');
    p.x=144;p.y=272;p.dir=0;q.x=204;q.y=272;

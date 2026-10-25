@@ -6,7 +6,7 @@ import { sameCell } from './boxhead-registration';
  * Actor/death and global callback timing follow the current authority model. */
 export function cellChildCount(s:State,position:{x:number;y:number}):number {
   const things=[
-    ...s.players,...s.zombies,...s.corpses,
+    ...s.players,...s.zombies.filter((z:any)=>z.ai.registered),...s.corpses,
     ...s.barrels.filter((b:any)=>['barrel','wall'].includes(b.kind)?b.registered:b.armed<s.tick),
     ...s.pickups.filter((p:any)=>p.life>0&&(p.born??-1)<s.tick),
     ...s.bullets.filter((b:any)=>b.life>0&&(b.born??-1)<s.tick),
