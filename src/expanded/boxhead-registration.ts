@@ -18,7 +18,7 @@ export function stepRegistration(s:State):void {
   // Newer things receive callbacks first. Objects born during this callback wait.
   for(const b of [...s.barrels].reverse()) {
     if(!['barrel','wall'].includes(b.kind)||b.armed>=s.tick||b.hp<=0)continue;
-    const playerOnCell=()=>s.players.some(p=>p.alive&&sameCell(p,b));
+    const playerOnCell=()=>s.players.some(p=>sameCell(p,b));
     if(b.objectPhase==='init') {
       b.registered=true;
       if(playerOnCell())b.objectPhase='waiting';

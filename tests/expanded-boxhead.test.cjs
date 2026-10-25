@@ -8,6 +8,7 @@ const data=require('../src/expanded/boxhead-data.json'),input=(seq=1,patch={})=>
 function arena(map){const s=a.create(1,true,[1,2,3,4],42,map);s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*96;p.y=272;p.invul=100000;});return s;}
 const zombie=(id,x,y,hp=100,devil=false)=>({id,x,y,hp,devil,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99});
 function tick(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
+function waitKills(s,n){for(let i=0;i<40&&s.players[0].kills<n;i++)tick(s);assert.equal(s.players[0].kills,n);}
 function equip(s,index){const p=s.players[0];p.unlocked[index]=true;p.weapon=index;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];p.cooldown=0;return p;}
 
 test('all 18 native rooms retain geometry, distinct occupied humans and deterministic authority',()=>{
@@ -24,9 +25,9 @@ test('duplicate, stale, malformed and reconnect input cannot repeat shots or wea
 });
 test('native hitscan damage and team multiplier unlock weapons for all four humans',()=>{
  const s=arena(),p=s.players[0];p.dir=0;s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,zombie(901,p.x+70,p.y,20))];
- a.step(s,[input(1,{attack:1})]);assert.equal(p.kills,1);assert.equal(s.combo,5);assert.equal(s.score,400);assert.equal(s.zombies.length,0);
+ a.step(s,[input(1,{attack:1})]);assert.equal(p.kills,0);waitKills(s,1);assert.equal(s.combo,5);assert.equal(s.score,400);assert.equal(s.zombies[0].body.phase,'dying');
  for(const human of s.players){assert(human.unlocked[1]);assert.equal(human.weapon,1);assert.equal(human.inventory[1],100);}
- assert(s.sounds.some(e=>e.name==='Weapon.Pistol.Fire.wav'));
+ assert.equal(p.fireAt,1);tick(s,67);assert.equal(s.zombies.length,0);
 });
 test('weapon cycling and number selection retain finite ammunition and reject locked weapons',()=>{
  const s=arena(),p=equip(s,1);a.step(s,[input(1,{attack:1})]);assert.equal(p.inventory[1],99);
@@ -38,14 +39,14 @@ test('weapon cycling and number selection retain finite ammunition and reject lo
 test('each original unlock milestone and upgrade persists when the combo decays',()=>{
  for(const [threshold,index] of [[5,1],[10,2],[15,3],[20,4],[30,5],[40,6],[50,7],[55,8],[70,9]]){
   const s=arena(),p=s.players[0];s.combo=threshold-1;s.peakCombo=threshold-1;s.zombies=[attachEnemy(s,zombie(901,p.x+70,p.y,1))];p.dir=0;
-  a.step(s,[input(1,{attack:1})]);assert(p.unlocked[index],String(threshold));assert.equal(p.weapon,index);
+  a.step(s,[input(1,{attack:1})]);waitKills(s,1);assert(p.unlocked[index],String(threshold));assert.equal(p.weapon,index);
   s.comboUntil=0;tick(s,100);assert(p.unlocked[index]);assert.equal(s.peakCombo,threshold);
  }
  const s=arena();s.peakCombo=100;assert.equal(world.weaponStats(s,9).rate,2);assert.equal(world.weaponStats(s,1).damage,140);assert.equal(world.weaponStats(s,1).ammo,400);
 });
 test('shotgun uses native three rays and railgun pierces a line of enemies',()=>{
  const shotgun=arena(),p=equip(shotgun,2);p.dir=0;a.step(shotgun,[input(1,{attack:1})]);assert.equal(shotgun.bullets.length,3);assert.equal(p.ammo,19);
- const s=arena(),q=equip(s,9);q.dir=0;s.zombies=[attachEnemy(s,zombie(901,q.x+60,q.y,90)),attachEnemy(s,zombie(902,q.x+120,q.y,90))];a.step(s,[input(1,{attack:1})]);assert.equal(q.kills,2);assert.equal(s.zombies.length,0);assert.equal(q.ammo,14);
+ const s=arena(),q=equip(s,9);q.dir=0;s.zombies=[attachEnemy(s,zombie(901,q.x+60,q.y,90)),attachEnemy(s,zombie(902,q.x+120,q.y,90))];a.step(s,[input(1,{attack:1})]);assert.equal(q.kills,0);waitKills(s,2);assert.equal(s.zombies.length,2);assert(s.zombies.every(z=>z.body.phase==='dying'||z.body.phase==='dead'));assert.equal(q.ammo,14);tick(s,67);assert.equal(s.zombies.length,0);
 });
 test('all ten weapons execute original shot or place behavior with valid authoritative snapshots',()=>{
  for(let index=0;index<10;index++){const s=arena(),p=equip(s,index);p.dir=0;a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,index?world.WEAPONS[index].ammo-1:-1,'ammo '+index);assert(a.valid(s),'snapshot '+index);if([3,5,6,8].includes(index))assert.equal(s.barrels.length,1);else assert(s.bullets.length>0);tick(s,70);assert(a.valid(s),'after projectile '+index);}
@@ -55,7 +56,7 @@ test('grenades bounce and retain their fuse; rockets explode on contact',()=>{
  const r=arena(),q=equip(r,7);q.x=55;q.dir=Math.PI;tick(r,3,[input(1,{attack:1})]);assert(r.effects.some(e=>e.kind==='Effect.Explosion'));
 });
 test('barrel chains initialize once on later ticks; mines arm and charge packs require a second trigger',()=>{
- const s=arena(),p=s.players[0];p.dir=0;s.players[1].x=624;s.barrels=[{id:901,x:p.x+60,y:p.y,z:0,kind:'barrel',hp:1,owner:0,armed:0,exploded:false,...objectRegistration()},{id:902,x:p.x+100,y:p.y,z:0,kind:'barrel',hp:1,owner:0,armed:0,exploded:false,...objectRegistration()}];s.zombies=[attachEnemy(s,zombie(903,p.x+155,p.y,50))];a.step(s,[input(1,{attack:1})]);assert.equal(s.barrels.length,1);assert.equal(p.kills,0);assert.equal(s.explosions.length,1);tick(s);assert.equal(s.barrels.length,0);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,1);tick(s);assert.equal(p.kills,1);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);assert.equal(s.explosions.length,0);tick(s);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);
+ const s=arena(),p=s.players[0];p.dir=0;s.players[1].x=624;s.barrels=[{id:901,x:p.x+60,y:p.y,z:0,kind:'barrel',hp:1,owner:0,armed:0,exploded:false,...objectRegistration()},{id:902,x:p.x+100,y:p.y,z:0,kind:'barrel',hp:1,owner:0,armed:0,exploded:false,...objectRegistration()}];s.zombies=[attachEnemy(s,zombie(903,p.x+155,p.y,50))];a.step(s,[input(1,{attack:1})]);assert.equal(s.barrels.length,1);assert.equal(p.kills,0);assert.equal(s.explosions.length,1);tick(s);assert.equal(s.barrels.length,0);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,1);tick(s);assert.equal(p.kills,0);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);assert.equal(s.explosions.length,0);tick(s);assert.equal(s.effects.filter(e=>e.kind==='Effect.Explosion').length,2);waitKills(s,1);
  const mine=arena(),m=equip(mine,6);m.dir=0;a.step(mine,[input(1,{attack:1})]);const item=mine.barrels[0];mine.zombies=[attachEnemy(mine,zombie(904,item.x,item.y))];tick(mine,1);assert.equal(mine.barrels.length,1);assert.equal(item.detonateAt,mine.tick+50);tick(mine,49);assert.equal(mine.barrels.length,1);tick(mine,1);assert.equal(mine.barrels.length,0);
  const pack=arena(),q=equip(pack,8);q.dir=0;a.step(pack,[input(1,{attack:1})]);assert.equal(pack.barrels[0].kind,'chargepack');const ammo=q.ammo;tick(pack,3,[input(1,{attack:1})]);assert.equal(pack.barrels.length,1);a.step(pack,[input(2,{attack:2})]);assert.equal(pack.barrels.length,1);assert.equal(pack.barrels[0].detonateCounter,1.5);tick(pack);assert.equal(pack.barrels.length,1);tick(pack);assert.equal(pack.barrels.length,0);assert.equal(q.ammo,ammo);
 });
@@ -71,8 +72,8 @@ test('native maze navigation routes enemies around static walls instead of walki
  assert(last&&last.d>10);const z=zombie(901,last.x,last.y);s.zombies=[attachEnemy(s,z)];for(let n=0;n<10000&&z.attackAt<0;n++)tick(s);assert(z.attackAt>0,'enemy reached the player around the maze');assert(a.valid(s));
 });
 test('cooperative revive requires a living teammate; simultaneous defeat ends survival',()=>{
- const s=arena();s.players[0].hp=-1;tick(s);assert.equal(s.players[0].alive,false);assert.equal(s.players[0].deaths,1);assert.equal(s.phase,'playing');tick(s,125);assert(s.players[0].alive);assert.equal(s.players[0].hp,200);assert(s.players[0].invul>0);assert.equal(s.players[0].deaths,1);
- s.players.forEach(p=>p.hp=-1);tick(s);assert.equal(s.phase,'finished');assert.equal(s.winner,0);const t=s.tick;tick(s,20);assert.equal(s.tick,t);
+ const s=arena();s.players[0].hp=-1;tick(s);assert.equal(s.players[0].alive,false);assert.equal(s.players[0].deaths,1);assert.equal(s.phase,'playing');tick(s,142);assert(s.players[0].alive);assert.equal(s.players[0].hp,200);assert(s.players[0].invul>0);assert.equal(s.players[0].deaths,1);
+ s.players.forEach(p=>p.hp=-1);tick(s);assert.equal(s.phase,'playing');tick(s,92);assert.equal(s.phase,'finished');assert.equal(s.winner,0);const t=s.tick;tick(s,20);assert.equal(s.tick,t);
 });
 test('survival continues beyond six waves and twelve minutes with native wave counts',()=>{
  const s=arena();s.wave=6;s.spawnLeft=0;s.waveReady=1;tick(s);assert.equal(s.phase,'playing');assert.equal(s.wave,7);assert.equal(s.spawnLeft,40);assert.equal(s.devilLeft,2);

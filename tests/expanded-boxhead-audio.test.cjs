@@ -17,3 +17,8 @@ test('native zombie ambience returns with a new horde and stops between waves or
  s.zombies=[];s.tick=151;a.confirm(s);assert(stopped.length>0);
  s.zombies=[{x:100,y:100}];s.tick=301;a.confirm(s);assert.equal(heard.length,count+1);a.setSound(false);assert(stopped.length>1);s.tick=451;a.confirm(s);assert.equal(heard.length,count+1);
 });
+
+test('native creature hit/death aliases retain original sample gains and volume updates',()=>{
+ const heard=[];global.Audio=class {constructor(src){this.src=src;}play(){heard.push(this);return Promise.resolve();}pause(){}};
+ const s=a.create(30,true,[1,2],1);a.setSound(true);a.setVolume(.5);a.confirm(s);s.tick=1;s.soundId=3;s.sounds=[{id:1,tick:1,name:'Creature.Zombie.Ambience.4.wav'},{id:2,tick:1,name:'Creature.Player.Scream.1.wav'},{id:3,tick:1,name:'Creature.HitFloor.wav'}];a.confirm(s);assert.deepEqual(heard.map(a=>a.volume),[.2,.35,.5]);a.setVolume(.2);assert.deepEqual(heard.map(a=>a.volume),[.08000000000000002,.13999999999999999,.2]);a.setSound(false);
+});

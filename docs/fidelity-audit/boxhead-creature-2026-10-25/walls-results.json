@@ -1,0 +1,320 @@
+{
+  "at": "2026-10-25T07:37:26.540Z",
+  "earned": {
+    "kills": 34,
+    "peakCombo": 34,
+    "stock": 5
+  },
+  "placed": {
+    "id": 1506,
+    "x": 144,
+    "y": 272,
+    "z": 0,
+    "kind": "wall",
+    "hp": 1000,
+    "maxHp": 1000,
+    "wallFrame": 0,
+    "wallAlpha": 100,
+    "fadeAt": null,
+    "deleteAt": null,
+    "affects": [],
+    "registered": false,
+    "objectPhase": "init",
+    "radius": null,
+    "collidable": false,
+    "barrelAffects": [],
+    "damage": 100,
+    "owner": 1,
+    "exploded": false,
+    "armed": 729,
+    "detonateAt": 0,
+    "animation": 0,
+    "detonating": false,
+    "detonateCounter": null
+  },
+  "pistolHits": 20,
+  "pistolDamage": 52,
+  "smokePreloadedBeforeBreak": true,
+  "allTenDamageFrames": true,
+  "damagedFullRecovery": true,
+  "fadeFullRecovery": true,
+  "collisionReleasedOnDisposal": true,
+  "nativeSmokeFramesDrawn": [
+    1,
+    2,
+    4,
+    5,
+    7,
+    8,
+    10,
+    11,
+    13,
+    14
+  ],
+  "watch": {
+    "damage": [
+      {
+        "tick": 738,
+        "hp": 1000,
+        "frame": 0
+      },
+      {
+        "tick": 765,
+        "hp": 948,
+        "frame": 0
+      },
+      {
+        "tick": 776,
+        "hp": 896,
+        "frame": 1
+      },
+      {
+        "tick": 788,
+        "hp": 844,
+        "frame": 1
+      },
+      {
+        "tick": 800,
+        "hp": 792,
+        "frame": 2
+      },
+      {
+        "tick": 812,
+        "hp": 740,
+        "frame": 2
+      },
+      {
+        "tick": 824,
+        "hp": 688,
+        "frame": 3
+      },
+      {
+        "tick": 835,
+        "hp": 636,
+        "frame": 3
+      },
+      {
+        "tick": 845,
+        "hp": 584,
+        "frame": 4
+      },
+      {
+        "tick": 856,
+        "hp": 532,
+        "frame": 4
+      },
+      {
+        "tick": 868,
+        "hp": 480,
+        "frame": 5
+      },
+      {
+        "tick": 880,
+        "hp": 428,
+        "frame": 5
+      },
+      {
+        "tick": 891,
+        "hp": 376,
+        "frame": 6
+      },
+      {
+        "tick": 902,
+        "hp": 324,
+        "frame": 6
+      },
+      {
+        "tick": 913,
+        "hp": 272,
+        "frame": 7
+      },
+      {
+        "tick": 925,
+        "hp": 220,
+        "frame": 7
+      },
+      {
+        "tick": 937,
+        "hp": 168,
+        "frame": 8
+      },
+      {
+        "tick": 949,
+        "hp": 116,
+        "frame": 8
+      },
+      {
+        "tick": 960,
+        "hp": 64,
+        "frame": 9
+      },
+      {
+        "tick": 973,
+        "hp": 12,
+        "frame": 9
+      }
+    ],
+    "motion": [
+      {
+        "tick": 984,
+        "x": 113.6,
+        "wall": true,
+        "alpha": 60,
+        "deleteAt": null
+      },
+      {
+        "tick": 984,
+        "x": 113.6,
+        "wall": true,
+        "alpha": 60,
+        "deleteAt": null
+      },
+      {
+        "tick": 985,
+        "x": 113.6,
+        "wall": true,
+        "alpha": 40,
+        "deleteAt": null
+      },
+      {
+        "tick": 987,
+        "x": 113.6,
+        "wall": true,
+        "alpha": 0,
+        "deleteAt": 987
+      },
+      {
+        "tick": 988,
+        "x": 118.72,
+        "wall": false
+      },
+      {
+        "tick": 990,
+        "x": 128.96,
+        "wall": false
+      },
+      {
+        "tick": 991,
+        "x": 134.08,
+        "wall": false
+      },
+      {
+        "tick": 993,
+        "x": 144.32000000000002,
+        "wall": false
+      },
+      {
+        "tick": 994,
+        "x": 149.44000000000003,
+        "wall": false
+      },
+      {
+        "tick": 996,
+        "x": 159.68000000000004,
+        "wall": false
+      },
+      {
+        "tick": 997,
+        "x": 164.80000000000004,
+        "wall": false
+      },
+      {
+        "tick": 999,
+        "x": 175.04000000000005,
+        "wall": false
+      },
+      {
+        "tick": 1000,
+        "x": 180.16000000000005,
+        "wall": false
+      }
+    ],
+    "smokes": {
+      "1547": {
+        "id": 1547,
+        "kind": "Effect.SmokeCloud",
+        "x": 144,
+        "y": 272,
+        "life": 15,
+        "total": 16,
+        "born": 984,
+        "scale": 1,
+        "z": 0
+      }
+    },
+    "registration": [
+      {
+        "tick": 738,
+        "phase": "waiting",
+        "radius": null,
+        "collidable": false
+      },
+      {
+        "tick": 743,
+        "phase": "growing",
+        "radius": 1.6,
+        "collidable": true
+      },
+      {
+        "tick": 744,
+        "phase": "growing",
+        "radius": 3.2,
+        "collidable": true
+      },
+      {
+        "tick": 745,
+        "phase": "growing",
+        "radius": 4.800000000000001,
+        "collidable": true
+      },
+      {
+        "tick": 747,
+        "phase": "growing",
+        "radius": 8,
+        "collidable": true
+      },
+      {
+        "tick": 748,
+        "phase": "growing",
+        "radius": 9.6,
+        "collidable": true
+      },
+      {
+        "tick": 750,
+        "phase": "growing",
+        "radius": 12.799999999999999,
+        "collidable": true
+      },
+      {
+        "tick": 751,
+        "phase": "growing",
+        "radius": 14.399999999999999,
+        "collidable": true
+      },
+      {
+        "tick": 753,
+        "phase": "normal",
+        "radius": 15.999999999999998,
+        "collidable": true
+      }
+    ],
+    "fadeRequest": {
+      "tick": 984,
+      "full": 12,
+      "id": 1506,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 983,
+      "alpha": 60
+    },
+    "fadeRecovery": {
+      "tick": 984,
+      "id": 1506,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 983,
+      "alpha": 60
+    }
+  },
+  "errors": []
+}

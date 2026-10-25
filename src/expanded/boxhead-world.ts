@@ -33,28 +33,46 @@ function blockingObjects(s:State,ignore?:any):any[] {
 export function blocked(s: State, x: number, y: number, radius = 11, ignore?: any): boolean {
   return mapBlocked(s,x,y,radius)||blockingObjects(s,ignore).some(b=>Math.hypot(b.x-x,b.y-y)<radius+b.radius);
 }
-export function move(s: State, p: any, dx: number, dy: number, radius = .45*CELL): void {
-  // Native PlayerCollide resolves circles before the map, up to three passes.
-  // Creature reservation, creature/creature collision and map normals are
-  // restored separately with the AI; this loop handles physical objects.
-  const human=Number.isInteger(p.seat),mapRadius=radius*(human?.85:1),objects=blockingObjects(s,p).reverse();
-  let x=p.x+dx,y=p.y+dy;
-  for(let pass=0;pass<(human?3:1);pass++) {
-    let collision=false;
-    for(const b of objects) {
-      const distance=Math.hypot(x-b.x,y-b.y),limit=radius+b.radius;
-      if(distance<limit) {
-        // Keep authority finite even for exactly coincident online positions.
-        const ux=distance?(x-b.x)/distance:dx||dy?-dx/Math.hypot(dx,dy):1;
-        const uy=distance?(y-b.y)/distance:dx||dy?-dy/Math.hypot(dx,dy):0;
-        x=b.x+ux*limit;y=b.y+uy*limit;collision=true;
-      }
+function physicalRadius(p:any):number { return p.body ? p.body.radius : p.radius; }
+function resolveCircles(s:State,p:any,x:number,y:number,r:number,dx:number,dy:number) {
+  const map=room(s),left=Math.max(0,Math.round((x-r)/CELL)-1),right=Math.min(map.columns-1,Math.round((x+r)/CELL));
+  const top=Math.max(0,Math.round((y-r)/CELL)-1),bottom=Math.min(map.rows-1,Math.round((y+r)/CELL));
+  const index=(v:any)=>Math.floor(v.y/CELL)*map.columns+Math.floor(v.x/CELL);
+  const things=[...blockingObjects(s,p),...s.players,...s.zombies.filter((z:any)=>z.ai.registered)]
+    .filter((v:any)=>v!==p&&(v.body?v.body.collidable:true)&&Math.floor(v.x/CELL)>=left&&Math.floor(v.x/CELL)<=right&&Math.floor(v.y/CELL)>=top&&Math.floor(v.y/CELL)<=bottom)
+    .sort((a,b)=>index(b)-index(a)||(b.id??0)-(a.id??0));
+  let collided=false;
+  for(const b of things){const distance=Math.hypot(x-b.x,y-b.y),limit=r+physicalRadius(b);
+    if(distance<limit){
+      // A coincident pair produces NaN in the SWF. Preserve finite authority
+      // using the existing deterministic opposite-motion fallback online.
+      const length=Math.hypot(dx,dy),ux=distance?(x-b.x)/distance:length?-dx/length:1,uy=distance?(y-b.y)/distance:length?-dy/length:0;
+      x=b.x+ux*limit;y=b.y+uy*limit;collided=true;
     }
-    if(mapBlocked(s,x,p.y,mapRadius)){x=p.x;collision=true;}
-    if(mapBlocked(s,x,y,mapRadius)){y=p.y;collision=true;}
-    if(!collision)break;
   }
-  p.x=x;p.y=y;
+  return {x,y,collided};
+}
+function resolveMap(s:State,p:any,dx:number,dy:number,r:number) {
+  if(!mapBlocked(s,p.x+dx,p.y+dy,r))return {x:p.x+dx,y:p.y+dy,collided:false};
+  if(!mapBlocked(s,p.x+dx,p.y,r))return {x:p.x+dx,y:p.y,collided:true};
+  if(!mapBlocked(s,p.x,p.y+dy,r))return {x:p.x,y:p.y+dy,collided:true};
+  return {x:p.x,y:p.y,collided:true};
+}
+export function move(s:State,p:any,dx:number,dy:number,radius=.45*CELL):void {
+  if(solid(room(s),p.x,p.y))return;
+  for(let pass=0;pass<3;pass++){
+    const circles=resolveCircles(s,p,p.x+dx,p.y+dy,radius,dx,dy);dx=circles.x-p.x;dy=circles.y-p.y;
+    const map=resolveMap(s,p,dx,dy,radius*.85);
+    if(!circles.collided&&!map.collided||pass===2){p.x=map.x;p.y=map.y;return;}
+  }
+}
+/** CreatureCollide feeds its resolved displacement back into the hit delta. */
+export function knockback(s:State,p:any):void {
+  const map=room(s),cx=Math.floor(p.x/CELL),cy=Math.floor(p.y/CELL),b=p.body;
+  if(cx<=0||cy<=0||cx>=map.columns-1||cy>=map.rows-1){b.vx=0;b.vy=0;return;}
+  const circles=resolveCircles(s,p,p.x+b.vx,p.y+b.vy,b.radius,b.vx,b.vy);
+  const next=resolveMap(s,p,circles.x-p.x,circles.y-p.y,b.radius);
+  b.vx=next.x-p.x;b.vy=next.y-p.y;p.x=next.x;p.y=next.y;
 }
 export function openPosition(s: State, x: number, y: number, used: {x:number;y:number}[] = []) {
   const map = room(s), candidates = [];
@@ -73,7 +91,7 @@ export function lineClear(s: State, x: number, y: number, tx: number, ty: number
 
 /** One shared camera, independent of seat. It always contains every living human. */
 export function camera(s: State, width = WIDTH, height = HEIGHT) {
-  const map = room(s), alive = s.players.filter(p => p.alive), areaH = height-HUD;
+  const map = room(s), alive = s.players.filter(p => !p.body.deadFlag), areaH = height-HUD;
   const xs = alive.map(p => p.x), ys = alive.map(p => p.y);
   const minX = xs.length ? Math.min(...xs) : map.width/2, maxX = xs.length ? Math.max(...xs) : minX;
   const minY = ys.length ? Math.min(...ys) : map.height/2, maxY = ys.length ? Math.max(...ys) : minY;

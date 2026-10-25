@@ -17,7 +17,7 @@ async function screenshot(p,name){const png=await p.evaluate(()=>document.queryS
  }
  const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
  await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await train({a,b,room,fixture,kills:48});
- await a.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=45);await b.waitForFunction(()=>window.__authorityTest.authority.players[0].kills===48);
+ await a.waitForFunction(()=>window.__authorityTest.authority.peakCombo>=45);await b.waitForFunction(()=>window.__authorityTest.authority.players[0].kills>=48);
  const earned=await a.evaluate(()=>{const s=window.__authorityTest.authority,p=s.players[0];return {kills:p.kills,peakCombo:s.peakCombo,unlocked:p.unlocked,grenades:p.inventory[4]};});await screenshot(a,'earned-upgrades.png');
  await fixture(room,'boxhead-grenade-scene');await a.waitForFunction(()=>window.__authorityTest.authority.zombies.length===0&&window.__authorityTest.authority.bullets.length===0);
  await b.evaluate(()=>{

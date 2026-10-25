@@ -20,7 +20,9 @@ export function flags(s:State,index:number):number {
   if(index<0||index>=map.columns*map.rows)return SOLID;
   let result=map.collision[Math.floor(index/map.columns)][index%map.columns]==='0'?0:SOLID;
   if(s.enemyCells[index])result|=CREATURE;
-  if(s.players.some(p=>p.alive&&cell(s,p.x,p.y)===index))result|=PLAYER;
+  // Player.Process_Normal writes this flag after every state callback, even
+  // dying, dead and respawn. Affect/collision flags remain separate.
+  if(s.players.some(p=>cell(s,p.x,p.y)===index))result|=PLAYER;
   if(s.barrels.some((b:any)=>b.registered&&['barrel','wall'].includes(b.kind)&&cell(s,b.x,b.y)===index))result|=OBJECT;
   return result;
 }

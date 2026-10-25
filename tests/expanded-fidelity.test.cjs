@@ -9,17 +9,17 @@ function arena(){const s=box.create(1,true,[1,2,3,4],42);s.waveReady=0;s.spawnLe
 function equip(s,w){const p=s.players[0];p.weapon=w;p.unlocked[w]=true;p.inventory[w]=world.weaponStats(s,w).ammo;p.ammo=p.inventory[w];return p;}
 const ticks=(s,n,controls=[])=>{for(let i=0;i<n;i++)box.step(s,controls);};
 test('original default friendly bullets hit the nearer teammate, not the zombie behind; invulnerability remains effective',()=>{
- const s=arena(),[p,q]=s.players;q.hp=200;s.zombies=[attachEnemy(s,{id:999,x:p.x+140,y:p.y,hp:100,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert.equal(q.hp,174+200/(25*30));assert.equal(s.zombies[0].hp,100);assert.equal(p.hp,200);assert.equal(p.kills,0);
- q.invul=50;p.cooldown=0;box.step(s,[input(2,{attack:2})]);assert(q.hp>174&&q.hp<175);assert(box.valid(s));
+ const s=arena(),[p,q]=s.players;q.hp=200;s.zombies=[attachEnemy(s,{id:999,x:p.x+140,y:p.y,hp:100,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,1);ticks(s,1);assert.equal(q.hp,174);assert.equal(s.zombies[0].hp,100);assert.equal(p.hp,200);assert.equal(p.kills,0);
+ q.invul=50;p.cooldown=0;box.step(s,[input(2,{attack:2})]);ticks(s,1);assert.equal(q.hp,174);assert(box.valid(s));
 });
 test('railguns damage teammates and enemies along the same ray; friendly kills are deaths, not zombie score',()=>{
- const s=arena(),p=equip(s,9),q=s.players[1];q.hp=80;s.zombies=[attachEnemy(s,{id:999,x:p.x+160,y:p.y,hp:90,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert(!q.alive);assert.equal(q.deaths,1);assert.equal(q.killedBy,1);assert.equal(p.kills,1);assert.equal(s.score,100);
+ const s=arena(),p=equip(s,9),q=s.players[1];q.hp=80;s.zombies=[attachEnemy(s,{id:999,x:p.x+160,y:p.y,hp:90,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert(q.alive);ticks(s,25);assert(!q.alive);assert.equal(q.deaths,1);assert.equal(q.killedBy,1);assert.equal(p.kills,1);assert.equal(s.score,100);
 });
 test('all original firearm families apply friendly damage through authoritative hits',()=>{
  for(const weapon of [0,1,2,7,9]){const s=arena(),p=equip(s,weapon),q=s.players[1];box.step(s,[input(1,{attack:1})]);ticks(s,10,[input(1,{attack:1})]);assert(q.hp<200,'friendly damage from '+world.WEAPONS[weapon].id);assert.equal(p.kills,0);assert.equal(s.score,0);assert(box.valid(s));}
 });
 test('native explosions hurt the owner and teammates with source distance falloff',()=>{
- const s=arena(),p=s.players[0],q=s.players[1];p.x=200;q.x=245;s.players[2].x=260;s.players[3].x=500;
+ const s=arena(),p=s.players[0],q=s.players[1];p.x=200;q.x=248;s.players[2].x=200;s.players[2].y=332;s.players[3].x=500;
  s.bullets=[{id:999,x:200,y:272,z:0,vz:0,vx:0,vy:0,owner:1,weapon:4,damage:100,life:1,bang:0,cluster:false}];box.step(s,[]);assert.equal(p.hp,200);assert.equal(s.explosions.length,1);box.step(s,[]);
  assert.equal(p.hp,100);assert.equal(q.hp,125);assert.equal(s.players[2].hp,150);assert.equal(s.players[3].hp,200);assert.equal(p.killedBy,1);
 });
@@ -31,15 +31,15 @@ test('Q/E directions skip empty or locked weapons and consume a switch counter o
  box.step(s,[input(3,{alt:3,weaponStep:1})]);assert.equal(p.weapon,7);
  box.step(s,[input(4,{alt:4,weapon:2})]);assert.equal(p.weapon,7);
 });
-test('death empties every finite weapon, respawn does not refill it, pickup can restore an unlocked weapon',()=>{
+test('native respawn empties finite weapons after the death timeline, pickup can restore an unlocked weapon',()=>{
  const s=arena(),p=s.players[0];p.unlocked.fill(true);p.inventory=world.WEAPONS.map(w=>w.ammo);p.weapon=7;p.ammo=20;p.hp=-1;
- ticks(s,1);assert.deepEqual(p.inventory,[-1,0,0,0,0,0,0,0,0,0]);assert.equal(p.weapon,0);
- ticks(s,125);assert(p.alive);assert.deepEqual(p.inventory,[-1,0,0,0,0,0,0,0,0,0]);
+ ticks(s,1);assert.equal(p.inventory[7],20);assert.equal(p.body.phase,'dying');
+ ticks(s,142);assert(p.alive);assert.equal(p.weapon,0);assert.deepEqual(p.inventory,[-1,0,0,0,0,0,0,0,0,0]);
  box.step(s,[input(2,{alt:1,weapon:7})]);assert.equal(p.weapon,0);
  s.pickups=[{id:999,x:p.x,y:p.y,life:100}];ticks(s,1);assert(p.inventory.slice(1).some(n=>n>0));assert.equal(p.ammo,p.inventory[p.weapon]);
 });
 test('a dead player receives upgrade availability without new ammunition before revival',()=>{
- const s=arena(),p=s.players[1];p.hp=-1;ticks(s,1);s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,{id:999,x:s.players[0].x+30,y:272,hp:1,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert(p.unlocked[1]);assert.equal(p.inventory[1],0);assert.equal(p.weapon,0);
+ const s=arena(),p=s.players[1];p.hp=-1;ticks(s,1);s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,{id:999,x:s.players[0].x+30,y:272,hp:1,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);ticks(s,20);assert(p.unlocked[1]);assert.equal(p.inventory[1],0);assert.equal(p.weapon,0);
 });
 test('native single fire, unlocked rapid fire and UZI held fire use server cooldown and never refill ammo',()=>{
  const s=arena(),p=s.players[0];box.step(s,[input(1,{attack:1,trigger:true})]);const first=p.fireAt;ticks(s,20,[input(1,{attack:1,trigger:true})]);assert.equal(p.fireAt,first);

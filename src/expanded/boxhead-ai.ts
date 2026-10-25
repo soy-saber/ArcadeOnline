@@ -1,12 +1,14 @@
 import type { State } from './types';
 import { CELL, room, lineClear } from './boxhead-world';
 import { cell, adjacent, flags, realFlags, reserve, direction, DELTAS, CREATURE, PLAYER, OBJECT, SOLID } from './boxhead-navigation';
+import { creatureBody } from './boxhead-creature';
 
 const TAU=Math.PI*2;
 const wrap=(angle:number)=>(angle%TAU+TAU)%TAU;
 const heading=(angle:number)=>Math.round(wrap(angle)/(Math.PI/4))&7;
 const frames=(action:string)=>action==='walk'?8:action==='attack'?4:1;
 export function enemyBrain(s:State,z:any,entering=true) {
+  z.body=creatureBody(false,z.devil);z.body.collidable=!entering;z.body.affectEnabled=!entering;
   return {state:entering?'init':'goto',base:'goto',previous:'goto',counter:0,born:s.tick,registered:!entering,collidable:!entering,
     reserved:null as number|null,entry:null as number|null,targetSeat:null as number|null,targetDir:0,targetAngle:0,angleDelta:0,dx:0,dy:0,
     speed:(z.devil?.04:.02)*Math.min(1+s.wave*.1,5),radius:(z.devil?.42:.45)*CELL,
@@ -26,6 +28,7 @@ export function transition(s:State,z:any,state:string):void {
   if(state==='goto'){a.base='goto';animation(z,'walk');}
   else if(state==='enter') {
     reserve(s,z,cell(s,z.x,z.y));a.collidable=false;a.base='enter';a.entry=null;animation(z,'stand');
+    z.body.collidable=false;z.body.affectEnabled=false;
     for(const dir of [0,2,4,6]){const next=adjacent(s,cell(s,z.x,z.y),dir);if(!(flags(s,next)&SOLID)){z.dir=dir*Math.PI/4;a.entry=next;break;}}
   }else if(state==='cell') {
     const [dx,dy]=DELTAS[heading(z.dir)],cx=Math.floor(z.x/CELL)*CELL+CELL/2,cy=Math.floor(z.y/CELL)*CELL+CELL/2;
@@ -48,7 +51,7 @@ function turnOr(s:State,z:any,next:string,target:number,wait=false):void {
 }
 function closest(s:State,z:any):any {
   // GetClosestPlayer enumerates newest players first; equal distances retain it.
-  const candidates=[...s.players].reverse().filter(p=>p.alive);
+  const candidates=[...s.players].reverse().filter(p=>!p.body.deadFlag);
   return candidates.reduce((best,p)=>!best||Math.hypot(p.x-z.x,p.y-z.y)<Math.hypot(best.x-z.x,best.y-z.y)?p:best,null as any)||s.players[s.players.length-1];
 }
 function targetVisible(s:State,z:any,p:any):boolean {
@@ -63,31 +66,30 @@ function targetVisible(s:State,z:any,p:any):boolean {
 }
 export interface EnemyHooks {
   random():number;
-  hurt(player:any,amount:number):void;
+  hurt(player:any,amount:number,source:any):void;
   damage(target:any,amount:number):void;
 }
-export function stepEnemies(s:State,hooks:EnemyHooks):void {
-  for(const z of [...s.zombies].reverse()) {
+export function stepEnemy(s:State,z:any,hooks:EnemyHooks):void {
     const a=z.ai;
-    if(z.hp<=0){reserve(s,z,null);a.collidable=false;continue;}
     if(a.state==='init') {
-      if(a.born>=s.tick)continue;
+      if(a.born>=s.tick)return;
+      z.body.damageSample=Math.floor(hooks.random()*4);z.body.deathSample=Math.floor(hooks.random()*4);
       z.x=Math.floor(z.x/CELL)*CELL+16;z.y=Math.floor(z.y/CELL)*CELL+16;a.registered=true;
-      transition(s,z,'enter');continue;
+      transition(s,z,'enter');return;
     }
     const at=cell(s,z.x,z.y);
     if(a.state==='enter') {
       if(a.entry===null||flags(s,a.entry)&CREATURE)transition(s,z,'wait');
-      else {a.collidable=true;a.base='goto';transition(s,z,z.devil?'remove':'cell');}
+      else {a.collidable=true;z.body.collidable=true;z.body.affectEnabled=true;a.base='goto';transition(s,z,z.devil?'remove':'cell');}
     }else if(a.state==='remove') {
       const next=adjacent(s,at,heading(z.dir));
       if(flags(s,next)&OBJECT){for(const b of s.barrels)if(b.registered&&cell(s,b.x,b.y)===next)hooks.damage(b,100000);}
       else transition(s,z,'goto');
     }else if(a.state==='goto') {
-      const p=closest(s,z);if(!p)continue;a.targetSeat=p.seat;
+      const p=closest(s,z);if(!p)return;a.targetSeat=p.seat;
       if(z.devil) {
         if(a.canAttack&&a.fireRateCount<=0&&p.hp>0&&heading(Math.atan2(p.y-z.y,p.x-z.x))===heading(z.dir)&&Math.hypot(p.x-z.x,p.y-z.y)<=5*CELL&&targetVisible(s,z,p)) {
-          a.multiply=false;a.attackAngle=Math.atan2(p.y-z.y,p.x-z.x);transition(s,z,'attack');a.fireRateCount--;continue;
+          a.multiply=false;a.attackAngle=Math.atan2(p.y-z.y,p.x-z.x);transition(s,z,'attack');a.fireRateCount--;return;
         }
         a.canAttack=true;
       }
@@ -119,14 +121,14 @@ export function stepEnemies(s:State,hooks:EnemyHooks):void {
         if(ended)transition(s,z,a.previous);
       }else if(animate(z,Math.min(.3*(a.speed*25*1.5),1))) {
         const target=adjacent(s,at,heading(z.dir));
-        for(const p of s.players)if(p.alive&&cell(s,p.x,p.y)===target)hooks.hurt(p,50);
+        for(const p of s.players)if(p.alive&&cell(s,p.x,p.y)===target)hooks.hurt(p,50,z);
         for(const b of s.barrels)if(b.kind==='wall'&&b.registered&&cell(s,b.x,b.y)===target)hooks.damage(b,50);
         const previous=a.previous;transition(s,z,'sleep');a.counter=10;a.previous=previous;
       }
     }
     if(z.devil)a.fireRateCount--;
-  }
 }
+export function stepEnemies(s:State,hooks:EnemyHooks):void {for(const z of [...s.zombies].reverse())stepEnemy(s,z,hooks);}
 
 export function validEnemyAI(s:State,z:any):boolean {
   const a=z.ai,size=room(s).columns*room(s).rows;

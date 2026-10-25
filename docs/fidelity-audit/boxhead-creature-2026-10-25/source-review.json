@@ -1,0 +1,155 @@
+{
+  "at": "2026-10-25T07:47:08.463197+00:00",
+  "baseline": "b5414486eb1ec2ae726eaa7936ab8c43974d3bfd",
+  "originalSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/Creature/CThing_Creature": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "Thing/Creature/CThing_Creature_Zombie": "7a99ad5ebd5e9e8024c2495d578c2c9be065e50f502f8a9c8caeff25cd5bf8b0",
+    "Thing/Creature/CThing_Creature_Devil": "1dfa13a54d7b8ec71ab0e48cbd05743019fc6ade34ef75c2f6b6109b08187b3b",
+    "Thing/CThing": "8a6fab0dee85a00895f4a01a58946fbc10a23eb6f583393c34c1413f72dbe47f",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "Thing/Affect/CThing_Affect": "6bde4883d2821a6b259fb7d922a24ebb0406cba3f53ebb77c85f69bca9bc74c0",
+    "Thing/Affect/CThing_Affect_Bullet": "00fba7e864b06d951740289915381951c899086bef5b5a1d63f00854ea336c62",
+    "Thing/Affect/CThing_Affect_Explosion": "84a842d933d7bac75f472982d9d5d79c3421011c34c380c3a8eb785dcac2df14",
+    "Thing/Affect/CThing_Affect_FireBall": "a45f90dd0776e55c7b5327b3a5ffc2b4e35eb0dad6bd2011327101b72cdca852",
+    "Thing/Affect/CThing_Affect_ZombieAttack": "19a6fe9c84dff61874aa3a9fa78e1b0b19e7c19363e2504bcc492380c5c60835",
+    "Thing/Math/CThing_Position": "0e4f90e6039964383e861106b1dba403f10eafcbb5bcdca663a85c832b23af97",
+    "Thing/Weapon/CThing_Weapon": "ba599826a9edc5d1bda49f09f7f074e135738d54ad20ab8709ef879295ef2db1",
+    "World/CWorld": "acbc9bcbd52bc1bfa12c62708e9c1949e71e7453dc480957201a6f548d15522f",
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "World/Map/CMap_Decal": "dd6ad8f4c430245c57431b446fe585815f696940c354fbeac4cbd88d3c374641",
+    "World/Map/CMap_Cell": "8de8f3174669da35efbc59b838f51ef05f6fd4a718f76a5058eace5c99553e87",
+    "CSound": "1459bfbda43f91e062a9a227b2f7ce0d4816afd9c9f5ab69c60779676e649b39"
+  },
+  "animationFrames": {
+    "swat-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "swat-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "swat-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "swat-dead": {
+      "frames": 1,
+      "directions": 4
+    },
+    "bond-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "bond-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "bond-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "bond-dead": {
+      "frames": 1,
+      "directions": 4
+    },
+    "gijoe-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "gijoe-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "gijoe-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "gijoe-dead": {
+      "frames": 1,
+      "directions": 4
+    },
+    "bambo-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "bambo-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "bambo-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "bambo-dead": {
+      "frames": 1,
+      "directions": 4
+    },
+    "zombie-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "zombie-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "zombie-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "zombie-dead": {
+      "frames": 1,
+      "directions": 4
+    },
+    "devil-hitfront": {
+      "frames": 2,
+      "directions": 8
+    },
+    "devil-hitrear": {
+      "frames": 2,
+      "directions": 8
+    },
+    "devil-dying": {
+      "frames": 5,
+      "directions": 4
+    },
+    "devil-dead": {
+      "frames": 1,
+      "directions": 4
+    }
+  },
+  "nativeRules": {
+    "affects": "queued until creature callback, newest first; capture return angle once; invincibility consumes queue; source-relative3D normalization then zeroZ",
+    "bulletFireballSpeedCells": "max(damage/5*2/32,.3)/mass",
+    "meleeSpeedCells": "max(damage/5/32/mass,.3)",
+    "explosionSpeedCells": "min(damage/5*2/32/mass,.3)",
+    "masses": {
+      "player": 2,
+      "zombie": 1,
+      "devil": 5
+    },
+    "hitCounter": "count while initial horizontal length>=.01cell, multiply.65 per count; resolved displacement feeds friction; decrement<0 gives an additional callback",
+    "hitAnimation": "random hitrear/hitfront frame0 held without animation advance",
+    "nonfatal": "restore pre-hit angle, stand sleep3; player Control_Init invokes control immediately; enemy returns goto for next callback",
+    "fatal": "first hit callback marks DEAD and clears affect flags; retain physical circle during recoil; release reservation at hit init; LogKill exactly at Dying init",
+    "dying": "five frames at.34/callback; then HitFloor cue and floor sorting",
+    "deadEnemy": "counter50,51callbacks until Delete, disposal following callback; fade last25 from predecrement value",
+    "deadPlayer": "counter100,101callbacks; notify all-dead when count<25 before decrement; then26respawn retry callbacks",
+    "respawn": "original spawn markers, nearest newest living teammate, squared distance>=4cells, within19/13cells, block Creature/Object/Player; random cyclic scan breaks ties; retry every callback after initial26",
+    "respawnControlOrder": "new stand animation + protection; run one control callback with previous weapon before FIRE renewal, life200 and finite-ammo empty/select pistol",
+    "invincibility": "initial200; respawn125 then end-of-callback decrement; original odd-count invisible blink",
+    "soundAliases": "zombie hit/death names bind Ambience.1..4 at.4 gain; player death Scream.1 at.7; HitFloor at1",
+    "blood": "floor layer, original vertical.6 flatten and +/-8px seeded jitter; original amount argument loop has no effect on number of draws"
+  },
+  "adaptationsAndLimits": [
+    "4 humans, authority, enlarged shared camera and WASD/arrows preserved; choose newest living teammate for four-player respawn",
+    "Creature callbacks process newest first; objects/effects/shots/explosions still have dedicated phases, not complete AS2 global collection equivalence",
+    "Ray hit geometry and bullet initialization/tracer animation still partly approximated; source pointer positions retained by ID with serialized coordinate fallback",
+    "Player movement and hit collisions now include registered creature/object circles and native map slide priority; exact coincident pairs retain finite deterministic online fallback instead of SWF NaN",
+    "Native3ms navigation CPU budget remains deterministic5layers/callback; equal-distance enumeration ties remain static inference, not Flash runtime tracing",
+    "Blood variant/direction timelines, floor mask and persistent floor bitmap/history remain incomplete; current decal lifetime/history cap retained",
+    "Complete native upgrade/wave/combo/pickup rules, difficulty/modes/character selection/HUD and remaining restoration checklist still pending"
+  ]
+}

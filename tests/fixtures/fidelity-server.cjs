@@ -89,9 +89,9 @@ process.on('message',m=>{try{
  }else if(m.action==='boxhead-pack-pose'){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01'||s.peakCombo<55||s.players.some(p=>!p.alive)||!Number.isInteger(m.index)||m.index<0||m.index>8)throw Error('Expected living players after actual charge-pack unlock');
    const p=s.players[0];p.x=m.index===8?144:80+m.index*64;p.y=m.index===8?400:144;p.dir=m.index===8?0:Math.PI/2;
- }else if(['boxhead-horde','boxhead-target','boxhead-ai-prepare','boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene','boxhead-grenade-scene','boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)){
+ }else if(['boxhead-horde','boxhead-target','boxhead-training-horde','boxhead-creature-duel','boxhead-ai-prepare','boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene','boxhead-grenade-scene','boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01')throw Error('Expected native BOXY room');
-   if(s.zombies.length&&['boxhead-horde','boxhead-target'].includes(m.action)&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
+   if(s.zombies.some(z=>!z.body.loggedKill)&&['boxhead-horde','boxhead-target','boxhead-training-horde'].includes(m.action)&&s.players[0].kills>0)throw Error('Defeat the prior horde through real shots first');
    if(s.players.some(p=>!p.alive))throw Error('Players must remain alive');
    if(m.action==='boxhead-grenade-scene'&&s.peakCombo<45)throw Error('Earn the native grenade upgrades through actual kills first');
    if(m.action==='boxhead-objects-scene'&&s.peakCombo<55)throw Error('Earn the native charge-pack unlock through actual kills first');
@@ -100,10 +100,12 @@ process.on('message',m=>{try{
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];s.bullets=[];s.explosions=[];s.effects=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?544:624;q.y=['boxhead-objects-scene','boxhead-wall-scene'].includes(m.action)?400:464;
    for(const z of s.zombies)if(z.ai?.reserved!=null)s.enemyCells[z.ai.reserved]=false;
-   const count=m.action==='boxhead-horde'?4:m.action==='boxhead-target'||['boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene'].includes(m.action)?1:0;
-   const devil=m.action==='boxhead-ai-devil',x=devil?272:m.action==='boxhead-ai-zombie'?176:m.action==='boxhead-mine-scene'?208:355;
-   if(m.action==='boxhead-mine-scene')p.x=176;
-   s.zombies=Array.from({length:count},()=>attachEnemy(s,{id:++s.nextId,x,y:272,hp:devil?1000:100,dir:Math.PI,owner:0,attack:0,devil,hitAt:-99,attackAt:-99},true));
+   const count=m.action==='boxhead-training-horde'?3:m.action==='boxhead-horde'?4:m.action==='boxhead-target'||['boxhead-ai-zombie','boxhead-ai-devil','boxhead-mine-scene'].includes(m.action)?1:0;
+   const devil=m.action==='boxhead-ai-devil',x=devil||m.action==='boxhead-target'?272:m.action==='boxhead-ai-zombie'?176:m.action==='boxhead-mine-scene'?208:355;
+   if(['boxhead-mine-scene','boxhead-target','boxhead-training-horde'].includes(m.action))p.x=176;
+   if(['boxhead-target','boxhead-training-horde'].includes(m.action)){const pose=m.action==='boxhead-target'?'handgun-stand':'uzi-stand';p.y=272-require('../../src/expanded/boxhead-gun-positions.json').poses[pose].anchors[0][0][1];q.x=48;q.y=464;}
+   if(m.action==='boxhead-creature-duel'){p.y=272-require('../../src/expanded/boxhead-gun-positions.json').poses['handgun-stand'].anchors[0][0][1];q.x=240;q.y=272;q.dir=Math.PI;}
+   s.zombies=Array.from({length:count},(_,index)=>attachEnemy(s,{id:++s.nextId,x:m.action==='boxhead-training-horde'?208+index*64:x,y:272,hp:devil?1000:100,dir:Math.PI,owner:0,attack:0,devil,hitAt:-99,attackAt:-99},true));
  }else if(m.action==='zombies'){
    s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.devilLeft=0;s.barrels=[];s.pickups=[];
    const [p,q]=s.players;p.x=144;p.y=272;p.dir=0;q.x=624;q.y=464;

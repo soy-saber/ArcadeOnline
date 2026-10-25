@@ -10,6 +10,7 @@ import { enemyRawFrame } from './boxhead-ai';
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
 const combatFiles=Object.entries(data.objects).filter(([key])=>/^(Object|Effect|Shot|Pistol|Railgun|Shotgun|UZI)\./.test(key)).map(([,meta])=>meta.file);
+const creatureCombatFiles=Object.entries(data.animations).filter(([key])=>/-(hitfront|hitrear|dying|dead)$/.test(key)).map(([,meta])=>meta.file);
 let backdrop:{id:string;floor?:HTMLCanvasElement;cover?:HTMLCanvasElement}|null=null;
 function image(file:string):HTMLImageElement {
   let im=images.get(file);if(!im){im=new Image();im.src=base+file;images.set(file,im);}return im;
@@ -49,30 +50,34 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   const c=canvas.getContext('2d');if(!c)return;
   c.fillStyle='#2b302a';c.fillRect(0,0,WIDTH,HEIGHT);if(!s)return;
   for(const file of combatFiles)image(file);
+  // These states can begin between two snapshots. Load original sheets during
+  // the waiting/protection period so their first native frame is drawable.
+  for(const file of creatureCombatFiles)image(file);
   const map=room(s), cam=camera(s);c.save();c.beginPath();c.rect(0,HUD,WIDTH,HEIGHT-HUD);c.clip();c.translate(cam.x,cam.y);c.scale(cam.scale,cam.scale);
   const floor=image(map.id+'-floor.svg'),cover=image(map.id+'-cover.svg');
   const floorBitmap=mapBitmap(map.id,'floor',floor,map.width,map.height),coverBitmap=mapBitmap(map.id,'cover',cover,map.width,map.height);
   if(floorBitmap)c.drawImage(floorBitmap,0,0,map.width,map.height);
   else{c.fillStyle='#c6c5bd';c.fillRect(0,0,map.width,map.height);}
-  for(const e of s.effects)if(['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){c.globalAlpha=Math.min(1,e.life/60);sprite(c,e.kind,e.x,e.y);c.globalAlpha=1;}
+  for(const e of s.effects)if(e.floor||['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){c.globalAlpha=Math.min(1,e.life/60);if(e.floor){c.save();c.translate(e.x,e.y);c.scale(1,.6);sprite(c,e.kind,0,0);c.restore();}else sprite(c,e.kind,e.x,e.y);c.globalAlpha=1;}
   for(const b of s.barrels)if(b.kind==='mine'||b.kind==='chargepack')sprite(c,b.kind==='mine'?'Object.Mine':'Object.ChargePack',b.x,b.y+b.z*PROJECTION,b.animation);
   for(const corpse of s.corpses){const age=s.tick-corpse.deadAt;person(c,corpse.character,age<15?'dying':'dead',corpse,s.tick,age);}
-  for(const p of s.players.filter(p=>!p.alive))person(c,p.character,s.tick-p.deadAt<15?'dying':'dead',p,s.tick,s.tick-p.deadAt);
+  for(const p of [...s.players,...s.zombies].filter(p=>p.body.floor&&p.body.phase!=='respawn')){c.globalAlpha=p.body.alpha;person(c,p.seat?p.character:p.devil?'devil':'zombie',p.body.action,p,s.tick,undefined,undefined,Math.floor(p.body.frame));c.globalAlpha=1;}
   for(const p of s.pickups)if(p.life>50||s.tick%6<3)sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
-  const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.filter((z:any)=>z.ai.registered).map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>p.alive).map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
+  const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.filter((z:any)=>z.ai.registered&&!z.body.floor).map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>!p.body.floor&&p.body.phase!=='respawn').map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
     if(p.entity==='object'){c.globalAlpha=p.kind==='wall'?p.wallAlpha/100:1;sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y+p.z*PROJECTION,p.kind==='wall'?p.wallFrame:0);c.globalAlpha=1;continue;}
     if(p.entity==='human'){
-      const hit=s.tick-p.hitAt<5,action=hit?'hitfront':p.drawAction;
-      c.globalAlpha=p.invul>0&&s.tick%4<2?.55:1;person(c,p.character,action,p,s.tick,undefined,hit?undefined:p.drawFrame);c.globalAlpha=1;
-    }else{const hit=s.tick-p.hitAt<5,action=hit?'hitfront':p.ai.action;person(c,p.devil?'devil':'zombie',action,p,s.tick,undefined,undefined,hit?undefined:enemyRawFrame(p));}
+      if(p.invul>0&&p.invul%2)continue;
+      const normal=p.body.phase==='control',action=normal?p.drawAction:p.body.action;
+      c.globalAlpha=p.body.alpha;person(c,p.character,action,p,s.tick,undefined,normal?p.drawFrame:undefined,normal?undefined:Math.floor(p.body.frame));c.globalAlpha=1;
+    }else{const normal=p.body.phase==='normal',action=normal?p.ai.action:p.body.action;c.globalAlpha=p.body.alpha;person(c,p.devil?'devil':'zombie',action,p,s.tick,undefined,undefined,normal?enemyRawFrame(p):Math.floor(p.body.frame));c.globalAlpha=1;}
   }
   for(const b of s.bullets){
     if(b.tx!==undefined){c.strokeStyle=b.weapon===9?'#9f80ef':'#f3f0cf';c.lineWidth=b.weapon===9?2:1;c.beginPath();c.moveTo(b.x,b.y+b.z*PROJECTION);c.lineTo(b.tx,b.ty+b.z*PROJECTION);c.stroke();}
     else if(b.fireball)sprite(c,'Effect.FireBall',b.x,b.y+b.z*PROJECTION,b.animation);
     else sprite(c,b.clusterShell?'Shot.ClusterShell':b.weapon===4?'Shot.Grenade':'Shot.Rocket',b.x,b.y+(b.z||0)*PROJECTION,s.tick/2,1,b.weapon===7?Math.atan2(b.vy,b.vx):0);
   }
-  for(const e of s.effects)if(!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){
+  for(const e of s.effects)if(!e.floor&&!['Effect.BloodPool','Effect.ScorchMark'].includes(e.kind)){
     if(e.kind==='Effect.MuzzleFlash'){sprite(c,e.spriteKey,e.x,e.y+e.z*PROJECTION,0,1,e.angle);continue;}
     if(e.kind==='Effect.SmokeCloud'&&s.tick<e.born)continue;
     const meta=(data.objects as any)[e.kind],frame=e.kind==='Effect.Explosion'?explosionFrame(s.tick,e.born):e.kind==='Effect.SmokeCloud'?smokeFrame(s.tick,e.born,meta.frames):(1-e.life/e.total)*(meta?.frames||1);
@@ -87,7 +92,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   c.fillStyle='#dddac3';c.font='17px monospace';c.fillText(`SCORE ${s.score.toLocaleString()}   ×${s.combo}`,430,28);
   c.fillStyle='#b6baa9';c.font='14px sans-serif';c.textAlign='right';c.fillText(map.label+'  ·  共享视野',WIDTH-20,28);c.textAlign='left';
   for(const p of s.players){const x=20+(p.seat-1)*WIDTH/4, gun=WEAPONS[p.weapon];c.fillStyle=['#9ac8ff','#f1d585','#9edc9c','#e7a5ad'][p.seat-1];c.font='bold 15px sans-serif';
-    c.fillText(`P${p.seat}  ${p.alive?Math.ceil(p.hp)+' HP':'倒地 · '+Math.ceil(p.respawn/25)+'s'}`,x,52);
+    c.fillText(`P${p.seat}  ${p.alive?Math.max(0,Math.ceil(p.hp))+' HP':'倒地 · '+Math.ceil(p.respawn/25)+'s'}`,x,52);
     c.fillStyle='#ddd';c.font='14px sans-serif';c.fillText(`${gun.name}  ${p.ammo<0?'∞':p.ammo}  ·  ${p.kills} 击杀`,x,73);
   }
   if(s.messageUntil>s.tick&&s.phase==='playing'){c.font='bold 19px sans-serif';c.textAlign='center';const w=c.measureText(s.message).width+40;c.fillStyle='#20251fcc';c.fillRect((WIDTH-w)/2,HUD+18,w,36);c.fillStyle='#f3e5ac';c.fillText(s.message,WIDTH/2,HUD+43);c.textAlign='left';}
@@ -111,7 +116,8 @@ export function confirm(s:State):void {
     if(event.name==='World.End.wav'&&playing.size>=12){const oldest=[...playing].find(audio=>!ambient.has(audio));if(oldest){oldest.pause();playing.delete(oldest);}}
     if(enabled&&volume>0&&s.tick-event.tick<=5&&playing.size<12){
       const file=(data.audio as Record<string,string>)[event.name];if(!file)continue;
-      const audio=new Audio(base+file);gain.set(audio,1);audio.volume=volume;playing.add(audio);
+      const nativeGain=/^Creature\.Zombie\.Ambience\./.test(event.name)?.4:/^Creature\.Player\.Scream\./.test(event.name)?.7:event.name==='Creature.Zombie.Hit.wav'?.3:1;
+      const audio=new Audio(base+file);gain.set(audio,nativeGain);audio.volume=volume*nativeGain;playing.add(audio);
       const done=()=>playing.delete(audio);audio.onended=done;audio.onerror=done;void audio.play().catch(done);
     }
   }

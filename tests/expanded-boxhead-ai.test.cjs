@@ -46,7 +46,7 @@ test('mine detection uses the reserved destination32px away before the creature 
 });
 
 test('dead creatures release their reserved flag instead of leaving a permanent blocked tile or armed mine trigger',()=>{
- const s=arena(),z=enemy(s);ticks(s);const reserved=z.ai.reserved;assert(s.enemyCells[reserved]);z.hp=0;ticks(s);assert(!s.enemyCells[reserved]);assert.equal(s.zombies.length,0);assert(a.valid(s));
+ const s=arena(),z=enemy(s);ticks(s);const reserved=z.ai.reserved;assert(s.enemyCells[reserved]);z.hp=0;ticks(s);assert(!s.enemyCells[reserved]);assert.equal(z.body.phase,'dying');assert.equal(s.zombies.length,1);assert(a.valid(s));ticks(s,67);assert.equal(s.zombies.length,0);
 });
 
 test('diagonal navigation includes both side cells; a noncollidable registered wall still blocks routing',()=>{
@@ -77,7 +77,7 @@ test('fireballs accelerate by1.02, retain original height and have no arbitrary4
 });
 
 test('normal fireball impact affects expanded grid cells at the old position, not only the touched player',()=>{
- const s=arena(),p=s.players[0];p.x=160;p.invul=0;const q={...p,seat:2,x:176,character:'bond',inventory:[...p.inventory],unlocked:[...p.unlocked]};s.players.push(q);const b=fireball(s);ticks(s);assert.equal(s.bullets.length,0);assert.equal(b.x,144);assert.equal(p.hp,150);assert.equal(q.hp,150);assert(!s.effects.some(e=>e.kind==='Effect.Explosion'));assert(a.valid(s));
+ const s=arena(),p=s.players[0];p.x=160;p.invul=0;const q={...p,id:++s.nextId,body:JSON.parse(JSON.stringify(p.body)),seat:2,x:176,character:'bond',inventory:[...p.inventory],unlocked:[...p.unlocked]};s.players.push(q);const b=fireball(s);ticks(s);assert.equal(s.bullets.length,0);assert.equal(b.x,144);assert.equal(p.hp,150);assert.equal(q.hp,150);assert(!s.effects.some(e=>e.kind==='Effect.Explosion'));assert(a.valid(s));
 });
 
 test('object-clearing fireballs use10000 DevilAttack damage and do not directly damage players',()=>{

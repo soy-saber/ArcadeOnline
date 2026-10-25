@@ -509,7 +509,7 @@
       }
     }
     if (s.tick >= s.nextCrate && s.crates.length < 3) {
-      const used = s.reachable.filter((cell2) => !s.crates.some((c) => Math.floor(c.x / CELL) === cell2[0] && Math.floor(c.y / CELL) === cell2[1]));
+      const used = s.reachable.filter((cell3) => !s.crates.some((c) => Math.floor(c.x / CELL) === cell3[0] && Math.floor(c.y / CELL) === cell3[1]));
       if (used.length) {
         const [x, y] = used[integer(s, used.length)];
         s.crates.push({ id: s.nextId++, x: (x + 0.5) * CELL, y: (y + 0.5) * CELL, weapon: WEAPONS2[integer(s, WEAPONS2.length)] });
@@ -1727,16 +1727,16 @@
     for (let i = 0; i < s.blasts.length; i++) {
       const b = s.blasts[i];
       if (b.until > s.tick) continue;
-      for (const cell2 of b.fires) {
-        s.flames[cell2] = 0;
-        s.owners[cell2] = 0;
+      for (const cell3 of b.fires) {
+        s.flames[cell3] = 0;
+        s.owners[cell3] = 0;
       }
       s.blasts.splice(i, 1);
       const skipped = s.blasts[i];
       if (skipped) {
         skipped.delay++;
         skipped.until++;
-        for (const cell2 of skipped.fires) if (s.flames[cell2] > 0) s.flames[cell2] = Math.max(s.flames[cell2], skipped.until);
+        for (const cell3 of skipped.fires) if (s.flames[cell3] > 0) s.flames[cell3] = Math.max(s.flames[cell3], skipped.until);
       }
     }
   }
@@ -1746,7 +1746,7 @@
   }
   function validBlasts(s) {
     const int = (v, min, max) => Number.isSafeInteger(v) && v >= min && v <= max;
-    return Array.isArray(s.blasts) && s.blasts.length <= 64 && new Set(s.blasts.map((b) => b?.id)).size === s.blasts.length && s.blasts.every((b) => b && int(b.id, 1, s.nextId - 1) && s.players.some((p) => p.seat === b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && Number.isFinite(b.px) && b.px >= 0 && b.px <= 480 && Number.isFinite(b.py) && b.py >= 0 && b.py <= 420 && int(b.born, 0, s.tick) && int(b.delay, 0, MAX_BLAST_DELAY) && b.until === b.born + BLAST_TICKS + b.delay && b.until > s.tick && ["normal", "mine"].includes(b.kind) && typeof b.blocking === "boolean" && Array.isArray(b.tiles) && b.tiles.length >= 1 && b.tiles.length <= 41 && new Set(b.tiles.map((t) => t && t.x + "," + t.y)).size === b.tiles.length && b.tiles.every((t) => t && int(t.x, 0, 16) && int(t.y, 0, 14) && int(t.frame, 1, 9)) && b.tiles[0].x === b.x && b.tiles[0].y === b.y && b.tiles[0].frame === 1 && Array.isArray(b.fires) && b.fires.length === b.tiles.length + (b.kind === "mine" ? [-1, 1].flatMap((dx) => [-1, 1].map((dy) => [b.x + dx, b.y + dy])).filter(([x, y]) => x >= 0 && x <= 16 && y >= 0 && y <= 14).length : 0) && new Set(b.fires).size === b.fires.length && b.fires.every((cell2) => int(cell2, 0, 254)) && b.tiles.every((t) => b.fires.includes(t.y * 17 + t.x)) && (b.kind !== "mine" || [-1, 1].every((dx) => [-1, 1].every((dy) => b.x + dx < 0 || b.x + dx > 16 || b.y + dy < 0 || b.y + dy > 14 || b.fires.includes((b.y + dy) * 17 + b.x + dx)))));
+    return Array.isArray(s.blasts) && s.blasts.length <= 64 && new Set(s.blasts.map((b) => b?.id)).size === s.blasts.length && s.blasts.every((b) => b && int(b.id, 1, s.nextId - 1) && s.players.some((p) => p.seat === b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && Number.isFinite(b.px) && b.px >= 0 && b.px <= 480 && Number.isFinite(b.py) && b.py >= 0 && b.py <= 420 && int(b.born, 0, s.tick) && int(b.delay, 0, MAX_BLAST_DELAY) && b.until === b.born + BLAST_TICKS + b.delay && b.until > s.tick && ["normal", "mine"].includes(b.kind) && typeof b.blocking === "boolean" && Array.isArray(b.tiles) && b.tiles.length >= 1 && b.tiles.length <= 41 && new Set(b.tiles.map((t) => t && t.x + "," + t.y)).size === b.tiles.length && b.tiles.every((t) => t && int(t.x, 0, 16) && int(t.y, 0, 14) && int(t.frame, 1, 9)) && b.tiles[0].x === b.x && b.tiles[0].y === b.y && b.tiles[0].frame === 1 && Array.isArray(b.fires) && b.fires.length === b.tiles.length + (b.kind === "mine" ? [-1, 1].flatMap((dx) => [-1, 1].map((dy) => [b.x + dx, b.y + dy])).filter(([x, y]) => x >= 0 && x <= 16 && y >= 0 && y <= 14).length : 0) && new Set(b.fires).size === b.fires.length && b.fires.every((cell3) => int(cell3, 0, 254)) && b.tiles.every((t) => b.fires.includes(t.y * 17 + t.x)) && (b.kind !== "mine" || [-1, 1].every((dx) => [-1, 1].every((dy) => b.x + dx < 0 || b.x + dx > 16 || b.y + dy < 0 || b.y + dy > 14 || b.fires.includes((b.y + dy) * 17 + b.x + dx)))));
   }
 
   // src/expanded/bomb2-vehicle-art.json
@@ -17883,8 +17883,8 @@
       onHit: onHit ? [onHit] : [],
       passable(x, y) {
         if (x < 0 || x >= 17 || y < 0 || y >= 15) return false;
-        const cell2 = s.board[y * 17 + x];
-        if (cell2 === 1 || cell2 === 2 && actor?.vehicle !== 11) return false;
+        const cell3 = s.board[y * 17 + x];
+        if (cell3 === 1 || cell3 === 2 && actor?.vehicle !== 11) return false;
         if (s.bombs.some((b) => b !== ignore && b.slide < 0 && b.x === x && b.y === y && b.kind !== "mine")) return false;
         if (burningBombAt(s, x, y, true, ending)) return false;
         if ((actor?.vehicle === 12 || actor?.vehicle === 13) && s.hazards.some((h) => h.kind === "SpringBoard" && h.x === x && h.y === y)) return false;
@@ -25143,12 +25143,12 @@
   var DIRECTION_NAMES = ["left", "up", "right", "down"];
   function enterLandform(s, p) {
     if (p.travel || p.vehicle === 11) return;
-    const cell2 = p.y * 17 + p.x;
-    if (p.sandCell !== cell2) p.sandCell = -1;
+    const cell3 = p.y * 17 + p.x;
+    if (p.sandCell !== cell3) p.sandCell = -1;
     const index3 = s.hazards.findIndex((h2) => h2.x === p.x && h2.y === p.y), h = s.hazards[index3];
     if (!h) return;
-    if (h.kind === "QuickSand" && h.target !== void 0 && p.sandCell !== cell2) {
-      p.sandCell = cell2;
+    if (h.kind === "QuickSand" && h.target !== void 0 && p.sandCell !== cell3) {
+      p.sandCell = cell3;
       p.travel = { kind: "sand", born: s.tick, source: index3, target: h.target, alpha: 1 };
       p.moveDir = -1;
       pauseAura(p);
@@ -25425,17 +25425,17 @@
       }
     }
     for (let y = 0; y < HEIGHT3; y++) for (let x = 0; x < WIDTH3; x++) {
-      const cell2 = index2(x, y), p = params[cell2], r = random2(s);
+      const cell3 = index2(x, y), p = params[cell3], r = random2(s);
       if (p.mid) {
-        s.board[cell2] = 1;
-        s.tiles[cell2] = p.mid === 3 ? map.begin + 8 : 0;
+        s.board[cell3] = 1;
+        s.tiles[cell3] = p.mid === 3 ? map.begin + 8 : 0;
       } else if (r > p.empty && r < p.empty + p.fixed) {
-        s.board[cell2] = 1;
-        s.tiles[cell2] = map.begin + 5 + (p.frame >= 0 ? p.frame : Math.floor(random2(s) * 2));
+        s.board[cell3] = 1;
+        s.tiles[cell3] = map.begin + 5 + (p.frame >= 0 ? p.frame : Math.floor(random2(s) * 2));
       } else if (r > p.empty + p.fixed && r < p.empty + p.fixed + p.crate) {
         const roll = Math.floor(random2(s) * 3);
-        s.board[cell2] = 2;
-        s.tiles[cell2] = map.begin + (roll ? roll + s.crateOffset : 0);
+        s.board[cell3] = 2;
+        s.tiles[cell3] = map.begin + (roll ? roll + s.crateOffset : 0);
       }
     }
     const used = /* @__PURE__ */ new Set();
@@ -25470,21 +25470,21 @@
     const cells = s.board.map((v, i) => v === 0 && !s.items[i] && !s.players.some((p) => index2(p.x, p.y) === i) ? i : -1).filter((i) => i >= 0);
     if (cells.length) s.items[cells[Math.floor(random2(s) * cells.length)]] = 9;
   }
-  function breakCrate(s, cell2) {
-    if (s.board[cell2] !== 2) return;
-    s.board[cell2] = 0;
-    s.tiles[cell2] = 0;
-    s.crateBursts.push({ cell: cell2, born: s.tick, at: s.tick + bomb2_brick_default.frames });
+  function breakCrate(s, cell3) {
+    if (s.board[cell3] !== 2) return;
+    s.board[cell3] = 0;
+    s.tiles[cell3] = 0;
+    s.crateBursts.push({ cell: cell3, born: s.tick, at: s.tick + bomb2_brick_default.frames });
   }
   function finishCrates(s) {
     for (const burst2 of s.crateBursts) {
       if (burst2.at > s.tick) continue;
-      const cell2 = burst2.cell;
-      if (s.board[cell2] || s.items[cell2]) continue;
+      const cell3 = burst2.cell;
+      if (s.board[cell3] || s.items[cell3]) continue;
       const pool = [...PROP_POOLS[s.mode], ...s.vehiclesLeft > 0 ? s.vehiclePool : []];
       if (s.items.filter((item) => item !== 0).length < 32 && random2(s) < 0.6) {
         const item = pool[Math.floor(random2(s) * pool.length)];
-        s.items[cell2] = item;
+        s.items[cell3] = item;
         if (item >= 11 && item <= 14) s.vehiclesLeft--;
       }
     }
@@ -25499,15 +25499,15 @@
   }
   function ignite(s, blast2, x, y, credit = true, diagonal = false) {
     if (!inside(x, y) || s.board[index2(x, y)] === 1 && !diagonal) return;
-    const cell2 = index2(x, y);
-    blast2.fires.push(cell2);
-    if (credit && !s.items[cell2]) {
+    const cell3 = index2(x, y);
+    blast2.fires.push(cell3);
+    if (credit && !s.items[cell3]) {
       for (const p of s.players) if (p.alive && !p.respawnAt && p.invulnerable === 0 && p.travel?.kind !== "sand" && p.x === x && p.y === y) scoreHit(s, p, blast2.owner);
     }
-    if (s.flames[cell2] <= s.tick) s.owners[cell2] = blast2.owner;
-    s.flames[cell2] = s.tick + BLAST_TICKS;
-    if (s.board[cell2] === 2) breakCrate(s, cell2);
-    else s.items[cell2] = 0;
+    if (s.flames[cell3] <= s.tick) s.owners[cell3] = blast2.owner;
+    s.flames[cell3] = s.tick + BLAST_TICKS;
+    if (s.board[cell3] === 2) breakCrate(s, cell3);
+    else s.items[cell3] = 0;
     for (const b of s.bombs) if (b.slide < 0 && b.x === x && b.y === y) b.explodeAt = Math.min(b.explodeAt, s.tick);
   }
   function burst(s, b, exploded, blocking = true) {
@@ -25553,9 +25553,9 @@
     return true;
   }
   function take(s, p) {
-    const cell2 = index2(p.x, p.y), item = s.items[cell2];
+    const cell3 = index2(p.x, p.y), item = s.items[cell3];
     if (!item) return;
-    s.items[cell2] = 0;
+    s.items[cell3] = 0;
     sound(s, "pickup");
     if (item === 1) p.capacity = Math.min(9, p.capacity + 1);
     else if (item === 2) p.range = Math.min(5, p.range + 1);
@@ -25640,7 +25640,7 @@
       s.scores[p.seat - 1] = p.points;
     }
     if (s.mode === "color") {
-      for (let cell2 = 0; cell2 < s.colors.length; cell2++) if (s.colors[cell2] === p.seat) s.colors[cell2] = 0;
+      for (let cell3 = 0; cell3 < s.colors.length; cell3++) if (s.colors[cell3] === p.seat) s.colors[cell3] = 0;
       p.points = 0;
       s.scores[p.seat - 1] = 0;
     }
@@ -25696,9 +25696,9 @@
       if (kind === 15) {
         const tx = x + dx, ty = y + dy;
         if (inside(tx, ty)) {
-          const cell2 = index2(tx, ty);
-          if (s.board[cell2] === 2) breakCrate(s, cell2);
-          else if (s.board[cell2] === 0) s.items[cell2] = 0;
+          const cell3 = index2(tx, ty);
+          if (s.board[cell3] === 2) breakCrate(s, cell3);
+          else if (s.board[cell3] === 0) s.items[cell3] = 0;
           for (const b of s.bombs) if (b.slide < 0 && b.x === tx && b.y === ty) b.explodeAt = s.tick;
           for (const q of s.players) if (q.travel?.kind !== "sand" && q.seat !== p.seat && (q.x === tx && q.y === ty || q.x === x && q.y === y)) hit(s, q, p.seat);
         }
@@ -25710,8 +25710,8 @@
         if (kind === 20) for (let d = 1; d < Math.max(WIDTH3, HEIGHT3); d++) {
           const tx = x + dx * d, ty = y + dy * d;
           if (!inside(tx, ty) || s.board[index2(tx, ty)] === 1) break;
-          const cell2 = index2(tx, ty), blocked2 = s.board[cell2] === 2 || burningBombAt(s, tx, ty) || s.bombs.some((b) => b.slide < 0 && b.x === tx && b.y === ty);
-          effect2.cells.push(cell2);
+          const cell3 = index2(tx, ty), blocked2 = s.board[cell3] === 2 || burningBombAt(s, tx, ty) || s.bombs.some((b) => b.slide < 0 && b.x === tx && b.y === ty);
+          effect2.cells.push(cell3);
           if (blocked2) break;
         }
         s.effects.push(effect2);
@@ -25729,11 +25729,11 @@
           effect2.cells.push(index2(x, y));
         }
       }
-      for (const cell2 of effect2.cells) {
-        const x = cell2 % WIDTH3, y = Math.floor(cell2 / WIDTH3);
+      for (const cell3 of effect2.cells) {
+        const x = cell3 % WIDTH3, y = Math.floor(cell3 / WIDTH3);
         if (effect2.kind === 21 || effect2.born === s.tick) {
-          if (s.board[cell2] === 2) breakCrate(s, cell2);
-          else s.items[cell2] = 0;
+          if (s.board[cell3] === 2) breakCrate(s, cell3);
+          else s.items[cell3] = 0;
           for (const b of s.bombs) if (b.slide < 0 && b.x === x && b.y === y) b.explodeAt = s.tick;
         }
         for (const q of s.players) if (q.travel?.kind !== "sand" && q.seat !== effect2.owner && q.x === x && q.y === y) hit(s, q, effect2.owner);
@@ -25879,8 +25879,8 @@
       const cells = s.board.map((v, i) => v === 0 && !s.items[i] && Math.abs(i % WIDTH3 - h.x) + Math.abs(Math.floor(i / WIDTH3) - h.y) <= 4 ? i : -1).filter((i) => i >= 0);
       const pool = PROP_POOLS[s.mode];
       for (let i = 0; i < 2 && cells.length; i++) {
-        const cell2 = cells.splice(Math.floor(random2(s) * cells.length), 1)[0];
-        s.items[cell2] = pool[Math.floor(random2(s) * pool.length)];
+        const cell3 = cells.splice(Math.floor(random2(s) * cells.length), 1)[0];
+        s.items[cell3] = pool[Math.floor(random2(s) * pool.length)];
       }
     }
     if (s.mode === "collect" && s.tick % COIN_INTERVAL === 0) spawnCoin(s);
@@ -25925,7 +25925,7 @@
     if (!Array.isArray(s.bombs) || s.bombs.length > 36 || !s.bombs.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && int(b.x, 0, 16) && int(b.y, 0, 14) && int(b.range, 1, 10) && ["normal", "remote", "mine", "thrown"].includes(b.kind) && int(b.slide, -1, 3) && int(b.explodeAt, 0, ROUND_TICKS3 + REMOTE_FUSE) && int(b.armedAt, 0, ROUND_TICKS3 + 20))) return false;
     if (!Array.isArray(s.shots) || s.shots.length > 64 || !s.shots.every((b) => b && int(b.id, 1, s.nextId - 1) && owns(b.owner) && Number.isFinite(b.x) && b.x >= 0 && b.x <= 17 && Number.isFinite(b.y) && b.y >= 0 && b.y <= 15 && Number.isFinite(b.vx) && Math.abs(b.vx) <= 1 && Number.isFinite(b.vy) && Math.abs(b.vy) <= 1 && [16, 19].includes(b.kind) && int(b.until, 0, ROUND_TICKS3 + HZ4 * 4))) return false;
     if (!s.players.every((p) => int(p.actionLock, 0, 25) && Array.isArray(p.weaponStock) && p.weaponStock.length <= 32 && p.weaponStock.every((kind) => Object.prototype.hasOwnProperty.call(WEAPON_USES, kind)) && (p.attack === null || p.attack && [15, 16, 19, 20, 21].includes(p.attack.kind) && int(p.attack.dir, 0, 3) && int(p.attack.x, 0, 16) && int(p.attack.y, 0, 14) && int(p.attack.born, 0, s.tick) && int(p.attack.at, p.attack.born, ROUND_TICKS3 + 25)))) return false;
-    if (!Array.isArray(s.effects) || s.effects.length > 64 || !s.effects.every((e) => e && int(e.id, 1, s.nextId - 1) && owns(e.owner) && [20, 21].includes(e.kind) && int(e.x, 0, 16) && int(e.y, 0, 14) && int(e.dir, 0, 3) && int(e.born, 0, s.tick) && int(e.until, e.born, ROUND_TICKS3 + 25) && Array.isArray(e.cells) && e.cells.length <= 17 && e.cells.every((cell2) => int(cell2, 0, 254)))) return false;
+    if (!Array.isArray(s.effects) || s.effects.length > 64 || !s.effects.every((e) => e && int(e.id, 1, s.nextId - 1) && owns(e.owner) && [20, 21].includes(e.kind) && int(e.x, 0, 16) && int(e.y, 0, 14) && int(e.dir, 0, 3) && int(e.born, 0, s.tick) && int(e.until, e.born, ROUND_TICKS3 + 25) && Array.isArray(e.cells) && e.cells.length <= 17 && e.cells.every((cell3) => int(cell3, 0, 254)))) return false;
     if (typeof s.tram !== "number" || !Number.isFinite(s.tram) || s.tram < 0 || s.tram > 100) return false;
     const map = MAPS.find((m) => m.id === s.mapId);
     return Array.isArray(s.hazards) && s.hazards.length === map.hazards.length && s.hazards.every((h, i) => JSON.stringify(h) === JSON.stringify(map.hazards[i]));
@@ -25967,7 +25967,7 @@
   function render2(canvas, s, seat) {
     localSeat = seat;
     const ctx = canvas.getContext("2d");
-    const cell2 = 30, left = 45, top = 66;
+    const cell3 = 30, left = 45, top = 66;
     ctx.clearRect(0, 0, BOMB2_CANVAS_WIDTH, 550);
     ctx.fillStyle = "#302f46";
     ctx.fillRect(0, 0, BOMB2_CANVAS_WIDTH, 550);
@@ -25995,16 +25995,16 @@
     ctx.font = "15px system-ui";
     ctx.fillText(`${THEMES[s.theme]} \xB7 ${["\u751F\u5B58", "\u51FB\u6740 10", "\u91D1\u5E01 10", "\u5360\u5730 50"][MODES.indexOf(s.mode)]}`, 180, 31);
     ctx.fillText(`${Math.max(0, Math.ceil((ROUND_TICKS3 - s.tick) / HZ4))} \u79D2`, 500, 31);
-    draw(ctx, "background-" + s.theme, left, top, WIDTH3 * cell2, HEIGHT3 * cell2);
+    draw(ctx, "background-" + s.theme, left, top, WIDTH3 * cell3, HEIGHT3 * cell3);
     for (const burst2 of s.crateBursts) {
       const im = asset2("brick-burst");
       if (im.complete && im.naturalWidth) {
         const frame = Math.min(bomb2_brick_default.frames - 1, s.tick - burst2.born);
-        ctx.drawImage(im, frame * bomb2_brick_default.w, 0, bomb2_brick_default.w, bomb2_brick_default.h, left + (burst2.cell % WIDTH3 + 0.5) * cell2 - bomb2_brick_default.w / 2, top + (Math.floor(burst2.cell / WIDTH3) + 1) * cell2 - bomb2_brick_default.h, bomb2_brick_default.w, bomb2_brick_default.h);
+        ctx.drawImage(im, frame * bomb2_brick_default.w, 0, bomb2_brick_default.w, bomb2_brick_default.h, left + (burst2.cell % WIDTH3 + 0.5) * cell3 - bomb2_brick_default.w / 2, top + (Math.floor(burst2.cell / WIDTH3) + 1) * cell3 - bomb2_brick_default.h, bomb2_brick_default.w, bomb2_brick_default.h);
       }
     }
     for (const [i, h] of s.hazards.entries()) {
-      const px = left + h.x * cell2, py = top + h.y * cell2;
+      const px = left + h.x * cell3, py = top + h.y * cell3;
       if (h.kind === "QuickSand") {
         landTimeline(ctx, "sand-base-" + h.dir, sandFrame(s.tick), px, py);
         const light = bomb2_landform_art_default.lights[String(h.dir)], m = light.matrix;
@@ -26013,30 +26013,30 @@
         ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
         landTimeline(ctx, "sand-light-" + h.dir, s.sandLights[i] ? s.tick - s.sandLights[i] : 0, 0, 0);
         ctx.restore();
-      } else if (h.kind === "Transmittal") draw(ctx, "conveyor-" + conveyorFrame(h, s.tick), px, py, cell2, cell2);
-      else if (h.kind === "Rail") draw(ctx, "rail-" + h.dir, px, py, cell2, cell2);
-      else if (h.kind === "SpringBoard") draw(ctx, "brick-40", px, py, cell2, cell2);
-      else if (h.kind === "IceFace") draw(ctx, "brick-30", px, py, cell2, cell2);
+      } else if (h.kind === "Transmittal") draw(ctx, "conveyor-" + conveyorFrame(h, s.tick), px, py, cell3, cell3);
+      else if (h.kind === "Rail") draw(ctx, "rail-" + h.dir, px, py, cell3, cell3);
+      else if (h.kind === "SpringBoard") draw(ctx, "brick-40", px, py, cell3, cell3);
+      else if (h.kind === "IceFace") draw(ctx, "brick-30", px, py, cell3, cell3);
       else if (h.kind === "TurnTable") draw(ctx, "turntable-1", px - 13, py - 17, 90, 90);
     }
     for (let y = 0; y < HEIGHT3; y++) for (let x = 0; x < WIDTH3; x++) {
-      const i = index2(x, y), px = left + x * cell2, py = top + y * cell2;
+      const i = index2(x, y), px = left + x * cell3, py = top + y * cell3;
       if (s.colors[i]) {
         ctx.fillStyle = territoryColor(s, s.colors[i]);
-        ctx.fillRect(px, py, cell2, cell2);
+        ctx.fillRect(px, py, cell3, cell3);
       }
       if (s.board[i] && s.tiles[i]) {
         const b = BRICKS[s.tiles[i]];
         if (b?.w) draw(ctx, "brick-" + s.tiles[i], px + b.x, py + b.y, b.w, b.h);
       }
-      if (s.items[i]) draw(ctx, "prop-" + s.items[i], px + 3, py + 3, cell2 - 6, cell2 - 6);
+      if (s.items[i]) draw(ctx, "prop-" + s.items[i], px + 3, py + 3, cell3 - 6, cell3 - 6);
     }
     for (const blast2 of s.blasts) for (const tile of blast2.tiles) {
       const sprite3 = blastSprite(blast2.kind, tile.frame, s.tick - blast2.born), img2 = asset2(sprite3.name), m = sprite3.meta;
       if (!img2.complete || !img2.naturalWidth) continue;
       const [a, b, c, d, tx, ty] = sprite3.matrix;
       ctx.save();
-      ctx.translate(left + blast2.px + (tile.x - blast2.x) * cell2, top + blast2.py + (tile.y - blast2.y) * cell2);
+      ctx.translate(left + blast2.px + (tile.x - blast2.x) * cell3, top + blast2.py + (tile.y - blast2.y) * cell3);
       ctx.transform(a, b, c, d, tx, ty);
       ctx.drawImage(img2, sprite3.frame * m.w, 0, m.w, m.h, m.x, m.y, m.w, m.h);
       ctx.restore();
@@ -26045,7 +26045,7 @@
       const pos = walkingPosition(b), kind = b.kind === "remote" ? "remote" : b.kind === "mine" ? "mine" : "normal", meta = bomb2_bomb_art_default.timelines[kind], img2 = asset2("native-bomb-" + kind);
       if (img2.complete && img2.naturalWidth) {
         const frame = Math.max(0, s.tick - (b.born ?? 0)) % meta.frames;
-        ctx.drawImage(img2, frame * meta.w, 0, meta.w, meta.h, left + pos.x * cell2 + meta.x, top + pos.y * cell2 + meta.y, meta.w, meta.h);
+        ctx.drawImage(img2, frame * meta.w, 0, meta.w, meta.h, left + pos.x * cell3 + meta.x, top + pos.y * cell3 + meta.y, meta.w, meta.h);
       }
     }
     for (const effect2 of s.effects) {
@@ -26053,60 +26053,60 @@
       if (effect2.kind === 21) {
         ctx.save();
         ctx.beginPath();
-        for (const i of effect2.cells) ctx.rect(left + i % WIDTH3 * cell2, top + Math.floor(i / WIDTH3) * cell2, cell2, cell2);
+        for (const i of effect2.cells) ctx.rect(left + i % WIDTH3 * cell3, top + Math.floor(i / WIDTH3) * cell3, cell3, cell3);
         ctx.clip();
-        ctx.translate(left + (effect2.x + 0.5) * cell2, top + (effect2.y + 0.5) * cell2);
+        ctx.translate(left + (effect2.x + 0.5) * cell3, top + (effect2.y + 0.5) * cell3);
         ctx.rotate([Math.PI, -Math.PI / 2, 0, Math.PI / 2][effect2.dir]);
         const meta = KILL_ART.fire, img2 = asset2("kill-fire");
-        if (img2.complete && img2.naturalWidth) ctx.drawImage(img2, Math.min(meta.frames - 1, s.tick - effect2.born) * meta.w, 0, meta.w, meta.h, cell2 / 2, -meta.h / 2, meta.w, meta.h);
+        if (img2.complete && img2.naturalWidth) ctx.drawImage(img2, Math.min(meta.frames - 1, s.tick - effect2.born) * meta.w, 0, meta.w, meta.h, cell3 / 2, -meta.h / 2, meta.w, meta.h);
         ctx.restore();
       }
       for (const i of effect2.cells) {
-        const x = left + i % WIDTH3 * cell2, y = top + Math.floor(i / WIDTH3) * cell2;
+        const x = left + i % WIDTH3 * cell3, y = top + Math.floor(i / WIDTH3) * cell3;
         if (effect2.kind === 20) {
           const [dx] = DIRS2[effect2.dir];
-          ctx.fillRect(x + (dx ? 0 : 12), y + (dx ? 12 : 0), dx ? cell2 : 6, dx ? 6 : cell2);
+          ctx.fillRect(x + (dx ? 0 : 12), y + (dx ? 12 : 0), dx ? cell3 : 6, dx ? 6 : cell3);
         } else if (!asset2("kill-fire").naturalWidth) {
-          ctx.fillRect(x + 3, y + 4, cell2 - 6, cell2 - 8);
+          ctx.fillRect(x + 3, y + 4, cell3 - 6, cell3 - 8);
         }
       }
     }
     for (const shot2 of s.shots) {
       ctx.fillStyle = shot2.kind === 20 ? "#ff4aaa" : "#ffe44e";
       ctx.beginPath();
-      ctx.arc(left + shot2.x * cell2, top + shot2.y * cell2, shot2.kind === 20 ? 3 : 5, 0, Math.PI * 2);
+      ctx.arc(left + shot2.x * cell3, top + shot2.y * cell3, shot2.kind === 20 ? 3 : 5, 0, Math.PI * 2);
       ctx.fill();
     }
     const rails = s.hazards.filter((h) => h.kind === "Rail");
     if (rails.length) {
       const pos = Math.floor(s.tram), part = s.tram - pos, start2 = rails[pos % rails.length], end = rails[(pos + 1) % rails.length];
-      draw(ctx, "tramcar-1", left + (start2.x + (end.x - start2.x) * part) * cell2, top + (start2.y + (end.y - start2.y) * part) * cell2 - 10, cell2, cell2 + 10);
+      draw(ctx, "tramcar-1", left + (start2.x + (end.x - start2.x) * part) * cell3, top + (start2.y + (end.y - start2.y) * part) * cell3 - 10, cell3, cell3 + 10);
     }
     for (const p of [...s.players].sort((a, b) => a.y - b.y)) {
       ctx.globalAlpha = 1;
       if (!p.alive || p.respawnAt > s.tick) {
-        if (p.deaths > 0 && s.tick - p.diedAt < RESPAWN_TICKS) timeline(ctx, "dead-" + (p.character - 1), s.tick - p.diedAt, left + (p.x + 0.5) * cell2, top + (p.y + 1) * cell2, true);
+        if (p.deaths > 0 && s.tick - p.diedAt < RESPAWN_TICKS) timeline(ctx, "dead-" + (p.character - 1), s.tick - p.diedAt, left + (p.x + 0.5) * cell3, top + (p.y + 1) * cell3, true);
         continue;
       }
-      const pos = walkingPosition(p), x = left + (pos.x + 0.5) * cell2, y = top + (pos.y + 1) * cell2;
+      const pos = walkingPosition(p), x = left + (pos.x + 0.5) * cell3, y = top + (pos.y + 1) * cell3;
       const sprite3 = jumpSprite(p, s.tick) || rideSprite(p) || nativeHero(p, s.tick), img2 = asset2(sprite3.name), m = sprite3.meta;
       ctx.globalAlpha = bodyAlpha(p) * travelAlpha(p);
       if (img2.complete && img2.naturalWidth) {
-        if (p.aura?.glow) ctx.drawImage(filteredFrame(img2, sprite3.name, sprite3.frame, m.w, m.h, p.aura.glow), left + pos.x * cell2 + m.x, top + pos.y * cell2 + m.y);
-        else ctx.drawImage(img2, sprite3.frame * m.w, 0, m.w, m.h, left + pos.x * cell2 + m.x, top + pos.y * cell2 + m.y, m.w, m.h);
+        if (p.aura?.glow) ctx.drawImage(filteredFrame(img2, sprite3.name, sprite3.frame, m.w, m.h, p.aura.glow), left + pos.x * cell3 + m.x, top + pos.y * cell3 + m.y);
+        else ctx.drawImage(img2, sprite3.frame * m.w, 0, m.w, m.h, left + pos.x * cell3 + m.x, top + pos.y * cell3 + m.y, m.w, m.h);
       }
       ctx.globalAlpha = travelAlpha(p);
       if (shieldVisible(p)) {
         const shield = bomb2_protection_art_default.timelines.shield;
-        draw(ctx, "native-shield", left + pos.x * cell2 + shield.x, top + pos.y * cell2 + shield.y, shield.w, shield.h);
+        draw(ctx, "native-shield", left + pos.x * cell3 + shield.x, top + pos.y * cell3 + shield.y, shield.w, shield.h);
       }
       const intro = introSprite(p);
       if (intro) {
         const img3 = asset2(intro.name), m2 = intro.meta;
-        if (img3.complete && img3.naturalWidth) ctx.drawImage(img3, intro.frame * m2.w, 0, m2.w, m2.h, left + pos.x * cell2 + m2.x, top + pos.y * cell2 + m2.y, m2.w, m2.h);
+        if (img3.complete && img3.naturalWidth) ctx.drawImage(img3, intro.frame * m2.w, 0, m2.w, m2.h, left + pos.x * cell3 + m2.x, top + pos.y * cell3 + m2.y, m2.w, m2.h);
       }
       const equipped = bomb2Weapon(s, p);
-      if (equipped) weaponBadge(ctx, equipped, x, top + pos.y * cell2 + heroHead(p, s.tick) - 6, 15);
+      if (equipped) weaponBadge(ctx, equipped, x, top + pos.y * cell3 + heroHead(p, s.tick) - 6, 15);
       if (p.attack) {
         const names2 = { 15: "hammer", 16: "launcher", 19: "shotgun", 20: "laser-ready" };
         const name = names2[p.attack.kind];
@@ -26240,7 +26240,7 @@
   function stepRegistration(s) {
     for (const b of [...s.barrels].reverse()) {
       if (!["barrel", "wall"].includes(b.kind) || b.armed >= s.tick || b.hp <= 0) continue;
-      const playerOnCell = () => s.players.some((p) => p.alive && sameCell(p, b));
+      const playerOnCell = () => s.players.some((p) => sameCell(p, b));
       if (b.objectPhase === "init") {
         b.registered = true;
         if (playerOnCell()) b.objectPhase = "waiting";
@@ -26319,33 +26319,59 @@
   function blocked(s, x, y, radius = 11, ignore) {
     return mapBlocked(s, x, y, radius) || blockingObjects(s, ignore).some((b) => Math.hypot(b.x - x, b.y - y) < radius + b.radius);
   }
-  function move(s, p, dx, dy, radius = 0.45 * CELL4) {
-    const human = Number.isInteger(p.seat), mapRadius = radius * (human ? 0.85 : 1), objects = blockingObjects(s, p).reverse();
-    let x = p.x + dx, y = p.y + dy;
-    for (let pass = 0; pass < (human ? 3 : 1); pass++) {
-      let collision = false;
-      for (const b of objects) {
-        const distance = Math.hypot(x - b.x, y - b.y), limit = radius + b.radius;
-        if (distance < limit) {
-          const ux = distance ? (x - b.x) / distance : dx || dy ? -dx / Math.hypot(dx, dy) : 1;
-          const uy = distance ? (y - b.y) / distance : dx || dy ? -dy / Math.hypot(dx, dy) : 0;
-          x = b.x + ux * limit;
-          y = b.y + uy * limit;
-          collision = true;
-        }
+  function physicalRadius(p) {
+    return p.body ? p.body.radius : p.radius;
+  }
+  function resolveCircles(s, p, x, y, r, dx, dy) {
+    const map = room(s), left = Math.max(0, Math.round((x - r) / CELL4) - 1), right = Math.min(map.columns - 1, Math.round((x + r) / CELL4));
+    const top = Math.max(0, Math.round((y - r) / CELL4) - 1), bottom = Math.min(map.rows - 1, Math.round((y + r) / CELL4));
+    const index3 = (v) => Math.floor(v.y / CELL4) * map.columns + Math.floor(v.x / CELL4);
+    const things = [...blockingObjects(s, p), ...s.players, ...s.zombies.filter((z) => z.ai.registered)].filter((v) => v !== p && (v.body ? v.body.collidable : true) && Math.floor(v.x / CELL4) >= left && Math.floor(v.x / CELL4) <= right && Math.floor(v.y / CELL4) >= top && Math.floor(v.y / CELL4) <= bottom).sort((a, b) => index3(b) - index3(a) || (b.id ?? 0) - (a.id ?? 0));
+    let collided = false;
+    for (const b of things) {
+      const distance = Math.hypot(x - b.x, y - b.y), limit = r + physicalRadius(b);
+      if (distance < limit) {
+        const length = Math.hypot(dx, dy), ux = distance ? (x - b.x) / distance : length ? -dx / length : 1, uy = distance ? (y - b.y) / distance : length ? -dy / length : 0;
+        x = b.x + ux * limit;
+        y = b.y + uy * limit;
+        collided = true;
       }
-      if (mapBlocked(s, x, p.y, mapRadius)) {
-        x = p.x;
-        collision = true;
-      }
-      if (mapBlocked(s, x, y, mapRadius)) {
-        y = p.y;
-        collision = true;
-      }
-      if (!collision) break;
     }
-    p.x = x;
-    p.y = y;
+    return { x, y, collided };
+  }
+  function resolveMap(s, p, dx, dy, r) {
+    if (!mapBlocked(s, p.x + dx, p.y + dy, r)) return { x: p.x + dx, y: p.y + dy, collided: false };
+    if (!mapBlocked(s, p.x + dx, p.y, r)) return { x: p.x + dx, y: p.y, collided: true };
+    if (!mapBlocked(s, p.x, p.y + dy, r)) return { x: p.x, y: p.y + dy, collided: true };
+    return { x: p.x, y: p.y, collided: true };
+  }
+  function move(s, p, dx, dy, radius = 0.45 * CELL4) {
+    if (solid(room(s), p.x, p.y)) return;
+    for (let pass = 0; pass < 3; pass++) {
+      const circles = resolveCircles(s, p, p.x + dx, p.y + dy, radius, dx, dy);
+      dx = circles.x - p.x;
+      dy = circles.y - p.y;
+      const map = resolveMap(s, p, dx, dy, radius * 0.85);
+      if (!circles.collided && !map.collided || pass === 2) {
+        p.x = map.x;
+        p.y = map.y;
+        return;
+      }
+    }
+  }
+  function knockback(s, p) {
+    const map = room(s), cx = Math.floor(p.x / CELL4), cy = Math.floor(p.y / CELL4), b = p.body;
+    if (cx <= 0 || cy <= 0 || cx >= map.columns - 1 || cy >= map.rows - 1) {
+      b.vx = 0;
+      b.vy = 0;
+      return;
+    }
+    const circles = resolveCircles(s, p, p.x + b.vx, p.y + b.vy, b.radius, b.vx, b.vy);
+    const next = resolveMap(s, p, circles.x - p.x, circles.y - p.y, b.radius);
+    b.vx = next.x - p.x;
+    b.vy = next.y - p.y;
+    p.x = next.x;
+    p.y = next.y;
   }
   function openPosition(s, x, y, used = []) {
     const map = room(s), candidates = [];
@@ -26362,7 +26388,7 @@
     return true;
   }
   function camera(s, width = WIDTH4, height = HEIGHT4) {
-    const map = room(s), alive = s.players.filter((p) => p.alive), areaH = height - HUD;
+    const map = room(s), alive = s.players.filter((p) => !p.body.deadFlag), areaH = height - HUD;
     const xs = alive.map((p) => p.x), ys = alive.map((p) => p.y);
     const minX = xs.length ? Math.min(...xs) : map.width / 2, maxX = xs.length ? Math.max(...xs) : minX;
     const minY = ys.length ? Math.min(...ys) : map.height / 2, maxY = ys.length ? Math.max(...ys) : minY;
@@ -26466,7 +26492,7 @@
     if (index3 < 0 || index3 >= map.columns * map.rows) return SOLID;
     let result = map.collision[Math.floor(index3 / map.columns)][index3 % map.columns] === "0" ? 0 : SOLID;
     if (s.enemyCells[index3]) result |= CREATURE;
-    if (s.players.some((p) => p.alive && cell(s, p.x, p.y) === index3)) result |= PLAYER;
+    if (s.players.some((p) => cell(s, p.x, p.y) === index3)) result |= PLAYER;
     if (s.barrels.some((b) => b.registered && ["barrel", "wall"].includes(b.kind) && cell(s, b.x, b.y) === index3)) result |= OBJECT;
     return result;
   }
@@ -26726,12 +26752,180 @@
     return { x: x * 32 + 16, y: y * 32 + 16, z: position2.z };
   }
 
+  // src/expanded/boxhead-creature.ts
+  function creatureBody(player, devil = false) {
+    return {
+      phase: player ? "control" : "normal",
+      counter: 0,
+      action: "stand",
+      frame: 0,
+      alpha: 1,
+      vx: 0,
+      vy: 0,
+      returnAngle: 0,
+      radius: (devil ? 0.42 : 0.45) * CELL4,
+      mass: player ? 2 : devil ? 5 : 1,
+      collidable: true,
+      affectEnabled: true,
+      deadFlag: false,
+      floor: false,
+      loggedKill: false,
+      disposeAt: null,
+      affects: [],
+      damageSample: 0,
+      deathSample: 0
+    };
+  }
+  function canAffect(p) {
+    return p.body.affectEnabled && (!p.ai || p.ai.registered && p.ai.collidable);
+  }
+  function queueAffect(s, p, kind, damage2, owner, source, range = null) {
+    if (!canAffect(p)) return;
+    p.body.affects.push({ kind, damage: damage2, owner, sourceId: source.id ?? null, x: source.x, y: source.y, z: source.z ?? 0, angle: source.angle ?? source.dir ?? 0, range, born: s.tick });
+  }
+  function clearCell(s, p) {
+    if (p.ai) reserve(s, p, null);
+  }
+  function dying(s, p, h) {
+    const b = p.body;
+    b.phase = "dying";
+    b.counter = 0;
+    b.action = "dying";
+    b.frame = 0;
+    b.deadFlag = true;
+    b.collidable = false;
+    b.affectEnabled = false;
+    clearCell(s, p);
+    h.sound(p.seat ? "Creature.Player.Scream.1.wav" : `Creature.Zombie.Ambience.${b.deathSample + 1}.wav`);
+    if (!b.loggedKill) {
+      b.loggedKill = true;
+      h.dying(p);
+    }
+  }
+  function processAffects(s, p, h) {
+    const b = p.body, queued = b.affects;
+    b.affects = [];
+    if (!queued.length || p.invul > 0) return;
+    b.returnAngle = p.dir;
+    for (const affect of [...queued].reverse()) {
+      const source = affect.sourceId === null ? affect : [...s.players, ...s.zombies, ...s.bullets].find((v) => v.id === affect.sourceId) || affect;
+      let damage2 = affect.damage;
+      if (affect.kind === "explosion") {
+        const distance = Math.hypot(p.x - source.x, p.y - source.y), fraction = distance / affect.range;
+        damage2 = fraction > 1 ? 0 : damage2 * (fraction > 0.75 ? 0.5 : fraction > 0.5 ? 0.75 : 1);
+      }
+      p.hp -= damage2;
+      p.hitAt = s.tick;
+      if (p.seat) p.killedBy = affect.owner > 0 ? affect.owner : 0;
+      else p.owner = affect.owner;
+      const speed = affect.kind === "explosion" ? Math.min(damage2 / 5 * 2 / CELL4 / b.mass, 0.3) : affect.kind === "melee" ? Math.max(damage2 / 5 / CELL4 / b.mass, 0.3) : Math.max(damage2 / 5 * 2 / CELL4, 0.3) / b.mass;
+      const dx = p.x - source.x, dy = p.y - source.y, dz = -(source.z ?? affect.z), length = Math.hypot(dx, dy, dz), factor = length ? speed * CELL4 / length : 0;
+      b.vx = dx * factor;
+      b.vy = dy * factor;
+      p.dir = Math.atan2(b.vy, b.vx) + Math.PI;
+      b.phase = affect.kind === "explosion" ? "explosion-hit" : affect.kind === "melee" ? "melee-hit" : "bullet-hit";
+      b.counter = 0;
+      for (let length2 = Math.hypot(b.vx, b.vy) / CELL4; length2 >= 0.01; length2 *= 0.65) b.counter++;
+      clearCell(s, p);
+      b.action = h.random() < 0.5 ? "hitrear" : "hitfront";
+      b.frame = 0;
+      h.blood(p, 1);
+      if (!p.seat) h.sound(`Creature.Zombie.Ambience.${b.damageSample + 1}.wav`);
+      if (solid(room(s), p.x, p.y)) {
+        b.vx = 0;
+        b.vy = 0;
+      }
+    }
+  }
+  function stepCreature(s, p, h) {
+    const b = p.body;
+    processAffects(s, p, h);
+    if (["bullet-hit", "melee-hit", "explosion-hit"].includes(b.phase)) {
+      knockback(s, p);
+      b.vx *= 0.65;
+      b.vy *= 0.65;
+      if (b.phase !== "explosion-hit") h.blood(p, 0);
+      if (p.hp <= 0) {
+        b.affectEnabled = false;
+        b.deadFlag = true;
+      }
+      if (--b.counter < 0) {
+        if (p.hp <= 0 || b.deadFlag) dying(s, p, h);
+        else {
+          p.dir = b.returnAngle;
+          b.phase = "sleep";
+          b.counter = 3;
+          b.action = "stand";
+          b.frame = 0;
+        }
+      }
+      return false;
+    }
+    if (b.phase === "sleep") {
+      if (--b.counter <= 0) {
+        b.phase = p.seat ? "control" : "normal";
+        h.resume(p);
+        return !!p.seat;
+      }
+      return false;
+    }
+    if (b.phase === "dying") {
+      h.blood(p, 1);
+      b.frame += 0.34;
+      if (b.frame >= 5) {
+        h.sound("Creature.HitFloor.wav");
+        b.phase = "dead";
+        b.counter = p.seat ? 100 : 50;
+        b.action = "dead";
+        b.frame = 0;
+        b.floor = true;
+        clearCell(s, p);
+        h.blood(p, 5);
+      }
+      return false;
+    }
+    if (b.phase === "dead") {
+      if (p.seat && b.counter < 25) h.playerDead(p);
+      b.alpha = b.counter < 25 ? b.counter / 25 : 1;
+      if (--b.counter < 0) {
+        if (p.seat) {
+          b.phase = "respawn";
+          b.counter = 25;
+        } else {
+          b.phase = "disposed";
+          b.disposeAt = s.tick + 1;
+        }
+      }
+      return false;
+    }
+    if (b.phase === "respawn") {
+      if (--b.counter < 0 && h.respawn(p)) {
+        h.resume(p);
+        return true;
+      }
+      return false;
+    }
+    if (b.phase === "disposed") return false;
+    if (p.hp <= 0 || b.deadFlag) {
+      dying(s, p, h);
+      return false;
+    }
+    return true;
+  }
+  function validCreature(s, p) {
+    const b = p.body;
+    return !!b && ["control", "normal", "bullet-hit", "melee-hit", "explosion-hit", "sleep", "dying", "dead", "respawn", "disposed"].includes(b.phase) && ["counter", "frame", "alpha", "vx", "vy", "returnAngle", "radius", "mass", "damageSample", "deathSample"].every((k) => Number.isFinite(b[k])) && Number.isSafeInteger(b.counter) && b.radius === (p.devil ? 0.42 : 0.45) * CELL4 && b.mass === (p.seat ? 2 : p.devil ? 5 : 1) && b.alpha >= 0 && b.alpha <= 1 && b.frame >= 0 && b.frame < 5 && ["stand", "hitfront", "hitrear", "dying", "dead"].includes(b.action) && ["collidable", "affectEnabled", "deadFlag", "floor", "loggedKill"].every((k) => typeof b[k] === "boolean") && [b.damageSample, b.deathSample].every((n) => Number.isInteger(n) && n >= 0 && n < 4) && (b.phase === "disposed" ? Number.isSafeInteger(b.disposeAt) && b.disposeAt === s.tick + 1 : b.disposeAt === null) && Array.isArray(b.affects) && b.affects.length < 1500 && b.affects.every((a) => !!a && ["bullet", "fireball", "explosion", "melee"].includes(a.kind) && ["damage", "x", "y", "z", "angle"].every((k) => Number.isFinite(a[k])) && a.damage > 0 && a.z >= 0 && Number.isSafeInteger(a.owner) && a.owner >= 0 && a.owner <= 4 && (a.sourceId === null || Number.isSafeInteger(a.sourceId) && a.sourceId >= 0) && (a.range === null || Number.isFinite(a.range) && a.range > 0) && (a.kind !== "explosion" || a.range !== null) && Number.isSafeInteger(a.born) && a.born >= 0 && a.born <= s.tick);
+  }
+
   // src/expanded/boxhead-ai.ts
   var TAU = Math.PI * 2;
   var wrap = (angle) => (angle % TAU + TAU) % TAU;
   var heading = (angle) => Math.round(wrap(angle) / (Math.PI / 4)) & 7;
   var frames2 = (action) => action === "walk" ? 8 : action === "attack" ? 4 : 1;
   function enemyBrain(s, z, entering = true) {
+    z.body = creatureBody(false, z.devil);
+    z.body.collidable = !entering;
+    z.body.affectEnabled = !entering;
     return {
       state: entering ? "init" : "goto",
       base: "goto",
@@ -26786,6 +26980,8 @@
       a.base = "enter";
       a.entry = null;
       animation2(z, "stand");
+      z.body.collidable = false;
+      z.body.affectEnabled = false;
       for (const dir of [0, 2, 4, 6]) {
         const next = adjacent(s, cell(s, z.x, z.y), dir);
         if (!(flags(s, next) & SOLID)) {
@@ -26834,7 +27030,7 @@
     transition(s, z, "turn");
   }
   function closest(s, z) {
-    const candidates = [...s.players].reverse().filter((p) => p.alive);
+    const candidates = [...s.players].reverse().filter((p) => !p.body.deadFlag);
     return candidates.reduce((best, p) => !best || Math.hypot(p.x - z.x, p.y - z.y) < Math.hypot(best.x - z.x, best.y - z.y) ? p : best, null) || s.players[s.players.length - 1];
   }
   function targetVisible(s, z, p) {
@@ -26846,120 +27042,117 @@
       return t > 0 && t < 1 && Math.hypot(other.x - z.x - t * dx, other.y - z.y - t * dy) < other.ai.radius;
     });
   }
-  function stepEnemies(s, hooks) {
-    for (const z of [...s.zombies].reverse()) {
-      const a = z.ai;
-      if (z.hp <= 0) {
-        reserve(s, z, null);
-        a.collidable = false;
-        continue;
+  function stepEnemy(s, z, hooks) {
+    const a = z.ai;
+    if (a.state === "init") {
+      if (a.born >= s.tick) return;
+      z.body.damageSample = Math.floor(hooks.random() * 4);
+      z.body.deathSample = Math.floor(hooks.random() * 4);
+      z.x = Math.floor(z.x / CELL4) * CELL4 + 16;
+      z.y = Math.floor(z.y / CELL4) * CELL4 + 16;
+      a.registered = true;
+      transition(s, z, "enter");
+      return;
+    }
+    const at = cell(s, z.x, z.y);
+    if (a.state === "enter") {
+      if (a.entry === null || flags(s, a.entry) & CREATURE) transition(s, z, "wait");
+      else {
+        a.collidable = true;
+        z.body.collidable = true;
+        z.body.affectEnabled = true;
+        a.base = "goto";
+        transition(s, z, z.devil ? "remove" : "cell");
       }
-      if (a.state === "init") {
-        if (a.born >= s.tick) continue;
+    } else if (a.state === "remove") {
+      const next = adjacent(s, at, heading(z.dir));
+      if (flags(s, next) & OBJECT) {
+        for (const b of s.barrels) if (b.registered && cell(s, b.x, b.y) === next) hooks.damage(b, 1e5);
+      } else transition(s, z, "goto");
+    } else if (a.state === "goto") {
+      const p = closest(s, z);
+      if (!p) return;
+      a.targetSeat = p.seat;
+      if (z.devil) {
+        if (a.canAttack && a.fireRateCount <= 0 && p.hp > 0 && heading(Math.atan2(p.y - z.y, p.x - z.x)) === heading(z.dir) && Math.hypot(p.x - z.x, p.y - z.y) <= 5 * CELL4 && targetVisible(s, z, p)) {
+          a.multiply = false;
+          a.attackAngle = Math.atan2(p.y - z.y, p.x - z.x);
+          transition(s, z, "attack");
+          a.fireRateCount--;
+          return;
+        }
+        a.canAttack = true;
+      }
+      a.targetAngle = wrap(Math.atan2(Math.floor(p.y / CELL4) * CELL4 + 16 - z.y, Math.floor(p.x / CELL4) * CELL4 + 16 - z.x));
+      a.targetDir = heading(a.targetAngle);
+      const ahead = realFlags(s, at, a.targetDir);
+      if (!z.devil && ahead & PLAYER) turnOr(s, z, "attack", a.targetDir);
+      else if (z.devil && ahead & OBJECT) {
+        a.attackAngle = heading(z.dir) * Math.PI / 4;
+        a.multiply = true;
+        turnOr(s, z, "attack", a.targetDir);
+      } else {
+        const dir = direction2(s, at, heading(z.dir), a.targetDir, z.devil, hooks.random);
+        a.targetDir = dir < 0 ? a.targetDir : dir;
+        if (dir < 0) transition(s, z, "wait");
+        else turnOr(s, z, "cell", dir, true);
+      }
+    } else if (a.state === "cell") {
+      if (--a.counter <= 0) {
         z.x = Math.floor(z.x / CELL4) * CELL4 + 16;
         z.y = Math.floor(z.y / CELL4) * CELL4 + 16;
-        a.registered = true;
-        transition(s, z, "enter");
-        continue;
+        transition(s, z, a.base);
+      } else {
+        a.frame = (a.frame + 0.34) % 8;
+        z.x += a.dx;
+        z.y += a.dy;
       }
-      const at = cell(s, z.x, z.y);
-      if (a.state === "enter") {
-        if (a.entry === null || flags(s, a.entry) & CREATURE) transition(s, z, "wait");
-        else {
-          a.collidable = true;
-          a.base = "goto";
-          transition(s, z, z.devil ? "remove" : "cell");
+    } else if (a.state === "turn") {
+      if (--a.counter <= 0) {
+        z.dir = a.targetAngle;
+        transition(s, z, a.base);
+      } else z.dir = wrap(z.dir + a.angleDelta);
+    } else if (a.state === "wait") {
+      if (--a.counter <= 0) transition(s, z, a.base);
+    } else if (a.state === "sleep") {
+      if (--a.counter <= 0) transition(s, z, a.previous);
+    } else if (a.state === "attack") {
+      if (z.devil) {
+        const before = Math.floor(a.frame), ended = animate(z, Math.min(0.2 * (a.speed * 25 * 1.5), 1));
+        if (before !== Math.floor(a.frame) && Math.floor(a.frame) === 3) {
+          const angle = a.attackAngle, radius = a.radius * 1.5;
+          s.bullets.push({
+            id: ++s.nextId,
+            x: z.x + Math.cos(angle) * radius,
+            y: z.y + Math.sin(angle) * radius,
+            z: 0.84 * CELL4,
+            vx: Math.cos(angle) * 0.15 * CELL4,
+            vy: Math.sin(angle) * 0.15 * CELL4,
+            owner: -1,
+            parent: z.id,
+            weapon: -1,
+            damage: 50,
+            multiply: a.multiply,
+            radius: a.multiply ? CELL4 : 0.25 * CELL4,
+            animation: 0,
+            fireball: true,
+            life: 1,
+            born: s.tick
+          });
+          a.fireRateCount = 0;
         }
-      } else if (a.state === "remove") {
-        const next = adjacent(s, at, heading(z.dir));
-        if (flags(s, next) & OBJECT) {
-          for (const b of s.barrels) if (b.registered && cell(s, b.x, b.y) === next) hooks.damage(b, 1e5);
-        } else transition(s, z, "goto");
-      } else if (a.state === "goto") {
-        const p = closest(s, z);
-        if (!p) continue;
-        a.targetSeat = p.seat;
-        if (z.devil) {
-          if (a.canAttack && a.fireRateCount <= 0 && p.hp > 0 && heading(Math.atan2(p.y - z.y, p.x - z.x)) === heading(z.dir) && Math.hypot(p.x - z.x, p.y - z.y) <= 5 * CELL4 && targetVisible(s, z, p)) {
-            a.multiply = false;
-            a.attackAngle = Math.atan2(p.y - z.y, p.x - z.x);
-            transition(s, z, "attack");
-            a.fireRateCount--;
-            continue;
-          }
-          a.canAttack = true;
-        }
-        a.targetAngle = wrap(Math.atan2(Math.floor(p.y / CELL4) * CELL4 + 16 - z.y, Math.floor(p.x / CELL4) * CELL4 + 16 - z.x));
-        a.targetDir = heading(a.targetAngle);
-        const ahead = realFlags(s, at, a.targetDir);
-        if (!z.devil && ahead & PLAYER) turnOr(s, z, "attack", a.targetDir);
-        else if (z.devil && ahead & OBJECT) {
-          a.attackAngle = heading(z.dir) * Math.PI / 4;
-          a.multiply = true;
-          turnOr(s, z, "attack", a.targetDir);
-        } else {
-          const dir = direction2(s, at, heading(z.dir), a.targetDir, z.devil, hooks.random);
-          a.targetDir = dir < 0 ? a.targetDir : dir;
-          if (dir < 0) transition(s, z, "wait");
-          else turnOr(s, z, "cell", dir, true);
-        }
-      } else if (a.state === "cell") {
-        if (--a.counter <= 0) {
-          z.x = Math.floor(z.x / CELL4) * CELL4 + 16;
-          z.y = Math.floor(z.y / CELL4) * CELL4 + 16;
-          transition(s, z, a.base);
-        } else {
-          a.frame = (a.frame + 0.34) % 8;
-          z.x += a.dx;
-          z.y += a.dy;
-        }
-      } else if (a.state === "turn") {
-        if (--a.counter <= 0) {
-          z.dir = a.targetAngle;
-          transition(s, z, a.base);
-        } else z.dir = wrap(z.dir + a.angleDelta);
-      } else if (a.state === "wait") {
-        if (--a.counter <= 0) transition(s, z, a.base);
-      } else if (a.state === "sleep") {
-        if (--a.counter <= 0) transition(s, z, a.previous);
-      } else if (a.state === "attack") {
-        if (z.devil) {
-          const before = Math.floor(a.frame), ended = animate(z, Math.min(0.2 * (a.speed * 25 * 1.5), 1));
-          if (before !== Math.floor(a.frame) && Math.floor(a.frame) === 3) {
-            const angle = a.attackAngle, radius = a.radius * 1.5;
-            s.bullets.push({
-              id: ++s.nextId,
-              x: z.x + Math.cos(angle) * radius,
-              y: z.y + Math.sin(angle) * radius,
-              z: 0.84 * CELL4,
-              vx: Math.cos(angle) * 0.15 * CELL4,
-              vy: Math.sin(angle) * 0.15 * CELL4,
-              owner: -1,
-              parent: z.id,
-              weapon: -1,
-              damage: 50,
-              multiply: a.multiply,
-              radius: a.multiply ? CELL4 : 0.25 * CELL4,
-              animation: 0,
-              fireball: true,
-              life: 1,
-              born: s.tick
-            });
-            a.fireRateCount = 0;
-          }
-          if (ended) transition(s, z, a.previous);
-        } else if (animate(z, Math.min(0.3 * (a.speed * 25 * 1.5), 1))) {
-          const target = adjacent(s, at, heading(z.dir));
-          for (const p of s.players) if (p.alive && cell(s, p.x, p.y) === target) hooks.hurt(p, 50);
-          for (const b of s.barrels) if (b.kind === "wall" && b.registered && cell(s, b.x, b.y) === target) hooks.damage(b, 50);
-          const previous = a.previous;
-          transition(s, z, "sleep");
-          a.counter = 10;
-          a.previous = previous;
-        }
+        if (ended) transition(s, z, a.previous);
+      } else if (animate(z, Math.min(0.3 * (a.speed * 25 * 1.5), 1))) {
+        const target = adjacent(s, at, heading(z.dir));
+        for (const p of s.players) if (p.alive && cell(s, p.x, p.y) === target) hooks.hurt(p, 50, z);
+        for (const b of s.barrels) if (b.kind === "wall" && b.registered && cell(s, b.x, b.y) === target) hooks.damage(b, 50);
+        const previous = a.previous;
+        transition(s, z, "sleep");
+        a.counter = 10;
+        a.previous = previous;
       }
-      if (z.devil) a.fireRateCount--;
     }
+    if (z.devil) a.fireRateCount--;
   }
   function validEnemyAI(s, z) {
     const a = z.ai, size = room(s).columns * room(s).rows;
@@ -26974,7 +27167,7 @@
     let collided = false;
     for (let cy = Math.floor((y - r) / CELL4); cy <= Math.floor((y + r) / CELL4); cy++) for (let cx = Math.floor((x - r) / CELL4); cx <= Math.floor((x + r) / CELL4); cx++) if (solid(map, cx * CELL4, cy * CELL4)) collided = true;
     const near = (p, radius) => Math.hypot(p.x - x, p.y - y) < r + radius;
-    collided || (collided = s.players.some((p) => p.alive && near(p, 0.45 * CELL4)) || s.zombies.some((z) => z.hp > 0 && z.ai.registered && z.ai.collidable && near(z, z.ai.radius)) || s.barrels.some((p) => objectBlocks(p) && (p.hp > 0 || wallBlocks(p, s.tick)) && near(p, p.radius)));
+    collided || (collided = s.players.some((p) => p.body.collidable && near(p, 0.45 * CELL4)) || s.zombies.some((z) => z.ai.registered && z.body.collidable && near(z, z.ai.radius)) || s.barrels.some((p) => objectBlocks(p) && (p.hp > 0 || wallBlocks(p, s.tick)) && near(p, p.radius)));
     if (collided) {
       const left = Math.max(0, Math.round((b.x - r) / CELL4) - 1), right = Math.min(map.columns - 1, Math.round((b.x + r) / CELL4));
       const top = Math.max(0, Math.round((b.y - r) / CELL4) - 1), bottom = Math.min(map.rows - 1, Math.round((b.y + r) / CELL4));
@@ -27068,10 +27261,12 @@
     for (const seat of [...new Set(seats)].filter((n) => Number.isInteger(n) && n >= 1 && n <= 4).sort()) {
       const spawn = spawns[s.players.length] || primary, pos = openPosition(s, spawn.x, spawn.y, s.players);
       s.players.push({
+        id: ++s.nextId,
         seat,
         x: pos.x,
         y: pos.y,
         dir: spawn.dir,
+        body: creatureBody(true),
         character: CHARACTERS[seat - 1],
         hp: 200,
         alive: true,
@@ -27089,6 +27284,9 @@
         invul: 200,
         lastAttack: 0,
         lastAlt: 0,
+        selectionPending: false,
+        selectionWeapon: null,
+        selectionStep: 1,
         moving: false,
         fireAt: -99,
         hitAt: -99,
@@ -27133,7 +27331,7 @@
     }
     return false;
   }
-  function damage(s, target, amount, owner) {
+  function damage(s, target, amount, owner, kind = "bullet", source = target, range = null) {
     if (["barrel", "wall"].includes(target.kind) && !target.registered) return;
     if ("devil" in target && (!target.ai.registered || !target.ai.collidable)) return;
     if (target.kind === "wall") {
@@ -27144,17 +27342,10 @@
       if (target.hp > 0) target.barrelAffects = [owner];
       return;
     }
-    if (target.hp <= 0) return;
-    target.hp -= amount;
-    target.owner = owner;
-    target.hitAt = s.tick;
-    if ("devil" in target) effect(s, "Effect.BloodSplat", target.x, target.y - 14, 8);
+    queueAffect(s, target, kind, amount, owner, source, range);
   }
-  function hurt(s, p, amount, owner = 0) {
-    if (!p.alive || p.hp <= 0 || p.invul > 0) return;
-    p.hp -= amount;
-    p.hitAt = s.tick;
-    p.killedBy = owner > 0 ? owner : 0;
+  function hurt(s, p, amount, owner = 0, kind = "bullet", source = p, range = null) {
+    queueAffect(s, p, kind, amount, owner, source, range);
   }
   function explode(s, e) {
     const { x, y, damage: amount, owner } = e;
@@ -27167,11 +27358,13 @@
       const fraction = Math.hypot(target.x - x, target.y - y) / radius;
       return fraction > 1 ? 0 : amount * (fraction > 0.75 ? 0.5 : fraction > 0.5 ? 0.75 : 1);
     };
-    for (const z of s.zombies) if (amountAt(z)) damage(s, z, amountAt(z), owner);
+    for (const z of s.zombies) if (amountAt(z)) damage(s, z, amount, owner, "explosion", e, radius);
     for (const b of s.barrels) if (b.hp > 0 && ["barrel", "wall"].includes(b.kind) && amountAt(b)) damage(s, b, amountAt(b), owner);
-    for (const p of s.players) if (amountAt(p)) hurt(s, p, amountAt(p), owner);
+    for (const p of s.players) if (amountAt(p)) hurt(s, p, amount, owner, "explosion", e, radius);
   }
   function shot(s, p, origin, angle, amount, range, pierce) {
+    const bullet = { id: ++s.nextId, ...origin, tx: origin.x, ty: origin.y, angle, vx: 0, vy: 0, owner: p.seat, weapon: p.weapon, damage: amount, life: 2, born: s.tick };
+    s.bullets.push(bullet);
     let x = origin.x, y = origin.y;
     const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
     for (let n = 0; n < range * CELL4 / 4; n++) {
@@ -27181,15 +27374,16 @@
         effect(s, "Effect.BulletHit", x, y - 18, 5);
         break;
       }
-      const target = [...s.barrels.filter((b) => b.registered && Number.isFinite(b.radius) && (b.kind === "barrel" || b.kind === "wall")), ...s.zombies.filter((z) => z.ai.registered && z.ai.collidable), ...s.players.filter((q) => q.seat !== p.seat && q.alive)].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < (t.kind ? t.radius : 15));
+      const target = [...s.barrels.filter((b) => b.registered && Number.isFinite(b.radius) && (b.kind === "barrel" || b.kind === "wall")), ...s.zombies.filter((z) => canAffect(z)), ...s.players.filter((q) => q.seat !== p.seat && canAffect(q))].find((t) => (t.body || t.hp > 0) && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < (t.kind ? t.radius : t.body.radius));
       if (target) {
-        if (target.seat) hurt(s, target, amount, p.seat);
-        else damage(s, target, amount, p.seat);
+        if (target.seat) hurt(s, target, amount, p.seat, "bullet", bullet);
+        else damage(s, target, amount, p.seat, "bullet", bullet);
         hits.add(target);
         if (!pierce || target.kind === "wall") break;
       }
     }
-    s.bullets.push({ id: ++s.nextId, ...origin, tx: x, ty: y, vx: 0, vy: 0, owner: p.seat, weapon: p.weapon, damage: amount, life: 2, born: s.tick });
+    bullet.tx = x;
+    bullet.ty = y;
   }
   function fire2(s, p) {
     const gun = weaponStats(s, p.weapon), origin = weaponPosition(p);
@@ -27256,9 +27450,6 @@
       }
     }
   }
-  function enemies(s) {
-    stepEnemies(s, { random: () => random3(s), hurt: (p, amount) => hurt(s, p, amount), damage: (target, amount) => damage(s, target, amount, 0) });
-  }
   function projectiles(s) {
     for (const b of s.bullets) {
       if (b.life <= 0) continue;
@@ -27267,7 +27458,7 @@
         continue;
       }
       if (b.fireball) {
-        if (b.born < s.tick) stepFireball(s, b, { hurt: (p, amount) => hurt(s, p, amount), damage: (target, amount) => damage(s, target, amount, 0) });
+        if (b.born < s.tick) stepFireball(s, b, { hurt: (p, amount) => hurt(s, p, amount, 0, "fireball", b), damage: (target, amount) => damage(s, target, amount, 0, "fireball", b) });
         continue;
       }
       if (b.born >= s.tick) continue;
@@ -27316,7 +27507,7 @@
               b.life = 0;
               break;
             }
-          } else if (s.zombies.some((z) => z.ai.registered && z.ai.collidable && z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => z.registered && z.hp > 0 && ["barrel", "wall"].includes(z.kind) && Number.isFinite(z.radius) && Math.hypot(z.x - b.x, z.y - b.y) < z.radius) || s.players.some((p) => p.alive && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < 17)) {
+          } else if (s.zombies.some((z) => canAffect(z) && Math.hypot(z.x - b.x, z.y - b.y) < z.body.radius) || s.barrels.some((z) => z.registered && z.hp > 0 && ["barrel", "wall"].includes(z.kind) && Number.isFinite(z.radius) && Math.hypot(z.x - b.x, z.y - b.y) < z.radius) || s.players.some((p) => canAffect(p) && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < p.body.radius)) {
             b.life = 0;
             break;
           }
@@ -27333,12 +27524,80 @@
     stepRegistration(s);
     s.effects = s.effects.filter((e) => --e.life > 0);
     s.corpses = s.corpses.filter((e) => s.tick - e.deadAt < 100);
+    s.zombies = s.zombies.filter((z) => z.body.disposeAt === null || z.body.disposeAt > s.tick);
     s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
     if (s.combo > 1 && s.tick > s.comboUntil) {
       s.combo--;
       s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
     }
-    for (const p of s.players) {
+    if (s.waveReady && s.tick >= s.waveReady) beginWave(s);
+    projectiles(s);
+    processExplosions(s, random3, (e) => explode(s, e));
+    const respawning = /* @__PURE__ */ new Set();
+    const hooks = {
+      random: () => random3(s),
+      sound: (name) => sound2(s, name),
+      blood: (p, size) => effect(s, "Effect.BloodSplat", p.x + (random3(s) - 0.5) * 16, p.y + (random3(s) - 0.5) * 16, 500, { floor: true, bloodCount: size }),
+      resume: (p) => {
+        if (p.seat) p.poseName = "";
+        else transition(s, p, "goto");
+      },
+      dying: (p) => {
+        p.deadAt = s.tick;
+        if (p.seat) {
+          p.alive = false;
+          p.deaths++;
+          p.moving = false;
+          return;
+        }
+        p.ai.collidable = false;
+        const owner = s.players.find((q) => q.seat === p.owner);
+        if (owner) owner.kills++;
+        s.score += (p.devil ? 1e3 : 100) * s.combo;
+        s.combo++;
+        s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
+        upgrade(s);
+        if (random3(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: p.x, y: p.y, life: 250, born: s.tick });
+      },
+      playerDead: () => {
+        if (s.phase === "playing" && !s.players.some((p) => !p.body.deadFlag)) {
+          s.phase = "finished";
+          s.winner = 0;
+          sound2(s, "World.End.wav");
+        }
+      },
+      respawn: (p) => {
+        const other = [...s.players].reverse().find((q) => q !== p && !q.body.deadFlag);
+        if (!other) return false;
+        const map = room(s), spawns = [...map.playerSpawns, ...map.otherSpawns], start2 = Math.floor(random3(s) * spawns.length);
+        let best = null, distance = Infinity;
+        for (let i = 0; i < spawns.length; i++) {
+          const pos = spawns[(start2 + i) % spawns.length], mask = flags(s, cell(s, pos.x, pos.y)), d = (pos.x - other.x) ** 2 + (pos.y - other.y) ** 2;
+          if (!(mask & (CREATURE | OBJECT | 64)) && d >= 4 * CELL4 * CELL4 && d < distance && Math.abs(pos.x - other.x) <= 19 * CELL4 && Math.abs(pos.y - other.y) <= 13 * CELL4) {
+            best = pos;
+            distance = d;
+          }
+        }
+        if (!best) return false;
+        p.x = best.x;
+        p.y = best.y;
+        p.dir = best.dir;
+        p.alive = true;
+        p.invul = 125;
+        p.body = creatureBody(true);
+        p.poseName = "";
+        p.poseAction = p.drawAction = "stand";
+        p.poseFrame = p.drawFrame = 0;
+        respawning.add(p);
+        return true;
+      }
+    };
+    for (const p of [...s.players, ...s.zombies].sort((a, b) => b.id - a.id)) {
+      if (!p.seat) {
+        if (stepCreature(s, p, hooks)) stepEnemy(s, p, { random: () => random3(s), hurt: (q, n, source) => hurt(s, q, n, 0, "melee", source), damage: (target, n) => damage(s, target, n, 0) });
+        else if (p.devil && p.ai.state !== "init") p.ai.fireRateCount--;
+        continue;
+      }
       const input = accept(s, p, inputs[p.seat - 1]);
       s.ack[p.seat - 1] = Math.max(s.ack[p.seat - 1], input.seq);
       const attack = input.attack > p.lastAttack, alt = input.alt > p.lastAlt;
@@ -27347,39 +27606,41 @@
       updateFireKey(p, p.triggerDown, attack, cancelled, s.tick);
       p.lastAttack = Math.max(p.lastAttack, input.attack);
       p.lastAlt = Math.max(p.lastAlt, input.alt);
-      p.cooldown = Math.max(0, p.cooldown - 1);
+      if (alt) {
+        p.selectionPending = true;
+        p.selectionWeapon = input.weapon ?? null;
+        p.selectionStep = input.weaponStep ?? 1;
+      }
+      const normal = stepCreature(s, p, hooks);
       p.invul = Math.max(0, p.invul - 1);
-      if (!p.alive) {
-        p.respawn = Math.max(0, p.respawn - 1);
-        const other = s.players.find((q) => q.alive);
-        if (!p.respawn && other) {
-          const pos = openPosition(s, other.x + 32, other.y, s.players.filter((q) => q.alive));
-          p.x = pos.x;
-          p.y = pos.y;
-          p.alive = true;
-          p.hp = 200;
-          p.weapon = 0;
-          p.ammo = -1;
-          p.invul = 125;
-          p.inventory = WEAPONS3.map((_, i) => i === 0 ? -1 : 0);
-          Object.assign(p, playerPose());
-        }
+      if (p.body.phase !== "control") {
+        p.poseName = "";
+        p.poseAction = p.body.action;
+        p.poseFrame = p.body.frame;
+        p.drawAction = p.body.action;
+        p.drawFrame = p.body.frame;
+      }
+      p.respawn = p.body.phase === "dead" ? Math.max(0, p.body.counter) + 26 : p.body.phase === "respawn" ? Math.max(0, p.body.counter) + 1 : p.body.phase === "dying" ? Math.ceil((5 - p.body.frame) / 0.34) + 127 : 0;
+      if (!normal) {
+        p.moving = false;
         continue;
       }
+      p.cooldown = Math.max(0, p.cooldown - 1);
       const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up), oldX = p.x, oldY = p.y;
       if (dx || dy) p.dir = Math.atan2(dy, dx);
       move(s, p, dx * 5.12, dy * 5.12);
       p.moving = p.x !== oldX || p.y !== oldY;
       const nextPose = WEAPONS3[p.weapon].id + (p.moving ? "walk" : "stand");
       if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
-      if (alt) {
-        if (input.weapon !== void 0) {
-          if (p.unlocked[input.weapon] && !weaponEmpty(s, p, input.weapon)) {
-            selectWeapon(s, p, input.weapon);
+      if (p.selectionPending) {
+        p.selectionPending = false;
+        if (p.selectionWeapon !== null) {
+          if (p.unlocked[p.selectionWeapon] && !weaponEmpty(s, p, p.selectionWeapon)) {
+            selectWeapon(s, p, p.selectionWeapon);
             renewFireKey(p);
           }
         } else for (let i = 1; i <= 10; i++) {
-          const index3 = (p.weapon + i * (input.weaponStep ?? 1) + 10) % 10;
+          const index3 = (p.weapon + i * p.selectionStep + 10) % 10;
           if (p.unlocked[index3] && !weaponEmpty(s, p, index3)) {
             selectWeapon(s, p, index3);
             renewFireKey(p);
@@ -27392,11 +27653,17 @@
       const firing = p.cooldown === 0 && !cancelled && consumeFireKey(p, gun.auto, gun.onRelease);
       if (firing) fire2(s, p);
       advancePlayerPose(p, nextPose, firing);
+      if (respawning.has(p)) {
+        renewFireKey(p);
+        p.hp = 200;
+        p.inventory = WEAPONS3.map((_, i) => i === 0 || p.unlocked[i] && weaponStats(s, i).ammo < 0 ? -1 : 0);
+        p.weapon = 0;
+        p.ammo = -1;
+        p.cooldown = 0;
+        p.chargeDetonate = false;
+        p.selectionPending = false;
+      }
     }
-    if (s.waveReady && s.tick >= s.waveReady) beginWave(s);
-    projectiles(s);
-    processExplosions(s, random3, (e) => explode(s, e));
-    enemies(s);
     processWallAffects(s, (b) => {
       const frames3 = boxhead_data_default.objects["Effect.SmokeCloud"].frames;
       effect(s, "Effect.SmokeCloud", b.x, b.y, frames3 + 1, { born: s.tick + 1, scale: 1, z: b.z });
@@ -27412,21 +27679,8 @@
       }
     }
     s.barrels = s.barrels.filter((b) => b.hp > 0 || wallBlocks(b, s.tick));
-    for (const z of s.zombies.filter((z2) => z2.hp <= 0)) {
-      const p = s.players.find((p2) => p2.seat === z.owner);
-      if (p) p.kills++;
-      s.score += (z.devil ? 1e3 : 100) * s.combo;
-      s.combo++;
-      s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
-      upgrade(s);
-      s.corpses.push({ x: z.x, y: z.y, dir: z.dir, character: z.devil ? "devil" : "zombie", deadAt: s.tick });
-      effect(s, "Effect.BloodPool", z.x, z.y, 500);
-      if (random3(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: z.x, y: z.y, life: 250, born: s.tick });
-      sound2(s, "Creature.Zombie.Hit.wav");
-    }
-    s.zombies = s.zombies.filter((z) => z.hp > 0);
     for (const item of s.pickups) {
-      for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && p.alive && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
+      for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && !p.body.deadFlag && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
         const available = p.unlocked.map((v, i) => v && p.inventory[i] >= 0 && p.inventory[i] < weaponStats(s, i).ammo ? i : -1).filter((i) => i >= 0);
         if (p.hp >= 200 && !available.length) continue;
         if (p.hp < 200 && (!available.length || random3(s) < 1 - p.hp / 200)) p.hp = 200;
@@ -27441,26 +27695,6 @@
       item.life--;
     }
     s.pickups = s.pickups.filter((i) => i.life > 0);
-    for (const p of s.players) if (p.alive && p.hp <= 0) {
-      p.hp = 0;
-      p.alive = false;
-      p.deaths++;
-      p.respawn = 125;
-      p.deadAt = s.tick;
-      p.weapon = 0;
-      p.ammo = -1;
-      p.inventory = WEAPONS3.map((_, i) => i === 0 ? -1 : 0);
-      p.triggerDown = false;
-      renewFireKey(p);
-      p.chargeDetonate = false;
-      p.cooldown = 0;
-      sound2(s, "Creature.Player.Scream.1.wav");
-    }
-    if (s.players.length && !s.players.some((p) => p.alive)) {
-      s.phase = "finished";
-      s.winner = 0;
-      sound2(s, "World.End.wav");
-    }
     if (s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
     const decals = new Set(s.effects.filter((e) => ["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)).slice(-180));
     s.effects = s.effects.filter((e) => !["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind) || decals.has(e));
@@ -27486,13 +27720,14 @@
   function valid3(value) {
     if (!value || typeof value !== "object") return false;
     const s = value;
-    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z)) && s.bullets.every((b) => validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && validCreature(s, p) && nums(p, ["id", "x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && typeof p.selectionPending === "boolean" && (p.selectionWeapon === null || Number.isInteger(p.selectionWeapon) && p.selectionWeapon >= 0 && p.selectionWeapon < 10) && [-1, 1].includes(p.selectionStep) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z) && validCreature(s, z)) && s.bullets.every((b) => validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.floor === void 0 || e.floor === true && e.kind === "Effect.BloodSplat" && [0, 1, 5].includes(e.bloodCount)) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
   }
 
   // src/expanded/boxhead-view.ts
   var base = "/expanded/assets/boxhead/";
   var images2 = /* @__PURE__ */ new Map();
   var combatFiles = Object.entries(boxhead_data_default.objects).filter(([key]) => /^(Object|Effect|Shot|Pistol|Railgun|Shotgun|UZI)\./.test(key)).map(([, meta]) => meta.file);
+  var creatureCombatFiles = Object.entries(boxhead_data_default.animations).filter(([key]) => /-(hitfront|hitrear|dying|dead)$/.test(key)).map(([, meta]) => meta.file);
   var backdrop = null;
   function image(file) {
     let im = images2.get(file);
@@ -27565,6 +27800,7 @@
     c.fillRect(0, 0, WIDTH4, HEIGHT4);
     if (!s) return;
     for (const file of combatFiles) image(file);
+    for (const file of creatureCombatFiles) image(file);
     const map = room(s), cam = camera(s);
     c.save();
     c.beginPath();
@@ -27579,9 +27815,15 @@
       c.fillStyle = "#c6c5bd";
       c.fillRect(0, 0, map.width, map.height);
     }
-    for (const e of s.effects) if (["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
+    for (const e of s.effects) if (e.floor || ["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
       c.globalAlpha = Math.min(1, e.life / 60);
-      sprite2(c, e.kind, e.x, e.y);
+      if (e.floor) {
+        c.save();
+        c.translate(e.x, e.y);
+        c.scale(1, 0.6);
+        sprite2(c, e.kind, 0, 0);
+        c.restore();
+      } else sprite2(c, e.kind, e.x, e.y);
       c.globalAlpha = 1;
     }
     for (const b of s.barrels) if (b.kind === "mine" || b.kind === "chargepack") sprite2(c, b.kind === "mine" ? "Object.Mine" : "Object.ChargePack", b.x, b.y + b.z * PROJECTION, b.animation);
@@ -27589,9 +27831,13 @@
       const age = s.tick - corpse.deadAt;
       person(c, corpse.character, age < 15 ? "dying" : "dead", corpse, s.tick, age);
     }
-    for (const p of s.players.filter((p2) => !p2.alive)) person(c, p.character, s.tick - p.deadAt < 15 ? "dying" : "dead", p, s.tick, s.tick - p.deadAt);
+    for (const p of [...s.players, ...s.zombies].filter((p2) => p2.body.floor && p2.body.phase !== "respawn")) {
+      c.globalAlpha = p.body.alpha;
+      person(c, p.seat ? p.character : p.devil ? "devil" : "zombie", p.body.action, p, s.tick, void 0, void 0, Math.floor(p.body.frame));
+      c.globalAlpha = 1;
+    }
     for (const p of s.pickups) if (p.life > 50 || s.tick % 6 < 3) sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
-    const entities2 = [...s.barrels.filter((b) => b.kind !== "mine" && b.kind !== "chargepack").map((b) => ({ ...b, entity: "object" })), ...s.zombies.filter((z) => z.ai.registered).map((z) => ({ ...z, entity: "enemy" })), ...s.players.filter((p) => p.alive).map((p) => ({ ...p, entity: "human" }))].sort((a, b) => a.y - b.y || a.x - b.x);
+    const entities2 = [...s.barrels.filter((b) => b.kind !== "mine" && b.kind !== "chargepack").map((b) => ({ ...b, entity: "object" })), ...s.zombies.filter((z) => z.ai.registered && !z.body.floor).map((z) => ({ ...z, entity: "enemy" })), ...s.players.filter((p) => !p.body.floor && p.body.phase !== "respawn").map((p) => ({ ...p, entity: "human" }))].sort((a, b) => a.y - b.y || a.x - b.x);
     for (const p of entities2) {
       if (p.entity === "object") {
         c.globalAlpha = p.kind === "wall" ? p.wallAlpha / 100 : 1;
@@ -27600,13 +27846,16 @@
         continue;
       }
       if (p.entity === "human") {
-        const hit4 = s.tick - p.hitAt < 5, action = hit4 ? "hitfront" : p.drawAction;
-        c.globalAlpha = p.invul > 0 && s.tick % 4 < 2 ? 0.55 : 1;
-        person(c, p.character, action, p, s.tick, void 0, hit4 ? void 0 : p.drawFrame);
+        if (p.invul > 0 && p.invul % 2) continue;
+        const normal = p.body.phase === "control", action = normal ? p.drawAction : p.body.action;
+        c.globalAlpha = p.body.alpha;
+        person(c, p.character, action, p, s.tick, void 0, normal ? p.drawFrame : void 0, normal ? void 0 : Math.floor(p.body.frame));
         c.globalAlpha = 1;
       } else {
-        const hit4 = s.tick - p.hitAt < 5, action = hit4 ? "hitfront" : p.ai.action;
-        person(c, p.devil ? "devil" : "zombie", action, p, s.tick, void 0, void 0, hit4 ? void 0 : enemyRawFrame(p));
+        const normal = p.body.phase === "normal", action = normal ? p.ai.action : p.body.action;
+        c.globalAlpha = p.body.alpha;
+        person(c, p.devil ? "devil" : "zombie", action, p, s.tick, void 0, void 0, normal ? enemyRawFrame(p) : Math.floor(p.body.frame));
+        c.globalAlpha = 1;
       }
     }
     for (const b of s.bullets) {
@@ -27620,7 +27869,7 @@
       } else if (b.fireball) sprite2(c, "Effect.FireBall", b.x, b.y + b.z * PROJECTION, b.animation);
       else sprite2(c, b.clusterShell ? "Shot.ClusterShell" : b.weapon === 4 ? "Shot.Grenade" : "Shot.Rocket", b.x, b.y + (b.z || 0) * PROJECTION, s.tick / 2, 1, b.weapon === 7 ? Math.atan2(b.vy, b.vx) : 0);
     }
-    for (const e of s.effects) if (!["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
+    for (const e of s.effects) if (!e.floor && !["Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)) {
       if (e.kind === "Effect.MuzzleFlash") {
         sprite2(c, e.spriteKey, e.x, e.y + e.z * PROJECTION, 0, 1, e.angle);
         continue;
@@ -27651,7 +27900,7 @@
       const x = 20 + (p.seat - 1) * WIDTH4 / 4, gun = WEAPONS3[p.weapon];
       c.fillStyle = ["#9ac8ff", "#f1d585", "#9edc9c", "#e7a5ad"][p.seat - 1];
       c.font = "bold 15px sans-serif";
-      c.fillText(`P${p.seat}  ${p.alive ? Math.ceil(p.hp) + " HP" : "\u5012\u5730 \xB7 " + Math.ceil(p.respawn / 25) + "s"}`, x, 52);
+      c.fillText(`P${p.seat}  ${p.alive ? Math.max(0, Math.ceil(p.hp)) + " HP" : "\u5012\u5730 \xB7 " + Math.ceil(p.respawn / 25) + "s"}`, x, 52);
       c.fillStyle = "#ddd";
       c.font = "14px sans-serif";
       c.fillText(`${gun.name}  ${p.ammo < 0 ? "\u221E" : p.ammo}  \xB7  ${p.kills} \u51FB\u6740`, x, 73);
@@ -27728,9 +27977,10 @@
       if (enabled && volume > 0 && s.tick - event.tick <= 5 && playing.size < 12) {
         const file = boxhead_data_default.audio[event.name];
         if (!file) continue;
+        const nativeGain = /^Creature\.Zombie\.Ambience\./.test(event.name) ? 0.4 : /^Creature\.Player\.Scream\./.test(event.name) ? 0.7 : event.name === "Creature.Zombie.Hit.wav" ? 0.3 : 1;
         const audio2 = new Audio(base + file);
-        gain.set(audio2, 1);
-        audio2.volume = volume;
+        gain.set(audio2, nativeGain);
+        audio2.volume = volume * nativeGain;
         playing.add(audio2);
         const done = () => playing.delete(audio2);
         audio2.onended = done;
@@ -27774,7 +28024,7 @@
     hz: 25,
     width: WIDTH4,
     height: HEIGHT4,
-    controls: "WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BQ / E \u524D\u540E\u6362\u67AA\uFF08K / X \u4E5F\u53EF\uFF09\uFF1B1\u20130 \u9009\u6B66\u5668\u3002\u9ED8\u8BA4\u5F00\u542F\u53CB\u4F24\uFF0C\u7206\u70B8\u4E5F\u4F1A\u4F24\u5230\u81EA\u5DF1\uFF1B\u6B7B\u4EA1\u6E05\u7A7A\u975E\u624B\u67AA\u5F39\u836F\uFF0C\u961F\u53CB\u5B58\u6D3B\u65F6\u53EF\u590D\u6D3B\u3002",
+    controls: "WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BQ / E \u524D\u540E\u6362\u67AA\uFF08K / X \u4E5F\u53EF\uFF09\uFF1B1\u20130 \u9009\u6B66\u5668\u3002\u9ED8\u8BA4\u5F00\u542F\u53CB\u4F24\uFF0C\u7206\u70B8\u4E5F\u4F1A\u4F24\u5230\u81EA\u5DF1\uFF1B\u590D\u6D3B\u65F6\u6E05\u7A7A\u975E\u624B\u67AA\u5F39\u836F\uFF0C\u961F\u53CB\u5B58\u6D3B\u65F6\u53EF\u590D\u6D3B\u3002",
     maps: MAPS2.map(({ id, label }) => ({ id, label })),
     create: create3,
     step: step3,
@@ -27789,12 +28039,13 @@
         p.lastAttack = Math.max(p.lastAttack, input.attack);
         p.lastAlt = Math.max(p.lastAlt, input.alt);
         p.triggerDown = false;
+        p.selectionPending = false;
         renewFireKey(p);
       }
     },
     predict(s, seat, input, fraction) {
       const p = s.players.find((p2) => p2.seat === seat);
-      if (!p?.alive) return;
+      if (!p?.alive || p.body.phase !== "control") return;
       const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
       if (dx || dy) {
         p.dir = Math.atan2(dy, dx);
@@ -29499,7 +29750,7 @@
       const seconds = Math.max(0, Math.ceil((ROUND_TICKS - state.tick) / HZ));
       ctx.fillText(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`, BOMB_FIELD_WIDTH - LEFT, 39);
       for (let y = 0; y < HEIGHT; y++) for (let x = 0; x < WIDTH; x++) {
-        const px = LEFT + x * CELL5, py = TOP + y * CELL5, cell2 = index(x, y);
+        const px = LEFT + x * CELL5, py = TOP + y * CELL5, cell3 = index(x, y);
         ctx.fillStyle = (x + y) % 2 ? "#b2c9a6" : "#bdd3b0";
         ctx.fillRect(px, py, CELL5, CELL5);
         const floor = this.images.get(theme && visual ? `floor-${visual.floor}` : "floor");
@@ -29510,19 +29761,19 @@
         }
         ctx.strokeStyle = "#23433b18";
         ctx.strokeRect(px, py, CELL5, CELL5);
-        if (state.board[cell2] === 1) {
+        if (state.board[cell3] === 1) {
           if (theme && visual) {
-            if (!(x >= 6 && x <= 7 && y >= 5 && y <= 6)) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell2], x, y) });
+            if (!(x >= 6 && x <= 7 && y >= 5 && y <= 6)) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell3], x, y) });
           } else {
             ctx.fillStyle = "#536d66";
             ctx.fillRect(px + 1, py + 1, CELL5 - 2, CELL5 - 2);
             this.sprite("wall", px + CELL5 / 2, py + CELL5 - 2, CELL5 - 2, CELL5 - 1);
           }
-        } else if (state.board[cell2] === 2) {
-          if (theme && visual) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell2], x, y) });
+        } else if (state.board[cell3] === 2) {
+          if (theme && visual) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell3], x, y) });
           else this.sprite("crate", px + CELL5 / 2, py + CELL5 - 1, CELL5 - 2, CELL5 - 1);
         }
-        if (state.flames[cell2] > state.tick) {
+        if (state.flames[cell3] > state.tick) {
           let original = false;
           for (const blast2 of state.blasts) {
             const dx = x - blast2.x, dy = y - blast2.y;
@@ -29540,12 +29791,12 @@
             break;
           }
           if (!original) this.animation("fx-blast", state.tick / 2, px + CELL5 / 2, py + CELL5, CELL5, CELL5);
-        } else if (state.ice[cell2] > state.tick) {
+        } else if (state.ice[cell3] > state.tick) {
           ctx.fillStyle = "#9cdef3bd";
           ctx.fillRect(px + 1, py + 1, CELL5 - 2, CELL5 - 2);
           this.animation("fx-ice", state.tick / 4, px + CELL5 / 2, py + CELL5, CELL5, CELL5);
-        } else if (state.items[cell2]) {
-          const type = state.items[cell2];
+        } else if (state.items[cell3]) {
+          const type = state.items[cell3];
           this.sprite(`item-${type}`, px + CELL5 / 2, py + CELL5 - 2, CELL5 * 0.86, CELL5 * 0.9);
         }
       }
@@ -29561,8 +29812,8 @@
         if (s.kind === "fire" || s.kind === "ice") {
           const [dx, dy] = [[-1, 0], [0, -1], [1, 0], [0, 1]][Math.max(0, s.dir)];
           for (let d = 1; d <= s.distance; d++) {
-            const cell2 = index(x + dx * d, y + dy * d);
-            if ((s.kind === "fire" ? state.flames[cell2] : state.ice[cell2]) > state.tick)
+            const cell3 = index(x + dx * d, y + dy * d);
+            if ((s.kind === "fire" ? state.flames[cell3] : state.ice[cell3]) > state.tick)
               this.animation(`fx-${s.kind}`, age / 4, LEFT + (x + dx * d + 0.5) * CELL5, TOP + (y + dy * d + 1) * CELL5, CELL5, CELL5 * 1.1);
           }
         } else {
@@ -30264,10 +30515,10 @@
         body2.replaceChildren();
         const records = net.room.auth?.records || [];
         if (!records.length) {
-          const row = document.createElement("tr"), cell2 = document.createElement("td");
-          cell2.setAttribute("colspan", "5");
-          cell2.textContent = "\u5F00\u5C40\u540E\u5F00\u59CB\u7EDF\u8BA1";
-          row.append(cell2);
+          const row = document.createElement("tr"), cell3 = document.createElement("td");
+          cell3.setAttribute("colspan", "5");
+          cell3.textContent = "\u5F00\u5C40\u540E\u5F00\u59CB\u7EDF\u8BA1";
+          row.append(cell3);
           body2.append(row);
         }
         for (const record of records) {
@@ -30275,9 +30526,9 @@
           row.classList.toggle("mine", record.id === net.id);
           const name = `${record.name}${record.id === net.id ? "\uFF08\u4F60\uFF09" : ""}${net.room.members.some((member) => member.id === record.id) ? "" : " \xB7 \u5DF2\u79BB\u5F00"}`;
           for (const value of [name, record.kills, record.deaths, record.wins, record.rounds]) {
-            const cell2 = document.createElement("td");
-            cell2.textContent = String(value);
-            row.append(cell2);
+            const cell3 = document.createElement("td");
+            cell3.textContent = String(value);
+            row.append(cell3);
           }
           body2.append(row);
         }

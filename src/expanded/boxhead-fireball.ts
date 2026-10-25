@@ -11,8 +11,8 @@ export function stepFireball(s:State,b:any,hooks:Hooks):void {
   let collided=false;
   for(let cy=Math.floor((y-r)/CELL);cy<=Math.floor((y+r)/CELL);cy++)for(let cx=Math.floor((x-r)/CELL);cx<=Math.floor((x+r)/CELL);cx++)if(solid(map,cx*CELL,cy*CELL))collided=true;
   const near=(p:any,radius:number)=>Math.hypot(p.x-x,p.y-y)<r+radius;
-  collided ||= s.players.some(p=>p.alive&&near(p,.45*CELL))||
-    s.zombies.some((z:any)=>z.hp>0&&z.ai.registered&&z.ai.collidable&&near(z,z.ai.radius))||
+  collided ||= s.players.some(p=>p.body.collidable&&near(p,.45*CELL))||
+    s.zombies.some((z:any)=>z.ai.registered&&z.body.collidable&&near(z,z.ai.radius))||
     s.barrels.some((p:any)=>objectBlocks(p)&&(p.hp>0||wallBlocks(p,s.tick))&&near(p,p.radius));
   if(collided) {
     // GenericCollide does not move on impact. AffectArea covers expanded grid

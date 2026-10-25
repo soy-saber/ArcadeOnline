@@ -44,7 +44,7 @@ test('fade lasts five callbacks including immediate80 percent, with collision re
 
 test('fading wall has no damage flags, so later hitscan passes through while its movement collider remains',()=>{
  const {s,p,b}=placedWall();hit(s,b,1000);const q=s.players[1];q.x=b.x+80;q.y=b.y;q.invul=0;
- a.step(s,[input(2,{attack:2})]);assert.equal(q.hp,174+200/750);assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,60);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);
+ a.step(s,[input(2,{attack:2})]);assert.equal(q.hp,200);assert.equal(q.body.affects.length,1);assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,60);ticks(s);assert.equal(q.hp,174);assert.equal(b.wallAlpha,40);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);
 });
 
 test('native rocket bullet-affect ray passes a fading wall while the movement collider remains',()=>{
