@@ -377,7 +377,14 @@ function serveFile(filePath, res, onNotFound) {
   });
 }
 
-const wss = new WebSocketServer({ server });
+// Large native maps include recoverable navigation grids. Compress messages
+// independently so full recovery does not flood slower connections. Keep zlib
+// concurrency/window bounded and leave small input/ack messages uncompressed.
+const wss = new WebSocketServer({ server, perMessageDeflate: {
+  serverNoContextTakeover: true, clientNoContextTakeover: true,
+  serverMaxWindowBits: 12, concurrencyLimit: 4, threshold: 1024,
+  zlibDeflateOptions: { level: 3, memLevel: 7 }
+} });
 
 wss.on("connection", (ws) => {
   const connectionId = crypto.randomUUID();

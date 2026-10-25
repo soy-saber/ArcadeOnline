@@ -2,13 +2,13 @@
 > arcade-online@0.1.0 test:deploy
 > node --test tests/deploy.test.cjs
 
-✔ IP TLS selects public certificate without SNI and preserves existing sites (5.739ms)
-✔ IP HTTPS uses short-lived ACME; DNS, NAT, credentials and private port match (2.428ms)
-✔ real Caddy parser accepts IP and DNS configurations and selects public ACME (383.8679ms)
-PASS http://127.0.0.1:28482: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.
-✔ public readiness probe checks a real service and websocket upgrade (379.6954ms)
+✔ IP TLS selects public certificate without SNI and preserves existing sites (6.9351ms)
+✔ IP HTTPS uses short-lived ACME; DNS, NAT, credentials and private port match (2.296ms)
+✔ real Caddy parser accepts IP and DNS configurations and selects public ACME (494.6717ms)
+PASS http://127.0.0.1:28241: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.
+✔ public readiness probe checks a real service and websocket upgrade (405.9779ms)
 PASS TURN UDP: authenticated allocation at 203.0.113.10:49180. Verify this is the public IP and an open relay port.
-✔ TURN probe authenticates, decodes relay address and releases its allocation (33.1041ms)
+✔ TURN probe authenticates, decodes relay address and releases its allocation (44.9161ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -16,4 +16,4 @@ PASS TURN UDP: authenticated allocation at 203.0.113.10:49180. Verify this is th
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 969.5862
+ℹ duration_ms 1149.65

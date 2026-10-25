@@ -8,7 +8,7 @@ server?.stderr.on("data", data => errors.push(data.toString()));
 let browser;
 (async () => {
   for (let i = 0; i < 100; i++) { try { if ((await fetch(base + "/healthz")).ok) break; } catch {} await wait(50); }
-  browser = await puppeteer.launch({ executablePath: process.env.CHROME || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", headless: true, args: ["--no-sandbox", "--disable-background-timer-throttling", "--disable-renderer-backgrounding"] });
+  browser = await puppeteer.launch({ executablePath: process.env.CHROME || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", headless: true, args: ["--no-sandbox", "--disable-gpu", "--disable-background-timer-throttling", "--disable-renderer-backgrounding"] });
   const catalog = (await (await fetch(base + "/games.json")).json()).filter(game => game.runtime === "server" && !["3881-server", "46923-server"].includes(game.id));
   assert.equal(catalog.length, 6);
   for (const game of catalog) {
@@ -82,8 +82,10 @@ let browser;
       await wait(300); // Exercise the complete blast frame range and asset loading.
     }
     const tickBefore = await b.evaluate(() => window.__authorityTest.authority.tick), cdp = await a.createCDPSession(); await cdp.send("Debugger.enable");
-    await cdp.send("Debugger.pause"); await wait(650);
+    await cdp.send("Debugger.pause"); const pauseAt=Date.now(); await wait(650);
+    await b.waitForFunction(tick => window.__authorityTest.authority.tick > tick + 5, {timeout:10000}, tickBefore);
     const tickAfter = await b.evaluate(() => window.__authorityTest.authority.tick); assert(tickAfter > tickBefore + 5, game.id);
+    const pauseEvidence={tickBefore,tickAfter,observedMs:Date.now()-pauseAt};
     await cdp.send("Debugger.resume"); await cdp.send("Debugger.disable");
     await a.waitForFunction(() => window.__authorityTest.network.resyncs > 0 && window.__authorityTest.network.snapshotAge < 250, { timeout: 10000 });
     await b.evaluate(() => window.__authorityTest.resync()); await b.waitForFunction(() => window.__authorityTest.network.fullUpdates > 2);
@@ -106,9 +108,17 @@ let browser;
     await b.click("#start-game");
     await b.waitForFunction(() => window.__authorityTest.network.room.members.find(m => m.id === window.__authorityTest.network.id)?.ready);
     if (fourPlayers) await a.click("#start-game"); await a.waitForFunction(() => window.__authorityTest.authority.phase === "playing");
+    await b.waitForFunction(() => window.__authorityTest.authority.phase === "playing");
+    let nativeEnemy;
+    if (game.id === '50737-server') {
+      await b.waitForFunction(() => window.__authorityTest.authority.zombies.some(z=>z.ai.registered&&z.ai.collidable&&z.ai.state==='cell'),{timeout:20000});
+      nativeEnemy=await b.evaluate(()=>{const s=window.__authorityTest.authority,z=s.zombies.find(z=>z.ai.registered&&z.ai.collidable&&z.ai.state==='cell');return {tick:s.tick,wave:s.wave,id:z.id,x:z.x,y:z.y,ai:z.ai,navigationPhase:s.navigation.phase};});
+      assert(nativeEnemy.ai.reserved>=0);assert(nativeEnemy.ai.counter>0);
+    }
+    await b.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await b.screenshot({ path: path.join(output, game.id + ".png"), fullPage: true });
     const counts = await b.evaluate(() => ({ full: window.__authorityTest.network.fullUpdates, delta: window.__authorityTest.network.deltaUpdates, bytes: window.__authorityTest.network.receivedBytes }));
-    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, ...counts });
+    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, nativeEnemy, pauseEvidence, ...counts });
     console.log("Expanded E2E passed: " + game.id);
     for (const context of contexts) await context.close();
   }
