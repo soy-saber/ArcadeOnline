@@ -146,23 +146,23 @@ export class Presentation {
     const entries = this.pending.filter((entry) => entry.at >= this.inputFloor && now - entry.at <= PREDICTION_MS);
     const frameMs = 1000 / hz;
     const total = Math.min(hz * PREDICTION_MS / 1000, entries.length + Math.max(0, now - (entries[entries.length - 1]?.at ?? now)) / frameMs);
+    let previewJump=isBomb(next)?0:next.players[seat-1].lastJump;
     for (let i = 0; i < Math.ceil(total); i++) {
       const input = entries[i]?.input || held, fraction = Math.min(1, total - i);
       if (isBomb(next)) bombMove(next, next.players[seat - 1], (input as BombInput).dir, fraction);
       else {
         const item = input as BadmintonInput, local = next.players[seat - 1];
-        const originalX = local.x;
-        const motion=local.motion,facing=local.facing;
-        moveControls(next as BadmintonState,seat as 1|2,item.left,item.right);
-        local.motion=motion;local.facing=facing;
-        local.x = mix(originalX, local.x, fraction);
         if (fraction === 1) {
           local.vy++;local.y+=local.vy;
           if(local.y>=GROUND){local.y=GROUND;local.jumping=false;}
-          const jump=item.jumpHeld||item.jump>Math.max(local.lastJump,item.cancelledJump||0);
-          local.lastJump=Math.max(local.lastJump,item.jump);
+          const jump=item.jumpHeld||item.jump>Math.max(previewJump,item.cancelledJump||0);
+          previewJump=Math.max(previewJump,item.jump);
           if(jump&&!local.jumping&&next.serve!==seat){local.vy=-12;local.jumping=true;}
         }
+        const originalX=local.x,motion=local.motion,motionAt=local.motionAt,facing=local.facing;
+        moveControls(next as BadmintonState,seat as 1|2,item.left,item.right);
+        local.motion=motion;local.motionAt=motionAt;local.facing=facing;
+        local.x=mix(originalX,local.x,fraction);
       }
       this.predictionSteps++;
     }

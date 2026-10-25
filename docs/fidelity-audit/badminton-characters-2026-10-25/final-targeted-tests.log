@@ -1,0 +1,32 @@
+✔ all114 native character frames match their recorded source/sheet/pixel hashes and native registration (52.9224ms)
+✔ native parent labels, child timelines, stopped jump, alpha/filters and depth layers remain intact (1.7957ms)
+✔ held walking loops all8frames, repeated parent label leaves the child running; blockage retains its animation (3.0783ms)
+✔ right then left can replace the child twice in one callback, even when the final label matches the previous one (1.0327ms)
+✔ jump switches parent pose once, source child305 stays stopped; landing follows original held controls (1.183ms)
+✔ source gameOver switches grounded characters to normal while keeping airborne jump pose (1.1028ms)
+✔ full/delta recovery preserves independent character phase and rejects missing/future motion origins (15.7759ms)
+✔ local preview applies gravity before native movement tests and preserves authoritative character tracks/counters (1.9091ms)
+✔ many received snapshots reconcile once per render and use the newest authoritative world (7.0655ms)
+✔ local bomb movement never predicts bomb actions, damage, item collection, world ticks or another player (4.6548ms)
+✔ stalls discard input backlog, request one fresh baseline, and preserve gameplay action counters (1.3736ms)
+✔ local badminton pose prediction leaves scoring, shuttle and remote player authoritative (0.7871ms)
+✔ remote movement and shuttle interpolate within a short buffer without extrapolating world physics (0.397ms)
+✔ unchanged waiting rooms do not repeatedly request expensive full snapshots (2.9641ms)
+✔ Bomb It 2 remote interpolation keeps pixel poses and walking animation together (19.5058ms)
+✔ Bomb It 2 moving bombs interpolate pixels without changing grid occupancy, fuse or authority (4.9209ms)
+✔ serve starts the rally; a landing on the right awards P1 and the scorer serves next (4.6226ms)
+✔ movement stays on each side; legacy jump and hit counters do not repeat without held flags (1.333ms)
+✔ original service area checks the scaled netLimit and keeps the server behind it (0.5191ms)
+✔ the server cannot jump until serve clip frame 13, then regains jump and net reach (0.4818ms)
+✔ timed racket contact sends the shuttle back; own side landing awards opponent (0.8645ms)
+✔ original overhand hit window closes at frame nine; retained single-player underhand geometry hits its source rectangle (0.4382ms)
+✔ first to seven finishes the match and ignores further input (0.4664ms)
+✔ snapshot validation and local reconciliation reject stale movement (0.7353ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 764.8191

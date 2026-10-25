@@ -1,0 +1,126 @@
+{
+  "at": "2026-10-25T14:50:34.040720+00:00",
+  "baseline": "2439702f37a2d84093b89f7f1483e55710be8ae6",
+  "source": "games/46923/game.swf",
+  "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "xmlSha256": "0ed596d2814f473f4ab20bc796112799d7c3a38c886d9ac49bd003643e36583e",
+  "sourceScripts": {
+    "frame_38/DoAction.as": "5366272533e09090da751adcbe2f2ce9c0b958f256c71d936cff3795272f6935",
+    "DefineSprite_306_hero/frame_1/DoAction.as": "12f9a1ea55e625949fab26aa076632e62c5fc65bcdc75bdad2fcd5709d6a31f9",
+    "DefineSprite_268_hero2/frame_1/DoAction.as": "cbc69ecc23ac87d5a62c790235cbf2c06fe53aaa95cea93514f5ed33ad6d9ef7",
+    "DefineSprite_305/frame_1/DoAction.as": "9a549e817c9735eb08d2a14278141df0dd3800b7c501dd21b239f65d33da0d9b",
+    "DefineSprite_276/frame_1/DoAction.as": "8a3029abd06019ad64a1f05ebcfdb726e57c75d677ad572abd0a083970c2e6ab",
+    "DefineSprite_276/frame_1/DoAction_2.as": "1b087e767b8a3301f15299b1c69db3ecda593e7c7e2f0265099674db6ab59fa0"
+  },
+  "exporter": "scripts/import-badminton-characters.py",
+  "metadata": "src/badminton/character-art.json",
+  "totalFrames": 114,
+  "rootMotionLabels": {
+    "p1": {
+      "normal": {
+        "rootSymbol": 306,
+        "rootFrame": 1,
+        "bodySymbol": 279,
+        "frames": 11,
+        "playing": true,
+        "file": "p1-body-normal.png",
+        "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50"
+      },
+      "walkbackward": {
+        "rootSymbol": 306,
+        "rootFrame": 12,
+        "bodySymbol": 294,
+        "frames": 8,
+        "playing": true,
+        "file": "p1-body-walkbackward.png",
+        "sha256": "c18b3788ea7c20a6558eb40127178717d6023e1b11c911475057ab18eca1f15d"
+      },
+      "walkforward": {
+        "rootSymbol": 306,
+        "rootFrame": 23,
+        "bodySymbol": 302,
+        "frames": 8,
+        "playing": true,
+        "file": "p1-body-walkforward.png",
+        "sha256": "8e3b2b24371d98dc2b3cb0634503b75be6d6b9c9aec7b1b885fd2451be8a10bb"
+      },
+      "walkup": {
+        "rootSymbol": 306,
+        "rootFrame": 32,
+        "bodySymbol": 305,
+        "frames": 32,
+        "playing": false,
+        "file": "p1-body-walkup.png",
+        "sha256": "dcc22d8d0e0634fb08bacab71e1fe4f575f56099c7f4607872e7d3f55fa0b2b9"
+      },
+      "walkdown": {
+        "rootSymbol": 306,
+        "rootFrame": 43,
+        "bodySymbol": 279,
+        "frames": 11,
+        "playing": true,
+        "file": "p1-body-walkdown.png",
+        "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50"
+      }
+    },
+    "p2": {
+      "normal": {
+        "rootSymbol": 268,
+        "rootFrame": 1,
+        "bodySymbol": 200,
+        "frames": 11,
+        "playing": true,
+        "file": "p2-body-normal.png",
+        "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff"
+      },
+      "walkforward": {
+        "rootSymbol": 268,
+        "rootFrame": 13,
+        "bodySymbol": 220,
+        "frames": 8,
+        "playing": true,
+        "file": "p2-body-walkforward.png",
+        "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580"
+      },
+      "walkbackward": {
+        "rootSymbol": 268,
+        "rootFrame": 23,
+        "bodySymbol": 229,
+        "frames": 8,
+        "playing": true,
+        "file": "p2-body-walkbackward.png",
+        "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49"
+      },
+      "walkdown": {
+        "rootSymbol": 268,
+        "rootFrame": 33,
+        "bodySymbol": 238,
+        "frames": 16,
+        "playing": true,
+        "file": "p2-body-walkdown.png",
+        "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8"
+      },
+      "walkup": {
+        "rootSymbol": 268,
+        "rootFrame": 45,
+        "bodySymbol": null,
+        "frames": 1,
+        "playing": false,
+        "file": "p2-body-walkup.png",
+        "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7"
+      }
+    }
+  },
+  "cachedImportReproducedAllFilesExactly": true,
+  "nativeCharacterDepths": {
+    "p2": 59998,
+    "p1": 59999,
+    "birdie": 119999
+  },
+  "racketDepths": {
+    "gunServe": 1,
+    "gun": 8
+  },
+  "runtimeCallbackEquivalenceProven": false,
+  "completeGoal": false
+}

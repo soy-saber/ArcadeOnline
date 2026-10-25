@@ -1,8 +1,10 @@
-import { GameState, GROUND, HEIGHT, WIDTH } from "./core";
+import { GameState, HEIGHT, WIDTH } from "./core";
 import geometry from './geometry.json';
+import characters from './character-art.json';
+import {bodyPose} from './motion';
 
 const ASSET_ROOT = "/authority/assets/badminton/";
-type ImageKey = "court" | "birdie" | "p1-body" | "p1-body-alt" | "p2-body" | "p2-head" | `${"p1" | "p2"}-${"swing" | "serve"}-${string}` | `p1-underhand-${string}`;
+type ImageKey = string;
 
 export class BadmintonView {
   private ctx: CanvasRenderingContext2D;
@@ -14,7 +16,7 @@ export class BadmintonView {
   constructor(private canvas: HTMLCanvasElement) {
     canvas.width = WIDTH * 2; canvas.height = HEIGHT * 2;
     this.ctx = canvas.getContext("2d")!;
-    for (const name of ["court", "birdie", "p1-body", "p1-body-alt", "p2-body", "p2-head"] as const) this.load(name);
+    for (const name of ['court','birdie',...Object.values(characters.poses).flatMap(group=>Object.values(group).map(m=>m.file.replace('.png','')))])this.load(name);
     for (const side of ["p1", "p2"] as const) {
       for (let frame = 1; frame <= 15; frame++) this.load(`${side}-swing-${String(frame).padStart(2, "0")}`);
       for (let frame = 1; frame <= 13; frame++) this.load(`${side}-serve-${String(frame).padStart(2, "0")}`);
@@ -44,7 +46,8 @@ export class BadmintonView {
     ctx.fillText(state ? `${String(state.score[0]).padStart(2, "0")} - ${String(state.score[1]).padStart(2, "0")}` : "00 - 00", 275, 42);
     ctx.shadowBlur = 0;
     if (state) {
-      state.players.forEach((player, i) => this.player(state, i));
+      // Original attachMovie depths: P2=59998, P1=59999, birdie=119999.
+      this.player(state,1);this.player(state,0);
       if (state.rally !== "serve") {
         const bird = state.birdie;
         ctx.save(); ctx.translate(bird.x, bird.y);
@@ -70,13 +73,7 @@ export class BadmintonView {
   private player(state: GameState, index: number): void {
     const p = state.players[index];
     const side = index === 0 ? "p1" : "p2";
-    const moving = state.inputs[index].left !== state.inputs[index].right;
     const ctx = this.ctx;
-    ctx.save(); ctx.translate(p.x, p.y);
-    if (index === 0) this.draw(moving && p.y >= GROUND && state.tick % 2 === 0 ? "p1-body-alt" : "p1-body", -14, -78);
-    else { this.draw("p2-body", -12, -62); this.draw("p2-head", -8, -81); }
-    ctx.restore();
-
     const serving=state.serve===index+1;
     const kind=serving?'serve':p.racket.frame>=16?'underhand':'swing';
     const bounded=serving?p.racket.serveFrame:kind==='underhand'?p.racket.frame-15:p.racket.frame;
@@ -86,6 +83,10 @@ export class BadmintonView {
     ctx.save(); ctx.translate(p.x, p.y);ctx.transform(matrix[0],matrix[1],matrix[2],matrix[3],matrix[4],matrix[5]);
     this.draw(key,meta.x,meta.y);
     ctx.restore();
+    // gunServe depth1 / gun depth8 precede the native body, head and shadow.
+    const pose=bodyPose(index+1,p,state.tick),body=pose.meta;
+    const image=this.images.get(body.file.replace('.png',''));
+    if(image?.complete&&image.naturalWidth)ctx.drawImage(image,(pose.frame-1)*body.w,0,body.w,body.h,p.x+body.x,p.y+body.y,body.w,body.h);
   }
 
   private banner(message: string): void {

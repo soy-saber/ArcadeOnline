@@ -1958,7 +1958,1063 @@
   // src/badminton/control.ts
   function validControl(p, tick) {
     const r = p.racket;
-    return !!r && ["playing", "servePlaying", "ready", "active", "consumed"].every((k) => typeof r[k] === "boolean") && Number.isInteger(r.frame) && r.frame >= 1 && r.frame <= 29 && Number.isInteger(r.serveFrame) && r.serveFrame >= 1 && r.serveFrame <= 13 && Number.isSafeInteger(r.strokes) && r.strokes >= 0 && Number.isSafeInteger(r.strokeAt) && r.strokeAt >= -1 && r.strokeAt <= tick && typeof p.jumping === "boolean" && Number.isSafeInteger(p.jumps) && p.jumps >= 0 && ["normal", "walkforward", "walkbackward", "walkup"].includes(p.motion) && p.swing === (r.playing ? r.frame >= 16 ? 30 - r.frame : 16 - r.frame : 0) && p.swingHit === r.consumed && p.servePose === (r.servePlaying ? 1 : 0) && p.underhand === (r.frame >= 16 ? 1 : 0);
+    return !!r && ["playing", "servePlaying", "ready", "active", "consumed"].every((k) => typeof r[k] === "boolean") && Number.isInteger(r.frame) && r.frame >= 1 && r.frame <= 29 && Number.isInteger(r.serveFrame) && r.serveFrame >= 1 && r.serveFrame <= 13 && Number.isSafeInteger(r.strokes) && r.strokes >= 0 && Number.isSafeInteger(r.strokeAt) && r.strokeAt >= -1 && r.strokeAt <= tick && typeof p.jumping === "boolean" && Number.isSafeInteger(p.jumps) && p.jumps >= 0 && ["normal", "walkforward", "walkbackward", "walkup", "walkdown"].includes(p.motion) && Number.isSafeInteger(p.motionAt) && p.motionAt >= 0 && p.motionAt <= tick && p.swing === (r.playing ? r.frame >= 16 ? 30 - r.frame : 16 - r.frame : 0) && p.swingHit === r.consumed && p.servePose === (r.servePlaying ? 1 : 0) && p.underhand === (r.frame >= 16 ? 1 : 0);
+  }
+
+  // src/badminton/character-art.json
+  var character_art_default = {
+    source: "games/46923/game.swf",
+    sourceSha256: "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+    xmlSha256: "0ed596d2814f473f4ab20bc796112799d7c3a38c886d9ac49bd003643e36583e",
+    rootFrameRate: 30,
+    method: "Static display list at each native hero label; independent body timeline stepped inside its original root layers, matrices, alpha and filters; gun/gunServe excluded for separate native tracks. Normal face276 held at source script-selected frame1. No AS2 execution or Flash callback-order equivalence claim.",
+    sourceScripts: {
+      "frame_38/DoAction.as": "5366272533e09090da751adcbe2f2ce9c0b958f256c71d936cff3795272f6935",
+      "DefineSprite_306_hero/frame_1/DoAction.as": "12f9a1ea55e625949fab26aa076632e62c5fc65bcdc75bdad2fcd5709d6a31f9",
+      "DefineSprite_268_hero2/frame_1/DoAction.as": "cbc69ecc23ac87d5a62c790235cbf2c06fe53aaa95cea93514f5ed33ad6d9ef7",
+      "DefineSprite_305/frame_1/DoAction.as": "9a549e817c9735eb08d2a14278141df0dd3800b7c501dd21b239f65d33da0d9b",
+      "DefineSprite_276/frame_1/DoAction.as": "8a3029abd06019ad64a1f05ebcfdb726e57c75d677ad572abd0a083970c2e6ab",
+      "DefineSprite_276/frame_1/DoAction_2.as": "1b087e767b8a3301f15299b1c69db3ecda593e7c7e2f0265099674db6ab59fa0"
+    },
+    poses: {
+      p1: {
+        normal: {
+          wrapper: 5e3,
+          rootSymbol: 306,
+          rootFrame: 1,
+          bodySymbol: 279,
+          frames: 11,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="11" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-334" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="279" depth="13" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="20" translateY="-800" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="2.3561859130859375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>'
+          ],
+          file: "p1-body-normal.png",
+          w: 52,
+          h: 98,
+          x: -16.7,
+          y: -77.25,
+          sha256: "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50",
+          frameSha256: [
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ]
+          ]
+        },
+        walkbackward: {
+          wrapper: 5001,
+          rootSymbol: 306,
+          rootFrame: 12,
+          bodySymbol: 294,
+          frames: 8,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="11" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-334" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="294" depth="13" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="11" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="40" translateY="-820" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="2.3561859130859375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>'
+          ],
+          file: "p1-body-walkbackward.png",
+          w: 52,
+          h: 98,
+          x: -16.7,
+          y: -77.25,
+          sha256: "c18b3788ea7c20a6558eb40127178717d6023e1b11c911475057ab18eca1f15d",
+          frameSha256: [
+            "f87d0c8911297dbfa2e17ea707c34b0f351ea9187e5c69133424ffaf01fa7805",
+            "54623ac656939fc4cfe4dc1faffa01db1412fe03747ff6c246580d5b9c08ec94",
+            "0336a15545cd27c52787ae6701fe4eae442aafe2184a18006fc52c7109f2bbae",
+            "d96fcb0d281053da7e37f6d8a24de375e023b5bcef0f5b58b9a737a8615286fa",
+            "0568fb6cabeb158ec36f55b007d9ae907d0b2bb8a34cb604409f39a3dfb794de",
+            "3ce64090e5ee062a68ddceae35b57bc3a209a09a0aceec08cbb25deb884b0f03",
+            "885d094284c881e852b9b5dd7731fcd0be44f967920f3ac2efdf5b36d4aff82f",
+            "9e577b5ff7079f0286a6e93c97011a19f1e595946df7517ffa422b4747962500"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              4,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ]
+          ]
+        },
+        walkforward: {
+          wrapper: 5002,
+          rootSymbol: 306,
+          rootFrame: 23,
+          bodySymbol: 302,
+          frames: 8,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="11" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-334" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="302" depth="13" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="22" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="47" translateY="-808" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="2.3561859130859375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>'
+          ],
+          file: "p1-body-walkforward.png",
+          w: 52,
+          h: 98,
+          x: -16.7,
+          y: -76.65,
+          sha256: "8e3b2b24371d98dc2b3cb0634503b75be6d6b9c9aec7b1b885fd2451be8a10bb",
+          frameSha256: [
+            "b985fc71e9a66cf657ea7f0adbfe6843916459b12a071e5961568f7a701dfb78",
+            "62fc2c53f532cec2f28edb5338f8978625861c5d8e9db39eed573fc7df3b8fc3",
+            "c552fca5f2e209092967c562031a3ec4816a3b41fce02710dfc0b8a05f1ca8be",
+            "c8e84fc45a131d64d9035a080f3a16b15f77c2345a075c39bdefb6a636b7c78f",
+            "405efdf095c1a5bfb18b1abc9d5f3225700583f4447442c71fafccaff2658b4d",
+            "2abc100ddf3adc1249537cefed3f2f25e996e152010406aa71501aa88fef5a80",
+            "269573efa45a78fc2fc771689d18a60d8b049b9fe6dc57825e80165334f216f6",
+            "dd4e061fbced7d7217d5f70828b4b39d4028a60a6be01d0ad4aa8d1a0aec2dff"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              4,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ]
+          ]
+        },
+        walkup: {
+          wrapper: 5003,
+          rootSymbol: 306,
+          rootFrame: 32,
+          bodySymbol: 305,
+          frames: 32,
+          playing: false,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="305" depth="11" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="31" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="0" translateY="-800" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="2.3561859130859375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>'
+          ],
+          file: "p1-body-walkup.png",
+          w: 44,
+          h: 94,
+          x: -11.65,
+          y: -77.25,
+          sha256: "dcc22d8d0e0634fb08bacab71e1fe4f575f56099c7f4607872e7d3f55fa0b2b9",
+          frameSha256: [
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
+            "bdf25ff6998ccb5e4057a2d5bb19c9d2828af486efbc1c90f0f96aa4d829b3b6",
+            "bdf25ff6998ccb5e4057a2d5bb19c9d2828af486efbc1c90f0f96aa4d829b3b6",
+            "a9dd016b63e035e364526ad4b58d2fe74f90162d8bb29e971db8d8198b9c852e",
+            "a9dd016b63e035e364526ad4b58d2fe74f90162d8bb29e971db8d8198b9c852e",
+            "83d1a2e5f7a27411399687140d21906f7d4eef39fb16f3bc7966937f93b577a5",
+            "83d1a2e5f7a27411399687140d21906f7d4eef39fb16f3bc7966937f93b577a5",
+            "9eb1c044b2ade5633ea21f2b35764db2e226064080106defacbb80309d958ff6",
+            "9eb1c044b2ade5633ea21f2b35764db2e226064080106defacbb80309d958ff6",
+            "46b9a5ab11daf72c04c041c150edbc44a0b1b46f6f70ed3adb75566766afe8bf",
+            "46b9a5ab11daf72c04c041c150edbc44a0b1b46f6f70ed3adb75566766afe8bf",
+            "f74e0391c6c0c04cdcbc9bcb086faced1d81f3f35535dce7fbe4bc3caf9ad280",
+            "f74e0391c6c0c04cdcbc9bcb086faced1d81f3f35535dce7fbe4bc3caf9ad280",
+            "e94ae1402ee786212f38a3e7b67c54bf6d2d0edaaac4e284a41408bbf11b153d",
+            "e94ae1402ee786212f38a3e7b67c54bf6d2d0edaaac4e284a41408bbf11b153d",
+            "c86e04b914dabb282f72d672df5ff30e77374f55ff0e529b3995f894035e7fac",
+            "c86e04b914dabb282f72d672df5ff30e77374f55ff0e529b3995f894035e7fac"
+          ],
+          bounds: [
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              3,
+              9,
+              33,
+              89
+            ],
+            [
+              11,
+              9,
+              35,
+              88
+            ],
+            [
+              11,
+              9,
+              35,
+              88
+            ],
+            [
+              11,
+              9,
+              34,
+              91
+            ],
+            [
+              11,
+              9,
+              34,
+              91
+            ],
+            [
+              11,
+              9,
+              33,
+              89
+            ],
+            [
+              11,
+              9,
+              33,
+              89
+            ],
+            [
+              11,
+              9,
+              33,
+              88
+            ],
+            [
+              11,
+              9,
+              33,
+              88
+            ],
+            [
+              11,
+              9,
+              33,
+              90
+            ],
+            [
+              11,
+              9,
+              33,
+              90
+            ],
+            [
+              11,
+              9,
+              33,
+              91
+            ],
+            [
+              11,
+              9,
+              33,
+              91
+            ],
+            [
+              11,
+              9,
+              34,
+              88
+            ],
+            [
+              11,
+              9,
+              34,
+              88
+            ],
+            [
+              11,
+              9,
+              35,
+              87
+            ],
+            [
+              11,
+              9,
+              35,
+              87
+            ]
+          ]
+        },
+        walkdown: {
+          wrapper: 5004,
+          rootSymbol: 306,
+          rootFrame: 43,
+          bodySymbol: 279,
+          frames: 11,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="11" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="42" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-334" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="279" depth="13" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="42" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="20" translateY="-800" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="2.3561859130859375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>'
+          ],
+          file: "p1-body-walkdown.png",
+          w: 52,
+          h: 98,
+          x: -16.7,
+          y: -77.25,
+          sha256: "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50",
+          frameSha256: [
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
+            "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ],
+            [
+              6,
+              9,
+              46,
+              94
+            ]
+          ]
+        }
+      },
+      p2: {
+        normal: {
+          wrapper: 5005,
+          rootSymbol: 268,
+          rootFrame: 1,
+          bodySymbol: 200,
+          frames: 11,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="10" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-303" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="200" depth="12" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="-120" translateY="-800" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="0.7853851318359375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject2Tag" characterId="260" depth="14" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="true" nRotateBits="0" nScaleBits="18" nTranslateBits="12" scaleX="-1.0036163" scaleY="1.0" translateX="-50" translateY="-1367" />\n</item>'
+          ],
+          file: "p2-body-normal.png",
+          w: 52,
+          h: 97,
+          x: -15.15,
+          y: -76.25,
+          sha256: "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff",
+          frameSha256: [
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+            "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ]
+          ]
+        },
+        walkforward: {
+          wrapper: 5006,
+          rootSymbol: 268,
+          rootFrame: 13,
+          bodySymbol: 220,
+          frames: 8,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="10" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-303" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="220" depth="12" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="12" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="-113" translateY="-828" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="0.7853851318359375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject2Tag" characterId="260" depth="14" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="true" nRotateBits="0" nScaleBits="18" nTranslateBits="12" scaleX="-1.0036163" scaleY="1.0" translateX="-50" translateY="-1367" />\n</item>'
+          ],
+          file: "p2-body-walkforward.png",
+          w: 52,
+          h: 97,
+          x: -15.15,
+          y: -76.25,
+          sha256: "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580",
+          frameSha256: [
+            "a186ecc630e55e823ac4cfa23953be4d1a6c007ae50fbe8b89894fbab6c9756b",
+            "88c74b7b1b4a61d6ec2892bc8f29159408a14f0b37d091c5564dc82829b20b22",
+            "a4b3d20ce9593b3c60a0ed51010b274afa295e0c5bf6b7748621716b03e1fc7f",
+            "7fe143549e09050defc2dd9cc08b1614d898507a64f6f2e56d1e44e024bd3ecc",
+            "fcb9993d38e73c1cc507ec6dc274f836c716ca6172225c30ea5079b1a80406da",
+            "eb3bd27ee52df608605ac41bf9c3056a1d9f22aca7695b7c89d397be43d3058a",
+            "5f36b414c4ecab076c754822774b190caded5227ff7807670e56c68d1e963730",
+            "3f657836ac2f6af81745177271db674e77f15080870cc7bdaac8826503bbc791"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              48,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ]
+          ]
+        },
+        walkbackward: {
+          wrapper: 5007,
+          rootSymbol: 268,
+          rootFrame: 23,
+          bodySymbol: 229,
+          frames: 8,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="10" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-303" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="229" depth="12" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="22" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="-120" translateY="-820" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="0.7853851318359375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject2Tag" characterId="260" depth="14" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="true" nRotateBits="0" nScaleBits="18" nTranslateBits="12" scaleX="-1.0036163" scaleY="1.0" translateX="-50" translateY="-1367" />\n</item>'
+          ],
+          file: "p2-body-walkbackward.png",
+          w: 52,
+          h: 97,
+          x: -15.15,
+          y: -76.25,
+          sha256: "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49",
+          frameSha256: [
+            "7c28ae3874e4e640eec19a3c1fc4e721fc68b251240def398251f1564c4cc170",
+            "26f71e80d6e74f8c9adf812b4e151b0fbd713f1e6a2bacf15ecc939eed12d915",
+            "1452a5d3d3d32dd9649ac601c0f656084898d6888f0da2895f3befb3d3a8fb48",
+            "caa277aeec71ce44b7ad1db56177165b53e524c2a60ddcf0c4f3d78d339736a0",
+            "882bba71bf590abc49a406216c5201e84d05d5ada1ab2a4e43e66e9818460147",
+            "4538d1cc6b63915d4bce7753b91effc427b3e5f6d20d550962b4f2e9bb10f03f",
+            "0f693d9b428f5772c019db3793f8912f7e22a6d7845022987d665d1f6cbbfdad",
+            "43af887f8d589dd1c0671dd03f56bf9b9328621e77ba1d4de023d6ceab4b2d27"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              48,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ]
+          ]
+        },
+        walkdown: {
+          wrapper: 5008,
+          rootSymbol: 268,
+          rootFrame: 33,
+          bodySymbol: 238,
+          frames: 16,
+          playing: true,
+          layers: [
+            '<item type="PlaceObject3Tag" characterId="202" depth="10" forceWriteAsLong="true" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="10" translateX="-303" translateY="-169" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="BLURFILTER" blurX="5.0" blurY="5.0" id="1" passes="3" reserved="0" />\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject3Tag" characterId="238" depth="12" forceWriteAsLong="true" name="hero" placeFlagHasBlendMode="false" placeFlagHasCacheAsBitmap="false" placeFlagHasCharacter="true" placeFlagHasClassName="false" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="true" placeFlagHasFilterList="true" placeFlagHasImage="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="true" placeFlagHasVisible="false" placeFlagMove="false" placeFlagOpaqueBackground="false" ratio="32" reserved="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="11" translateX="-120" translateY="-800" />\n<colorTransform type="CXFORMWITHALPHA" alphaMultTerm="230" blueMultTerm="256" greenMultTerm="256" hasAddTerms="false" hasMultTerms="true" nbits="10" redMultTerm="256" />\n<surfaceFilterList>\n<item type="DROPSHADOWFILTER" angle="0.7853851318359375" blurX="5.0" blurY="5.0" compositeSource="true" distance="5.0" id="0" innerShadow="false" knockout="false" passes="1" strength="0.296875">\n<dropShadowColor type="RGBA" alpha="255" blue="0" green="0" red="0" />\n</item>\n</surfaceFilterList>\n</item>',
+            '<item type="PlaceObject2Tag" characterId="260" depth="14" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="true" nRotateBits="0" nScaleBits="18" nTranslateBits="12" scaleX="-1.0036163" scaleY="1.0" translateX="-50" translateY="-1367" />\n</item>'
+          ],
+          file: "p2-body-walkdown.png",
+          w: 52,
+          h: 97,
+          x: -15.15,
+          y: -76.25,
+          sha256: "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8",
+          frameSha256: [
+            "58e19cb71cb9ba69c9768073fb4a8952e27c7513af7e69a48b698c7ca384b371",
+            "58e19cb71cb9ba69c9768073fb4a8952e27c7513af7e69a48b698c7ca384b371",
+            "32a549589f0a87b8b08dc3a38ac56d702b32cf824a51ddafeb20c7ec4e6aaa4b",
+            "32a549589f0a87b8b08dc3a38ac56d702b32cf824a51ddafeb20c7ec4e6aaa4b",
+            "27d9f53da1fd8676433b4b01b7cdb1c5d05fafe420b2ede654f242434ad1964c",
+            "27d9f53da1fd8676433b4b01b7cdb1c5d05fafe420b2ede654f242434ad1964c",
+            "3a738f1933571be47d03a3e70fd21b48681971bb7b97c3ac12e74694efde1f46",
+            "3a738f1933571be47d03a3e70fd21b48681971bb7b97c3ac12e74694efde1f46",
+            "b404f4f8137163adaff549db0ccf57c4257505bfd79770dbd28195e0087be91d",
+            "b404f4f8137163adaff549db0ccf57c4257505bfd79770dbd28195e0087be91d",
+            "0e0c5f8d9178649e5bc081bd5a51a711714e9bc9f55c256fc9694286c4101b75",
+            "0e0c5f8d9178649e5bc081bd5a51a711714e9bc9f55c256fc9694286c4101b75",
+            "8874a983f8eac7e2a97b4af945714dc936ca6367eab7ab3226f8dd988fc183a4",
+            "8874a983f8eac7e2a97b4af945714dc936ca6367eab7ab3226f8dd988fc183a4",
+            "8bb5ad355b6254bf9f763f7739d43125dc869596904ec310d368231a91f7a7aa",
+            "8bb5ad355b6254bf9f763f7739d43125dc869596904ec310d368231a91f7a7aa"
+          ],
+          bounds: [
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ],
+            [
+              6,
+              9,
+              46,
+              93
+            ]
+          ]
+        },
+        walkup: {
+          wrapper: 5009,
+          rootSymbol: 268,
+          rootFrame: 45,
+          bodySymbol: null,
+          frames: 1,
+          playing: false,
+          layers: [
+            '<item type="PlaceObject2Tag" characterId="212" depth="10" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="0" translateX="0" translateY="0" />\n</item>',
+            '<item type="PlaceObject2Tag" characterId="260" depth="14" forceWriteAsLong="true" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="false" placeFlagHasRatio="false" placeFlagMove="false">\n<matrix type="MATRIX" hasRotate="false" hasScale="true" nRotateBits="0" nScaleBits="18" nTranslateBits="12" scaleX="-1.0036163" scaleY="1.0" translateX="-50" translateY="-1367" />\n</item>'
+          ],
+          file: "p2-body-walkup.png",
+          w: 26,
+          h: 75,
+          x: -10.35,
+          y: -76.25,
+          sha256: "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7",
+          frameSha256: [
+            "1bfb4258ba2fbddd9302f120e609a517d1b047a023ed16c494e24daa1903b30a"
+          ],
+          bounds: [
+            [
+              0,
+              0,
+              26,
+              75
+            ]
+          ]
+        }
+      }
+    }
+  };
+
+  // src/badminton/motion.ts
+  function setMotion(p, motion, tick) {
+    if (p.motion !== motion) {
+      p.motion = motion;
+      p.motionAt = tick;
+    }
+  }
+  function bodyPose(seat, p, tick) {
+    const meta = character_art_default.poses[seat === 1 ? "p1" : "p2"][p.motion];
+    return { meta, frame: meta.playing ? Math.max(0, tick - p.motionAt) % meta.frames + 1 : 1 };
   }
 
   // src/badminton/core.ts
@@ -2002,7 +3058,7 @@
     }
     player.x += Math.sign(direction3) * 5.9;
     player.facing = direction3 > 0 ? 1 : -1;
-    if (!player.jumping) player.motion = towardNet ? "walkforward" : "walkbackward";
+    if (!player.jumping) setMotion(player, towardNet ? "walkforward" : "walkbackward", state.tick);
   }
   function moveControls(state, seat, left, right) {
     if (right) movePlayer(state, seat, 1);
@@ -31591,17 +32647,12 @@
       const entries = this.pending.filter((entry) => entry.at >= this.inputFloor && now - entry.at <= PREDICTION_MS);
       const frameMs = 1e3 / hz;
       const total = Math.min(hz * PREDICTION_MS / 1e3, entries.length + Math.max(0, now - (entries[entries.length - 1]?.at ?? now)) / frameMs);
+      let previewJump = isBomb(next) ? 0 : next.players[seat - 1].lastJump;
       for (let i = 0; i < Math.ceil(total); i++) {
         const input = entries[i]?.input || held, fraction = Math.min(1, total - i);
         if (isBomb(next)) bombMove(next, next.players[seat - 1], input.dir, fraction);
         else {
           const item = input, local = next.players[seat - 1];
-          const originalX = local.x;
-          const motion = local.motion, facing = local.facing;
-          moveControls(next, seat, item.left, item.right);
-          local.motion = motion;
-          local.facing = facing;
-          local.x = mix(originalX, local.x, fraction);
           if (fraction === 1) {
             local.vy++;
             local.y += local.vy;
@@ -31609,13 +32660,19 @@
               local.y = GROUND;
               local.jumping = false;
             }
-            const jump = item.jumpHeld || item.jump > Math.max(local.lastJump, item.cancelledJump || 0);
-            local.lastJump = Math.max(local.lastJump, item.jump);
+            const jump = item.jumpHeld || item.jump > Math.max(previewJump, item.cancelledJump || 0);
+            previewJump = Math.max(previewJump, item.jump);
             if (jump && !local.jumping && next.serve !== seat) {
               local.vy = -12;
               local.jumping = true;
             }
           }
+          const originalX = local.x, motion = local.motion, motionAt = local.motionAt, facing = local.facing;
+          moveControls(next, seat, item.left, item.right);
+          local.motion = motion;
+          local.motionAt = motionAt;
+          local.facing = facing;
+          local.x = mix(originalX, local.x, fraction);
         }
         this.predictionSteps++;
       }
@@ -31942,7 +32999,7 @@
       canvas.width = WIDTH2 * 2;
       canvas.height = HEIGHT2 * 2;
       this.ctx = canvas.getContext("2d");
-      for (const name of ["court", "birdie", "p1-body", "p1-body-alt", "p2-body", "p2-head"]) this.load(name);
+      for (const name of ["court", "birdie", ...Object.values(character_art_default.poses).flatMap((group) => Object.values(group).map((m) => m.file.replace(".png", "")))]) this.load(name);
       for (const side of ["p1", "p2"]) {
         for (let frame = 1; frame <= 15; frame++) this.load(`${side}-swing-${String(frame).padStart(2, "0")}`);
         for (let frame = 1; frame <= 13; frame++) this.load(`${side}-serve-${String(frame).padStart(2, "0")}`);
@@ -31975,7 +33032,8 @@
       ctx.fillText(state ? `${String(state.score[0]).padStart(2, "0")} - ${String(state.score[1]).padStart(2, "0")}` : "00 - 00", 275, 42);
       ctx.shadowBlur = 0;
       if (state) {
-        state.players.forEach((player, i) => this.player(state, i));
+        this.player(state, 1);
+        this.player(state, 0);
         if (state.rally !== "serve") {
           const bird = state.birdie;
           ctx.save();
@@ -32007,16 +33065,7 @@
     player(state, index3) {
       const p = state.players[index3];
       const side = index3 === 0 ? "p1" : "p2";
-      const moving = state.inputs[index3].left !== state.inputs[index3].right;
       const ctx = this.ctx;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      if (index3 === 0) this.draw(moving && p.y >= GROUND && state.tick % 2 === 0 ? "p1-body-alt" : "p1-body", -14, -78);
-      else {
-        this.draw("p2-body", -12, -62);
-        this.draw("p2-head", -8, -81);
-      }
-      ctx.restore();
       const serving = state.serve === index3 + 1;
       const kind = serving ? "serve" : p.racket.frame >= 16 ? "underhand" : "swing";
       const bounded = serving ? p.racket.serveFrame : kind === "underhand" ? p.racket.frame - 15 : p.racket.frame;
@@ -32028,6 +33077,9 @@
       ctx.transform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
       this.draw(key, meta.x, meta.y);
       ctx.restore();
+      const pose2 = bodyPose(index3 + 1, p, state.tick), body2 = pose2.meta;
+      const image2 = this.images.get(body2.file.replace(".png", ""));
+      if (image2?.complete && image2.naturalWidth) ctx.drawImage(image2, (pose2.frame - 1) * body2.w, 0, body2.w, body2.h, p.x + body2.x, p.y + body2.y, body2.w, body2.h);
     }
     banner(message) {
       const ctx = this.ctx;

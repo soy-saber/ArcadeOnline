@@ -1,0 +1,44 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{spawn}=require('child_process'),puppeteer=require('puppeteer-core'),art=require('../src/badminton/character-art.json');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/badminton-characters-e2e'),port=57000+Math.floor(Math.random()*1000),base=process.env.BADMINTON_BASE_URL||`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],wait=ms=>new Promise(r=>setTimeout(r,ms));let browser;
+const server=process.env.BADMINTON_BASE_URL?null:spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe']});server?.stderr.on('data',d=>errors.push(d.toString()));
+const snapshot=p=>p.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority)));
+async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function screenshot(p,name){const image=await p.evaluate(()=>({png:document.querySelector('#game-canvas').toDataURL(),state:JSON.parse(JSON.stringify(window.__authorityTest.authority))}));fs.writeFileSync(path.join(out,name),Buffer.from(image.png.split(',')[1],'base64'));return image.state;}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='characters-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<3;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(15000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
+  await p.evaluateOnNewDocument((i,poses)=>{
+   localStorage.setItem('arcade_name','Character '+i);localStorage.setItem('arcade_native_sound','off');window.__characterPaint={errors:[],bodies:[],groups:[],loaded:{}};
+   const draw=CanvasRenderingContext2D.prototype.drawImage;let group=null,lastTick={};
+   CanvasRenderingContext2D.prototype.drawImage=function(...args){const result=draw.apply(this,args);if(this.canvas.id!=='game-canvas')return result;
+    const file=(args[0]?.src||'').split('/').pop(),w=window.__characterPaint,s=window.__authorityTest?.state;if(file==='court.png'){group=[];if(s)w.groups.push(group);return result;}if(!s)return result;
+    const side=/^(p[12])-/.exec(file)?.[1];if(/^(p[12])-(swing|serve|underhand)-/.test(file))group?.push(side+'-gun');
+    const match=/^(p[12])-body-(normal|walkforward|walkbackward|walkup|walkdown)\.png$/.exec(file);if(match){
+     const p=s.players[Number(match[1][1])-1],m=poses[match[1]][p.motion],frame=m.playing?(s.tick-p.motionAt)%m.frames+1:1,expected=[(frame-1)*m.w,0,m.w,m.h,p.x+m.x,p.y+m.y,m.w,m.h];
+     group?.push(match[1]+'-body');w.loaded[file]=[args[0].naturalWidth,args[0].naturalHeight];if(file!==m.file||args.length!==9||args.slice(1).some((n,j)=>Math.abs(n-expected[j])>1e-7))w.errors.push({file,tick:s.tick,motion:p.motion,motionAt:p.motionAt,actual:args.slice(1),expected});
+     const key=s.round+':'+s.tick+':'+match[1];if(lastTick[match[1]]!==key){lastTick[match[1]]=key;w.bodies.push({tick:s.tick,round:s.round,side:match[1],motion:p.motion,motionAt:p.motionAt,frame,x:p.x,y:p.y,file});}
+    }if(file==='birdie.png')group?.push('birdie');return result;
+   };
+  },i,art.poses);
+  await p.goto(`${base}/authority-room.html?game=46923-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);if(i<2){await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);}
+ }
+ const [a,b,v]=pages;for(const p of [a,b])await p.click('#start-game');await v.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');
+ const walks=[],recoveries=[];
+ async function walk(p,code,seat,motion,recover=false){await focus(p);await p.keyboard.down(code);await v.waitForFunction((seat,motion)=>window.__authorityTest.authority.players[seat-1].motion===motion,{},seat,motion);const start=await snapshot(v);await wait(600);
+  if(recover){const before=await v.evaluate(()=>({full:window.__authorityTest.network.fullUpdates,p:window.__authorityTest.authority.players[1]}));await v.evaluate(()=>window.__authorityTest.network.requestFull());await v.waitForFunction(full=>window.__authorityTest.network.fullUpdates>full,{},before.full);const after=await snapshot(v);assert.equal(after.players[1].motionAt,before.p.motionAt);assert.equal(after.players[1].motion,motion);recoveries.push({before,after});}
+  await p.keyboard.up(code);const end=await snapshot(v);walks.push({seat,motion,start,end});await v.waitForFunction(seat=>window.__authorityTest.authority.players[seat-1].motion==='normal',{},seat);
+ }
+ await walk(a,'KeyA',1,'walkbackward');await walk(a,'KeyD',1,'walkforward');await walk(b,'ArrowRight',2,'walkbackward');await walk(b,'ArrowLeft',2,'walkforward',true);await screenshot(v,'native-walking.png');
+ await focus(b);await b.keyboard.press('ArrowUp');await v.waitForFunction(()=>window.__authorityTest.authority.players[1].y<350);const p2Jump=await screenshot(v,'p2-native-jump.png');assert.equal(p2Jump.players[1].motion,'walkup');await v.waitForFunction(()=>!window.__authorityTest.authority.players[1].jumping);
+ await focus(a);await a.keyboard.press('KeyS');await v.waitForFunction(()=>window.__authorityTest.authority.serve===0);await a.keyboard.press('KeyW');await v.waitForFunction(()=>window.__authorityTest.authority.players[0].y<350);await a.keyboard.press('KeyS');const p1Jump=await screenshot(v,'p1-native-air-stroke.png');assert.equal(p1Jump.players[0].motion,'walkup');
+ await v.click('#fullscreen-stage');await v.waitForFunction(()=>document.fullscreenElement||document.querySelector('.fullscreen-fallback'));await v.waitForFunction(()=>{const c=document.querySelector('#game-canvas'),r=c.getBoundingClientRect(),scale=Math.min(innerWidth/c.width,innerHeight/c.height);return Math.abs(r.width-c.width*scale)<2&&Math.abs(r.height-c.height*scale)<2;});await screenshot(v,'native-fullscreen.png');await v.click('#exit-fullscreen');
+ const paints=await Promise.all(pages.map(p=>p.evaluate(()=>window.__characterPaint)));
+ for(const paint of paints){assert.deepEqual(paint.errors,[]);assert(paint.bodies.length>20);const complete=paint.groups.filter(g=>['p1-body','p2-body','p1-gun','p2-gun'].every(k=>g.includes(k)));assert(complete.length>20);for(const g of complete){assert.deepEqual(g.slice(0,4),['p2-gun','p2-body','p1-gun','p1-body']);if(g.includes('birdie'))assert.equal(g.indexOf('birdie'),4);}}
+ const all=paints.flatMap(p=>p.bodies),frames={};for(const side of ['p1','p2'])for(const motion of ['normal','walkforward','walkbackward','walkup']){const seen=all.filter(d=>d.side===side&&d.motion===motion);assert(seen.length>0,side+' '+motion);frames[side+'-'+motion]=[...new Set(seen.map(d=>d.frame))].sort((a,b)=>a-b);if(motion==='walkup')assert.deepEqual(frames[side+'-'+motion],[1]);if(motion.startsWith('walk')&&motion!=='walkup')assert(frames[side+'-'+motion].length>=4);}
+ const decode=await v.evaluate(async poses=>{const result=[];for(const group of Object.values(poses))for(const m of Object.values(group)){const image=new Image();image.src='/authority/assets/badminton/'+m.file;await image.decode();result.push({file:m.file,width:image.naturalWidth,height:image.naturalHeight});}return result;},art.poses);for(const d of decode){const m=Object.values(art.poses).flatMap(g=>Object.values(g)).find(m=>m.file===d.file);assert.equal(d.width,m.w*m.frames);assert.equal(d.height,m.h);}
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),base,normalInputOnly:true,walks,recoveries,p1Jump,p2Jump,frames,decode,paints,fullscreen:true,errors},null,2));console.log('Native character loops/jumps, original filtered sheets/depths/registration, full phase recovery and fullscreen passed using normal inputs.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),paint:window.__characterPaint})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

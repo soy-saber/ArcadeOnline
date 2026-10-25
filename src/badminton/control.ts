@@ -1,7 +1,8 @@
 import type { Player } from './core';
+import type { Motion } from './motion';
 
 export function controlState() {
-  return {jumping:false,jumps:0,motion:'normal' as 'normal'|'walkforward'|'walkbackward'|'walkup',
+  return {jumping:false,jumps:0,motion:'normal' as Motion,motionAt:0,
     racket:{frame:1,playing:false,serveFrame:1,servePlaying:false,ready:true,active:false,consumed:false,strokes:0,strokeAt:-1}};
 }
 
@@ -43,6 +44,7 @@ export function validControl(p:Player,tick:number):boolean {
   return !!r&&['playing','servePlaying','ready','active','consumed'].every(k=>typeof r[k as keyof typeof r]==='boolean')&&
     Number.isInteger(r.frame)&&r.frame>=1&&r.frame<=29&&Number.isInteger(r.serveFrame)&&r.serveFrame>=1&&r.serveFrame<=13&&
     Number.isSafeInteger(r.strokes)&&r.strokes>=0&&Number.isSafeInteger(r.strokeAt)&&r.strokeAt>=-1&&r.strokeAt<=tick&&
-    typeof p.jumping==='boolean'&&Number.isSafeInteger(p.jumps)&&p.jumps>=0&&['normal','walkforward','walkbackward','walkup'].includes(p.motion)&&
+    typeof p.jumping==='boolean'&&Number.isSafeInteger(p.jumps)&&p.jumps>=0&&['normal','walkforward','walkbackward','walkup','walkdown'].includes(p.motion)&&
+    Number.isSafeInteger(p.motionAt)&&p.motionAt>=0&&p.motionAt<=tick&&
     p.swing===(r.playing?(r.frame>=16?30-r.frame:16-r.frame):0)&&p.swingHit===r.consumed&&p.servePose===(r.servePlaying?1:0)&&p.underhand===(r.frame>=16?1:0);
 }

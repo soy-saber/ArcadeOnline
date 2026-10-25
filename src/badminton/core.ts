@@ -1,6 +1,7 @@
 // Stage geometry and frame cadence come from the original SWF (550×400, 30 FPS).
 import { racketFrameContains, racketFramePose, servePoint } from './geometry';
 import { controlState, advanceRacket, startRacket, syncControl, validControl } from './control';
+import { setMotion } from './motion';
 export const HZ = 30;
 export const STEP_MS = 1000 / HZ;
 export const WIDTH = 550;
@@ -94,7 +95,7 @@ function award(state: GameState, player: 1 | 2): void {
   state.pointTicks = Math.round(HZ * 1.5);
   if (state.score[player - 1] >= TARGET) {
     if(player===1)state.finishAt=state.tick+state.pointTicks;
-    else {state.winner=2;state.phase='finished';state.pointTicks=0;}
+    else finish(state,2);
   } else state.resetAt=state.tick+state.pointTicks;
 }
 
@@ -116,7 +117,7 @@ export function movePlayer(state: GameState, seat: 1 | 2, direction: number): vo
   }
   player.x += Math.sign(direction)*5.9;
   player.facing=direction>0?1:-1;
-  if(!player.jumping)player.motion=towardNet?'walkforward':'walkbackward';
+  if(!player.jumping)setMotion(player,towardNet?'walkforward':'walkbackward',state.tick);
 }
 
 export function moveControls(state:GameState,seat:1|2,left:boolean,right:boolean):void {
@@ -130,10 +131,15 @@ export function consumeInput(state:GameState,seat:number,input:Input):void {
   p.lastJump=Math.max(p.lastJump,input.jump);p.lastHit=Math.max(p.lastHit,input.hit);
 }
 
+function finish(state:GameState,winner:1|2):void {
+  state.finishAt=null;state.pointTicks=0;state.winner=winner;state.phase='finished';
+  state.players.forEach(p=>{if(!p.jumping)setMotion(p,'normal',state.tick);});
+}
+
 export function step(state: GameState, incoming: readonly Input[]): void {
   if (state.phase !== "playing") return;
   state.tick++;
-  if(state.finishAt!==null&&state.tick>=state.finishAt){state.finishAt=null;state.pointTicks=0;state.winner=1;state.phase='finished';return;}
+  if(state.finishAt!==null&&state.tick>=state.finishAt){finish(state,1);return;}
   if(state.resetAt!==null&&state.tick>=state.resetAt)beginServe(state);
   for (let i = 0; i < 2; i++) {
     const input = validInput(incoming[i]) ? incoming[i] : EMPTY_INPUT;
@@ -155,9 +161,9 @@ export function step(state: GameState, incoming: readonly Input[]): void {
     const jump=held.jumpHeld||held.jump>player.lastJump,hit=held.hitHeld||held.hit>player.lastHit;
     player.lastJump=Math.max(player.lastJump,held.jump);player.lastHit=Math.max(player.lastHit,held.hit);
     if(hit&&!player.racket.active&&player.racket.ready)startRacket(player,state.serve===i+1,state.tick);
-    if(jump&&!player.jumping&&state.serve!==i+1){player.jumping=true;player.jumps++;player.motion='walkup';player.vy=-12;}
+    if(jump&&!player.jumping&&state.serve!==i+1){player.jumping=true;player.jumps++;setMotion(player,'walkup',state.tick);player.vy=-12;}
     moveControls(state,(i+1)as 1|2,held.left,held.right);
-    if(!held.left&&!held.right&&!jump&&!player.jumping)player.motion='normal';
+    if(!held.left&&!held.right&&!jump&&!player.jumping)setMotion(player,'normal',state.tick);
   }
   const bird = state.birdie;
   if (state.rally === "serve") {
@@ -217,9 +223,11 @@ export function step(state: GameState, incoming: readonly Input[]): void {
 export function reconcile(snapshot: GameState, seat: number, pending: Input[]): { state: GameState; pending: Input[] } {
   const next = cloneState(snapshot);
   const remaining = pending.filter((input) => input.seq > snapshot.ack[seat - 1]).slice(-HZ * 2);
+  const player=next.players[seat-1],{motion,motionAt,facing}=player;
   // Prediction replays local movement only; scoring and ball physics stay authoritative.
   for (const input of remaining) {
     moveControls(next,seat as 1|2,input.left,input.right);
   }
+  Object.assign(player,{motion,motionAt,facing});
   return { state: next, pending: remaining };
 }

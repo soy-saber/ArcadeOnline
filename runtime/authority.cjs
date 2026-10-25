@@ -2577,6 +2577,7 @@ function controlState() {
     jumping: false,
     jumps: 0,
     motion: "normal",
+    motionAt: 0,
     racket: { frame: 1, playing: false, serveFrame: 1, servePlaying: false, ready: true, active: false, consumed: false, strokes: 0, strokeAt: -1 }
   };
 }
@@ -2631,6 +2632,14 @@ function syncControl(p) {
   p.swingHit = p.racket.consumed;
   p.servePose = p.racket.servePlaying ? 1 : 0;
   p.underhand = p.racket.frame >= 16 ? 1 : 0;
+}
+
+// src/badminton/motion.ts
+function setMotion(p, motion, tick) {
+  if (p.motion !== motion) {
+    p.motion = motion;
+    p.motionAt = tick;
+  }
 }
 
 // src/badminton/core.ts
@@ -2704,11 +2713,7 @@ function award(state, player) {
   state.pointTicks = Math.round(HZ2 * 1.5);
   if (state.score[player - 1] >= TARGET) {
     if (player === 1) state.finishAt = state.tick + state.pointTicks;
-    else {
-      state.winner = 2;
-      state.phase = "finished";
-      state.pointTicks = 0;
-    }
+    else finish(state, 2);
   } else state.resetAt = state.tick + state.pointTicks;
 }
 function movePlayer(state, seat, direction3) {
@@ -2726,7 +2731,7 @@ function movePlayer(state, seat, direction3) {
   }
   player.x += Math.sign(direction3) * 5.9;
   player.facing = direction3 > 0 ? 1 : -1;
-  if (!player.jumping) player.motion = towardNet ? "walkforward" : "walkbackward";
+  if (!player.jumping) setMotion(player, towardNet ? "walkforward" : "walkbackward", state.tick);
 }
 function moveControls(state, seat, left, right) {
   if (right) movePlayer(state, seat, 1);
@@ -2738,14 +2743,20 @@ function consumeInput(state, seat, input) {
   p.lastJump = Math.max(p.lastJump, input.jump);
   p.lastHit = Math.max(p.lastHit, input.hit);
 }
+function finish(state, winner) {
+  state.finishAt = null;
+  state.pointTicks = 0;
+  state.winner = winner;
+  state.phase = "finished";
+  state.players.forEach((p) => {
+    if (!p.jumping) setMotion(p, "normal", state.tick);
+  });
+}
 function step2(state, incoming) {
   if (state.phase !== "playing") return;
   state.tick++;
   if (state.finishAt !== null && state.tick >= state.finishAt) {
-    state.finishAt = null;
-    state.pointTicks = 0;
-    state.winner = 1;
-    state.phase = "finished";
+    finish(state, 1);
     return;
   }
   if (state.resetAt !== null && state.tick >= state.resetAt) beginServe(state);
@@ -2782,11 +2793,11 @@ function step2(state, incoming) {
     if (jump && !player.jumping && state.serve !== i + 1) {
       player.jumping = true;
       player.jumps++;
-      player.motion = "walkup";
+      setMotion(player, "walkup", state.tick);
       player.vy = -12;
     }
     moveControls(state, i + 1, held.left, held.right);
-    if (!held.left && !held.right && !jump && !player.jumping) player.motion = "normal";
+    if (!held.left && !held.right && !jump && !player.jumping) setMotion(player, "normal", state.tick);
   }
   const bird = state.birdie;
   if (state.rally === "serve") {
