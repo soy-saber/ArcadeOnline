@@ -1,0 +1,86 @@
+{
+  "checkedAt": "2026-10-25T06:32:17.267414+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "23a7611ee920f26b4cad897e45066c2696136ab6",
+  "implementationCommits": [
+    "d3bca893ad9c53b21905ace113df35dad94e99a1",
+    "1132e0c"
+  ],
+  "archiveSha256": "2fc977a9f81b42bdcccb40525ae56da653b3efd7c5be4d72e8c633c7c497ac63",
+  "archiveBytes": 57375789,
+  "releaseFiles": 5048,
+  "current": "/opt/arcade-online/releases/20261025062858-266626",
+  "previous": "/opt/arcade-online/releases/20261025061837-263964",
+  "upload": "/root/arcade-deploy-20261025-ai-compressed-2fc977a9/release",
+  "bundleSha256": "d78d64af3955b63fd140187674c66a545ac03647caa639dfb7fbb80f5581b87e",
+  "authorityRuntimeSha256": "bff7119e22e4c0d7531a55cbb1df777a2840b3a89da9dc47053508c918148d6d",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 161,
+  "probe": "health, eight game resources/covers/background, retired paths404, temporary TURN credentials and WSS room join all eight",
+  "publicBoxheadFourPlayers": "public-four-player-results.json",
+  "publicCompression": {
+    "clients": 4,
+    "map": "original-18",
+    "wireBytes": 355059,
+    "decodedBytes": 6535347,
+    "wireFraction": 0.05432902032592914,
+    "reductionFraction": 0.9456709796740709,
+    "measurements": [
+      {
+        "compressed": true,
+        "wireBytes": 124101,
+        "decodedBytes": 2097330,
+        "full": 6,
+        "delta": 28
+      },
+      {
+        "compressed": true,
+        "wireBytes": 78001,
+        "decodedBytes": 1459628,
+        "full": 6,
+        "delta": 16
+      },
+      {
+        "compressed": true,
+        "wireBytes": 88394,
+        "decodedBytes": 1673187,
+        "full": 6,
+        "delta": 20
+      },
+      {
+        "compressed": true,
+        "wireBytes": 64563,
+        "decodedBytes": 1305202,
+        "full": 6,
+        "delta": 13
+      }
+    ],
+    "scope": "Short four-client WSS sample on live production; socket bytes relative to handshake, JSON bytes after decompression; not a server link-capacity or sustained concurrency benchmark"
+  },
+  "browserRttSamplesMs": [
+    54.60000002384186,
+    50.299999952316284,
+    43.10000002384186,
+    41.799999952316284
+  ],
+  "browserHost": "All four Chrome contexts ran on the same Windows workstation",
+  "complexScenarioScope": "Natural unlock, mine reservation, melee/fireball damage, turns/full recovery, underfoot wall placement/growth/damage/fade, packs and enhanced/cluster explosion processes were validated locally; deployed bundles match. No public fixtures. Actual public native enemy registration, reserved destination and cell movement were additionally observed on the largest map.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "fullRestorationGoalComplete": false,
+  "remainingPlan": "../../../BOXHEAD_RESTORATION_PLAN.md"
+}

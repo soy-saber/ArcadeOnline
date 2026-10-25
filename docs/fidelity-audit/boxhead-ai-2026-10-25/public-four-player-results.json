@@ -1,0 +1,79 @@
+{
+  "results": [
+    {
+      "game": "50737-server",
+      "seats": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "names": 4,
+      "maps": 18,
+      "nativeEnemy": {
+        "tick": 19,
+        "wave": 1,
+        "id": 5,
+        "x": 1616,
+        "y": 16.704,
+        "ai": {
+          "state": "cell",
+          "base": "goto",
+          "previous": "enter",
+          "counter": 44.45454545454545,
+          "born": 16,
+          "registered": true,
+          "collidable": true,
+          "reserved": 137,
+          "entry": 137,
+          "targetSeat": null,
+          "targetDir": 0,
+          "targetAngle": 0,
+          "angleDelta": 0,
+          "dx": 0,
+          "dy": 0.7040000000000001,
+          "speed": 0.022000000000000002,
+          "radius": 14.4,
+          "action": "walk",
+          "frame": 0.34,
+          "canAttack": false,
+          "fireRateCount": 0,
+          "attackAngle": 0,
+          "multiply": false
+        },
+        "navigationPhase": "resume"
+      },
+      "pauseEvidence": {
+        "tickBefore": 31,
+        "tickAfter": 49,
+        "observedMs": 683
+      },
+      "transport": [
+        {
+          "rtt": 54.60000002384186,
+          "snapshotAge": 94.80000007152557,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 50.299999952316284,
+          "snapshotAge": 2.600000023841858,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 43.10000002384186,
+          "snapshotAge": 108.80000007152557,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        },
+        {
+          "rtt": 41.799999952316284,
+          "snapshotAge": 100.39999997615814,
+          "extensions": "permessage-deflate; server_no_context_takeover; client_no_context_takeover; server_max_window_bits=12"
+        }
+      ],
+      "full": 13,
+      "delta": 52,
+      "bytes": 1513988
+    }
+  ],
+  "errors": []
+}

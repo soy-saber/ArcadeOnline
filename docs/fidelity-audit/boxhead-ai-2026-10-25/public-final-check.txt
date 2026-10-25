@@ -1,0 +1,6 @@
+Authenticated to 43.142.142.215 as root
+server.js: OK
+active
+active
+active
+{"status":"ok","rooms":10}

@@ -118,7 +118,9 @@ let browser;
     await b.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await b.screenshot({ path: path.join(output, game.id + ".png"), fullPage: true });
     const counts = await b.evaluate(() => ({ full: window.__authorityTest.network.fullUpdates, delta: window.__authorityTest.network.deltaUpdates, bytes: window.__authorityTest.network.receivedBytes }));
-    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, nativeEnemy, pauseEvidence, ...counts });
+    const transport=await Promise.all(pages.map(p=>p.evaluate(()=>{const n=window.__authorityTest.network;return {rtt:n.rtt,snapshotAge:n.snapshotAge,extensions:n.ws?.extensions||''};})));
+    if(game.id==='50737-server')assert(transport.every(t=>t.extensions.includes('permessage-deflate')));
+    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, nativeEnemy, pauseEvidence, transport, ...counts });
     console.log("Expanded E2E passed: " + game.id);
     for (const context of contexts) await context.close();
   }
