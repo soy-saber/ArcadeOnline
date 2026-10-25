@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-25T05:27:50.284589+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "1a051fddcc36254c48c745556b44fb364011b4d8",
+  "archiveSha256": "3e83328e23084985ffd0653db1799a8f8b52b797cba2f087bbc5568d11602351",
+  "archiveBytes": 56753602,
+  "releaseFiles": 5024,
+  "current": "/opt/arcade-online/releases/20261025052430-251297",
+  "previous": "/opt/arcade-online/releases/20261025043950-240848",
+  "upload": "/root/arcade-deploy-20261025-placement-3e83328e/release",
+  "bundleSha256": "a6016ff30745eda862da0838e29598ff2ccaa3b5878a65c002a8cbcbbfa8cdd1",
+  "authorityRuntimeSha256": "a5ad76376099f411549edc813f039bb2195a3ce18f34fa5d9f093fabe3f8ae28",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 160,
+  "probe": "health, eight game resources/covers/background, retired paths404, temporary TURN credentials and WSS room join all eight",
+  "publicBoxheadFourPlayers": "public-four-player-results.json",
+  "browserHost": "All four Chrome contexts ran on the same Windows workstation",
+  "complexScenarioScope": "Natural unlock, underfoot placement/growth, wall damage/fade, packs and enhanced/cluster explosion processes were validated locally; deployed bundles match. No public fixtures.",
+  "bandwidthRetested": false,
+  "actualTurnRelayRetested": false,
+  "fullRestorationGoalComplete": false,
+  "remainingPlan": "../../../BOXHEAD_RESTORATION_PLAN.md"
+}

@@ -1,6 +1,6 @@
 # 僵尸危机3：枪口、放置格、控制姿态与待执行射击
 
-2026-10-25，本地验证完成，发布状态见后续 `public-deployment.json`。原SWF保持不变；静态源码/原P-code、模型元数据哈希、每个姿态的方向/原始帧/逻辑帧维度及未完成范围见 [来源记录](source-review.json)。本批不代表完整还原目标完成。
+2026-10-25，本地验证完成并随 `1a051fd` 上线。160公网文件哈希及真实四人联机通过，见 [发布记录](public-deployment.json)、[公网哈希](public-hashes.json)、[四人过程](public-four-player-results.json)、[截图](public-four-player.png)。原SWF保持不变；静态源码/原P-code、模型元数据哈希、每个姿态的方向/原始帧/逻辑帧维度及未完成范围见 [来源记录](source-review.json)。本批不代表完整还原目标完成。
 
 `scripts/import-boxhead-gun-positions.py` 从原模型字面量导入16种人物姿态的逐方向、逐帧枪口位置；可用 `--check` 复核。四种玩家材质均使用0.35比例，原 `FillXSIInfo` 转为世界坐标，缺少 `GunPosition_Right` 的空手姿态回退人物脚下。角度先截断到256再按原查表取方向。控制动画保存当前逻辑名称、共享动画身份、浮点帧及实际绘制帧；每回调推进0.32，步行按0/1/2/3/4/3/2/1往返。原PNG仍保留五个不同原始图像，无需重复烘焙八张。
 
