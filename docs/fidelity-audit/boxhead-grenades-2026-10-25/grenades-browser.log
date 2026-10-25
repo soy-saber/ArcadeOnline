@@ -1,0 +1,19 @@
+
+> arcade-online@0.1.0 test:boxhead:grenades:e2e
+> node scripts/build-native.cjs && node tests/boxhead-grenades-e2e.cjs
+
+Natural kills: 1; peak combo: 2; tick: 47
+Natural kills: 2; peak combo: 3; tick: 118
+Natural kills: 3; peak combo: 4; tick: 173
+Natural kills: 4; peak combo: 5; tick: 229
+Natural kills: 7; peak combo: 8; tick: 296
+Natural kills: 10; peak combo: 11; tick: 363
+Natural kills: 13; peak combo: 14; tick: 430
+Natural kills: 16; peak combo: 17; tick: 486
+Natural kills: 19; peak combo: 20; tick: 536
+Natural kills: 22; peak combo: 23; tick: 589
+Natural kills: 25; peak combo: 26; tick: 637
+Natural kills: 28; peak combo: 29; tick: 687
+Natural kills: 31; peak combo: 31; tick: 748
+Natural kills: 34; peak combo: 33; tick: 797
+Natural grenade/wall unlock, native Init, low oblique wall/teammate reflection, high overflight, terminal frame, original art and full recovery passed.

@@ -1,0 +1,53 @@
+{
+  "at": "2026-10-25T08:50:50.660643+00:00",
+  "baseline": "ad97cdf0982286bdb4f2264ecde4c4255104e6e3",
+  "originalSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/Shot/CThing_Shot_Grenade": "03bfd84c088218e55c8459a2bee7966c4858f1391ec1aacf3e633ccf5f434451",
+    "Thing/Shot/CThing_Shot_ClusterShell": "b166ce8f0db010fa0619ebd687b5f0ecabe2c7fba979f98ae835537762443c0b",
+    "Thing/Weapon/CThing_Weapon_Grenade": "0feee77cbaf902dfabd1d112aa069b904decf99212a8217bb9b8858e29ec470c",
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "World/Map/CMap": "bc93816e8d32c503c16cfdb394bb63587dcdae3adef939a3299e2427e3f74ee9",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a",
+    "Thing/Math/CThing_Position": "0e4f90e6039964383e861106b1dba403f10eafcbb5bcdca663a85c832b23af97",
+    "Thing/Math/CThing_Angle": "1bb643849b70c98667158e86e5086929458e1e6be17d64d6ea2d6e5946fab5d9",
+    "Thing/Creature/CThing_Creature": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "Thing/Creature/CThing_Creature_Zombie": "7a99ad5ebd5e9e8024c2495d578c2c9be065e50f502f8a9c8caeff25cd5bf8b0",
+    "Thing/Creature/CThing_Creature_Devil": "1dfa13a54d7b8ec71ab0e48cbd05743019fc6ade34ef75c2f6b6109b08187b3b",
+    "Thing/Object/CThing_Object_Barrel": "b822a0fa02c486ba7980b187d630c1227f05046b0dd09c482ca3745d051d81b8",
+    "Thing/Object/CThing_Object_Wall": "237e9b7ec5e9de32924931f8643c5b7196a4124af8b7499a7616d43e7e16fa9a",
+    "Thing/Effect/CThing_Effect_Explosion": "22cedb97e9124974343d9ecc3849ef711b7ed14163a2b443b39604a5e9044dce",
+    "Thing/CThing": "8a6fab0dee85a00895f4a01a58946fbc10a23eb6f583393c34c1413f72dbe47f",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2"
+  },
+  "rules": {
+    "grenadeConstructor": "capture weaponXYZ, angle and power; Init sets40px height,60callback fuse, radius.1cell, horizontal speed power*32 and vertical power*16, then runs Normal",
+    "normal": "gravity.06cell, floor bounce then BounceCollide, sound iff final3D speed>.06cell, Move by reflected/damped velocity, --life==0 queues explosion and Delete",
+    "floor": "if proposedZ<0: abs(vz), <=.06cell becomes0; scaleXYZ by.5 and set positionZ0 before reflected Move",
+    "circle": "query rounded expanded cells once at proposedXYZ; registered collidable circles only, exclude inherited parentID; strict proposedZ<objectZ+height; temporary queryZ is pushed with3D delta but actual vz remains unchanged",
+    "heightPixels": {
+      "barrel": 32,
+      "wall": 32,
+      "player": 48,
+      "zombie": 48,
+      "devil": 57.6
+    },
+    "map": "full proposed position, X-only, Y-only, original position; radius.1cell",
+    "reflection": "normal=normalize2D(resolvedPoint-originalProposedPoint); vXY-=2*dot(vXY,normal)*normal; then horizontal damping.25",
+    "cluster": "constructor Normal;16..23callback fuse; horizontal.05..0.1cell; vz.5cell; same physics without resettingZ40/life60",
+    "delete": "retain terminal projectile and Mapwho occupancy until next disposal; explosion initializes in next callback"
+  },
+  "adaptations": [
+    "Init encodes reserved fuse60/radius.1cell and0velocities for complete serializable pending state",
+    "same-cell ordering uses reverse allocatedID pending full Mapwho insertion history",
+    "exact coincident circles use existing finite deterministic fallback instead of original divide by zero",
+    "cluster parentID follows current authoritative owner model; full original object-parent/attribution flow remains pending"
+  ],
+  "remaining": [
+    "global collection callback/registration/disposal and Mapwho insertion history",
+    "native AI line-of-sight queries",
+    "waves/combo/upgrades/pickups/difficulty",
+    "menus/modes/characters/HUD and permanent floor decals"
+  ]
+}

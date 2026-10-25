@@ -86,6 +86,11 @@ process.on('message',m=>{try{
    if(s.players.some(p=>p.moveDir>=0||p.actionLock))throw Error('Players must stop first');
    s.board.fill(0);s.items.fill(null);s.bombs=[];s.specials=[];s.blasts=[];s.flames.fill(0);
    const [p,q]=s.players;p.x=5;p.y=5;q.x=11;q.y=9;s.board[4*15+5]=2;s.board[3*15+5]=2;
+ }else if(['boxhead-grenade-wall-pose','boxhead-grenade-throw-pose','boxhead-grenade-teammate-pose','boxhead-grenade-safe-pose'].includes(m.action)){
+   if(s.gameId!=='50737-server'||s.mapId!=='original-01'||s.peakCombo<30||s.players.some(p=>!p.alive||p.body.phase!=='control'))throw Error('Earn native grenade/wall unlocks and recover control first');
+   const [p,q]=s.players,placing=m.action==='boxhead-grenade-wall-pose',safe=m.action==='boxhead-grenade-safe-pose';
+   p.x=safe?48:placing?208:144;p.y=safe?464:placing?272:264;p.dir=0;
+   q.x=m.action==='boxhead-grenade-teammate-pose'?208:624;q.y=m.action==='boxhead-grenade-teammate-pose'?272:464;
  }else if(m.action==='boxhead-ray-align'||m.action==='boxhead-rocket-pose'){
    if(s.gameId!=='50737-server'||s.mapId!=='original-01'||s.peakCombo<70||s.players.some(p=>!p.alive||p.body.phase!=='control'))throw Error('Earn native railgun unlock and recover control first');
    const [p,q]=s.players,rocket=m.action==='boxhead-rocket-pose',key=rocket?'rocketlauncher-stand':'railgun-stand';

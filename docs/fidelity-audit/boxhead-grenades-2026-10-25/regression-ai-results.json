@@ -1,0 +1,637 @@
+{
+  "at": "2026-10-25T08:51:50.646Z",
+  "spawnProtectionExpiredNaturally": true,
+  "zombie": {
+    "states": [
+      {
+        "id": 17,
+        "devil": false,
+        "state": "enter",
+        "x": 176,
+        "y": 272,
+        "dir": 0,
+        "tick": 202,
+        "frame": 0,
+        "reserved": 181
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "cell",
+        "x": 176.64,
+        "y": 272,
+        "dir": 0,
+        "tick": 204,
+        "frame": 0.34,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "goto",
+        "x": 208,
+        "y": 272,
+        "dir": 0,
+        "tick": 253,
+        "frame": 0.6599999999999968,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "turn",
+        "x": 208,
+        "y": 272,
+        "dir": 0.20000000000000018,
+        "tick": 255,
+        "frame": 0,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "attack",
+        "x": 176,
+        "y": 272,
+        "dir": 3.141592653589793,
+        "tick": 322,
+        "frame": 0,
+        "reserved": 181
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "sleep",
+        "x": 176,
+        "y": 272,
+        "dir": 3.141592653589793,
+        "tick": 340,
+        "frame": 0,
+        "reserved": 181
+      }
+    ],
+    "hit": {
+      "tick": 340,
+      "hitAt": 340,
+      "before": 200,
+      "after": 150,
+      "damageBetweenSnapshots": 50
+    }
+  },
+  "recovery": {
+    "request": {
+      "tick": 255,
+      "id": 17,
+      "full": 6,
+      "ai": {
+        "state": "turn",
+        "base": "goto",
+        "previous": "goto",
+        "counter": 14.707963267948966,
+        "born": 201,
+        "registered": true,
+        "collidable": true,
+        "reserved": 182,
+        "entry": 182,
+        "targetSeat": 1,
+        "targetDir": 4,
+        "targetAngle": 3.141592653589793,
+        "angleDelta": 0.2,
+        "dx": 0.64,
+        "dy": 0,
+        "speed": 0.02,
+        "radius": 14.4,
+        "action": "stand",
+        "frame": 0,
+        "canAttack": false,
+        "fireRateCount": 0,
+        "attackAngle": 0,
+        "multiply": false
+      }
+    },
+    "recovered": {
+      "tick": 255,
+      "ai": {
+        "state": "turn",
+        "base": "goto",
+        "previous": "goto",
+        "counter": 14.707963267948966,
+        "born": 201,
+        "registered": true,
+        "collidable": true,
+        "reserved": 182,
+        "entry": 182,
+        "targetSeat": 1,
+        "targetDir": 4,
+        "targetAngle": 3.141592653589793,
+        "angleDelta": 0.2,
+        "dx": 0.64,
+        "dy": 0,
+        "speed": 0.02,
+        "radius": 14.4,
+        "action": "stand",
+        "frame": 0,
+        "canAttack": false,
+        "fireRateCount": 0,
+        "attackAngle": 0,
+        "multiply": false
+      }
+    }
+  },
+  "devil": {
+    "states": [
+      {
+        "id": 17,
+        "devil": false,
+        "state": "enter",
+        "x": 176,
+        "y": 272,
+        "dir": 0,
+        "tick": 202,
+        "frame": 0,
+        "reserved": 181
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "cell",
+        "x": 176.64,
+        "y": 272,
+        "dir": 0,
+        "tick": 204,
+        "frame": 0.34,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "goto",
+        "x": 208,
+        "y": 272,
+        "dir": 0,
+        "tick": 253,
+        "frame": 0.6599999999999968,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "turn",
+        "x": 208,
+        "y": 272,
+        "dir": 0.20000000000000018,
+        "tick": 255,
+        "frame": 0,
+        "reserved": 182
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "attack",
+        "x": 176,
+        "y": 272,
+        "dir": 3.141592653589793,
+        "tick": 322,
+        "frame": 0,
+        "reserved": 181
+      },
+      {
+        "id": 17,
+        "devil": false,
+        "state": "sleep",
+        "x": 176,
+        "y": 272,
+        "dir": 3.141592653589793,
+        "tick": 340,
+        "frame": 0,
+        "reserved": 181
+      },
+      {
+        "id": 22,
+        "devil": true,
+        "state": "enter",
+        "x": 272,
+        "y": 272,
+        "dir": 0,
+        "tick": 343,
+        "frame": 0,
+        "reserved": 184
+      },
+      {
+        "id": 22,
+        "devil": true,
+        "state": "remove",
+        "x": 272,
+        "y": 272,
+        "dir": 0,
+        "tick": 344,
+        "frame": 0,
+        "reserved": 184
+      },
+      {
+        "id": 22,
+        "devil": true,
+        "state": "turn",
+        "x": 272,
+        "y": 272,
+        "dir": 0,
+        "tick": 346,
+        "frame": 0,
+        "reserved": 184
+      },
+      {
+        "id": 22,
+        "devil": true,
+        "state": "attack",
+        "x": 272,
+        "y": 272,
+        "dir": 3.141592653589793,
+        "tick": 355,
+        "frame": 0,
+        "reserved": 184
+      }
+    ],
+    "hits": [
+      {
+        "tick": 340,
+        "hitAt": 340,
+        "before": 200,
+        "after": 150,
+        "damageBetweenSnapshots": 50
+      },
+      {
+        "tick": 382,
+        "hitAt": 382,
+        "before": 158.0000000000004,
+        "after": 108.26666666666708,
+        "damageBetweenSnapshots": 49.73333333333332
+      }
+    ],
+    "shots": [
+      {
+        "id": 29,
+        "x": 251.84,
+        "y": 272,
+        "z": 26.88,
+        "vx": -4.8,
+        "vy": 5.878304635907295e-16,
+        "owner": -1,
+        "parent": 22,
+        "weapon": -1,
+        "damage": 50,
+        "multiply": false,
+        "radius": 8,
+        "animation": 0,
+        "fireball": true,
+        "life": 1,
+        "born": 365
+      },
+      {
+        "id": 30,
+        "x": 251.84,
+        "y": 272,
+        "z": 26.88,
+        "vx": -4.8,
+        "vy": 5.878304635907295e-16,
+        "owner": -1,
+        "parent": 22,
+        "weapon": -1,
+        "damage": 50,
+        "multiply": false,
+        "radius": 8,
+        "animation": 0,
+        "fireball": true,
+        "life": 1,
+        "born": 380
+      }
+    ],
+    "draws": [
+      {
+        "args": [
+          0,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 365
+      },
+      {
+        "args": [
+          78,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 367
+      },
+      {
+        "args": [
+          78,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 367
+      },
+      {
+        "args": [
+          78,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 367
+      },
+      {
+        "args": [
+          195,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 370
+      },
+      {
+        "args": [
+          195,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 370
+      },
+      {
+        "args": [
+          234,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 371
+      },
+      {
+        "args": [
+          234,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 371
+      },
+      {
+        "args": [
+          312,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 373
+      },
+      {
+        "args": [
+          312,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 373
+      },
+      {
+        "args": [
+          351,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 374
+      },
+      {
+        "args": [
+          351,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 374
+      },
+      {
+        "args": [
+          351,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 374
+      },
+      {
+        "args": [
+          429,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 376
+      },
+      {
+        "args": [
+          468,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 377
+      },
+      {
+        "args": [
+          468,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 377
+      },
+      {
+        "args": [
+          468,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 377
+      },
+      {
+        "args": [
+          546,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 379
+      },
+      {
+        "args": [
+          546,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 379
+      },
+      {
+        "args": [
+          585,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 380
+      },
+      {
+        "args": [
+          0,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 380
+      },
+      {
+        "args": [
+          585,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 380
+      },
+      {
+        "args": [
+          0,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 380
+      },
+      {
+        "args": [
+          78,
+          0,
+          39,
+          42,
+          -6.25,
+          -9.55,
+          39,
+          42
+        ],
+        "tick": 382
+      }
+    ],
+    "alive": true
+  },
+  "fireballFramesDrawn": [
+    0,
+    2,
+    5,
+    6,
+    8,
+    9,
+    11,
+    12,
+    14,
+    15
+  ],
+  "errors": []
+}

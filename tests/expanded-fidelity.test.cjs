@@ -1,5 +1,6 @@
 'use strict';
 const attachEnemy=require('./helpers/boxhead-enemy.cjs');
+const grenadeState=require('./helpers/boxhead-grenade.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),Module=require('node:module'),path=require('node:path');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const box=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),bomb=load('../src/authority/bomb-core.ts'),bomb2=load('../src/expanded/bomb2.ts');
@@ -20,7 +21,7 @@ test('all original firearm families apply friendly damage through authoritative 
 });
 test('native explosions hurt the owner and teammates with source distance falloff',()=>{
  const s=arena(),p=s.players[0],q=s.players[1];p.x=200;q.x=248;s.players[2].x=200;s.players[2].y=332;s.players[3].x=500;
- s.bullets=[{id:999,x:200,y:272,z:0,vz:0,vx:0,vy:0,owner:1,weapon:4,damage:100,life:1,bang:0,cluster:false}];box.step(s,[]);assert.equal(p.hp,200);assert.equal(s.explosions.length,1);box.step(s,[]);
+ s.bullets=[{...grenadeState(s),id:999,x:200,y:272,z:0,vz:0,vx:0,vy:0,owner:1,weapon:4,damage:100,life:1,bang:0,cluster:false}];box.step(s,[]);assert.equal(p.hp,200);assert.equal(s.explosions.length,1);box.step(s,[]);
  assert.equal(p.hp,100);assert.equal(q.hp,125);assert.equal(s.players[2].hp,150);assert.equal(s.players[3].hp,200);assert.equal(p.killedBy,1);
 });
 test('Q/E directions skip empty or locked weapons and consume a switch counter once',()=>{

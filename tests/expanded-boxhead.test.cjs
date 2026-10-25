@@ -52,7 +52,7 @@ test('all ten weapons execute original shot or place behavior with valid authori
  for(let index=0;index<10;index++){const s=arena(),p=equip(s,index);p.dir=0;a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,index?world.WEAPONS[index].ammo-1:-1,'ammo '+index);assert(a.valid(s),'snapshot '+index);if([3,5,6,8].includes(index))assert.equal(s.barrels.length,1);else assert(s.bullets.length>0);tick(s,70);assert(a.valid(s),'after projectile '+index);}
 });
 test('grenades bounce and retain their fuse; rockets explode on contact',()=>{
- const s=arena(),p=equip(s,4);p.x=55;p.dir=Math.PI;a.step(s,[input(1,{attack:1})]);const b=s.bullets[0];assert.equal(b.weapon,4);assert.equal(b.life,60);tick(s,5);assert(b.vx>0);assert(b.life>0);assert(s.sounds.some(e=>e.name==='Shot.Grenade.Bounce.wav'));tick(s,55);assert.equal(s.bullets.length,0);assert.equal(s.explosions.length,1);assert(!s.effects.some(e=>e.kind==='Effect.Explosion'));tick(s);assert(s.effects.some(e=>e.kind==='Effect.Explosion'));
+ const s=arena(),p=equip(s,4);p.x=80;p.dir=Math.PI;a.step(s,[input(1,{attack:1})]);const b=s.bullets[0];assert.equal(b.weapon,4);assert.equal(b.life,60);tick(s,5);assert(b.vx>0);assert(b.life>0);assert(s.sounds.some(e=>e.name==='Shot.Grenade.Bounce.wav'));tick(s,55);assert.equal(s.bullets.length,1);assert.equal(s.bullets[0].grenadePhase,'delete');assert.equal(s.explosions.length,1);assert(!s.effects.some(e=>e.kind==='Effect.Explosion'));tick(s);assert(s.effects.some(e=>e.kind==='Effect.Explosion'));
  const r=arena(),q=equip(r,7);q.x=55;q.dir=Math.PI;tick(r,3,[input(1,{attack:1})]);assert(r.effects.some(e=>e.kind==='Effect.Explosion'));
 });
 test('barrel chains initialize once on later ticks; mines arm and charge packs require a second trigger',()=>{

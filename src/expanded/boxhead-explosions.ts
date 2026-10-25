@@ -22,7 +22,8 @@ export function processExplosions(s: State, random:(s:State)=>number, impact:(e:
         const angle=i*Math.PI/2+(random(s)-.5)*Math.PI/4;
         const life=16+Math.floor(random(s)*8),speed=(.05+random(s)*.05)*CELL;
         s.bullets.push({id:++s.nextId,x:e.x,y:e.y,z:e.z,vz:.5*CELL,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,
-          owner:e.owner,weapon:4,damage:e.damage,life,bang:0,cluster:false,clusterShell:true,born:s.tick});
+          owner:e.owner,parent:s.players.find(p=>p.seat===e.owner)?.id??0,angle,weapon:4,damage:e.damage,life,bang:0,cluster:false,clusterShell:true,
+          grenadePhase:'normal',grenadePower:null,radius:.1*CELL,born:s.tick});
       }
       if(e.bang) {
         const step=Math.PI*2/(e.bang*1.5);

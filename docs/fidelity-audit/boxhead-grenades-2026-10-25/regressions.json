@@ -1,0 +1,42 @@
+[
+  {
+    "suite": "walls",
+    "code": 0,
+    "seconds": 46.97
+  },
+  {
+    "suite": "objects",
+    "code": 0,
+    "seconds": 75.13
+  },
+  {
+    "suite": "explosions",
+    "code": 0,
+    "seconds": 49.56
+  },
+  {
+    "suite": "creature",
+    "code": 0,
+    "seconds": 27.32
+  },
+  {
+    "suite": "ai",
+    "code": 0,
+    "seconds": 18.48
+  },
+  {
+    "suite": "rays",
+    "code": 0,
+    "seconds": 82.15
+  },
+  {
+    "suite": "assets",
+    "code": 0,
+    "seconds": 5.09
+  },
+  {
+    "suite": "four-local",
+    "code": 0,
+    "seconds": 11.87
+  }
+]

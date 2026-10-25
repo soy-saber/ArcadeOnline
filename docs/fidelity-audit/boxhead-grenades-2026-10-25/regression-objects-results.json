@@ -1,0 +1,628 @@
+{
+  "at": "2026-10-25T08:50:15.417Z",
+  "earned": {
+    "kills": 73,
+    "peakCombo": 55,
+    "stock": [
+      9,
+      10
+    ]
+  },
+  "multiplePackPlacement": true,
+  "nativeSlowAndFastAnimation": true,
+  "nativeFloorLayer": true,
+  "lastAmmoDetonator": true,
+  "additiveFeedbackPixels": [
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 1
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 1
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 1
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    },
+    {
+      "before": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "after": [
+        247,
+        252,
+        246,
+        255
+      ],
+      "hudBefore": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "hudAfter": [
+        43,
+        48,
+        42,
+        255
+      ],
+      "alpha": 0.8
+    }
+  ],
+  "recovery": {
+    "request": {
+      "tick": 1528,
+      "full": 16,
+      "packs": [
+        {
+          "id": 3280,
+          "x": 144,
+          "y": 272,
+          "z": 0,
+          "kind": "chargepack",
+          "hp": 60,
+          "damage": 150,
+          "owner": 1,
+          "exploded": false,
+          "armed": 1433,
+          "detonateAt": 0,
+          "animation": 1.7600000000000016,
+          "detonating": true,
+          "detonateCounter": 0.5,
+          "queueAt": 1529
+        },
+        {
+          "id": 3282,
+          "x": 240,
+          "y": 272,
+          "z": 0,
+          "kind": "chargepack",
+          "hp": 60,
+          "damage": 150,
+          "owner": 1,
+          "exploded": false,
+          "armed": 1468,
+          "detonateAt": 0,
+          "animation": 0.36000000000000076,
+          "detonating": true,
+          "detonateCounter": 0.5,
+          "queueAt": 1529
+        }
+      ]
+    },
+    "recovery": {
+      "tick": 1528,
+      "packs": [
+        {
+          "id": 3280,
+          "queueAt": 1529,
+          "preserved": true
+        },
+        {
+          "id": 3282,
+          "queueAt": 1529,
+          "preserved": true
+        }
+      ]
+    },
+    "feedback": {
+      "tick": 1531,
+      "brightness": 0.6000000000000001,
+      "shakeY": 15
+    }
+  },
+  "cuesBefore": {
+    "place": 1,
+    "detonate": 0
+  },
+  "final": {
+    "players": [
+      {
+        "seat": 1,
+        "alive": true,
+        "ammo": 0
+      },
+      {
+        "seat": 2,
+        "alive": true,
+        "ammo": 9
+      }
+    ],
+    "remaining": [
+      {
+        "owner": 2,
+        "detonating": false
+      }
+    ],
+    "draws": [
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1614
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          0,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1616
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1617
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1617
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1619
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1619
+      },
+      {
+        "name": "object-chargepack.png",
+        "args": [
+          28,
+          0,
+          28,
+          26,
+          -10,
+          -9,
+          28,
+          26
+        ],
+        "tick": 1621
+      }
+    ],
+    "placementCues": 11,
+    "detonateCues": 9
+  },
+  "mineReservedCell": {
+    "tick": 1746,
+    "mine": {
+      "id": 3318,
+      "x": 176,
+      "y": 272,
+      "z": 0,
+      "kind": "mine",
+      "hp": 60,
+      "damage": 100,
+      "owner": 1,
+      "exploded": false,
+      "armed": 1637,
+      "detonateAt": 1796,
+      "animation": 1.3600000000000017,
+      "detonating": true,
+      "detonateCounter": null
+    },
+    "zombie": {
+      "id": 3317,
+      "x": 208,
+      "y": 272,
+      "hp": 100,
+      "dir": 3.141592653589793,
+      "owner": 0,
+      "attack": 0,
+      "devil": false,
+      "hitAt": -99,
+      "attackAt": -99,
+      "body": {
+        "phase": "normal",
+        "counter": 0,
+        "action": "stand",
+        "frame": 0,
+        "alpha": 1,
+        "vx": 0,
+        "vy": 0,
+        "returnAngle": 0,
+        "radius": 14.4,
+        "mass": 1,
+        "collidable": true,
+        "affectEnabled": true,
+        "deadFlag": false,
+        "floor": false,
+        "loggedKill": false,
+        "disposeAt": null,
+        "affects": [],
+        "damageSample": 2,
+        "deathSample": 2
+      },
+      "ai": {
+        "state": "cell",
+        "base": "goto",
+        "previous": "goto",
+        "counter": 50,
+        "born": 1625,
+        "registered": true,
+        "collidable": true,
+        "reserved": 181,
+        "entry": 183,
+        "targetSeat": 1,
+        "targetDir": 4,
+        "targetAngle": 3.141592653589793,
+        "angleDelta": 0.2,
+        "dx": -0.64,
+        "dy": 0,
+        "speed": 0.02,
+        "radius": 14.4,
+        "action": "walk",
+        "frame": 0.6599999999999968,
+        "canAttack": false,
+        "fireRateCount": 0,
+        "attackAngle": 0,
+        "multiply": false
+      }
+    },
+    "distance": 32
+  },
+  "errors": []
+}

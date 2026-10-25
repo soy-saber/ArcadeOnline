@@ -1,5 +1,6 @@
 'use strict';
 const attachEnemy=require('./helpers/boxhead-enemy.cjs');
+const grenadeState=require('./helpers/boxhead-grenade.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),Module=require('node:module');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),explosions=load('../src/expanded/boxhead-explosions.ts');
@@ -55,20 +56,20 @@ test('grenade launch power scales both axes, birth does not consume fuse, ground
  for(const hold of [0,12,30]){
   const s=arena(),p=equip(s,4);p.dir=0;
   a.step(s,[input(1,{attack:1,trigger:true})]);ticks(s,hold,[input(1,{attack:1,trigger:true})]);a.step(s,[input(2,{attack:1,trigger:false})]);
-  const b=s.bullets[0],power=Math.min(.75,Math.max(.25,(hold+1)/25));assert.equal(b.vx,32*power);assert.equal(b.vz,16*power);assert.equal(b.z,40);assert.equal(b.life,60);
+  const b=s.bullets[0],power=Math.min(.75,Math.max(.25,(hold+1)/25));assert.equal(b.grenadePhase,'init');assert.equal(b.grenadePower,power);assert.equal(b.vx,0);assert.equal(b.vz,0);assert.equal(b.life,60);const origin={x:b.x,y:b.y};ticks(s);assert.equal(b.vx,32*power);assert.equal(b.vz,16*power-1.92);assert.equal(b.z,40+b.vz);assert.equal(b.x,origin.x+b.vx);assert.equal(b.y,origin.y);assert.equal(b.life,59);
  }
- const s=arena();s.bullets=[{id:++s.nextId,x:320,y:272,z:1,vz:-8,vx:4,vy:2,owner:1,weapon:4,damage:100,life:2,bang:0,cluster:false,born:0}];ticks(s);
+ const s=arena();s.bullets=[{...grenadeState(s),id:++s.nextId,x:320,y:272,z:1,vz:-8,vx:4,vy:2,owner:1,weapon:4,damage:100,life:2,bang:0,cluster:false}];ticks(s);
  const b=s.bullets[0];assert.equal(b.vz,4.96);assert.equal(b.z,4.96);assert.equal(b.x,322);assert.equal(b.y,273);assert.equal(b.vy,1);assert.equal(b.life,1);assert(s.sounds.some(e=>e.name==='Shot.Grenade.Bounce.wav'));
 });
 
 test('a new complete grenade tap uses minimum charge rather than an old gun press timestamp',()=>{
  const s=arena(),p=equip(s,1);a.step(s,[input(1,{attack:1,trigger:true})]);a.step(s,[input(2,{attack:1,trigger:false})]);ticks(s,30);
- equip(s,4);p.weapon=1;p.ammo=p.inventory[1];a.step(s,[input(3,{alt:1,weapon:4,attack:1,trigger:false})]);a.step(s,[input(4,{attack:2,trigger:false})]);const b=s.bullets.find(b=>b.weapon===4);assert.equal(b.vx,8);assert.equal(b.vz,4);assert.equal(b.life,60);
+ equip(s,4);p.weapon=1;p.ammo=p.inventory[1];a.step(s,[input(3,{alt:1,weapon:4,attack:1,trigger:false})]);a.step(s,[input(4,{attack:2,trigger:false})]);const b=s.bullets.find(b=>b.weapon===4);assert.equal(b.grenadePhase,'init');assert.equal(b.grenadePower,.25);assert.equal(b.vx,0);assert.equal(b.vz,0);assert.equal(b.life,60);ticks(s);assert.equal(b.vx,8);assert.equal(b.vz,2.08);assert.equal(b.life,59);
 });
 
 test('grounded subthreshold bounce is silent; a wall bounce damps both horizontal components',()=>{
- const s=arena();s.bullets=[{id:++s.nextId,x:320,y:272,z:0,vz:0,vx:0,vy:0,owner:1,weapon:4,damage:100,life:4,bang:0,cluster:false}];ticks(s);assert.equal(s.bullets[0].z,0);assert.equal(s.bullets[0].vz,0);assert.equal(s.soundId,0);
- const t=arena();t.bullets=[{id:++t.nextId,x:36,y:272,z:40,vz:0,vx:-8,vy:4,owner:1,weapon:4,damage:100,life:4,bang:0,cluster:false}];ticks(t);const b=t.bullets[0];assert.equal(b.vx,2);assert.equal(b.vy,1);assert.equal(b.x,38);assert.equal(b.y,273);
+ const s=arena();s.bullets=[{...grenadeState(s),id:++s.nextId,x:320,y:272,z:0,vz:0,vx:0,vy:0,owner:1,weapon:4,damage:100,life:4,bang:0,cluster:false}];ticks(s);assert.equal(s.bullets[0].z,0);assert.equal(s.bullets[0].vz,0);assert.equal(s.soundId,0);
+ const t=arena();t.bullets=[{...grenadeState(t),id:++t.nextId,x:36,y:272,z:40,vz:0,vx:-8,vy:4,owner:1,weapon:4,damage:100,life:4,bang:0,cluster:false}];ticks(t);const b=t.bullets[0];assert.equal(b.vx,2);assert.equal(b.vy,1);assert.equal(b.x,38);assert.equal(b.y,273);
 });
 
 test('native explosion advances 2.5 frames at unit scale and leaves the last frame until deferred removal',()=>{

@@ -1,0 +1,52 @@
+'use strict';
+const train=require('./helpers/boxhead-training.cjs');
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{fork}=require('child_process'),puppeteer=require('puppeteer-core');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/boxhead-grenades-e2e'),port=54000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const errors=[],pending=new Map(),wait=ms=>new Promise(r=>setTimeout(r,ms));let browser,id=0;
+const server=fork(path.join(__dirname,'fixtures/fidelity-server.cjs'),[],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});server.stderr.on('data',d=>errors.push(d.toString()));server.on('message',m=>{const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve();}});
+function fixture(room,action){return new Promise((resolve,reject)=>{const key=++id;pending.set(key,{resolve,reject});server.send({id:key,room,action});setTimeout(()=>{if(pending.delete(key))reject(Error('Fixture timeout'));},5000).unref();});}
+async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function select(p,key,index){await focus(p);const before=await p.evaluate(()=>window.__authorityTest.authority.players[0].lastAlt);await p.keyboard.press(key);await p.waitForFunction((index,before)=>{const p=window.__authorityTest.authority.players[0];return p.weapon===index&&p.lastAlt>before;},{},index,before);}
+async function screenshot(p,name){const png=await p.evaluate(()=>document.querySelector('#game-canvas').toDataURL());fs.writeFileSync(path.join(out,name),Buffer.from(png.split(',')[1],'base64'));}
+(async()=>{
+ for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
+ browser=await puppeteer.launch({executablePath:process.env.CHROME||'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',headless:true,args:['--disable-gpu','--disable-background-timer-throttling','--disable-renderer-backgrounding']});const pages=[],room='grenades-'+Date.now().toString(36).slice(-6);
+ for(let i=0;i<2;i++){
+  const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(20000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
+  await p.evaluateOnNewDocument(i=>{localStorage.setItem('arcade_name','Grenade P'+(i+1));window.__grenadeDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(...args){if(this.canvas.id==='game-canvas'&&args[0]?.src?.endsWith('/shot-grenade.png'))window.__grenadeDraws.push({tick:window.__authorityTest?.authority.tick,args:args.slice(1)});return draw.apply(this,args);};},i);
+  await p.goto(`${base}/authority-room.html?game=50737-server&room=${room}&debug=1`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__authorityTest?.authority);await p.click(`[data-seat="${i+1}"]`);await p.waitForFunction(seat=>window.__authorityTest.seat===seat,{},i+1);
+ }
+ const [a,b]=pages;await a.select('#game-map','original-01');for(const p of pages){await p.click('#start-game');await p.waitForFunction(()=>window.__authorityTest.network.room.members.find(m=>m.id===window.__authorityTest.network.id)?.ready);}
+ await a.waitForFunction(()=>window.__authorityTest.authority.phase==='playing');await train({a,b,room,fixture,kills:32});const earned=await b.evaluate(()=>{const s=window.__authorityTest.authority;return {kills:s.players[0].kills,peak:s.peakCombo,inventory:[...s.players[0].inventory]};});assert(earned.inventory[4]>0&&earned.inventory[5]>0);
+ await fixture(room,'boxhead-wall-scene');await fixture(room,'boxhead-grenade-wall-pose');await select(a,'Digit6',5);await a.waitForFunction(()=>window.__authorityTest.authority.players[0].poseAction==='stand');await a.keyboard.press('Space');await b.waitForFunction(()=>window.__authorityTest.authority.barrels.some(b=>b.kind==='wall'&&b.objectPhase==='waiting'));
+ await fixture(room,'boxhead-grenade-throw-pose');await b.waitForFunction(()=>window.__authorityTest.authority.barrels.some(b=>b.objectPhase==='normal'));await select(a,'Digit5',4);await a.waitForFunction(()=>window.__authorityTest.authority.players[0].poseAction==='stand');
+ const nativeWall=await b.evaluate(()=>window.__authorityTest.authority.barrels[0]);assert.equal(nativeWall.x,208);assert.equal(nativeWall.y,272);assert.equal(nativeWall.hp,1000);
+ await b.evaluate(()=>{window.__grenadeWatch={scenario:'',snapshots:[],requests:{},recoveries:{}};const net=window.__authorityTest.network,original=net.onSnapshot;net.onSnapshot=function(s,...args){original.call(this,s,...args);const w=window.__grenadeWatch;
+  w.snapshots.push({scenario:w.scenario,tick:s.tick,bullets:JSON.parse(JSON.stringify(s.bullets)),effects:s.effects.filter(e=>e.kind==='Effect.Explosion'),walls:s.barrels.map(b=>({id:b.id,x:b.x,y:b.y,hp:b.hp,radius:b.radius,phase:b.objectPhase})),players:s.players.map(p=>({id:p.id,hp:p.hp,x:p.x,y:p.y,body:p.body.phase})),sounds:s.sounds.filter(e=>e.name==='Shot.Grenade.Bounce.wav')});
+  const phase=s.bullets.find(b=>b.weapon===4&&!b.clusterShell)?.grenadePhase;
+  if(phase&&!w.requests[phase]){const before=this.resyncs,candidate={tick:s.tick,full:this.fullUpdates,bullets:JSON.parse(JSON.stringify(s.bullets))};this.requestFull();if(this.resyncs>before)w.requests[phase]=candidate;}
+  for(const [key,request]of Object.entries(w.requests))if(!w.recoveries[key]&&this.fullUpdates>request.full)w.recoveries[key]={tick:s.tick,bullets:JSON.parse(JSON.stringify(s.bullets))};
+ };});
+ const throws=[];
+ async function throwGrenade(scenario,high){
+  await b.evaluate(scenario=>window.__grenadeWatch.scenario=scenario,scenario);await a.waitForFunction(()=>window.__authorityTest.authority.players[0].cooldown===0);await focus(a);const stock=await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo);
+  if(high){await a.keyboard.down('Space');await a.waitForFunction(()=>window.__authorityTest.authority.players[0].triggerDown);const down=await a.evaluate(()=>window.__authorityTest.authority.tick);await a.waitForFunction(at=>window.__authorityTest.authority.tick>=at+20,{},down);await a.keyboard.up('Space');}else await a.keyboard.press('Space');
+  await b.waitForFunction(()=>window.__authorityTest.authority.bullets.some(b=>b.weapon===4&&b.life>0));const born=await b.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority.bullets.find(b=>b.weapon===4))));assert.equal(born.grenadePower,high?.75:.25);assert.equal(await a.evaluate(()=>window.__authorityTest.authority.players[0].ammo),stock-1);
+  if(high)await b.waitForFunction(()=>window.__authorityTest.authority.bullets.some(b=>b.weapon===4&&b.x>240&&b.vx===24));
+  else await b.waitForFunction(()=>window.__authorityTest.authority.bullets.some(b=>b.weapon===4&&(b.vx<0||b.vy<-.1)));
+  const contact=await b.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority.bullets.find(b=>b.weapon===4))));await screenshot(b,scenario+'.png');await fixture(room,'boxhead-grenade-safe-pose');
+  await b.waitForFunction(scenario=>window.__grenadeWatch.snapshots.some(s=>s.scenario===scenario&&s.effects.length),{},scenario);await b.waitForFunction(()=>window.__authorityTest.authority.bullets.length===0);await b.waitForFunction(()=>window.__authorityTest.authority.effects.every(e=>e.kind!=='Effect.Explosion'));throws.push({scenario,high,born,contact,stockBefore:stock});
+ }
+ await throwGrenade('low-wall',false);assert(throws[0].contact.vx<0&&throws[0].contact.vy<0);assert(Math.abs(throws[0].contact.vx+1.2)<1e-9);assert(Math.abs(throws[0].contact.vy+1.6)<1e-9);
+ await fixture(room,'boxhead-grenade-throw-pose');await throwGrenade('high-wall',true);assert.equal(throws[1].contact.vy,0);assert(throws[1].contact.z>32);
+ await fixture(room,'boxhead-wall-scene');await fixture(room,'boxhead-grenade-teammate-pose');await throwGrenade('low-teammate',false);assert(throws[2].contact.vy<0);
+ await fixture(room,'boxhead-grenade-teammate-pose');await throwGrenade('high-teammate',true);assert(throws[3].contact.z>48);assert.equal(throws[3].contact.vy,0);
+ // If a40ms terminal packet was skipped by the50ms publisher, make another
+ // real safe throw to observe it; no timers or projectile state are changed.
+ for(let n=0;n<3&&!(await b.evaluate(()=>window.__grenadeWatch.requests.init&&window.__grenadeWatch.requests.normal&&window.__grenadeWatch.requests.delete));n++){await fixture(room,'boxhead-grenade-teammate-pose');await throwGrenade('observe-'+n,true);}
+ const watch=await b.evaluate(()=>window.__grenadeWatch),draws=await b.evaluate(()=>window.__grenadeDraws),state=await b.evaluate(()=>window.__authorityTest.authority);
+ for(const phase of ['init','normal','delete'])assert(watch.requests[phase]&&watch.recoveries[phase],phase+' real full recovery');
+ for(const [phase,request]of Object.entries(watch.requests)){const rec=watch.recoveries[phase],original=request.bullets[0],next=rec.bullets.find(b=>b.id===original.id),dt=rec.tick-request.tick;if(phase==='delete'&&dt>0)assert(!next);else if(next&&original.grenadePhase!=='init')assert.equal(next.life,original.life-dt);}
+ assert(watch.snapshots.some(s=>s.bullets.some(b=>b.grenadePhase==='init'&&b.z===0&&b.vx===0)));assert(watch.snapshots.some(s=>s.bullets.some(b=>b.grenadePhase==='delete'&&b.life===0)));assert(draws.some(d=>d.args[2]===7&&d.args[3]===7&&d.args[6]===7&&d.args[7]===7));assert(state.players.every(p=>p.hp===200&&p.body.phase==='control'));assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),earned,nativeWall,throws,watch,draws,players:state.players.map(p=>({hp:p.hp,inventory:p.inventory})),errors},null,2));console.log('Natural grenade/wall unlock, native Init, low oblique wall/teammate reflection, high overflight, terminal frame, original art and full recovery passed.');
+})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),watch:window.__grenadeWatch})),null,2));await screenshot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();});
