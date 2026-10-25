@@ -1,0 +1,45 @@
+✔ a held key repeats overhead on native ready frame15, without client counter increments (5.4545ms)
+✔ normal frame9 closes contact; frame15 restores ready and stops without resetting to idle frame1 (0.6608ms)
+✔ the non-server may swing before release; creating the shuttle cancels both active flags without stopping clips (0.5541ms)
+✔ service play begins at1, releases at4, clears serve at13, wraps to1 before ordinary held stroke can restart (2.8799ms)
+✔ held jumping repeats at landing; native ground gravity accumulates and a later jump resets its impulse (0.8833ms)
+✔ native wall tests permit one-step overshoot and both-held executes right before left (0.6372ms)
+✔ cancelled taps are consumed; an ordinary released short tap still acts exactly once (1.0799ms)
+✔ normal points reset exactly45callbacks after award and retain live player/clip tracks (1.0225ms)
+✔ P1 seventh point waits1500ms, P2 seventh point finishes immediately, with no extra service or score (0.5954ms)
+✔ full/delta recovery preserves both held tracks, service wrap and round timers deterministically (32.7892ms)
+✔ native source hash, all44racket frames,26service markers and70filtered original images remain reproducible (127.0063ms)
+✔ all native transparent hitbox corners compose into their recorded stage-axis bounding rectangles (1.3048ms)
+✔ native rectangular corner hits replace the old30px circle, and the old circle cannot hit outside the native bounds (1.0651ms)
+✔ P2 mirror and airborne character translation use original transformed rectangles, with frame9 closing the hit window (0.3158ms)
+✔ contact consumes this swing without interrupting its remaining native animation or allowing an immediate new stroke (0.424ms)
+✔ two-human low-ball strokes follow original setupHero1 overhead; source single-player underhand geometry is retained separately (0.2148ms)
+✔ both native release markers are transformed through the original serve gun, then immediately take the first ballistic step (0.3895ms)
+✔ point-over ball can still be struck through native hit flags without incrementing the settled score (0.1919ms)
+✔ full/delta recovery preserves a consumed stroke throughout its remaining animation and cannot replay contact (9.6318ms)
+✔ server progresses independently of creator and readiness survives roster changes (16.2458ms)
+✔ finished rounds automatically continue; personal unready only gates next round (1.4338ms)
+✔ slow consumers receive bounded updates, ACK establishes delta baseline, periodic full repairs drift (4.9331ms)
+✔ expired inputs do not resurrect attacks and long machine stalls have bounded work (2.5442ms)
+✔ late or reordered attacks are tombstoned and cannot fire on recovery (2.1338ms)
+✔ a burst of expired packets consumes every stale action despite input throttling (2.1772ms)
+✔ badminton reconnect neutralizes the previous held movement (2.0581ms)
+✔ badminton expired, timed-out and reconnected held actions cannot restart or replay a buffered tap (2.4939ms)
+✔ badminton disconnect after a live held stroke finishes its animation and stops repeating (1.1758ms)
+✔ reconnect discards a buffered special attack instead of executing it later (2.8513ms)
+✔ serve starts the rally; a landing on the right awards P1 and the scorer serves next (5.3396ms)
+✔ movement stays on each side; legacy jump and hit counters do not repeat without held flags (1.3656ms)
+✔ original service area checks the scaled netLimit and keeps the server behind it (0.4543ms)
+✔ the server cannot jump until serve clip frame 13, then regains jump and net reach (0.5056ms)
+✔ timed racket contact sends the shuttle back; own side landing awards opponent (0.6319ms)
+✔ original overhand hit window closes at frame nine; retained single-player underhand geometry hits its source rectangle (0.2979ms)
+✔ first to seven finishes the match and ignores further input (0.2763ms)
+✔ snapshot validation and local reconciliation reject stale movement (0.7997ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 614.2155

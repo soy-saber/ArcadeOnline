@@ -72,6 +72,27 @@ test("badminton reconnect neutralizes the previous held movement",()=>{
   engine.reconnect(room,member);engine.pump(room,now+80);
   assert.equal(room.auth.state.players[1].x,x);
 });
+
+test('badminton expired, timed-out and reconnected held actions cannot restart or replay a buffered tap',()=>{
+ for(const mode of ['expired','timeout','reconnect']){
+  const {engine,room}=setup('46923-server'),m=room.members.get('b'),now=room.auth.clock,round=room.auth.state.round,p=room.auth.state.players[1];
+  const send=(seq,at,patch={},timestamp=at)=>engine.input(room,m,{round,serverTime:timestamp,input:{seq,left:false,right:false,jump:1,hit:1,jumpHeld:true,hitHeld:true,...patch}},at);
+  send(1,now,{},mode==='expired'?now-1000:now);
+  if(mode==='reconnect')engine.reconnect(room,m);
+  for(let n=1;n<=35;n++)engine.pump(room,now+(mode==='timeout'?300:0)+n*35);
+  assert.equal(p.jumps,0,mode);assert.equal(p.racket.strokes,0,mode);assert.equal(p.lastJump,1);assert.equal(p.lastHit,1);
+  const fresh=room.auth.clock+10;send(2,fresh,{jumpHeld:false,hitHeld:false});engine.pump(room,fresh+40);assert.equal(p.jumps,0);assert.equal(p.racket.strokes,0);
+  send(3,fresh+50,{jump:2,hit:2});engine.pump(room,fresh+90);assert.equal(p.jumps,1);assert.equal(p.racket.strokes,1);
+ }
+});
+
+test('badminton disconnect after a live held stroke finishes its animation and stops repeating',()=>{
+ const {engine,room}=setup('46923-server'),m=room.members.get('b'),now=room.auth.clock,p=room.auth.state.players[1];
+ engine.input(room,m,{round:room.auth.state.round,serverTime:now,input:{seq:1,left:false,right:false,jump:1,hit:1,jumpHeld:true,hitHeld:true}},now);engine.pump(room,now+40);
+ assert.equal(p.jumps,1);assert.equal(p.racket.strokes,1);engine.reconnect(room,m);
+ for(let n=2;n<=40;n++)engine.pump(room,now+n*35);
+ assert.equal(p.jumps,1);assert.equal(p.racket.strokes,1);assert.equal(p.racket.frame,15);assert(p.racket.ready);assert.equal(p.y,376.25);
+});
 test("reconnect discards a buffered special attack instead of executing it later",()=>{
   const {engine,room}=setup(),member=room.members.get("b"),now=room.auth.clock;
   const player=room.auth.state.players[1];player.weapon="rocket";player.ammo=2;player.moveDir=0;player.moveTicks=20;player.progress=0;

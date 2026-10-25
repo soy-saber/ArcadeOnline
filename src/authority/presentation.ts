@@ -1,6 +1,6 @@
 import { State } from "./protocol";
 import { GameState as BombState, Input as BombInput, Player as BombPlayer, HEIGHT, WIDTH, index, position } from "./bomb-core";
-import { GameState as BadmintonState, Input as BadmintonInput, GROUND, movePlayer } from "../badminton/core";
+import { GameState as BadmintonState, Input as BadmintonInput, GROUND, moveControls } from "../badminton/core";
 import { Input as ExpandedInput } from "../expanded/types";
 import { getAdapter } from "../expanded/registry";
 import {walkingPosition} from '../expanded/bomb2-walking';
@@ -152,12 +152,16 @@ export class Presentation {
       else {
         const item = input as BadmintonInput, local = next.players[seat - 1];
         const originalX = local.x;
-        movePlayer(next as BadmintonState, seat as 1 | 2, Number(item.right) - Number(item.left));
+        const motion=local.motion,facing=local.facing;
+        moveControls(next as BadmintonState,seat as 1|2,item.left,item.right);
+        local.motion=motion;local.facing=facing;
         local.x = mix(originalX, local.x, fraction);
         if (fraction === 1) {
-          local.y = Math.min(GROUND, local.y + local.vy + 1);
-          local.vy = local.y >= GROUND ? 0 : local.vy + 1;
-          if (item.jump > local.lastJump) { local.lastJump = item.jump; if (next.serve !== seat && local.y >= GROUND) local.vy = -12; }
+          local.vy++;local.y+=local.vy;
+          if(local.y>=GROUND){local.y=GROUND;local.jumping=false;}
+          const jump=item.jumpHeld||item.jump>Math.max(local.lastJump,item.cancelledJump||0);
+          local.lastJump=Math.max(local.lastJump,item.jump);
+          if(jump&&!local.jumping&&next.serve!==seat){local.vy=-12;local.jumping=true;}
         }
       }
       this.predictionSteps++;

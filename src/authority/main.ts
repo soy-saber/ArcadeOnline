@@ -35,6 +35,7 @@ function start(): void {
   let selectedWeapon: number | undefined;
   let weaponStep = 1;
   let cancelledAttack = 0;
+  let cancelledJump=0,cancelledHit=0;
   let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
   let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
@@ -47,7 +48,7 @@ function start(): void {
   let sound = localStorage.getItem("arcade_native_sound") !== "off";
   let volume = Math.max(0, Math.min(100, Number(localStorage.getItem("arcade_native_volume") ?? 24)));
   if (!Number.isFinite(volume)) volume = 24;
-  let heard: { round: number; score: string; hitter: number; winner: number | null } | null = null;
+  let heard: { round: number; score: string; hitter: number; winner: number | null; strokes:number[] } | null = null;
   const sounds: Record<string, string> = { whoosh: "badminton-whoosh", hit: "badminton-hit", score: "badminton-score", cheer: "badminton-cheer" };
 
   document.title = `${title} · 在线联机 - ArcadeOnline`;
@@ -92,9 +93,13 @@ function start(): void {
   for (const map of adapter?.maps || ORIGINAL_MAPS) { const option = document.createElement("option"); option.value = map.id; option.textContent = map.label; mapSelect.append(option); }
   if(!adapter&&!badminton)mapSelect.title='每完成5局随机切换一个不同的原作场景；手动换图重新计数';
   function notice(message: string): void { el("connection-note").textContent = message; }
-  function clearInput(): void { if(boxhead&&actions.some(code=>keys.has(code)))cancelledAttack=bomb;keys.clear(); held = null; presentation.clearPrediction(); }
+  function clearInput(): void {
+    if(boxhead&&actions.some(code=>keys.has(code)))cancelledAttack=bomb;
+    if(badminton){cancelledJump=jump;cancelledHit=hit;}
+    keys.clear();held=null;presentation.clearPrediction();
+  }
   function resetRound(next: number): void {
-    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; cancelledAttack=0;clearInput();
+    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; cancelledAttack=0;cancelledJump=0;cancelledHit=0;clearInput();
   }
   function alignCounters(state: State): void {
     if (!seat) return;
@@ -127,8 +132,9 @@ function start(): void {
     if ("gameId" in state) { adapter?.confirm?.(state as ExpandedState); return; }
     if (isBomb(state)) bombView!.confirm(state);
     else {
-      const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner };
+      const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner, strokes:state.players.map(p=>p.racket.strokes) };
       if (heard?.round === state.round) {
+        state.players.forEach((p,i)=>{if(next.strokes[i]>heard!.strokes[i]&&state.tick-p.racket.strokeAt<=3)play('whoosh');});
         if (next.score !== heard.score) play("score");
         else if (next.hitter && next.hitter !== heard.hitter) play("hit");
         if (next.winner && next.winner !== heard.winner) play("cheer");
@@ -145,8 +151,8 @@ function start(): void {
       ...(bomb2?{direction:preferredDirection}:{}),
       ...(boxhead ? {trigger:actions.some(code=>keys.has(code)),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
-      if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) { hit++; lastHitAt = now; }
-      return { seq: ++seq, left: directions.left, right: directions.right, jump, hit };
+      return { seq: ++seq, left: directions.left, right: directions.right, jump, hit,
+        jumpHeld:jumps.some(code=>keys.has(code)),hitHeld:actions.some(code=>keys.has(code)),cancelledJump,cancelledHit };
     }
     let dir: BombInput["dir"] = -1, time = -1;
     for (const [code, at] of keys) if (bombDirections[code] !== undefined && at >= time) { dir = bombDirections[code]; time = at; }
@@ -164,7 +170,7 @@ function start(): void {
     // Pressing the alternative for an already-held direction is not a second
     // jump/swing, and does not steal the latest-direction priority.
     if(aliasAt!==undefined)return;
-    if (actions.includes(code)) { if (badminton) { hit++; lastHitAt = now; play("whoosh"); } else { bomb++; lastHitAt = now; } }
+    if (actions.includes(code)) { if (badminton) hit++; else { bomb++; lastHitAt = now; } }
     if ((badminton || adapter) && jumps.includes(code)) { jump++; selectedWeapon=undefined; weaponStep=code==='KeyQ'?-1:1; }
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }

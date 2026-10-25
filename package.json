@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test:native": "node --test tests/native-core.test.cjs tests/native-relay.test.cjs tests/badminton-core.test.cjs",
     "test:badminton:e2e": "node scripts/build-native.cjs && node tests/badminton-restoration-e2e.cjs",
+    "test:badminton:controls:e2e": "node scripts/build-native.cjs && node tests/badminton-controls-e2e.cjs",
     "test:native:e2e": "node tests/native-e2e.cjs",
     "test:deploy": "node --test tests/deploy.test.cjs",
     "test:authority": "node --test tests/authority-protocol.test.cjs tests/authority-engine.test.cjs tests/authority-relay.test.cjs tests/authority-presentation.test.cjs tests/authority-records.test.cjs tests/authority-mechanics.test.cjs tests/original-maps.test.cjs",

@@ -2558,19 +2558,79 @@ var geometry_default = {
 };
 
 // src/badminton/geometry.ts
-function racketPose(seat, swing, underhand) {
-  const frame = swing > 0 ? 16 - swing : 1;
-  const key = seat === 1 && underhand ? "p1-underhand" : seat === 1 ? "p1-swing" : "p2-swing";
-  const poses2 = geometry_default.timelines[key];
-  return poses2[Math.max(0, Math.min(poses2.length - 1, key === "p1-underhand" ? frame - 2 : frame - 1))];
+function racketFramePose(seat, frame) {
+  const poses2 = seat === 1 && frame >= 16 ? geometry_default.timelines["p1-underhand"] : seat === 1 ? geometry_default.timelines["p1-swing"] : geometry_default.timelines["p2-swing"];
+  return poses2[Math.max(0, Math.min(poses2.length - 1, frame >= 16 ? frame - 16 : frame - 1))];
 }
-function racketContains(p, seat, x, y) {
-  const pose2 = racketPose(seat, p.swing, p.underhand), [left, top, right, bottom] = pose2.bounds;
+function racketFrameContains(p, seat, frame, x, y) {
+  const pose2 = racketFramePose(seat, frame), [left, top, right, bottom] = pose2.bounds;
   return pose2.active && x >= p.x + left && x <= p.x + right && y >= p.y + top && y <= p.y + bottom;
 }
 function servePoint(seat, frame) {
   const pose2 = (seat === 1 ? geometry_default.timelines["p1-serve"] : geometry_default.timelines["p2-serve"])[Math.max(0, Math.min(12, frame - 1))];
   return { x: pose2.point[0], y: pose2.point[1] };
+}
+
+// src/badminton/control.ts
+function controlState() {
+  return {
+    jumping: false,
+    jumps: 0,
+    motion: "normal",
+    racket: { frame: 1, playing: false, serveFrame: 1, servePlaying: false, ready: true, active: false, consumed: false, strokes: 0, strokeAt: -1 }
+  };
+}
+function advanceRacket(p, release, serviceEnded) {
+  const r = p.racket;
+  if (r.playing) {
+    r.frame++;
+    if (r.frame === 2 || r.frame === 16) {
+      r.active = true;
+      r.ready = false;
+      r.consumed = false;
+    }
+    if (r.frame === 9 || r.frame === 23) r.active = false;
+    if (r.frame === 15 || r.frame === 29) {
+      r.active = false;
+      r.ready = true;
+      r.playing = false;
+    }
+  }
+  if (r.servePlaying) {
+    r.serveFrame = r.serveFrame === 13 ? 1 : r.serveFrame + 1;
+    if (r.serveFrame === 2) {
+      r.active = true;
+      r.ready = false;
+      r.consumed = false;
+    }
+    if (r.serveFrame === 4) release();
+    if (r.serveFrame === 13) serviceEnded();
+    if (r.serveFrame === 1) {
+      r.servePlaying = false;
+      r.active = false;
+      r.ready = true;
+    }
+  }
+}
+function startRacket(p, serving, tick) {
+  const r = p.racket;
+  if (serving) {
+    r.servePlaying = true;
+    return;
+  }
+  r.frame = 2;
+  r.playing = true;
+  r.ready = false;
+  r.active = true;
+  r.consumed = false;
+  r.strokes++;
+  r.strokeAt = tick;
+}
+function syncControl(p) {
+  p.swing = p.racket.playing ? p.racket.frame >= 16 ? 30 - p.racket.frame : 16 - p.racket.frame : 0;
+  p.swingHit = p.racket.consumed;
+  p.servePose = p.racket.servePlaying ? 1 : 0;
+  p.underhand = p.racket.frame >= 16 ? 1 : 0;
 }
 
 // src/badminton/core.ts
@@ -2591,8 +2651,8 @@ var EMPTY_INPUT2 = { seq: 0, left: false, right: false, jump: 0, hit: 0 };
 var clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
 function createGame2(round, playing2) {
   const players = [
-    { x: 132.85, y: GROUND, vy: 0, swing: 0, swingHit: false, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: 1 },
-    { x: 416.85, y: GROUND, vy: 0, swing: 0, swingHit: false, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: -1 }
+    { ...controlState(), x: 132.85, y: GROUND, vy: 0, swing: 0, swingHit: false, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: 1 },
+    { ...controlState(), x: 416.85, y: GROUND, vy: 0, swing: 0, swingHit: false, servePose: 0, underhand: 0, lastJump: 0, lastHit: 0, facing: -1 }
   ];
   const point2 = servePoint(1, 1);
   return {
@@ -2608,13 +2668,15 @@ function createGame2(round, playing2) {
     ack: [0, 0],
     inputs: [{ ...EMPTY_INPUT2 }, { ...EMPTY_INPUT2 }],
     pointTicks: 0,
-    lastPoint: 0
+    lastPoint: 0,
+    resetAt: null,
+    finishAt: null
   };
 }
 function validInput2(input) {
   if (!input || typeof input !== "object") return false;
   const item = input;
-  return Number.isSafeInteger(item.seq) && item.seq >= 0 && item.seq < 1e9 && Number.isSafeInteger(item.jump) && item.jump >= 0 && item.jump < 1e9 && Number.isSafeInteger(item.hit) && item.hit >= 0 && item.hit < 1e9 && typeof item.left === "boolean" && typeof item.right === "boolean";
+  return Number.isSafeInteger(item.seq) && item.seq >= 0 && item.seq < 1e9 && Number.isSafeInteger(item.jump) && item.jump >= 0 && item.jump < 1e9 && Number.isSafeInteger(item.hit) && item.hit >= 0 && item.hit < 1e9 && typeof item.left === "boolean" && typeof item.right === "boolean" && [item.jumpHeld, item.hitHeld].every((v) => v === void 0 || typeof v === "boolean") && [[item.cancelledJump, item.jump], [item.cancelledHit, item.hit]].every(([v, max]) => v === void 0 || Number.isSafeInteger(v) && v >= 0 && v <= max);
 }
 function beginServe(state) {
   if (state.lastPoint) state.serve = state.lastPoint;
@@ -2629,12 +2691,8 @@ function beginServe(state) {
     vy: 0,
     lastHitter: 0
   };
-  state.players.forEach((p) => {
-    p.swing = 0;
-    p.swingHit = false;
-    p.servePose = 0;
-    p.underhand = 0;
-  });
+  state.resetAt = null;
+  state.pointTicks = 0;
 }
 function award(state, player) {
   if (state.rally !== "flight") return;
@@ -2643,9 +2701,13 @@ function award(state, player) {
   state.rally = "point";
   state.pointTicks = Math.round(HZ2 * 1.5);
   if (state.score[player - 1] >= TARGET) {
-    state.winner = player;
-    state.phase = "finished";
-  }
+    if (player === 1) state.finishAt = state.tick + state.pointTicks;
+    else {
+      state.winner = 2;
+      state.phase = "finished";
+      state.pointTicks = 0;
+    }
+  } else state.resetAt = state.tick + state.pointTicks;
 }
 function movePlayer(state, seat, direction3) {
   if (!direction3) return;
@@ -2656,15 +2718,35 @@ function movePlayer(state, seat, direction3) {
     const testX = player.x + reach;
     if (player.y >= NET_LIMIT_TOP && player.y <= NET_LIMIT_BOTTOM && testX >= NET_LIMIT_X - NET_LIMIT_HALF_WIDTH && testX <= NET_LIMIT_X + NET_LIMIT_HALF_WIDTH) return;
   }
-  player.x = clamp(
-    player.x + Math.sign(direction3) * 5.9,
-    seat === 1 ? LEFT_WALL : NET_X,
-    seat === 1 ? NET_X : RIGHT_WALL
-  );
+  if (!towardNet) {
+    const x = seat === 1 ? LEFT_WALL : RIGHT_WALL, y = seat === 1 ? 169 : 177;
+    if (Math.abs(player.x - x) <= 10.5 * 0.9523773 && Math.abs(player.y - y) <= 10.5 * 26.952164) return;
+  }
+  player.x += Math.sign(direction3) * 5.9;
+  player.facing = direction3 > 0 ? 1 : -1;
+  if (!player.jumping) player.motion = towardNet ? "walkforward" : "walkbackward";
+}
+function moveControls(state, seat, left, right) {
+  if (right) movePlayer(state, seat, 1);
+  if (left) movePlayer(state, seat, -1);
+}
+function consumeInput(state, seat, input) {
+  const p = state.players[seat - 1];
+  if (!p) return;
+  p.lastJump = Math.max(p.lastJump, input.jump);
+  p.lastHit = Math.max(p.lastHit, input.hit);
 }
 function step2(state, incoming) {
   if (state.phase !== "playing") return;
   state.tick++;
+  if (state.finishAt !== null && state.tick >= state.finishAt) {
+    state.finishAt = null;
+    state.pointTicks = 0;
+    state.winner = 1;
+    state.phase = "finished";
+    return;
+  }
+  if (state.resetAt !== null && state.tick >= state.resetAt) beginServe(state);
   for (let i = 0; i < 2; i++) {
     const input = validInput2(incoming[i]) ? incoming[i] : EMPTY_INPUT2;
     const player = state.players[i];
@@ -2674,62 +2756,57 @@ function step2(state, incoming) {
       state.ack[i] = input.seq;
     }
     const held = state.inputs[i];
-    player.y = Math.min(GROUND, player.y + player.vy + 1);
-    if (player.y >= GROUND) player.vy = 0;
-    else player.vy += 1;
-    if (player.swing > 0) {
-      player.swing--;
-      if (player.servePose && player.swing === 2) state.serve = 0;
-      if (player.swing === 0) player.servePose = 0;
+    player.vy++;
+    player.y += player.vy;
+    if (player.y >= GROUND) {
+      player.y = GROUND;
+      player.jumping = false;
     }
-    const speed = (Number(held.right) - Number(held.left)) * 5.9;
-    if (speed) player.facing = speed > 0 ? 1 : -1;
-    movePlayer(state, i + 1, speed);
-    const serving = state.rally === "serve" && state.serve === i + 1;
-    if (held.jump > player.lastJump) {
-      player.lastJump = held.jump;
-      if (state.serve !== i + 1 && player.y >= GROUND) player.vy = -12;
+    advanceRacket(player, () => {
+      if (state.rally !== "serve" || state.serve !== i + 1) return;
+      const point2 = servePoint(i + 1, 4);
+      state.rally = "flight";
+      state.birdie = { x: player.x + point2.x, y: player.y + point2.y, vx: i === 0 ? 30 : -30, vy: -30, lastHitter: i + 1 };
+      state.players.forEach((p) => p.racket.active = false);
+    }, () => {
+      state.serve = 0;
+    });
+    player.lastJump = Math.max(player.lastJump, held.cancelledJump || 0);
+    player.lastHit = Math.max(player.lastHit, held.cancelledHit || 0);
+    const jump = held.jumpHeld || held.jump > player.lastJump, hit4 = held.hitHeld || held.hit > player.lastHit;
+    player.lastJump = Math.max(player.lastJump, held.jump);
+    player.lastHit = Math.max(player.lastHit, held.hit);
+    if (hit4 && !player.racket.active && player.racket.ready) startRacket(player, state.serve === i + 1, state.tick);
+    if (jump && !player.jumping && state.serve !== i + 1) {
+      player.jumping = true;
+      player.jumps++;
+      player.motion = "walkup";
+      player.vy = -12;
     }
-    if (held.hit > player.lastHit) {
-      player.lastHit = held.hit;
-      if (serving && player.swing === 0) {
-        player.swing = 13;
-        player.swingHit = false;
-        player.servePose = 1;
-      } else if ((state.rally === "flight" || state.rally === "point") && player.swing === 0) {
-        player.swing = 14;
-        player.servePose = 0;
-        player.underhand = 0;
-        player.swingHit = false;
-      }
-    }
+    moveControls(state, i + 1, held.left, held.right);
+    if (!held.left && !held.right && !jump && !player.jumping) player.motion = "normal";
   }
   const bird = state.birdie;
   if (state.rally === "serve") {
     const player = state.players[state.serve - 1];
-    const point2 = servePoint(state.serve, player.servePose ? 15 - player.swing : 1);
+    const point2 = servePoint(state.serve, player.racket.serveFrame);
     bird.x = player.x + point2.x;
     bird.y = player.y + point2.y;
-    if (player.servePose && player.swing === 11) {
-      state.rally = "flight";
-      bird.vx = state.serve === 1 ? 30 : -30;
-      bird.vy = -30;
-      bird.lastHitter = state.serve;
-    }
   }
   if (state.rally === "flight" || state.rally === "point") {
     for (let i = 0; i < 2; i++) {
       const player = state.players[i];
-      if (player.swing <= 0 || player.swingHit || player.servePose || bird.lastHitter === i + 1) continue;
-      if (racketContains(player, i + 1, bird.x, bird.y)) {
+      if (!player.racket.active || player.racket.consumed || bird.lastHitter === i + 1) continue;
+      if (racketFrameContains(player, i + 1, player.racket.frame, bird.x, bird.y)) {
         const jitter = (state.round + state.tick * 73 + i * 397) % 1e3 / 200 - 2.5;
-        const rotation = racketPose(i + 1, player.swing, player.underhand).rotation + jitter;
+        const rotation = racketFramePose(i + 1, player.racket.frame).rotation + jitter;
         const degrees = i === 0 ? rotation + 122 : -rotation - 302;
         const radians = degrees * Math.PI / 180;
         bird.vx = -Math.cos(radians) * (i === 0 ? 52 : 50);
         bird.vy = -Math.sin(radians) * 40;
         bird.lastHitter = i + 1;
-        player.swingHit = true;
+        player.racket.consumed = true;
+        player.racket.active = false;
       }
     }
   }
@@ -2769,7 +2846,8 @@ function step2(state, incoming) {
       if (state.rally === "flight") award(state, bird.x < NET_X ? 2 : 1);
     }
   }
-  if (state.rally === "point" && --state.pointTicks <= 0) beginServe(state);
+  state.pointTicks = Math.max(0, (state.resetAt ?? state.finishAt ?? state.tick) - state.tick);
+  state.players.forEach(syncControl);
 }
 
 // src/expanded/tank.ts
@@ -32043,10 +32121,7 @@ function expireAction(room2, seat, input) {
       player.lastAlt = Math.max(player.lastAlt || 0, input.alt);
     }
   } else if (isBomb(room2)) player.lastBomb = Math.max(player.lastBomb, input.bomb);
-  else {
-    player.lastJump = Math.max(player.lastJump, input.jump);
-    player.lastHit = Math.max(player.lastHit, input.hit);
-  }
+  else consumeInput(room2.auth.state, seat, input);
 }
 var AuthorityEngine = class {
   constructor(changed) {
@@ -32190,7 +32265,7 @@ var AuthorityEngine = class {
     const timestamp = Number(message.serverTime);
     if (!Number.isFinite(timestamp) || timestamp > now + 250 || now - timestamp > 250) {
       expireAction(room2, member.seat, incoming);
-      const neutral = adapter7 ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room2) ? { ...incoming, dir: -1 } : { ...incoming, left: false, right: false };
+      const neutral = adapter7 ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room2) ? { ...incoming, dir: -1 } : { ...incoming, left: false, right: false, jumpHeld: false, hitHeld: false };
       match.inputs.set(member.id, { input: neutral, at: now - 251, receivedAt: now });
       return;
     }
@@ -32257,11 +32332,11 @@ var AuthorityEngine = class {
         const empty = adapter7 ? EMPTY_INPUT3 : isBomb(room2) ? EMPTY_INPUT : EMPTY_INPUT2;
         if (!remote) {
           const current = match.state.inputs?.[seat - 1] || empty;
-          return adapter7 ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room2) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
+          return adapter7 ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room2) ? { ...current, dir: -1 } : { ...current, left: false, right: false, jumpHeld: false, hitHeld: false };
         }
         if (now - remote.at <= 250) return remote.input;
         expireAction(room2, seat, remote.input);
-        return adapter7 ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room2) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
+        return adapter7 ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room2) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false, jumpHeld: false, hitHeld: false };
       });
       if (adapter7) {
         const game = match.state;

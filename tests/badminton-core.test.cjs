@@ -15,6 +15,7 @@ test("serve starts the rally; a landing on the right awards P1 and the scorer se
   assert.equal(state.rally, "serve"); // Original serve clip releases the shuttle on frame 4.
   step(state, [input(2, { hit: 1 }), EMPTY_INPUT]);
   step(state, [input(3, { hit: 1 }), EMPTY_INPUT]);
+  step(state, [input(4, { hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.rally, "flight");
   assert.equal(state.birdie.vx, 27.6);
   assert(Math.abs(state.birdie.vy + 26.825) < 1e-9);
@@ -27,7 +28,7 @@ test("serve starts the rally; a landing on the right awards P1 and the scorer se
   assert(validState(state));
 });
 
-test("movement stays on each side; jump and hit counters act once while held", () => {
+test("movement stays on each side; legacy jump and hit counters do not repeat without held flags", () => {
   const state = createGame(2, true);
   for (let i = 1; i < 90; i++) step(state, [input(i, { right: true, jump: 1 }), input(i, { left: true })]);
   assert.equal(state.players[0].x, 150.55);
@@ -62,12 +63,12 @@ test("original service area checks the scaled netLimit and keeps the server behi
   p1Serve.players[0].x = 210;
   p1Serve.rally = "point";
   p1Serve.lastPoint = 1;
-  p1Serve.pointTicks = 1;
+  p1Serve.pointTicks = 1;p1Serve.resetAt=p1Serve.tick+1;
   step(p1Serve, [EMPTY_INPUT, EMPTY_INPUT]);
   assert(Math.abs(p1Serve.players[0].x - (5499 / 20 - 10.5 * 6.177414 - 65)) < 1e-9);
   p2Serve.players[1].x = 340;
   p2Serve.rally = "point";
-  p2Serve.pointTicks = 1;
+  p2Serve.pointTicks = 1;p2Serve.resetAt=p2Serve.tick+1;
   step(p2Serve, [EMPTY_INPUT, EMPTY_INPUT]);
   assert(Math.abs(p2Serve.players[1].x - (5499 / 20 + 10.5 * 6.177414 + 65)) < 1e-9);
 });
@@ -75,12 +76,12 @@ test("original service area checks the scaled netLimit and keeps the server behi
 test("the server cannot jump until serve clip frame 13, then regains jump and net reach", () => {
   const state = createGame(8, true);
   step(state, [input(1, { jump: 1, hit: 1 }), input(1, { jump: 1 })]);
-  assert.equal(state.players[0].vy, 0);
+  assert.equal(state.players[0].vy, 1);
   assert.equal(state.players[1].vy, -12);
-  for (let tick = 2; tick <= 11; tick++) step(state, [input(tick, { jump: 1, hit: 1 }), EMPTY_INPUT]);
+  for (let tick = 2; tick <= 12; tick++) step(state, [input(tick, { jump: 1, hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.serve, 1);
   assert.equal(state.rally, "flight");
-  step(state, [input(12, { jump: 2, hit: 1 }), EMPTY_INPUT]);
+  step(state, [input(13, { jump: 2, hit: 1 }), EMPTY_INPUT]);
   assert.equal(state.serve, 0);
   assert.equal(state.players[0].vy, -12);
 
@@ -88,9 +89,9 @@ test("the server cannot jump until serve clip frame 13, then regains jump and ne
   other.serve = 2;
   step(other, [input(1, { jump: 1 }), input(1, { jump: 1, hit: 1 })]);
   assert.equal(other.players[0].vy, -12);
-  assert.equal(other.players[1].vy, 0);
-  for (let tick = 2; tick <= 11; tick++) step(other, [EMPTY_INPUT, input(tick, { jump: 1, hit: 1 })]);
-  step(other, [EMPTY_INPUT, input(12, { jump: 2, hit: 1 })]);
+  assert.equal(other.players[1].vy, 1);
+  for (let tick = 2; tick <= 12; tick++) step(other, [EMPTY_INPUT, input(tick, { jump: 1, hit: 1 })]);
+  step(other, [EMPTY_INPUT, input(13, { jump: 2, hit: 1 })]);
   assert.equal(other.serve, 0);
   assert.equal(other.players[1].vy, -12);
 });
@@ -100,11 +101,12 @@ test("timed racket contact sends the shuttle back; own side landing awards oppon
   step(state, [input(1, { hit: 1 }), EMPTY_INPUT]);
   step(state, [input(2, { hit: 1 }), EMPTY_INPUT]);
   step(state, [input(3, { hit: 1 }), EMPTY_INPUT]);
+  step(state, [input(4, { hit: 1 }), EMPTY_INPUT]);
   state.birdie = { x: state.players[1].x + 61, y: GROUND - 102, vx: 3, vy: 1, lastHitter: 1 };
   step(state, [EMPTY_INPUT, input(1, { hit: 1 })]);
   assert.equal(state.birdie.lastHitter, 2);
   assert(state.birdie.vx < 0);
-  state.players[0].swing = 0;
+  Object.assign(state.players[0].racket,{frame:15,playing:false,ready:true,active:false});
   state.birdie = { x: 170, y: GROUND - 4, vx: 0, vy: 4, lastHitter: 2 };
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.deepEqual(state.score, [0, 1]);
@@ -114,20 +116,19 @@ test("timed racket contact sends the shuttle back; own side landing awards oppon
   assert.equal(state.rally, "serve");
 });
 
-test("original overhand hit window closes at frame nine; P1 underhand hits low shuttles", () => {
+test("original overhand hit window closes at frame nine; retained single-player underhand geometry hits its source rectangle", () => {
   const state = createGame(5, true);
-  state.rally = "flight";
+  state.rally = "flight";state.serve=0;
   state.birdie = { x: state.players[0].x + 54, y: GROUND - 49, vx: 0, vy: 0, lastHitter: 2 };
-  state.players[0].swing = 8; // decrements to frame nine before collision checking
+  Object.assign(state.players[0].racket,{frame:8,playing:true,ready:false,active:true}); // native frame nine closes contact
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.equal(state.birdie.lastHitter, 2);
 
   const player = state.players[0];
   player.y = GROUND - 80;
   player.vy = 0;
-  player.swing = 12;
-  player.underhand = 1;
-  state.birdie = { x: player.x - 9, y: player.y + 17, vx: 0, vy: 0, lastHitter: 2 };
+  Object.assign(player.racket,{frame:18,playing:true,ready:false,active:true});
+  state.birdie = { x: player.x - 25, y: player.y - 15, vx: 0, vy: 0, lastHitter: 2 };
   step(state, [EMPTY_INPUT, EMPTY_INPUT]);
   assert.equal(state.birdie.lastHitter, 1);
 });

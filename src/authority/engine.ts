@@ -44,10 +44,7 @@ function expireAction(room: Room, seat: number, input: bomb.Input | badminton.In
     else if (player) { player.lastAttack = Math.max(player.lastAttack || 0, (input as ExpandedInput).attack); player.lastAlt = Math.max(player.lastAlt || 0, (input as ExpandedInput).alt); }
   }
   else if (isBomb(room)) (player as bomb.Player).lastBomb = Math.max((player as bomb.Player).lastBomb, (input as bomb.Input).bomb);
-  else {
-    (player as badminton.Player).lastJump = Math.max((player as badminton.Player).lastJump, (input as badminton.Input).jump);
-    (player as badminton.Player).lastHit = Math.max((player as badminton.Player).lastHit, (input as badminton.Input).hit);
-  }
+  else badminton.consumeInput(room.auth!.state as badminton.GameState,seat,input as badminton.Input);
 }
 
 export class AuthorityEngine {
@@ -163,7 +160,7 @@ export class AuthorityEngine {
     if (!Number.isFinite(timestamp) || timestamp > now + 250 || now - timestamp > 250) {
       // Expired button presses must not reappear in the next full input packet.
       expireAction(room, member.seat, incoming);
-      const neutral = adapter ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...incoming, dir: -1 as const } : { ...incoming, left: false, right: false };
+      const neutral = adapter ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...incoming, dir: -1 as const } : { ...incoming, left: false, right: false, jumpHeld:false,hitHeld:false };
       match.inputs.set(member.id, { input: neutral, at: now - 251, receivedAt: now });
       return;
     }
@@ -230,11 +227,11 @@ export class AuthorityEngine {
           // The badminton core retains held input when a lower sequence is
           // supplied. Neutralize using the current sequence after reconnect.
           const current = match.state.inputs?.[seat - 1] || empty;
-          return adapter ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false };
+          return adapter ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false, jumpHeld:false,hitHeld:false };
         }
         if (now - remote.at <= 250) return remote.input;
         expireAction(room, seat, remote.input);
-        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false };
+        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false, jumpHeld:false,hitHeld:false };
       });
       if (adapter) {
         const game = match.state as ExpandedState;

@@ -77,10 +77,9 @@ export class BadmintonView {
     else { this.draw("p2-body", -12, -62); this.draw("p2-head", -8, -81); }
     ctx.restore();
 
-    const serving = p.servePose > 0 || (state.rally === "serve" && state.serve === index + 1);
-    const kind = serving ? "serve" : p.underhand && p.swing > 0 ? "underhand" : "swing";
-    const frame = p.swing > 0 ? (serving ? 15 - p.swing : 16 - p.swing) : 1;
-    const bounded = Math.max(1, Math.min(serving ? 13 : kind === "underhand" ? 14 : 15, kind === "underhand" ? frame - 1 : frame));
+    const serving=state.serve===index+1;
+    const kind=serving?'serve':p.racket.frame>=16?'underhand':'swing';
+    const bounded=serving?p.racket.serveFrame:kind==='underhand'?p.racket.frame-15:p.racket.frame;
     const key = `${side}-${kind}-${String(bounded).padStart(2, "0")}` as ImageKey;
     const meta=(geometry.art as Record<string,{x:number;y:number}>)[key];
     const matrix=geometry.gunMatrices[`${side}-${serving?'serve':'swing'}` as keyof typeof geometry.gunMatrices];

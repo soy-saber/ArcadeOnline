@@ -26,7 +26,7 @@ test('native rectangular corner hits replace the old30px circle, and the old cir
 });
 
 test('P2 mirror and airborne character translation use original transformed rectangles, with frame9 closing the hit window',()=>{
- const s=flight(),p=s.players[1];p.y-=80;p.vy=-1;p.swing=15;const b=data.timelines['p2-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:1};core.step(s,[core.EMPTY_INPUT,core.EMPTY_INPUT]);assert.equal(s.birdie.lastHitter,2);
+ const s=flight(),p=s.players[1];p.y-=80;p.vy=-1;Object.assign(p.racket,{frame:1,playing:true,ready:false});const b=data.timelines['p2-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:1};core.step(s,[core.EMPTY_INPUT,core.EMPTY_INPUT]);assert.equal(s.birdie.lastHitter,2);
  const q={x:0,y:0,swing:7,underhand:0};assert.equal(geometry.racketPose(1,q.swing,0).frame,9);assert.equal(geometry.racketContains(q,1,0,-50),false);
 });
 
@@ -42,7 +42,7 @@ test('two-human low-ball strokes follow original setupHero1 overhead; source sin
 });
 
 test('both native release markers are transformed through the original serve gun, then immediately take the first ballistic step',()=>{
- for(const seat of [1,2]){const s=core.createGame(1,true);s.serve=seat;for(let n=1;n<=3;n++){const controls=[input(n),input(n)];controls[seat-1].hit=1;core.step(s,controls);}
+ for(const seat of [1,2]){const s=core.createGame(1,true);s.serve=seat;for(let n=1;n<=4;n++){const controls=[input(n),input(n)];controls[seat-1].hit=1;core.step(s,controls);}
   const p=s.players[seat-1],point=geometry.servePoint(seat,4);close(s.birdie.x,p.x+point.x+(seat===1?27.6:-27.6));close(s.birdie.y,p.y+point.y-26.825);assert.equal(s.rally,'flight');assert.equal(s.birdie.lastHitter,seat);
  }
  close(geometry.servePoint(1,4).x,23.8);close(geometry.servePoint(1,4).y,-29.5);close(geometry.servePoint(2,4).x,-21.65);close(geometry.servePoint(2,4).y,-28.5);

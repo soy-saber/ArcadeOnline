@@ -1955,13 +1955,18 @@
     }
   };
 
+  // src/badminton/control.ts
+  function validControl(p, tick) {
+    const r = p.racket;
+    return !!r && ["playing", "servePlaying", "ready", "active", "consumed"].every((k) => typeof r[k] === "boolean") && Number.isInteger(r.frame) && r.frame >= 1 && r.frame <= 29 && Number.isInteger(r.serveFrame) && r.serveFrame >= 1 && r.serveFrame <= 13 && Number.isSafeInteger(r.strokes) && r.strokes >= 0 && Number.isSafeInteger(r.strokeAt) && r.strokeAt >= -1 && r.strokeAt <= tick && typeof p.jumping === "boolean" && Number.isSafeInteger(p.jumps) && p.jumps >= 0 && ["normal", "walkforward", "walkbackward", "walkup"].includes(p.motion) && p.swing === (r.playing ? r.frame >= 16 ? 30 - r.frame : 16 - r.frame : 0) && p.swingHit === r.consumed && p.servePose === (r.servePlaying ? 1 : 0) && p.underhand === (r.frame >= 16 ? 1 : 0);
+  }
+
   // src/badminton/core.ts
   var HZ2 = 30;
   var STEP_MS2 = 1e3 / HZ2;
   var WIDTH2 = 550;
   var HEIGHT2 = 400;
   var GROUND = 376.25;
-  var NET_X = 275;
   var NET_TOP = 7093 / 20 - 10.5 * 4.212677;
   var TARGET = 7;
   var LEFT_WALL = 36.5;
@@ -1971,17 +1976,16 @@
   var NET_LIMIT_HALF_WIDTH = 10.5 * 6.177414;
   var NET_LIMIT_TOP = 7032 / 20 - 10.5 * 3.4748993;
   var NET_LIMIT_BOTTOM = 7032 / 20 + 10.5 * 3.4748993;
-  var clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
   function validInput2(input) {
     if (!input || typeof input !== "object") return false;
     const item = input;
-    return Number.isSafeInteger(item.seq) && item.seq >= 0 && item.seq < 1e9 && Number.isSafeInteger(item.jump) && item.jump >= 0 && item.jump < 1e9 && Number.isSafeInteger(item.hit) && item.hit >= 0 && item.hit < 1e9 && typeof item.left === "boolean" && typeof item.right === "boolean";
+    return Number.isSafeInteger(item.seq) && item.seq >= 0 && item.seq < 1e9 && Number.isSafeInteger(item.jump) && item.jump >= 0 && item.jump < 1e9 && Number.isSafeInteger(item.hit) && item.hit >= 0 && item.hit < 1e9 && typeof item.left === "boolean" && typeof item.right === "boolean" && [item.jumpHeld, item.hitHeld].every((v) => v === void 0 || typeof v === "boolean") && [[item.cancelledJump, item.jump], [item.cancelledHit, item.hit]].every(([v, max]) => v === void 0 || Number.isSafeInteger(v) && v >= 0 && v <= max);
   }
   function validState2(value) {
     if (!value || typeof value !== "object") return false;
     const s = value;
     const finite = (n) => typeof n === "number" && Number.isFinite(n) && Math.abs(n) < 1e15;
-    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [0, 1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p) => p && typeof p.swingHit === "boolean" && Number.isInteger(p.swing) && p.swing >= 0 && p.swing <= 14 && [0, 1].includes(p.servePose) && [0, 1].includes(p.underhand) && [p.x, p.y, p.vy, p.swing, p.servePose, p.underhand, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput2);
+    return finite(s.round) && finite(s.tick) && ["waiting", "playing", "finished"].includes(s.phase) && ["serve", "flight", "point"].includes(s.rally) && [0, 1, 2].includes(s.serve) && [0, 1, 2].includes(s.winner) && [0, 1, 2].includes(s.lastPoint) && finite(s.pointTicks) && [s.resetAt, s.finishAt].every((v) => v === null || Number.isSafeInteger(v) && v > s.tick) && Array.isArray(s.score) && s.score.length === 2 && s.score.every((n) => finite(n) && n >= 0 && n <= TARGET) && Array.isArray(s.players) && s.players.length === 2 && s.players.every((p, i) => p && validControl(p, s.tick) && (i === 0 || p.racket.frame <= 15) && [p.x, p.y, p.vy, p.lastJump, p.lastHit, p.facing].every(finite)) && !!s.birdie && [s.birdie.x, s.birdie.y, s.birdie.vx, s.birdie.vy, s.birdie.lastHitter].every(finite) && Array.isArray(s.ack) && s.ack.length === 2 && s.ack.every(finite) && Array.isArray(s.inputs) && s.inputs.length === 2 && s.inputs.every(validInput2);
   }
   function movePlayer(state, seat, direction3) {
     if (!direction3) return;
@@ -1992,11 +1996,17 @@
       const testX = player.x + reach;
       if (player.y >= NET_LIMIT_TOP && player.y <= NET_LIMIT_BOTTOM && testX >= NET_LIMIT_X - NET_LIMIT_HALF_WIDTH && testX <= NET_LIMIT_X + NET_LIMIT_HALF_WIDTH) return;
     }
-    player.x = clamp(
-      player.x + Math.sign(direction3) * 5.9,
-      seat === 1 ? LEFT_WALL : NET_X,
-      seat === 1 ? NET_X : RIGHT_WALL
-    );
+    if (!towardNet) {
+      const x = seat === 1 ? LEFT_WALL : RIGHT_WALL, y = seat === 1 ? 169 : 177;
+      if (Math.abs(player.x - x) <= 10.5 * 0.9523773 && Math.abs(player.y - y) <= 10.5 * 26.952164) return;
+    }
+    player.x += Math.sign(direction3) * 5.9;
+    player.facing = direction3 > 0 ? 1 : -1;
+    if (!player.jumping) player.motion = towardNet ? "walkforward" : "walkbackward";
+  }
+  function moveControls(state, seat, left, right) {
+    if (right) movePlayer(state, seat, 1);
+    if (left) movePlayer(state, seat, -1);
   }
 
   // src/expanded/tank.ts
@@ -30402,7 +30412,7 @@
   var HZ5 = 30;
   var stages = brawler_data_default.stages;
   var stats = [{ weight: 0.5, speed: 0.5, power: 0.5 }, { weight: 0.4, speed: 0.7, power: 0.4 }, { weight: 0.5, speed: 0.6, power: 0.4 }, { weight: 0.5, speed: 0.5, power: 0.5 }, { weight: 0.6, speed: 0.4, power: 0.5 }, { weight: 0.4, speed: 0.5, power: 0.6 }];
-  var clamp2 = (n, a, b) => Math.max(a, Math.min(b, n));
+  var clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   var stageOf = (s) => stages.find((m) => m.id === s.mapId);
   var random4 = (s) => {
     s.seed = Math.imul(s.seed, 1664525) + 1013904223 >>> 0;
@@ -30425,12 +30435,12 @@
     }
     const sender = s.players.find((x) => x.seat === owner);
     p.damage += Math.floor(amount * p.combo / 2);
-    p.combo = clamp2(p.combo + 1, 2, 6);
+    p.combo = clamp(p.combo + 1, 2, 6);
     p.killedBy = owner;
     const launch = power + power * (sender ? stats[sender.character].weight : 1) - power * stats[p.character].weight + p.damage / 100 * Math.log(power) * power + p.combo / 4;
     p.vx = Math.cos(angle) * launch;
     p.vy = -Math.sin(angle) * launch;
-    p.stun = clamp2(Math.ceil(launch * launch / 8), 6, 70);
+    p.stun = clamp(Math.ceil(launch * launch / 8), 6, 70);
     p.grounded = false;
     p.jumps = Math.max(1, p.jumps);
     p.attackFrame = 0;
@@ -30525,7 +30535,7 @@
       if (p.attackFrame > 0) p.attackFrame--;
       if (p.stun > 0) p.stun--;
       p.guarding = i.down && p.grounded && !p.stun && !attack;
-      p.shield = clamp2(p.shield + (p.guarding ? -0.28 : 0.35), 0, 100);
+      p.shield = clamp(p.shield + (p.guarding ? -0.28 : 0.35), 0, 100);
       if (!p.stun && !p.guarding) {
         const dir = Number(i.right) - Number(i.left);
         if (dir) {
@@ -30713,7 +30723,7 @@
   var levels = forest_data_default.levels;
   var T = 32;
   var HZ6 = 60;
-  var clamp3 = (n, a, b) => Math.max(a, Math.min(b, n));
+  var clamp2 = (n, a, b) => Math.max(a, Math.min(b, n));
   function overlap2(a, b) {
     const r = b.rotation || 0;
     if (!r) return a.x - a.w / 2 < b.x + b.w / 2 && a.x + a.w / 2 > b.x - b.w / 2 && a.y - a.h < b.y && a.y > b.y - b.h;
@@ -30918,7 +30928,7 @@
       if (d.type === "platform") {
         const oldX = d.x, oldY = d.y;
         const distance = Math.hypot(d.dx, d.dy);
-        d.amount = clamp3(d.amount + (d.active ? 1 : -1) * (d.props.dtheta != null ? 0.015 : distance ? 64 / HZ6 / distance : 0), 0, 1);
+        d.amount = clamp2(d.amount + (d.active ? 1 : -1) * (d.props.dtheta != null ? 0.015 : distance ? 64 / HZ6 / distance : 0), 0, 1);
         if (d.props.dtheta != null) {
           d.rotation = Number(d.props.dtheta) * Math.PI / 180 * d.amount;
           const ox = Number(d.props.offsetX || 0) * T, oy = Number(d.props.offsetY || 0) * T;
@@ -30938,7 +30948,7 @@
         const weight = s.players.filter((p) => p.support === d.id).reduce((n, p) => n + (p.x - d.x) * 4e-4, 0);
         d.angularVelocity += weight - d.swing * 0.02;
         d.angularVelocity *= 0.96;
-        d.swing = clamp3(d.swing + d.angularVelocity, -0.7, 0.7);
+        d.swing = clamp2(d.swing + d.angularVelocity, -0.7, 0.7);
         d.x = d.baseX + Math.sin(d.swing) * (d.baseY - d.anchorY);
         d.rotation = d.swing;
         for (const p of s.players) if (p.support === d.id) p.x += d.x - oldX;
@@ -30946,8 +30956,8 @@
       if (d.type === "pulley" && d.id < 1e4) {
         const other = s.devices.find((x) => x.id === d.pair);
         const a = s.players.filter((p) => p.support === d.id).length, b = s.players.filter((p) => p.support === other.id).length;
-        const change = clamp3((a - b) * 0.5, -0.5, 0.5);
-        const offset = clamp3(d.y - d.baseY + change, -480, 480);
+        const change = clamp2((a - b) * 0.5, -0.5, 0.5);
+        const offset = clamp2(d.y - d.baseY + change, -480, 480);
         const delta = d.baseY + offset - d.y;
         d.y += delta;
         other.y -= delta;
@@ -30959,7 +30969,7 @@
     }
     const solids = s.devices.filter(solidDevice);
     for (const box of solids.filter((d) => ["box", "boxheavy", "boxmirror", "ball"].includes(d.type))) {
-      box.vy = clamp3(box.vy + 1e3 / HZ6 / HZ6, -20, 20);
+      box.vy = clamp2(box.vy + 1e3 / HZ6 / HZ6, -20, 20);
       box.vx *= 0.9;
       move3(s, box, solids);
     }
@@ -30980,13 +30990,13 @@
       const dir = Number(i.right) - Number(i.left), max = ice && p.element === "wg" ? 2 * T / HZ6 : 8.5 * T / HZ6;
       if (dir) {
         p.facing = dir;
-        p.vx = clamp3(p.vx + dir * (p.grounded ? 0.45 : 0.27), -max, max);
+        p.vx = clamp2(p.vx + dir * (p.grounded ? 0.45 : 0.27), -max, max);
       } else p.vx *= ice && p.element === "fb" ? 0.99 : 0.76;
       if (jump && p.grounded) {
         p.vy = -(ice ? p.element === "fb" ? 3 : 10 : 15.5) * T / HZ6;
         p.grounded = false;
       }
-      p.vy = clamp3(p.vy + 1e3 / HZ6 / HZ6, -20, 20);
+      p.vy = clamp2(p.vy + 1e3 / HZ6 / HZ6, -20, 20);
       for (const wind of s.devices.filter((d) => d.type === "wind" && d.active)) {
         const r = wind.rotation, len = Number(wind.props.length || 10) * T, dx = Math.sin(r), dy = -Math.cos(r);
         const tx = p.x - wind.x, ty = p.y - p.h / 2 - (wind.y - wind.h / 2);
@@ -31587,14 +31597,23 @@
         else {
           const item = input, local = next.players[seat - 1];
           const originalX = local.x;
-          movePlayer(next, seat, Number(item.right) - Number(item.left));
+          const motion = local.motion, facing = local.facing;
+          moveControls(next, seat, item.left, item.right);
+          local.motion = motion;
+          local.facing = facing;
           local.x = mix(originalX, local.x, fraction);
           if (fraction === 1) {
-            local.y = Math.min(GROUND, local.y + local.vy + 1);
-            local.vy = local.y >= GROUND ? 0 : local.vy + 1;
-            if (item.jump > local.lastJump) {
-              local.lastJump = item.jump;
-              if (next.serve !== seat && local.y >= GROUND) local.vy = -12;
+            local.vy++;
+            local.y += local.vy;
+            if (local.y >= GROUND) {
+              local.y = GROUND;
+              local.jumping = false;
+            }
+            const jump = item.jumpHeld || item.jump > Math.max(local.lastJump, item.cancelledJump || 0);
+            local.lastJump = Math.max(local.lastJump, item.jump);
+            if (jump && !local.jumping && next.serve !== seat) {
+              local.vy = -12;
+              local.jumping = true;
             }
           }
         }
@@ -31998,10 +32017,9 @@
         this.draw("p2-head", -8, -81);
       }
       ctx.restore();
-      const serving = p.servePose > 0 || state.rally === "serve" && state.serve === index3 + 1;
-      const kind = serving ? "serve" : p.underhand && p.swing > 0 ? "underhand" : "swing";
-      const frame = p.swing > 0 ? serving ? 15 - p.swing : 16 - p.swing : 1;
-      const bounded = Math.max(1, Math.min(serving ? 13 : kind === "underhand" ? 14 : 15, kind === "underhand" ? frame - 1 : frame));
+      const serving = state.serve === index3 + 1;
+      const kind = serving ? "serve" : p.racket.frame >= 16 ? "underhand" : "swing";
+      const bounded = serving ? p.racket.serveFrame : kind === "underhand" ? p.racket.frame - 15 : p.racket.frame;
       const key = `${side}-${kind}-${String(bounded).padStart(2, "0")}`;
       const meta = geometry_default.art[key];
       const matrix = geometry_default.gunMatrices[`${side}-${serving ? "serve" : "swing"}`];
@@ -32150,6 +32168,7 @@
     let selectedWeapon;
     let weaponStep = 1;
     let cancelledAttack = 0;
+    let cancelledJump = 0, cancelledHit = 0;
     let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
     let inputAt = 0, responseMs = 0, maxFrameMs = 0;
     let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
@@ -32227,6 +32246,10 @@
     }
     function clearInput() {
       if (boxhead && actions.some((code) => keys.has(code))) cancelledAttack = bomb;
+      if (badminton) {
+        cancelledJump = jump;
+        cancelledHit = hit4;
+      }
       keys.clear();
       held = null;
       presentation.clearPrediction();
@@ -32240,6 +32263,8 @@
       lastHitAt = 0;
       selectedWeapon = void 0;
       cancelledAttack = 0;
+      cancelledJump = 0;
+      cancelledHit = 0;
       clearInput();
     }
     function alignCounters(state) {
@@ -32294,8 +32319,11 @@
       }
       if (isBomb(state)) bombView.confirm(state);
       else {
-        const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner };
+        const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner, strokes: state.players.map((p) => p.racket.strokes) };
         if (heard?.round === state.round) {
+          state.players.forEach((p, i) => {
+            if (next.strokes[i] > heard.strokes[i] && state.tick - p.racket.strokeAt <= 3) play("whoosh");
+          });
           if (next.score !== heard.score) play("score");
           else if (next.hitter && next.hitter !== heard.hitter) play("hit");
           if (next.winner && next.winner !== heard.winner) play("cheer");
@@ -32325,11 +32353,17 @@
         ...boxhead ? { trigger: actions.some((code) => keys.has(code)), cancelledAttack, weaponStep, ...selectedWeapon !== void 0 ? { weapon: selectedWeapon } : {} } : {}
       };
       if (badminton) {
-        if (actions.some((code) => keys.has(code)) && now - lastHitAt >= 500) {
-          hit4++;
-          lastHitAt = now;
-        }
-        return { seq: ++seq, left: directions2.left, right: directions2.right, jump, hit: hit4 };
+        return {
+          seq: ++seq,
+          left: directions2.left,
+          right: directions2.right,
+          jump,
+          hit: hit4,
+          jumpHeld: jumps.some((code) => keys.has(code)),
+          hitHeld: actions.some((code) => keys.has(code)),
+          cancelledJump,
+          cancelledHit
+        };
       }
       let dir = -1, time = -1;
       for (const [code, at] of keys) if (bombDirections[code] !== void 0 && at >= time) {
@@ -32355,11 +32389,8 @@
       inputAt = now;
       if (aliasAt !== void 0) return;
       if (actions.includes(code)) {
-        if (badminton) {
-          hit4++;
-          lastHitAt = now;
-          play("whoosh");
-        } else {
+        if (badminton) hit4++;
+        else {
           bomb++;
           lastHitAt = now;
         }
