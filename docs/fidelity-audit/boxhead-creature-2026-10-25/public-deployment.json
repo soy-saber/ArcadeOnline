@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-10-25T07:56:13.635017+00:00",
+  "origin": "https://43.142.142.215",
+  "sourceCommit": "648ace369913d72d3c33551d9a39e9952254748f",
+  "archiveSha256": "ab5aade483ef76b1fb29cf8f24866799b779201c5fd17899c817ab9adecfff98",
+  "archiveBytes": 58553401,
+  "releaseFiles": 5076,
+  "current": "/opt/arcade-online/releases/20261025075019-285342",
+  "previous": "/opt/arcade-online/releases/20261025062858-266626",
+  "upload": "/root/arcade-deploy-20261025-creature-ab5aade4/release",
+  "bundleSha256": "278769a050cbe07d515a647ed9a93f952904264bbf07c2c13188d3aab0720826",
+  "authorityRuntimeSha256": "c84365f5df675cbfe00bebcbd3450a54443feea24851582e96f10c44c5fdd5b0",
+  "serverSha256": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+  "services": {
+    "arcade-online": {
+      "active": true,
+      "enabled": true
+    },
+    "caddy": {
+      "active": true,
+      "enabled": true
+    },
+    "coturn": {
+      "active": true,
+      "enabled": true
+    }
+  },
+  "publicFileHashesMatched": 185,
+  "combatPoseImagesVerified": 24,
+  "probe": "health, eight game resources/covers/background, retired paths404, temporary TURN credentials and WSS room join all eight",
+  "publicBoxheadFourPlayers": "public-four-player-results.json",
+  "publicNativeCreatureModel": "Largest-map actual enemy normal phase/mass1/registered entry movement and all4human control phases/mass2/pending affect queues observed",
+  "publicCompression": {
+    "clients": 4,
+    "map": "original-18",
+    "wireBytes": 299642,
+    "decodedBytes": 5243929,
+    "wireFraction": 0.05714074313363129,
+    "reductionFraction": 0.9428592568663687,
+    "measurements": [
+      {
+        "compressed": true,
+        "wireBytes": 95791,
+        "decodedBytes": 1537600,
+        "full": 6,
+        "delta": 17
+      },
+      {
+        "compressed": true,
+        "wireBytes": 65475,
+        "decodedBytes": 1210871,
+        "full": 6,
+        "delta": 10
+      },
+      {
+        "compressed": true,
+        "wireBytes": 90543,
+        "decodedBytes": 1479705,
+        "full": 6,
+        "delta": 16
+      },
+      {
+        "compressed": true,
+        "wireBytes": 47833,
+        "decodedBytes": 1015753,
+        "full": 6,
+        "delta": 7
+      }
+    ],
+    "scope": "Short live-production4client WSS sample; socket bytes after handshake versus decoded JSON. Not link capacity or sustained load."
+  },
+  "browserRttSamplesMs": [
+    44.799999952316284,
+    72.89999997615814,
+    73.20000004768372,
+    32.700000047683716
+  ],
+  "browserHost": "All four Chrome contexts ran on the same Windows workstation",
+  "complexScenarioScope": "Natural unlock, player/enemy hits, death animation, corpse fades/disposal, native marker respawn, finite-ammo reset and phase-by-phase recovery were validated locally. Deployed bundles match. No public fixtures. Public4Chrome covers real seats/ready/movement/fire/fullscreen/pause recovery/map/rematch and explicit current creature fields.",
+  "bandwidthCapacityRetested": false,
+  "actualTurnRelayRetested": false,
+  "fullRestorationGoalComplete": false,
+  "remainingPlan": "../../../BOXHEAD_RESTORATION_PLAN.md"
+}

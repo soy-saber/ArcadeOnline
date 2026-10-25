@@ -112,8 +112,9 @@ let browser;
     let nativeEnemy;
     if (game.id === '50737-server') {
       await b.waitForFunction(() => window.__authorityTest.authority.zombies.some(z=>z.ai.registered&&z.ai.collidable&&z.ai.state==='cell'),{timeout:20000});
-      nativeEnemy=await b.evaluate(()=>{const s=window.__authorityTest.authority,z=s.zombies.find(z=>z.ai.registered&&z.ai.collidable&&z.ai.state==='cell');return {tick:s.tick,wave:s.wave,id:z.id,x:z.x,y:z.y,ai:z.ai,navigationPhase:s.navigation.phase};});
+      nativeEnemy=await b.evaluate(()=>{const s=window.__authorityTest.authority,z=s.zombies.find(z=>z.ai.registered&&z.ai.collidable&&z.ai.state==='cell');return {tick:s.tick,wave:s.wave,id:z.id,x:z.x,y:z.y,ai:z.ai,body:z.body,players:s.players.map(p=>({seat:p.seat,body:p.body})),navigationPhase:s.navigation.phase};});
       assert(nativeEnemy.ai.reserved>=0);assert(nativeEnemy.ai.counter>0);
+      assert.equal(nativeEnemy.body.phase,'normal');assert.equal(nativeEnemy.body.mass,1);assert(nativeEnemy.players.every(p=>p.body.mass===2&&Array.isArray(p.body.affects)));
     }
     await b.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await b.screenshot({ path: path.join(output, game.id + ".png"), fullPage: true });
