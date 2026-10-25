@@ -462,9 +462,9 @@ export function step(state: GameState, inputs: readonly Input[]): void {
       if (player.shield) { player.shield = false; player.invulnerable = 60; }
       else {
         player.life=Math.max(0,player.life-1);
-        // Original human players leave the arena on an unshielded hit;
-        // the life pickup is a stage stock, not an extra hit-point shield.
-        if(state.options.mode==='online'||!state.options.bots.includes(player.seat)||player.life===0){player.alive=false;player.diedAt=state.tick;player.killedBy=state.flameOwners[index(Math.round(pos.x),Math.round(pos.y))];}
+        // Online rooms have no campaign stage-stock carryover. A collected
+        // life must survive an additional hit in the current match.
+        if(player.life===0||state.options.mode!=='online'&&!state.options.bots.includes(player.seat)){player.alive=false;player.diedAt=state.tick;player.killedBy=state.flameOwners[index(Math.round(pos.x),Math.round(pos.y))];}
         else player.invulnerable=60;
       }
     }

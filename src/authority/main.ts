@@ -90,6 +90,7 @@ function start(): void {
     for (const mode of adapter.modes) { const option = document.createElement("option"); option.value = mode.id; option.textContent = mode.label; modeSelect.append(option); }
   }
   for (const map of adapter?.maps || ORIGINAL_MAPS) { const option = document.createElement("option"); option.value = map.id; option.textContent = map.label; mapSelect.append(option); }
+  if(!adapter&&!badminton)mapSelect.title='每完成5局随机切换一个不同的原作场景；手动换图重新计数';
   function notice(message: string): void { el("connection-note").textContent = message; }
   function clearInput(): void { if(boxhead&&actions.some(code=>keys.has(code)))cancelledAttack=bomb;keys.clear(); held = null; presentation.clearPrediction(); }
   function resetRound(next: number): void {
@@ -322,8 +323,8 @@ function start(): void {
     }
     const nextAt = net.room.auth?.nextRoundAt;
     if (!net.connected) el("round-status").textContent = "连接中";
-    else if (state?.phase === "playing") el("round-status").textContent = "比赛进行中";
-    else if (state?.phase === "finished" && nextAt) el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1000))} 秒后开始下一局`;
+    else if (state?.phase === "playing") { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = "比赛进行中"+(rotation?` · 本图第 ${Math.min(rotation.every,rotation.completed+1)}/${rotation.every} 局`:''); }
+    else if (state?.phase === "finished" && nextAt) { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1000))} 秒后${rotation&&rotation.completed>=rotation.every?'换图并':''}开始下一局`; }
     else el("round-status").textContent = "入座并准备后自动开始";
     if (badminton && state && !isBomb(state)) el("score-line").textContent = `P1 ${state.score[0]} : ${state.score[1]} P2`;
     el("metrics-age").textContent = Number.isFinite(net.snapshotAge) ? `${Math.round(net.snapshotAge)} ms` : "等待同步";

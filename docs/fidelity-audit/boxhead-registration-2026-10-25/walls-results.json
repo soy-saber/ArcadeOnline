@@ -1,0 +1,255 @@
+{
+  "at": "2026-10-25T04:30:23.062Z",
+  "earned": {
+    "kills": 32,
+    "peakCombo": 33,
+    "stock": 5
+  },
+  "placed": {
+    "id": 294,
+    "x": 176,
+    "y": 272,
+    "kind": "wall",
+    "hp": 1000,
+    "maxHp": 1000,
+    "wallFrame": 0,
+    "wallAlpha": 100,
+    "fadeAt": null,
+    "deleteAt": null,
+    "affects": [],
+    "registered": false,
+    "objectPhase": "init",
+    "radius": null,
+    "collidable": false,
+    "barrelAffects": [],
+    "damage": 100,
+    "owner": 1,
+    "exploded": false,
+    "armed": 497,
+    "detonateAt": 0,
+    "animation": 0,
+    "detonating": false,
+    "detonateCounter": null
+  },
+  "pistolHits": 20,
+  "pistolDamage": 52,
+  "smokePreloadedBeforeBreak": true,
+  "allTenDamageFrames": true,
+  "damagedFullRecovery": true,
+  "fadeFullRecovery": true,
+  "collisionReleasedOnDisposal": true,
+  "nativeSmokeFramesDrawn": [
+    2,
+    3,
+    5,
+    6,
+    9,
+    11,
+    12,
+    14
+  ],
+  "watch": {
+    "damage": [
+      {
+        "tick": 503,
+        "hp": 1000,
+        "frame": 0
+      },
+      {
+        "tick": 515,
+        "hp": 948,
+        "frame": 0
+      },
+      {
+        "tick": 529,
+        "hp": 896,
+        "frame": 1
+      },
+      {
+        "tick": 542,
+        "hp": 844,
+        "frame": 1
+      },
+      {
+        "tick": 554,
+        "hp": 792,
+        "frame": 2
+      },
+      {
+        "tick": 568,
+        "hp": 740,
+        "frame": 2
+      },
+      {
+        "tick": 580,
+        "hp": 688,
+        "frame": 3
+      },
+      {
+        "tick": 592,
+        "hp": 636,
+        "frame": 3
+      },
+      {
+        "tick": 603,
+        "hp": 584,
+        "frame": 4
+      },
+      {
+        "tick": 615,
+        "hp": 532,
+        "frame": 4
+      },
+      {
+        "tick": 628,
+        "hp": 480,
+        "frame": 5
+      },
+      {
+        "tick": 641,
+        "hp": 428,
+        "frame": 5
+      },
+      {
+        "tick": 654,
+        "hp": 376,
+        "frame": 6
+      },
+      {
+        "tick": 665,
+        "hp": 324,
+        "frame": 6
+      },
+      {
+        "tick": 676,
+        "hp": 272,
+        "frame": 7
+      },
+      {
+        "tick": 689,
+        "hp": 220,
+        "frame": 7
+      },
+      {
+        "tick": 701,
+        "hp": 168,
+        "frame": 8
+      },
+      {
+        "tick": 711,
+        "hp": 116,
+        "frame": 8
+      },
+      {
+        "tick": 723,
+        "hp": 64,
+        "frame": 9
+      },
+      {
+        "tick": 738,
+        "hp": 12,
+        "frame": 9
+      }
+    ],
+    "motion": [
+      {
+        "tick": 751,
+        "x": 148.16,
+        "wall": true,
+        "alpha": 80,
+        "deleteAt": null
+      },
+      {
+        "tick": 751,
+        "x": 148.16,
+        "wall": true,
+        "alpha": 80,
+        "deleteAt": null
+      },
+      {
+        "tick": 753,
+        "x": 148.16,
+        "wall": true,
+        "alpha": 40,
+        "deleteAt": null
+      },
+      {
+        "tick": 754,
+        "x": 148.16,
+        "wall": true,
+        "alpha": 20,
+        "deleteAt": null
+      },
+      {
+        "tick": 756,
+        "x": 153.28,
+        "wall": false
+      },
+      {
+        "tick": 757,
+        "x": 158.4,
+        "wall": false
+      },
+      {
+        "tick": 760,
+        "x": 173.76000000000002,
+        "wall": false
+      },
+      {
+        "tick": 762,
+        "x": 184.00000000000003,
+        "wall": false
+      },
+      {
+        "tick": 763,
+        "x": 189.12000000000003,
+        "wall": false
+      },
+      {
+        "tick": 765,
+        "x": 199.36000000000004,
+        "wall": false
+      },
+      {
+        "tick": 766,
+        "x": 204.48000000000005,
+        "wall": false
+      },
+      {
+        "tick": 767,
+        "x": 209.60000000000005,
+        "wall": false
+      }
+    ],
+    "smokes": {
+      "315": {
+        "id": 315,
+        "kind": "Effect.SmokeCloud",
+        "x": 176,
+        "y": 272,
+        "life": 16,
+        "total": 16,
+        "born": 752,
+        "scale": 1
+      }
+    },
+    "fadeRequest": {
+      "tick": 751,
+      "full": 10,
+      "id": 294,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 751,
+      "alpha": 80
+    },
+    "fadeRecovery": {
+      "tick": 751,
+      "id": 294,
+      "hp": -40,
+      "frame": 9,
+      "fadeAt": 751,
+      "alpha": 80
+    }
+  },
+  "errors": []
+}

@@ -1,0 +1,24 @@
+{
+  "defaultUnitSuite": {
+    "passed": 292,
+    "failed": 0,
+    "command": "npm test"
+  },
+  "deploySuite": {
+    "passed": 5,
+    "failed": 0
+  },
+  "typecheck": true,
+  "nativeBuildMatchesSource": true,
+  "localChromeSuites": [
+    "walls-results.json",
+    "packs-results.json"
+  ],
+  "additionalAllTestFilesAudit": {
+    "passed": 325,
+    "failed": 1,
+    "knownFailure": "native-relay.test.cjs targets retired catalog entries; confirmed independently",
+    "productionCatalogUnchanged": true
+  },
+  "fullGoalComplete": false
+}

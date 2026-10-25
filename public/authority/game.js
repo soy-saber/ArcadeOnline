@@ -26183,7 +26183,10 @@
     return b.kind === "wall" && (b.deleteAt === null || b.deleteAt >= tick);
   }
   function affectWall(b, amount, owner) {
-    if (b.hp > 0) b.affects.push({ amount, owner });
+    if (b.hp > 0) {
+      b.affects.push({ amount, owner });
+      if (b.registered) b.objectPhase = "normal";
+    }
   }
   function processWallAffects(s, destroy) {
     for (const b of s.barrels) if (b.kind === "wall" && b.affects.length) {
@@ -26197,6 +26200,7 @@
         if (b.hp > 0) b.wallFrame = Math.floor((1 - b.hp / b.maxHp) * 10);
         else {
           b.exploded = true;
+          b.collidable = true;
           b.fadeAt = s.tick;
           b.wallAlpha = 80;
           destroy(b);
@@ -26222,11 +26226,68 @@
     return b.exploded && b.affects.length === 0 && Number.isSafeInteger(b.fadeAt) && b.fadeAt >= 0 && b.fadeAt <= tick && b.wallAlpha === Math.max(0, 100 - 20 * (tick - b.fadeAt + 1)) && (b.wallAlpha > 0 ? b.deleteAt === null : b.deleteAt === b.fadeAt + 4);
   }
 
+  // src/expanded/boxhead-registration.ts
+  var CELL3 = 32;
+  function sameCell(a, b) {
+    return Math.floor(a.x / CELL3) === Math.floor(b.x / CELL3) && Math.floor(a.y / CELL3) === Math.floor(b.y / CELL3);
+  }
+  function objectRegistration() {
+    return { registered: false, objectPhase: "init", radius: null, collidable: false, barrelAffects: [] };
+  }
+  function objectBlocks(b) {
+    return b.registered === true && b.collidable === true && Number.isFinite(b.radius) && b.radius > 0;
+  }
+  function stepRegistration(s) {
+    for (const b of [...s.barrels].reverse()) {
+      if (!["barrel", "wall"].includes(b.kind) || b.armed >= s.tick || b.hp <= 0) continue;
+      const playerOnCell = () => s.players.some((p) => p.alive && sameCell(p, b));
+      if (b.objectPhase === "init") {
+        b.registered = true;
+        if (playerOnCell()) b.objectPhase = "waiting";
+        else {
+          b.radius = 0.42 * CELL3;
+          b.collidable = true;
+          b.objectPhase = "normal";
+        }
+      }
+      if (b.objectPhase === "waiting") {
+        if (playerOnCell()) continue;
+        b.collidable = true;
+        b.objectPhase = "growing";
+      }
+      if (b.objectPhase === "growing") {
+        const target = (b.kind === "barrel" ? 0.42 : 0.48) * CELL3;
+        if ((b.radius ?? 0) < target) b.radius = (b.radius ?? 0) + 0.05 * CELL3;
+        else {
+          if (b.kind === "barrel") b.radius = 0.42 * CELL3;
+          b.objectPhase = "normal";
+        }
+      }
+    }
+  }
+  function processBarrelAffects(s) {
+    for (const b of s.barrels) if (b.kind === "barrel" && b.hp > 0 && b.objectPhase === "normal" && b.barrelAffects.length) {
+      b.owner = b.barrelAffects[b.barrelAffects.length - 1];
+      b.barrelAffects = [];
+      b.hp = 0;
+    }
+  }
+  function validRegistration(b, tick) {
+    if (!["barrel", "wall"].includes(b.kind)) return true;
+    if (typeof b.registered !== "boolean" || typeof b.collidable !== "boolean" || !["init", "waiting", "growing", "normal"].includes(b.objectPhase) || !(b.radius === null || Number.isFinite(b.radius) && b.radius > 0 && b.radius <= 0.5 * CELL3 + 1e-10) || !Array.isArray(b.barrelAffects) || b.barrelAffects.length > 1 || !b.barrelAffects.every((n) => Number.isInteger(n) && n >= -1 && n <= 4) || !Number.isSafeInteger(b.armed) || b.armed < 0 || b.armed > tick) return false;
+    if (b.objectPhase === "init") return !b.registered && !b.collidable && b.radius === null;
+    if (!b.registered) return false;
+    if (b.objectPhase === "waiting") return !b.collidable && b.radius === null;
+    if (b.objectPhase === "growing") return b.collidable && b.radius !== null;
+    if (b.kind === "barrel") return b.collidable && b.radius === 0.42 * CELL3;
+    return b.barrelAffects.length === 0 && (b.collidable || b.radius === null);
+  }
+
   // src/expanded/boxhead-world.ts
   var WIDTH4 = 1280;
   var HEIGHT4 = 800;
   var HUD = 84;
-  var CELL3 = 32;
+  var CELL4 = 32;
   var MAPS2 = boxhead_data_default.maps;
   var CHARACTERS = ["swat", "bond", "gijoe", "bambo"];
   var WEAPONS3 = [
@@ -26245,21 +26306,51 @@
     return MAPS2.find((m) => m.id === s.mapId) || MAPS2[0];
   }
   function solid(map, x, y) {
-    return map.collision[Math.floor(y / CELL3)]?.[Math.floor(x / CELL3)] !== "0";
+    return map.collision[Math.floor(y / CELL4)]?.[Math.floor(x / CELL4)] !== "0";
   }
-  function blocked(s, x, y, radius = 11, ignore) {
+  function mapBlocked(s, x, y, radius) {
     const map = room(s);
     for (const dx of [-radius, radius]) for (const dy of [-radius, radius]) if (solid(map, x + dx, y + dy)) return true;
-    return s.barrels.some((b) => b !== ignore && (b.kind === "barrel" && b.hp > 0 || wallBlocks(b, s.tick)) && Math.abs(b.x - x) < radius + 14 && Math.abs(b.y - y) < radius + 14);
+    return false;
   }
-  function move(s, p, dx, dy, radius = 11) {
-    if (!blocked(s, p.x + dx, p.y, radius, p)) p.x += dx;
-    if (!blocked(s, p.x, p.y + dy, radius, p)) p.y += dy;
+  function blockingObjects(s, ignore) {
+    return s.barrels.filter((b) => b !== ignore && objectBlocks(b) && (b.kind === "barrel" && b.hp > 0 || wallBlocks(b, s.tick)));
+  }
+  function blocked(s, x, y, radius = 11, ignore) {
+    return mapBlocked(s, x, y, radius) || blockingObjects(s, ignore).some((b) => Math.hypot(b.x - x, b.y - y) < radius + b.radius);
+  }
+  function move(s, p, dx, dy, radius = 0.45 * CELL4) {
+    const human = Number.isInteger(p.seat), mapRadius = radius * (human ? 0.85 : 1), objects = blockingObjects(s, p).reverse();
+    let x = p.x + dx, y = p.y + dy;
+    for (let pass = 0; pass < (human ? 3 : 1); pass++) {
+      let collision = false;
+      for (const b of objects) {
+        const distance = Math.hypot(x - b.x, y - b.y), limit = radius + b.radius;
+        if (distance < limit) {
+          const ux = distance ? (x - b.x) / distance : dx || dy ? -dx / Math.hypot(dx, dy) : 1;
+          const uy = distance ? (y - b.y) / distance : dx || dy ? -dy / Math.hypot(dx, dy) : 0;
+          x = b.x + ux * limit;
+          y = b.y + uy * limit;
+          collision = true;
+        }
+      }
+      if (mapBlocked(s, x, p.y, mapRadius)) {
+        x = p.x;
+        collision = true;
+      }
+      if (mapBlocked(s, x, y, mapRadius)) {
+        y = p.y;
+        collision = true;
+      }
+      if (!collision) break;
+    }
+    p.x = x;
+    p.y = y;
   }
   function openPosition(s, x, y, used = []) {
     const map = room(s), candidates = [];
     for (let row = 1; row < map.rows - 1; row++) for (let col = 1; col < map.columns - 1; col++) {
-      const px = col * CELL3 + 16, py = row * CELL3 + 16;
+      const px = col * CELL4 + 16, py = row * CELL4 + 16;
       if (!blocked(s, px, py) && !used.some((p) => Math.hypot(p.x - px, p.y - py) < 30)) candidates.push({ x: px, y: py, d: Math.hypot(px - x, py - y) });
     }
     candidates.sort((a, b) => a.d - b.d);
@@ -26314,13 +26405,13 @@
         e.initialized = true;
         if (e.cluster) for (let i = 0; i < 4; i++) {
           const angle = i * Math.PI / 2 + (random5(s) - 0.5) * Math.PI / 4;
-          const life = 16 + Math.floor(random5(s) * 8), speed = (0.05 + random5(s) * 0.05) * CELL3;
+          const life = 16 + Math.floor(random5(s) * 8), speed = (0.05 + random5(s) * 0.05) * CELL4;
           s.bullets.push({
             id: ++s.nextId,
             x: e.x,
             y: e.y,
             z: e.z,
-            vz: 0.5 * CELL3,
+            vz: 0.5 * CELL4,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             owner: e.owner,
@@ -26337,7 +26428,7 @@
           const step6 = Math.PI * 2 / (e.bang * 1.5);
           for (let angle = 0; angle < Math.PI * 2; angle += step6) {
             const direction2 = angle + (random5(s) - 0.5) * step6 / 4;
-            queueExplosion(s, e.x + Math.cos(direction2) * CELL3, e.y + Math.sin(direction2) * CELL3, e.damage, e.owner, 0, false, e.z, 2 + Math.floor(random5(s) * 4));
+            queueExplosion(s, e.x + Math.cos(direction2) * CELL4, e.y + Math.sin(direction2) * CELL4, e.damage, e.owner, 0, false, e.z, 2 + Math.floor(random5(s) * 4));
           }
         }
       }
@@ -26483,8 +26574,8 @@
       message: "",
       messageUntil: 0
     };
-    for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0 });
-    for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0 });
+    for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0, ...objectRegistration() });
+    for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0, ...objectRegistration() });
     for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250 });
     const primary = map.playerSpawns[0] || { x: map.width / 2, y: map.height / 2, dir: 0 };
     const spawns = [primary, ...map.otherSpawns].sort((a, b) => Math.hypot(a.x - primary.x, a.y - primary.y) - Math.hypot(b.x - primary.x, b.y - primary.y));
@@ -26540,8 +26631,13 @@
     s.zombies.push({ id: ++s.nextId, x: pos.x, y: pos.y, hp: devil ? 1e3 : 100, devil, attack: 0, dir: 0, owner: 0, hitAt: -99, attackAt: -99 });
   }
   function damage(s, target, amount, owner) {
+    if (["barrel", "wall"].includes(target.kind) && !target.registered) return;
     if (target.kind === "wall") {
       affectWall(target, amount, owner);
+      return;
+    }
+    if (target.kind === "barrel") {
+      if (target.hp > 0) target.barrelAffects = [owner];
       return;
     }
     if (target.hp <= 0) return;
@@ -26574,14 +26670,14 @@
   function shot(s, p, angle, amount, range, pierce) {
     let x = p.x, y = p.y;
     const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
-    for (let n = 0; n < range * CELL3 / 4; n++) {
+    for (let n = 0; n < range * CELL4 / 4; n++) {
       x += dx;
       y += dy;
       if (solid(room(s), x, y)) {
         effect(s, "Effect.BulletHit", x, y - 18, 5);
         break;
       }
-      const target = [...s.barrels.filter((b) => b.kind === "barrel" || b.kind === "wall"), ...s.zombies, ...s.players.filter((q) => q.seat !== p.seat && q.alive)].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < 15);
+      const target = [...s.barrels.filter((b) => b.registered && Number.isFinite(b.radius) && (b.kind === "barrel" || b.kind === "wall")), ...s.zombies, ...s.players.filter((q) => q.seat !== p.seat && q.alive)].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < (t.kind ? t.radius : 15));
       if (target) {
         if (target.seat) hurt(s, target, amount, p.seat);
         else damage(s, target, amount, p.seat);
@@ -26605,9 +26701,9 @@
     }
     if (["barrel", "fakewall", "mine", "chargepack"].includes(gun.id)) {
       if (gun.id === "chargepack") sound2(s, "Weapon.Mine.Place.wav");
-      const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL3) * CELL3 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL3) * CELL3 + 16;
+      const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL4) * CELL4 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL4) * CELL4 + 16;
       if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
-      s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
+      s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
       if (gun.id === "chargepack") p.chargeDetonate = true;
       else sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
     } else if (gun.id === "grenade" || gun.id === "rocket") {
@@ -26657,7 +26753,7 @@
   function navigation(s) {
     const map = room(s), distances = new Int32Array(map.columns * map.rows).fill(-1), queue = [];
     for (const p of s.players) if (p.alive) {
-      const cell = Math.floor(p.y / CELL3) * map.columns + Math.floor(p.x / CELL3);
+      const cell = Math.floor(p.y / CELL4) * map.columns + Math.floor(p.x / CELL4);
       if (distances[cell] === -1) {
         distances[cell] = 0;
         queue.push(cell);
@@ -26684,21 +26780,21 @@
       const distance = Math.hypot(p.x - z.x, p.y - z.y), visible = lineClear(s, z.x, z.y, p.x, p.y);
       let tx = p.x, ty = p.y;
       if (!visible) {
-        const cx = Math.floor(z.x / CELL3), cy = Math.floor(z.y / CELL3);
+        const cx = Math.floor(z.x / CELL4), cy = Math.floor(z.y / CELL4);
         let best = Infinity;
         for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
           const x = cx + dx, y = cy + dy, d = field[y * map.columns + x];
           if (map.collision[y]?.[x] === "0" && d >= 0 && d < best) {
             best = d;
-            tx = x * CELL3 + 16;
-            ty = y * CELL3 + 16;
+            tx = x * CELL4 + 16;
+            ty = y * CELL4 + 16;
           }
         }
       }
       z.dir = Math.atan2(ty - z.y, tx - z.x);
       if (z.attack > 0) z.attack--;
       const blocker = s.barrels.find((b) => b.hp > 0 && ["barrel", "wall"].includes(b.kind) && Math.hypot(b.x - z.x, b.y - z.y) < 35);
-      if (blocker && z.attack === 0) {
+      if (blocker && z.attack === 0 && (z.devil || blocker.kind === "wall")) {
         damage(s, blocker, z.devil ? 100 : 50, 0);
         z.attack = 25;
         z.attackAt = s.tick;
@@ -26773,7 +26869,7 @@
               b.life = 0;
               break;
             }
-          } else if (s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => (wallBlocks(z, s.tick) || z.kind === "barrel" && z.hp > 0) && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.players.some((p) => p.alive && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < 17)) {
+          } else if (s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => z.registered && z.hp > 0 && ["barrel", "wall"].includes(z.kind) && Number.isFinite(z.radius) && Math.hypot(z.x - b.x, z.y - b.y) < z.radius) || s.players.some((p) => p.alive && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < 17)) {
             b.life = 0;
             break;
           }
@@ -26787,6 +26883,7 @@
     if (s.phase !== "playing") return;
     s.tick++;
     stepWalls(s);
+    stepRegistration(s);
     s.effects = s.effects.filter((e) => --e.life > 0);
     s.corpses = s.corpses.filter((e) => s.tick - e.deadAt < 100);
     s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
@@ -26823,10 +26920,8 @@
       }
       const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
       p.moving = !!(dx || dy);
-      if (p.moving) {
-        p.dir = Math.atan2(dy, dx);
-        move(s, p, dx * 5.12, dy * 5.12);
-      }
+      if (p.moving) p.dir = Math.atan2(dy, dx);
+      move(s, p, dx * 5.12, dy * 5.12);
       if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
       if (alt) {
         if (input.weapon !== void 0) {
@@ -26864,6 +26959,7 @@
       effect(s, "Effect.ScorchMark", b.x, b.y, 500);
     });
     stepExplosiveObjects(s, sound2);
+    processBarrelAffects(s);
     for (const b of s.barrels) if (b.hp <= 0 && !b.exploded) {
       b.exploded = true;
       if (b.kind !== "wall") {
@@ -26932,7 +27028,7 @@
   function valid3(value) {
     if (!value || typeof value !== "object") return false;
     const s = value;
-    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (b.born === void 0 || Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (b.born === void 0 || Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
   }
 
   // src/expanded/boxhead-view.ts
@@ -28816,7 +28912,7 @@
   }
 
   // src/authority/bomb-view.ts
-  var CELL4 = 44;
+  var CELL5 = 44;
   var LEFT = 28;
   var TOP = 66;
   var GameView = class {
@@ -28833,7 +28929,7 @@
       this.finishedRound = 0;
       this.finishedAt = 0;
       canvas.width = BOMB_CANVAS_WIDTH;
-      canvas.height = TOP + HEIGHT * CELL4 + 28;
+      canvas.height = TOP + HEIGHT * CELL5 + 28;
       this.ctx = canvas.getContext("2d", { alpha: false });
       for (const name of [
         "floor",
@@ -28872,8 +28968,8 @@
     walking(hero, direction2, frame, x, bottom) {
       const image2 = this.images.get(`walk-${hero}-${direction2}`);
       if (!image2?.complete || !image2.naturalWidth) return;
-      const width = 40 * CELL4 * 1.12 / 53;
-      const height = CELL4 * 1.12;
+      const width = 40 * CELL5 * 1.12 / 53;
+      const height = CELL5 * 1.12;
       this.ctx.drawImage(
         image2,
         Math.max(0, Math.floor(frame)) % 8 * 64 + 12,
@@ -28895,11 +28991,11 @@
     mapBrick(frame, x, y) {
       const image2 = this.images.get(`brick-${frame}`);
       if (!image2?.complete || !image2.naturalWidth) return;
-      const scale = CELL4 / 30;
+      const scale = CELL5 / 30;
       this.ctx.drawImage(
         image2,
-        LEFT + x * CELL4 + BRICK_RASTER_ORIGIN.x * scale,
-        TOP + y * CELL4 + BRICK_RASTER_ORIGIN.y * scale,
+        LEFT + x * CELL5 + BRICK_RASTER_ORIGIN.x * scale,
+        TOP + y * CELL5 + BRICK_RASTER_ORIGIN.y * scale,
         image2.width * scale,
         image2.height * scale
       );
@@ -28943,28 +29039,28 @@
       const seconds = Math.max(0, Math.ceil((ROUND_TICKS - state.tick) / HZ));
       ctx.fillText(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`, BOMB_FIELD_WIDTH - LEFT, 39);
       for (let y = 0; y < HEIGHT; y++) for (let x = 0; x < WIDTH; x++) {
-        const px = LEFT + x * CELL4, py = TOP + y * CELL4, cell = index(x, y);
+        const px = LEFT + x * CELL5, py = TOP + y * CELL5, cell = index(x, y);
         ctx.fillStyle = (x + y) % 2 ? "#b2c9a6" : "#bdd3b0";
-        ctx.fillRect(px, py, CELL4, CELL4);
+        ctx.fillRect(px, py, CELL5, CELL5);
         const floor = this.images.get(theme && visual ? `floor-${visual.floor}` : "floor");
-        if (floor?.complete && floor.naturalWidth) ctx.drawImage(floor, px, py, CELL4, CELL4);
+        if (floor?.complete && floor.naturalWidth) ctx.drawImage(floor, px, py, CELL5, CELL5);
         if (state.options.map === "lanes" || state.options.map === "open") {
           ctx.fillStyle = state.options.map === "lanes" ? "#729cd333" : "#efc97044";
-          ctx.fillRect(px, py, CELL4, CELL4);
+          ctx.fillRect(px, py, CELL5, CELL5);
         }
         ctx.strokeStyle = "#23433b18";
-        ctx.strokeRect(px, py, CELL4, CELL4);
+        ctx.strokeRect(px, py, CELL5, CELL5);
         if (state.board[cell] === 1) {
           if (theme && visual) {
             if (!(x >= 6 && x <= 7 && y >= 5 && y <= 6)) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell], x, y) });
           } else {
             ctx.fillStyle = "#536d66";
-            ctx.fillRect(px + 1, py + 1, CELL4 - 2, CELL4 - 2);
-            this.sprite("wall", px + CELL4 / 2, py + CELL4 - 2, CELL4 - 2, CELL4 - 1);
+            ctx.fillRect(px + 1, py + 1, CELL5 - 2, CELL5 - 2);
+            this.sprite("wall", px + CELL5 / 2, py + CELL5 - 2, CELL5 - 2, CELL5 - 1);
           }
         } else if (state.board[cell] === 2) {
           if (theme && visual) draws.push({ depth: y * WIDTH + (WIDTH - x), draw: () => this.mapBrick(visual.tiles[cell], x, y) });
-          else this.sprite("crate", px + CELL4 / 2, py + CELL4 - 1, CELL4 - 2, CELL4 - 1);
+          else this.sprite("crate", px + CELL5 / 2, py + CELL5 - 1, CELL5 - 2, CELL5 - 1);
         }
         if (state.flames[cell] > state.tick) {
           let original = false;
@@ -28976,21 +29072,21 @@
             const tip = distance === blast2.lengths[dir] && (!blast2.active[dir] || blast2.distance >= blast2.range);
             const frame = (state.players.find((p) => p.seat === blast2.owner)?.character || blast2.owner) + (distance ? tip ? 8 : 4 : 0);
             ctx.save();
-            ctx.translate(px + CELL4 / 2, py + CELL4 / 2);
+            ctx.translate(px + CELL5 / 2, py + CELL5 / 2);
             if (distance) ctx.rotate((dir + 2) * Math.PI / 2);
-            this.sprite(`bomb1-blast-${frame}`, 0, CELL4 / 2, CELL4, CELL4);
+            this.sprite(`bomb1-blast-${frame}`, 0, CELL5 / 2, CELL5, CELL5);
             ctx.restore();
             original = true;
             break;
           }
-          if (!original) this.animation("fx-blast", state.tick / 2, px + CELL4 / 2, py + CELL4, CELL4, CELL4);
+          if (!original) this.animation("fx-blast", state.tick / 2, px + CELL5 / 2, py + CELL5, CELL5, CELL5);
         } else if (state.ice[cell] > state.tick) {
           ctx.fillStyle = "#9cdef3bd";
-          ctx.fillRect(px + 1, py + 1, CELL4 - 2, CELL4 - 2);
-          this.animation("fx-ice", state.tick / 4, px + CELL4 / 2, py + CELL4, CELL4, CELL4);
+          ctx.fillRect(px + 1, py + 1, CELL5 - 2, CELL5 - 2);
+          this.animation("fx-ice", state.tick / 4, px + CELL5 / 2, py + CELL5, CELL5, CELL5);
         } else if (state.items[cell]) {
           const type = state.items[cell];
-          this.sprite(`item-${type}`, px + CELL4 / 2, py + CELL4 - 2, CELL4 * 0.86, CELL4 * 0.9);
+          this.sprite(`item-${type}`, px + CELL5 / 2, py + CELL5 - 2, CELL5 * 0.86, CELL5 * 0.9);
         }
       }
       for (const s of visibleSpecials(state, seat)) {
@@ -29000,41 +29096,41 @@
           const ratio = Math.min(1, age / 18), [dx, dy] = [[-1, 0], [0, -1], [1, 0], [0, 1]][Math.max(0, s.dir)];
           x += dx * ratio * 2;
           y += dy * ratio * 2;
-          lift = Math.sin(ratio * Math.PI) * CELL4;
+          lift = Math.sin(ratio * Math.PI) * CELL5;
         }
         if (s.kind === "fire" || s.kind === "ice") {
           const [dx, dy] = [[-1, 0], [0, -1], [1, 0], [0, 1]][Math.max(0, s.dir)];
           for (let d = 1; d <= s.distance; d++) {
             const cell = index(x + dx * d, y + dy * d);
             if ((s.kind === "fire" ? state.flames[cell] : state.ice[cell]) > state.tick)
-              this.animation(`fx-${s.kind}`, age / 4, LEFT + (x + dx * d + 0.5) * CELL4, TOP + (y + dy * d + 1) * CELL4, CELL4, CELL4 * 1.1);
+              this.animation(`fx-${s.kind}`, age / 4, LEFT + (x + dx * d + 0.5) * CELL5, TOP + (y + dy * d + 1) * CELL5, CELL5, CELL5 * 1.1);
           }
         } else {
           const specialX = x, specialY = y, specialLift = lift;
-          draws.push({ depth: y * WIDTH + WIDTH - x - 0.5, draw: () => this.sprite(s.kind === "rocket" ? `rocket-${s.dir}` : s.kind, LEFT + (specialX + 0.5) * CELL4, TOP + (specialY + 1) * CELL4 - specialLift, CELL4 * 0.85, CELL4 * 0.8) });
+          draws.push({ depth: y * WIDTH + WIDTH - x - 0.5, draw: () => this.sprite(s.kind === "rocket" ? `rocket-${s.dir}` : s.kind, LEFT + (specialX + 0.5) * CELL5, TOP + (specialY + 1) * CELL5 - specialLift, CELL5 * 0.85, CELL5 * 0.8) });
           if (s.kind === "mine" || s.kind === "gas") {
             ctx.fillStyle = s.kind === "mine" ? "#fd6670" : "#ac79ec";
             ctx.beginPath();
-            ctx.arc(LEFT + (x + 0.5) * CELL4, TOP + (y + 0.75) * CELL4, 3, 0, Math.PI * 2);
+            ctx.arc(LEFT + (x + 0.5) * CELL5, TOP + (y + 0.75) * CELL5, 3, 0, Math.PI * 2);
             ctx.fill();
           }
         }
       }
       for (const bomb of state.bombs) {
-        const x = LEFT + (bomb.x + 0.5) * CELL4, y = TOP + (bomb.y + 1) * CELL4;
+        const x = LEFT + (bomb.x + 0.5) * CELL5, y = TOP + (bomb.y + 1) * CELL5;
         draws.push({ depth: bomb.y * WIDTH + WIDTH - bomb.x - 0.5, draw: () => {
-          this.sprite("bomb", x, y - 2, CELL4 * 0.85, CELL4 * 0.9);
+          this.sprite("bomb", x, y - 2, CELL5 * 0.85, CELL5 * 0.9);
           ctx.fillStyle = bomb.explodeAt - state.tick < 20 ? "#ff6a35" : "#ffdd73";
           ctx.beginPath();
-          ctx.arc(x + 5, y - CELL4 + 5, 3 + Math.sin(now / 55), 0, Math.PI * 2);
+          ctx.arc(x + 5, y - CELL5 + 5, 3 + Math.sin(now / 55), 0, Math.PI * 2);
           ctx.fill();
         } });
       }
       for (const player of [...state.players].sort((a, b) => position(a).y - position(b).y)) {
         if (state.options.mode === "online" && !state.options.activeSeats?.includes(player.seat)) continue;
-        const pos = position(player), x = LEFT + (pos.x + 0.5) * CELL4, y = TOP + (pos.y + 1) * CELL4;
+        const pos = position(player), x = LEFT + (pos.x + 0.5) * CELL5, y = TOP + (pos.y + 1) * CELL5;
         if (!player.alive) {
-          if (state.tick - player.diedAt < 28) draws.push({ depth: pos.y * WIDTH + WIDTH - pos.x - player.seat / 10, draw: () => this.animation("fx-death", (state.tick - player.diedAt) / 4, x, y, CELL4, CELL4 * 1.2) });
+          if (state.tick - player.diedAt < 28) draws.push({ depth: pos.y * WIDTH + WIDTH - pos.x - player.seat / 10, draw: () => this.animation("fx-death", (state.tick - player.diedAt) / 4, x, y, CELL5, CELL5 * 1.2) });
           continue;
         }
         draws.push({ depth: pos.y * WIDTH + WIDTH - pos.x - player.seat / 10, draw: () => {
@@ -29051,7 +29147,7 @@
           }
           ctx.globalAlpha = player.invulnerable > 0 && state.tick % 4 < 2 ? 0.5 : 1;
           if (player.moveDir >= 0 && !player.frozen) this.walking(player.character, Math.max(0, player.dir), state.tick / 2, x, y);
-          else this.sprite(`hero-${player.character}-${Math.max(0, player.dir)}`, x, y, CELL4 * 0.9, CELL4 * 1.12);
+          else this.sprite(`hero-${player.character}-${Math.max(0, player.dir)}`, x, y, CELL5 * 0.9, CELL5 * 1.12);
           ctx.globalAlpha = 1;
           if (player.frozen) {
             ctx.fillStyle = "#92dcff99";
@@ -29072,7 +29168,7 @@
       }
       if (state.phase !== "playing") {
         ctx.fillStyle = "#10272bd9";
-        ctx.fillRect(LEFT, TOP, WIDTH * CELL4, HEIGHT * CELL4);
+        ctx.fillRect(LEFT, TOP, WIDTH * CELL5, HEIGHT * CELL5);
         ctx.textAlign = "center";
         ctx.fillStyle = "#fff5dc";
         ctx.font = "bold 32px system-ui";
@@ -29086,7 +29182,7 @@
         }
         ctx.fillText(state.phase === "waiting" ? "\u81F3\u5C11\u4E24\u4EBA\u5165\u5EA7\uFF0C\u5168\u5458\u51C6\u5907\u540E\u5F00\u5C40" : `\u4E0B\u4E00\u5C40\u5C06\u5728 ${Math.max(0, Math.ceil((3e3 - (now - this.finishedAt)) / 1e3))} \u79D2\u540E\u81EA\u52A8\u5F00\u59CB`, BOMB_FIELD_WIDTH / 2, this.canvas.height / 2 + 24);
       }
-      drawPlayerStatus(ctx, bombStatus(state), BOMB_FIELD_WIDTH, TOP, this.canvas.width - BOMB_FIELD_WIDTH, HEIGHT * CELL4, seat);
+      drawPlayerStatus(ctx, bombStatus(state), BOMB_FIELD_WIDTH, TOP, this.canvas.width - BOMB_FIELD_WIDTH, HEIGHT * CELL5, seat);
     }
   };
 
@@ -29399,6 +29495,7 @@
       option.textContent = map.label;
       mapSelect.append(option);
     }
+    if (!adapter7 && !badminton) mapSelect.title = "\u6BCF\u5B8C\u62105\u5C40\u968F\u673A\u5207\u6362\u4E00\u4E2A\u4E0D\u540C\u7684\u539F\u4F5C\u573A\u666F\uFF1B\u624B\u52A8\u6362\u56FE\u91CD\u65B0\u8BA1\u6570";
     function notice(message) {
       el("connection-note").textContent = message;
     }
@@ -29772,9 +29869,13 @@
       }
       const nextAt = net.room.auth?.nextRoundAt;
       if (!net.connected) el("round-status").textContent = "\u8FDE\u63A5\u4E2D";
-      else if (state?.phase === "playing") el("round-status").textContent = "\u6BD4\u8D5B\u8FDB\u884C\u4E2D";
-      else if (state?.phase === "finished" && nextAt) el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1e3))} \u79D2\u540E\u5F00\u59CB\u4E0B\u4E00\u5C40`;
-      else el("round-status").textContent = "\u5165\u5EA7\u5E76\u51C6\u5907\u540E\u81EA\u52A8\u5F00\u59CB";
+      else if (state?.phase === "playing") {
+        const rotation = net.room.auth?.mapRotation;
+        el("round-status").textContent = "\u6BD4\u8D5B\u8FDB\u884C\u4E2D" + (rotation ? ` \xB7 \u672C\u56FE\u7B2C ${Math.min(rotation.every, rotation.completed + 1)}/${rotation.every} \u5C40` : "");
+      } else if (state?.phase === "finished" && nextAt) {
+        const rotation = net.room.auth?.mapRotation;
+        el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1e3))} \u79D2\u540E${rotation && rotation.completed >= rotation.every ? "\u6362\u56FE\u5E76" : ""}\u5F00\u59CB\u4E0B\u4E00\u5C40`;
+      } else el("round-status").textContent = "\u5165\u5EA7\u5E76\u51C6\u5907\u540E\u81EA\u52A8\u5F00\u59CB";
       if (badminton && state && !isBomb(state)) el("score-line").textContent = `P1 ${state.score[0]} : ${state.score[1]} P2`;
       el("metrics-age").textContent = Number.isFinite(net.snapshotAge) ? `${Math.round(net.snapshotAge)} ms` : "\u7B49\u5F85\u540C\u6B65";
       el("metrics-bandwidth").textContent = `${Math.round(net.receivedBytes / 1024)} KB \u6536 / ${Math.round(net.sentBytes / 1024)} KB \u53D1`;

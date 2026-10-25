@@ -34,7 +34,7 @@ test('a shotgun burst queues all wall affects before applying them and does not 
 });
 
 test('fade lasts five callbacks including immediate80 percent, with collision released only at following disposal',()=>{
- const {s,p,b}=placedWall();hit(s,b,1000);const born=s.tick;p.x=b.x-25;const x=p.x,alpha=[];
+ const {s,p,b}=placedWall();hit(s,b,1000);const born=s.tick;p.x=b.x-(.45*32+b.radius);const x=p.x,alpha=[];
  for(let i=0;i<5;i++){
   assert(s.barrels.includes(b));assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,80-i*20);alpha.push(b.wallAlpha);assert(a.valid(s));
   a.step(s,[input(10+i,{right:true,attack:1})]);if(i<4)assert.equal(p.x,x);
@@ -47,8 +47,8 @@ test('fading wall has no damage flags, so later hitscan passes through while its
  a.step(s,[input(2,{attack:2})]);assert.equal(q.hp,174+200/750);assert(world.blocked(s,b.x,b.y,11));assert.equal(b.wallAlpha,60);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);
 });
 
-test('native rocket still collides with a cleared-affect wall until the collider is disposed',()=>{
- const {s,p,b}=placedWall();hit(s,b,1000);equip(s,7);a.step(s,[input(2,{attack:2})]);ticks(s);assert.equal(s.bullets.filter(b=>b.weapon===7).length,0);assert.equal(s.explosions.length,1);assert(s.barrels.includes(b));ticks(s);assert(s.effects.some(e=>e.kind==='Effect.Explosion'));assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);assert(a.valid(s));
+test('native rocket bullet-affect ray passes a fading wall while the movement collider remains',()=>{
+ const {s,p,b}=placedWall();hit(s,b,1000);equip(s,7);a.step(s,[input(2,{attack:2})]);ticks(s);assert.equal(s.bullets.filter(b=>b.weapon===7).length,1);assert.equal(s.explosions.length,0);assert(s.barrels.includes(b));assert(world.blocked(s,b.x,b.y));assert(s.bullets[0].x>b.x);assert.equal(s.effects.filter(e=>e.kind==='Effect.SmokeCloud').length,1);assert(a.valid(s));
 });
 
 test('explosion damage uses the original wall health and frame without causing an extra wall explosion',()=>{

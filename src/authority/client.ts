@@ -5,7 +5,7 @@ export interface Member { id: string; name: string; seat: number | null; ready: 
 export interface AuthorityRoom {
   t: "state"; gameId: string; room: string; hostId: null; controllerId: string | null;
   seats: Record<number, string | null>; members: Member[];
-  auth?: { phase: State["phase"]; round: number; nextRoundAt: number | null; options?: { map?: string; loadout?: string; gameMode?: string }; records?: RecordRow[] };
+  auth?: { phase: State["phase"]; round: number; nextRoundAt: number | null; options?: { map?: string; loadout?: string; gameMode?: string }; records?: RecordRow[]; mapRotation?: { every:number; completed:number } };
 }
 
 // The transport applies and acknowledges snapshots immediately. Rendering only

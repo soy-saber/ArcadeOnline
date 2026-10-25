@@ -1,0 +1,177 @@
+{
+  "at": "2026-10-25T04:18:02.068Z",
+  "pickupAddsLife": true,
+  "lifeHudTwo": true,
+  "firstBlastSurvived": {
+    "round": 1792901850468,
+    "life": 1,
+    "alive": true,
+    "protected": true,
+    "records": [
+      {
+        "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+        "name": "Life P1",
+        "kills": 0,
+        "deaths": 0,
+        "wins": 0,
+        "rounds": 0
+      },
+      {
+        "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+        "name": "Life P2",
+        "kills": 0,
+        "deaths": 0,
+        "wins": 0,
+        "rounds": 0
+      }
+    ]
+  },
+  "fullRecoveryPreservesLife": true,
+  "lastLifeKnockout": true,
+  "realCompletedRounds": 5,
+  "rounds": [
+    {
+      "round": 1792901850468,
+      "map": "forest",
+      "rotation": {
+        "every": 5,
+        "completed": 1
+      },
+      "records": [
+        {
+          "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+          "name": "Life P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 1,
+          "rounds": 1
+        },
+        {
+          "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+          "name": "Life P1",
+          "kills": 0,
+          "deaths": 1,
+          "wins": 0,
+          "rounds": 1
+        }
+      ]
+    },
+    {
+      "round": 1792901860628,
+      "map": "forest",
+      "rotation": {
+        "every": 5,
+        "completed": 2
+      },
+      "records": [
+        {
+          "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+          "name": "Life P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 2,
+          "rounds": 2
+        },
+        {
+          "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+          "name": "Life P1",
+          "kills": 0,
+          "deaths": 2,
+          "wins": 0,
+          "rounds": 2
+        }
+      ]
+    },
+    {
+      "round": 1792901865878,
+      "map": "forest",
+      "rotation": {
+        "every": 5,
+        "completed": 3
+      },
+      "records": [
+        {
+          "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+          "name": "Life P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 3,
+          "rounds": 3
+        },
+        {
+          "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+          "name": "Life P1",
+          "kills": 0,
+          "deaths": 3,
+          "wins": 0,
+          "rounds": 3
+        }
+      ]
+    },
+    {
+      "round": 1792901871146,
+      "map": "forest",
+      "rotation": {
+        "every": 5,
+        "completed": 4
+      },
+      "records": [
+        {
+          "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+          "name": "Life P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 4,
+          "rounds": 4
+        },
+        {
+          "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+          "name": "Life P1",
+          "kills": 0,
+          "deaths": 4,
+          "wins": 0,
+          "rounds": 4
+        }
+      ]
+    },
+    {
+      "round": 1792901876149,
+      "map": "forest",
+      "rotation": {
+        "every": 5,
+        "completed": 5
+      },
+      "records": [
+        {
+          "id": "643b6856-5898-41cb-979f-f64a62afbb06",
+          "name": "Life P2",
+          "kills": 0,
+          "deaths": 0,
+          "wins": 5,
+          "rounds": 5
+        },
+        {
+          "id": "5d5ecb0d-7793-4989-8a98-04179b71dbb0",
+          "name": "Life P1",
+          "kills": 0,
+          "deaths": 5,
+          "wins": 0,
+          "rounds": 5
+        }
+      ]
+    }
+  ],
+  "sixth": {
+    "map": "candy",
+    "rotation": {
+      "every": 5,
+      "completed": 0
+    },
+    "ready": [
+      true,
+      true
+    ],
+    "mapSelect": "candy"
+  },
+  "errors": []
+}

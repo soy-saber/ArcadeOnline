@@ -25,6 +25,7 @@
     "test:boxhead:walls:e2e": "node scripts/build-native.cjs && node tests/boxhead-walls-e2e.cjs",
     "test:fidelity:e2e": "node scripts/build-native.cjs && node tests/fidelity-e2e.cjs",
     "test:bomb:restoration:e2e": "node scripts/build-native.cjs && node tests/bomb-restoration-e2e.cjs",
+    "test:bomb:life:e2e": "node scripts/build-native.cjs && node tests/bomb1-life-rotation-e2e.cjs",
     "test:bomb:motion:e2e": "node scripts/build-native.cjs && node tests/bomb2-motion-e2e.cjs",
     "test:bomb:conveyor:e2e": "node scripts/build-native.cjs && node tests/bomb2-conveyor-e2e.cjs",
     "test:bomb:blasts:e2e": "node scripts/build-native.cjs && node tests/bomb2-blasts-e2e.cjs",

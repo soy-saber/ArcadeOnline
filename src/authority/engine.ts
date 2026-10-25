@@ -1,5 +1,6 @@
 import * as bomb from "./bomb-core";
 import * as badminton from "../badminton/core";
+import { ORIGINAL_MAPS } from './maps';
 import { createUpdate, State, Update } from "./protocol";
 import { getAdapter } from "../expanded/registry";
 import { State as ExpandedState, Input as ExpandedInput, EMPTY_INPUT as EXPANDED_EMPTY, validInput as validExpandedInput } from "../expanded/types";
@@ -15,6 +16,7 @@ interface Delivery { base: State | null; outstanding: Update | null; sentAt: num
 interface RemoteInput { input: bomb.Input | badminton.Input | ExpandedInput; at: number; receivedAt: number }
 interface Match {
   state: State; roster: string; clock: number; accumulator: number; nextRoundAt: number;
+  completedOnMap: number;
   lastPublish: number; options: Partial<bomb.GameOptions> & { gameMode?: string }; inputs: Map<string, RemoteInput>; deliveries: Map<string, Delivery>;
   records: Map<string, RecordRow>; roundMembers: Map<number, string>;
 }
@@ -54,7 +56,7 @@ export class AuthorityEngine {
   onRoom(room: Room): void {
     if (!room.auth) {
       room.auth = { state: newState(room, false), roster: "", clock: Date.now(), accumulator: 0, nextRoundAt: 0,
-        lastPublish: 0, options: {}, inputs: new Map(), deliveries: new Map(), records: new Map(), roundMembers: new Map() };
+        completedOnMap: 0, lastPublish: 0, options: {}, inputs: new Map(), deliveries: new Map(), records: new Map(), roundMembers: new Map() };
       if (isBomb(room)) room.auth.options = { ...(room.auth.state as bomb.GameState).options };
       const adapter = getAdapter(room.gameId);
       if (adapter?.maps?.length) room.auth.options.map = adapter.maps[0].id as bomb.GameOptions["map"];
@@ -79,11 +81,17 @@ export class AuthorityEngine {
   info(room: Room): object {
     const match = room.auth!;
     return { phase: match.state.phase, round: match.state.round, nextRoundAt: match.nextRoundAt, options: match.options,
+      ...(isBomb(room)?{mapRotation:{every:5,completed:match.completedOnMap}}:{}),
       ...(hasRecords(room) ? { records: [...match.records.values()].sort((a, b) => b.kills - a.kills || b.wins - a.wins || a.deaths - b.deaths) } : {}) };
   }
 
   private begin(room: Room, playing: boolean): void {
     const match = room.auth!;
+    if(isBomb(room)&&match.completedOnMap>=5){
+      const choices=ORIGINAL_MAPS.filter(map=>map.id!==match.options.map);
+      match.options.map=choices[Math.floor(Math.random()*choices.length)].id;
+      match.completedOnMap=0;
+    }
     match.state = newState(room, playing); match.inputs.clear(); match.nextRoundAt = 0;
     match.roundMembers = new Map(activeSeats(room).map((seat) => [seat, room.seats[seat]!]));
     if (hasRecords(room) && playing) for (const id of match.roundMembers.values()) {
@@ -191,6 +199,7 @@ export class AuthorityEngine {
     options.difficulty=difficulty as bomb.GameOptions['difficulty'];
     const candidate = bomb.createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room) });
     if (!bomb.validState(candidate)) return false;
+    if(options.map!==match.options.map)match.completedOnMap=0;
     match.options = options; this.begin(room, false); return true;
   }
 
@@ -264,6 +273,7 @@ export class AuthorityEngine {
           const record = match.records.get(id); if (!record) continue;
           record.rounds++; if (game.winner === seat) record.wins++;
         }
+        if(game.phase==='finished')match.completedOnMap++;
       }
       else badminton.step(match.state as badminton.GameState, inputs as badminton.Input[]);
       match.accumulator -= stepMs;

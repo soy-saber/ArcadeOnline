@@ -11,7 +11,7 @@ export function wallBlocks(b:any,tick:number):boolean {
 }
 
 export function affectWall(b:any,amount:number,owner:number):void {
-  if(b.hp>0)b.affects.push({amount,owner});
+  if(b.hp>0){b.affects.push({amount,owner});if(b.registered)b.objectPhase='normal';}
 }
 
 export function processWallAffects(s:State,destroy:(b:any)=>void):void {
@@ -25,7 +25,7 @@ export function processWallAffects(s:State,destroy:(b:any)=>void):void {
       else {
         // The lethal affect clears pending affects and exits before GotoToFrame.
         // Keep the image from the last nonlethal affect in this callback.
-        b.exploded=true;b.fadeAt=s.tick;b.wallAlpha=80;destroy(b);break;
+        b.exploded=true;b.collidable=true;b.fadeAt=s.tick;b.wallAlpha=80;destroy(b);break;
       }
     }
   }

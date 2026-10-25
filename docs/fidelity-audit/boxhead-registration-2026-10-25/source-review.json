@@ -1,0 +1,63 @@
+{
+  "baseline": "5347104",
+  "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sourceClasses": {
+    "Thing/CThing": "8a6fab0dee85a00895f4a01a58946fbc10a23eb6f583393c34c1413f72dbe47f",
+    "Thing/CThing_Collection": "fad77aa7c0f93b3e4186b3e7ca7038b3267b5537947266c22619fdf683f815f2",
+    "Thing/Object/CThing_Object_Barrel": "b822a0fa02c486ba7980b187d630c1227f05046b0dd09c482ca3745d051d81b8",
+    "Thing/Object/CThing_Object_Wall": "237e9b7ec5e9de32924931f8643c5b7196a4124af8b7499a7616d43e7e16fa9a",
+    "Thing/Weapon/CThing_Weapon_Barrel": "238e817b76fcc6a55ecb0e2770df9cf7867d6a36f382f5cccb1c42c0c1e4ab0e",
+    "Thing/Weapon/CThing_Weapon_FakeWall": "f0ae7de4b8cd7097b9e4a46615066627889bce18107a065284bff80635a6f7b9",
+    "Thing/Creature/CThing_Creature": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99",
+    "Thing/Creature/CThing_Creature_Player": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61",
+    "Thing/Shot/CThing_Shot_Rocket": "9e2514f8b4106ea2121f4aa55862af2dc613a03feaec048296b3dc888812a66d",
+    "World/Map/CMap_Mapwho": "ff9042c0ed2fb619d2df82ac7e40768662c1e933fbeaa2c8b92b80236e4bed5a",
+    "World/Map/CMap_Collide": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83",
+    "World/Map/CMap_Cell": "8de8f3174669da35efbc59b838f51ef05f6fd4a718f76a5058eace5c99553e87"
+  },
+  "implemented": [
+    "Mapwho registration only on next physical object callback",
+    "Player-cell wait, then .05-cell radius growth: barrel target .42 overshoot .45 then reset; wall target .48 overshoot .50 and retain",
+    "Ordinary initial radius .42, human physical radius .45, object circle pushout in up to three passes; static human radius factor .85",
+    "Barrel accepted affects defer until normal; wall Affect wakes and interrupts waiting/growth",
+    "Normal zombie attack excludes barrels; devil attack includes barrels",
+    "Rocket uses bullet-affect ray: cleared-affect fading wall does not intercept; physical movement still blocked until disposal"
+  ],
+  "scopeLimits": [
+    "Global AS2 collection order, player/creature collision, static map normal solver and AI destination reservations are not yet equivalent",
+    "Weapon anchor/placement remains the prior forward34px/radial occupancy rule; this batch does not claim native placement",
+    "Hitscan/rocket still use sampled simplified lines; full native gun positions, heights, impacts and fireball handling remain pending",
+    "Under-player lifecycle exercised in unit state arrangements, not a claim of natural underfoot placement in current browser game",
+    "One unrelated legacy native-relay test still targets retired 3881-native/3881 and times out under server-only catalog; default npm test and deploy tests are recorded separately"
+  ],
+  "nextPlacementEvidence": {
+    "modelSourceSha256": "efc101c78c4af50f8d18ee12042b8831c3eac753e7cd027ad66581c2e236fc3d",
+    "allUnarmedFrames": [
+      {
+        "model": "mPlayer_Alternate1_Stand",
+        "directions": 16,
+        "framesPerDirection": 1,
+        "gunPositionFrames": 0
+      },
+      {
+        "model": "mPlayer_Alternate1_Walk",
+        "directions": 8,
+        "framesPerDirection": 5,
+        "gunPositionFrames": 0
+      },
+      {
+        "model": "mPlayer_Default_Stand",
+        "directions": 16,
+        "framesPerDirection": 1,
+        "gunPositionFrames": 0
+      },
+      {
+        "model": "mPlayer_Default_Walk",
+        "directions": 8,
+        "framesPerDirection": 5,
+        "gunPositionFrames": 0
+      }
+    ],
+    "consequence": "All112 unarmed stand/walk frames lack GunPosition_Right; FillXSIInfo creates new per-frame metadata and GetWeaponPosition falls back to player position. Prior-gun animation on select/fire still requires faithful current-animation/frame tracking before all placement anchors are corrected."
+  }
+}

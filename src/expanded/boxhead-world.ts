@@ -1,6 +1,7 @@
 import data from './boxhead-data.json';
 import type { State } from './types';
 import { wallBlocks } from './boxhead-walls';
+import { objectBlocks } from './boxhead-registration';
 
 export const WIDTH = 1280, HEIGHT = 800, HUD = 84, CELL = 32;
 export const MAPS = data.maps;
@@ -21,14 +22,39 @@ export function room(s: State) { return MAPS.find(m => m.id === s.mapId) || MAPS
 export function solid(map: typeof MAPS[number], x: number, y: number): boolean {
   return map.collision[Math.floor(y / CELL)]?.[Math.floor(x / CELL)] !== '0';
 }
-export function blocked(s: State, x: number, y: number, radius = 11, ignore?: any): boolean {
-  const map = room(s);
-  for (const dx of [-radius, radius]) for (const dy of [-radius, radius]) if (solid(map, x + dx, y + dy)) return true;
-  return s.barrels.some((b: any) => b !== ignore && (b.kind==='barrel'&&b.hp>0||wallBlocks(b,s.tick)) && Math.abs(b.x-x)<radius+14 && Math.abs(b.y-y)<radius+14);
+function mapBlocked(s:State,x:number,y:number,radius:number):boolean {
+  const map=room(s);
+  for(const dx of [-radius,radius])for(const dy of [-radius,radius])if(solid(map,x+dx,y+dy))return true;
+  return false;
 }
-export function move(s: State, p: any, dx: number, dy: number, radius = 11): void {
-  if (!blocked(s, p.x + dx, p.y, radius, p)) p.x += dx;
-  if (!blocked(s, p.x, p.y + dy, radius, p)) p.y += dy;
+function blockingObjects(s:State,ignore?:any):any[] {
+  return s.barrels.filter((b:any)=>b!==ignore&&objectBlocks(b)&&(b.kind==='barrel'&&b.hp>0||wallBlocks(b,s.tick)));
+}
+export function blocked(s: State, x: number, y: number, radius = 11, ignore?: any): boolean {
+  return mapBlocked(s,x,y,radius)||blockingObjects(s,ignore).some(b=>Math.hypot(b.x-x,b.y-y)<radius+b.radius);
+}
+export function move(s: State, p: any, dx: number, dy: number, radius = .45*CELL): void {
+  // Native PlayerCollide resolves circles before the map, up to three passes.
+  // Creature reservation, creature/creature collision and map normals are
+  // restored separately with the AI; this loop handles physical objects.
+  const human=Number.isInteger(p.seat),mapRadius=radius*(human?.85:1),objects=blockingObjects(s,p).reverse();
+  let x=p.x+dx,y=p.y+dy;
+  for(let pass=0;pass<(human?3:1);pass++) {
+    let collision=false;
+    for(const b of objects) {
+      const distance=Math.hypot(x-b.x,y-b.y),limit=radius+b.radius;
+      if(distance<limit) {
+        // Keep authority finite even for exactly coincident online positions.
+        const ux=distance?(x-b.x)/distance:dx||dy?-dx/Math.hypot(dx,dy):1;
+        const uy=distance?(y-b.y)/distance:dx||dy?-dy/Math.hypot(dx,dy):0;
+        x=b.x+ux*limit;y=b.y+uy*limit;collision=true;
+      }
+    }
+    if(mapBlocked(s,x,p.y,mapRadius)){x=p.x;collision=true;}
+    if(mapBlocked(s,x,y,mapRadius)){y=p.y;collision=true;}
+    if(!collision)break;
+  }
+  p.x=x;p.y=y;
 }
 export function openPosition(s: State, x: number, y: number, used: {x:number;y:number}[] = []) {
   const map = room(s), candidates = [];

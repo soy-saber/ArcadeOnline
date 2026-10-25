@@ -738,7 +738,7 @@ function step(state, inputs) {
         player.invulnerable = 60;
       } else {
         player.life = Math.max(0, player.life - 1);
-        if (state.options.mode === "online" || !state.options.bots.includes(player.seat) || player.life === 0) {
+        if (player.life === 0 || state.options.mode !== "online" && !state.options.bots.includes(player.seat)) {
           player.alive = false;
           player.diedAt = state.tick;
           player.killedBy = state.flameOwners[index(Math.round(pos.x), Math.round(pos.y))];
@@ -26932,7 +26932,10 @@ function wallBlocks(b, tick) {
   return b.kind === "wall" && (b.deleteAt === null || b.deleteAt >= tick);
 }
 function affectWall(b, amount, owner) {
-  if (b.hp > 0) b.affects.push({ amount, owner });
+  if (b.hp > 0) {
+    b.affects.push({ amount, owner });
+    if (b.registered) b.objectPhase = "normal";
+  }
 }
 function processWallAffects(s, destroy) {
   for (const b of s.barrels) if (b.kind === "wall" && b.affects.length) {
@@ -26946,6 +26949,7 @@ function processWallAffects(s, destroy) {
       if (b.hp > 0) b.wallFrame = Math.floor((1 - b.hp / b.maxHp) * 10);
       else {
         b.exploded = true;
+        b.collidable = true;
         b.fadeAt = s.tick;
         b.wallAlpha = 80;
         destroy(b);
@@ -26971,11 +26975,68 @@ function validWall(b, tick) {
   return b.exploded && b.affects.length === 0 && Number.isSafeInteger(b.fadeAt) && b.fadeAt >= 0 && b.fadeAt <= tick && b.wallAlpha === Math.max(0, 100 - 20 * (tick - b.fadeAt + 1)) && (b.wallAlpha > 0 ? b.deleteAt === null : b.deleteAt === b.fadeAt + 4);
 }
 
+// src/expanded/boxhead-registration.ts
+var CELL3 = 32;
+function sameCell(a, b) {
+  return Math.floor(a.x / CELL3) === Math.floor(b.x / CELL3) && Math.floor(a.y / CELL3) === Math.floor(b.y / CELL3);
+}
+function objectRegistration() {
+  return { registered: false, objectPhase: "init", radius: null, collidable: false, barrelAffects: [] };
+}
+function objectBlocks(b) {
+  return b.registered === true && b.collidable === true && Number.isFinite(b.radius) && b.radius > 0;
+}
+function stepRegistration(s) {
+  for (const b of [...s.barrels].reverse()) {
+    if (!["barrel", "wall"].includes(b.kind) || b.armed >= s.tick || b.hp <= 0) continue;
+    const playerOnCell = () => s.players.some((p) => p.alive && sameCell(p, b));
+    if (b.objectPhase === "init") {
+      b.registered = true;
+      if (playerOnCell()) b.objectPhase = "waiting";
+      else {
+        b.radius = 0.42 * CELL3;
+        b.collidable = true;
+        b.objectPhase = "normal";
+      }
+    }
+    if (b.objectPhase === "waiting") {
+      if (playerOnCell()) continue;
+      b.collidable = true;
+      b.objectPhase = "growing";
+    }
+    if (b.objectPhase === "growing") {
+      const target = (b.kind === "barrel" ? 0.42 : 0.48) * CELL3;
+      if ((b.radius ?? 0) < target) b.radius = (b.radius ?? 0) + 0.05 * CELL3;
+      else {
+        if (b.kind === "barrel") b.radius = 0.42 * CELL3;
+        b.objectPhase = "normal";
+      }
+    }
+  }
+}
+function processBarrelAffects(s) {
+  for (const b of s.barrels) if (b.kind === "barrel" && b.hp > 0 && b.objectPhase === "normal" && b.barrelAffects.length) {
+    b.owner = b.barrelAffects[b.barrelAffects.length - 1];
+    b.barrelAffects = [];
+    b.hp = 0;
+  }
+}
+function validRegistration(b, tick) {
+  if (!["barrel", "wall"].includes(b.kind)) return true;
+  if (typeof b.registered !== "boolean" || typeof b.collidable !== "boolean" || !["init", "waiting", "growing", "normal"].includes(b.objectPhase) || !(b.radius === null || Number.isFinite(b.radius) && b.radius > 0 && b.radius <= 0.5 * CELL3 + 1e-10) || !Array.isArray(b.barrelAffects) || b.barrelAffects.length > 1 || !b.barrelAffects.every((n) => Number.isInteger(n) && n >= -1 && n <= 4) || !Number.isSafeInteger(b.armed) || b.armed < 0 || b.armed > tick) return false;
+  if (b.objectPhase === "init") return !b.registered && !b.collidable && b.radius === null;
+  if (!b.registered) return false;
+  if (b.objectPhase === "waiting") return !b.collidable && b.radius === null;
+  if (b.objectPhase === "growing") return b.collidable && b.radius !== null;
+  if (b.kind === "barrel") return b.collidable && b.radius === 0.42 * CELL3;
+  return b.barrelAffects.length === 0 && (b.collidable || b.radius === null);
+}
+
 // src/expanded/boxhead-world.ts
 var WIDTH3 = 1280;
 var HEIGHT3 = 800;
 var HUD = 84;
-var CELL3 = 32;
+var CELL4 = 32;
 var MAPS2 = boxhead_data_default.maps;
 var CHARACTERS = ["swat", "bond", "gijoe", "bambo"];
 var WEAPONS3 = [
@@ -26994,21 +27055,51 @@ function room(s) {
   return MAPS2.find((m) => m.id === s.mapId) || MAPS2[0];
 }
 function solid(map, x, y) {
-  return map.collision[Math.floor(y / CELL3)]?.[Math.floor(x / CELL3)] !== "0";
+  return map.collision[Math.floor(y / CELL4)]?.[Math.floor(x / CELL4)] !== "0";
 }
-function blocked(s, x, y, radius = 11, ignore) {
+function mapBlocked(s, x, y, radius) {
   const map = room(s);
   for (const dx of [-radius, radius]) for (const dy of [-radius, radius]) if (solid(map, x + dx, y + dy)) return true;
-  return s.barrels.some((b) => b !== ignore && (b.kind === "barrel" && b.hp > 0 || wallBlocks(b, s.tick)) && Math.abs(b.x - x) < radius + 14 && Math.abs(b.y - y) < radius + 14);
+  return false;
 }
-function move(s, p, dx, dy, radius = 11) {
-  if (!blocked(s, p.x + dx, p.y, radius, p)) p.x += dx;
-  if (!blocked(s, p.x, p.y + dy, radius, p)) p.y += dy;
+function blockingObjects(s, ignore) {
+  return s.barrels.filter((b) => b !== ignore && objectBlocks(b) && (b.kind === "barrel" && b.hp > 0 || wallBlocks(b, s.tick)));
+}
+function blocked(s, x, y, radius = 11, ignore) {
+  return mapBlocked(s, x, y, radius) || blockingObjects(s, ignore).some((b) => Math.hypot(b.x - x, b.y - y) < radius + b.radius);
+}
+function move(s, p, dx, dy, radius = 0.45 * CELL4) {
+  const human = Number.isInteger(p.seat), mapRadius = radius * (human ? 0.85 : 1), objects = blockingObjects(s, p).reverse();
+  let x = p.x + dx, y = p.y + dy;
+  for (let pass = 0; pass < (human ? 3 : 1); pass++) {
+    let collision = false;
+    for (const b of objects) {
+      const distance = Math.hypot(x - b.x, y - b.y), limit = radius + b.radius;
+      if (distance < limit) {
+        const ux = distance ? (x - b.x) / distance : dx || dy ? -dx / Math.hypot(dx, dy) : 1;
+        const uy = distance ? (y - b.y) / distance : dx || dy ? -dy / Math.hypot(dx, dy) : 0;
+        x = b.x + ux * limit;
+        y = b.y + uy * limit;
+        collision = true;
+      }
+    }
+    if (mapBlocked(s, x, p.y, mapRadius)) {
+      x = p.x;
+      collision = true;
+    }
+    if (mapBlocked(s, x, y, mapRadius)) {
+      y = p.y;
+      collision = true;
+    }
+    if (!collision) break;
+  }
+  p.x = x;
+  p.y = y;
 }
 function openPosition(s, x, y, used = []) {
   const map = room(s), candidates = [];
   for (let row = 1; row < map.rows - 1; row++) for (let col = 1; col < map.columns - 1; col++) {
-    const px = col * CELL3 + 16, py = row * CELL3 + 16;
+    const px = col * CELL4 + 16, py = row * CELL4 + 16;
     if (!blocked(s, px, py) && !used.some((p) => Math.hypot(p.x - px, p.y - py) < 30)) candidates.push({ x: px, y: py, d: Math.hypot(px - x, py - y) });
   }
   candidates.sort((a, b) => a.d - b.d);
@@ -27063,13 +27154,13 @@ function processExplosions(s, random6, impact) {
       e.initialized = true;
       if (e.cluster) for (let i = 0; i < 4; i++) {
         const angle = i * Math.PI / 2 + (random6(s) - 0.5) * Math.PI / 4;
-        const life = 16 + Math.floor(random6(s) * 8), speed = (0.05 + random6(s) * 0.05) * CELL3;
+        const life = 16 + Math.floor(random6(s) * 8), speed = (0.05 + random6(s) * 0.05) * CELL4;
         s.bullets.push({
           id: ++s.nextId,
           x: e.x,
           y: e.y,
           z: e.z,
-          vz: 0.5 * CELL3,
+          vz: 0.5 * CELL4,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           owner: e.owner,
@@ -27086,7 +27177,7 @@ function processExplosions(s, random6, impact) {
         const step8 = Math.PI * 2 / (e.bang * 1.5);
         for (let angle = 0; angle < Math.PI * 2; angle += step8) {
           const direction2 = angle + (random6(s) - 0.5) * step8 / 4;
-          queueExplosion(s, e.x + Math.cos(direction2) * CELL3, e.y + Math.sin(direction2) * CELL3, e.damage, e.owner, 0, false, e.z, 2 + Math.floor(random6(s) * 4));
+          queueExplosion(s, e.x + Math.cos(direction2) * CELL4, e.y + Math.sin(direction2) * CELL4, e.damage, e.owner, 0, false, e.z, 2 + Math.floor(random6(s) * 4));
         }
       }
     }
@@ -27232,8 +27323,8 @@ function create3(round, playing2, seats, seed, mapId) {
     message: "",
     messageUntil: 0
   };
-  for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0 });
-  for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0 });
+  for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0, ...objectRegistration() });
+  for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0, ...objectRegistration() });
   for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250 });
   const primary = map.playerSpawns[0] || { x: map.width / 2, y: map.height / 2, dir: 0 };
   const spawns = [primary, ...map.otherSpawns].sort((a, b) => Math.hypot(a.x - primary.x, a.y - primary.y) - Math.hypot(b.x - primary.x, b.y - primary.y));
@@ -27289,8 +27380,13 @@ function spawnEnemy(s, devil) {
   s.zombies.push({ id: ++s.nextId, x: pos.x, y: pos.y, hp: devil ? 1e3 : 100, devil, attack: 0, dir: 0, owner: 0, hitAt: -99, attackAt: -99 });
 }
 function damage(s, target, amount, owner) {
+  if (["barrel", "wall"].includes(target.kind) && !target.registered) return;
   if (target.kind === "wall") {
     affectWall(target, amount, owner);
+    return;
+  }
+  if (target.kind === "barrel") {
+    if (target.hp > 0) target.barrelAffects = [owner];
     return;
   }
   if (target.hp <= 0) return;
@@ -27323,14 +27419,14 @@ function explode(s, e) {
 function shot(s, p, angle, amount, range, pierce) {
   let x = p.x, y = p.y;
   const hits = /* @__PURE__ */ new Set(), dx = Math.cos(angle) * 4, dy = Math.sin(angle) * 4;
-  for (let n = 0; n < range * CELL3 / 4; n++) {
+  for (let n = 0; n < range * CELL4 / 4; n++) {
     x += dx;
     y += dy;
     if (solid(room(s), x, y)) {
       effect(s, "Effect.BulletHit", x, y - 18, 5);
       break;
     }
-    const target = [...s.barrels.filter((b) => b.kind === "barrel" || b.kind === "wall"), ...s.zombies, ...s.players.filter((q) => q.seat !== p.seat && q.alive)].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < 15);
+    const target = [...s.barrels.filter((b) => b.registered && Number.isFinite(b.radius) && (b.kind === "barrel" || b.kind === "wall")), ...s.zombies, ...s.players.filter((q) => q.seat !== p.seat && q.alive)].find((t) => t.hp > 0 && !hits.has(t) && Math.hypot(t.x - x, t.y - y) < (t.kind ? t.radius : 15));
     if (target) {
       if (target.seat) hurt(s, target, amount, p.seat);
       else damage(s, target, amount, p.seat);
@@ -27354,9 +27450,9 @@ function fire2(s, p) {
   }
   if (["barrel", "fakewall", "mine", "chargepack"].includes(gun.id)) {
     if (gun.id === "chargepack") sound2(s, "Weapon.Mine.Place.wav");
-    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL3) * CELL3 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL3) * CELL3 + 16;
+    const x = Math.floor((p.x + Math.cos(p.dir) * 34) / CELL4) * CELL4 + 16, y = Math.floor((p.y + Math.sin(p.dir) * 34) / CELL4) * CELL4 + 16;
     if (blocked(s, x, y, 12) || s.players.some((q) => q.alive && Math.hypot(q.x - x, q.y - y) < 24) || s.barrels.some((b) => b.hp > 0 && Math.hypot(b.x - x, b.y - y) < 22)) return;
-    s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
+    s.barrels.push({ id: ++s.nextId, x, y, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
     if (gun.id === "chargepack") p.chargeDetonate = true;
     else sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
   } else if (gun.id === "grenade" || gun.id === "rocket") {
@@ -27406,7 +27502,7 @@ function upgrade(s) {
 function navigation(s) {
   const map = room(s), distances = new Int32Array(map.columns * map.rows).fill(-1), queue = [];
   for (const p of s.players) if (p.alive) {
-    const cell = Math.floor(p.y / CELL3) * map.columns + Math.floor(p.x / CELL3);
+    const cell = Math.floor(p.y / CELL4) * map.columns + Math.floor(p.x / CELL4);
     if (distances[cell] === -1) {
       distances[cell] = 0;
       queue.push(cell);
@@ -27433,21 +27529,21 @@ function enemies(s) {
     const distance = Math.hypot(p.x - z.x, p.y - z.y), visible = lineClear(s, z.x, z.y, p.x, p.y);
     let tx = p.x, ty = p.y;
     if (!visible) {
-      const cx = Math.floor(z.x / CELL3), cy = Math.floor(z.y / CELL3);
+      const cx = Math.floor(z.x / CELL4), cy = Math.floor(z.y / CELL4);
       let best = Infinity;
       for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
         const x = cx + dx, y = cy + dy, d = field[y * map.columns + x];
         if (map.collision[y]?.[x] === "0" && d >= 0 && d < best) {
           best = d;
-          tx = x * CELL3 + 16;
-          ty = y * CELL3 + 16;
+          tx = x * CELL4 + 16;
+          ty = y * CELL4 + 16;
         }
       }
     }
     z.dir = Math.atan2(ty - z.y, tx - z.x);
     if (z.attack > 0) z.attack--;
     const blocker = s.barrels.find((b) => b.hp > 0 && ["barrel", "wall"].includes(b.kind) && Math.hypot(b.x - z.x, b.y - z.y) < 35);
-    if (blocker && z.attack === 0) {
+    if (blocker && z.attack === 0 && (z.devil || blocker.kind === "wall")) {
       damage(s, blocker, z.devil ? 100 : 50, 0);
       z.attack = 25;
       z.attackAt = s.tick;
@@ -27522,7 +27618,7 @@ function projectiles(s) {
             b.life = 0;
             break;
           }
-        } else if (s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => (wallBlocks(z, s.tick) || z.kind === "barrel" && z.hp > 0) && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.players.some((p) => p.alive && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < 17)) {
+        } else if (s.zombies.some((z) => z.hp > 0 && Math.hypot(z.x - b.x, z.y - b.y) < 17) || s.barrels.some((z) => z.registered && z.hp > 0 && ["barrel", "wall"].includes(z.kind) && Number.isFinite(z.radius) && Math.hypot(z.x - b.x, z.y - b.y) < z.radius) || s.players.some((p) => p.alive && p.seat !== b.owner && Math.hypot(p.x - b.x, p.y - b.y) < 17)) {
           b.life = 0;
           break;
         }
@@ -27536,6 +27632,7 @@ function step5(s, inputs) {
   if (s.phase !== "playing") return;
   s.tick++;
   stepWalls(s);
+  stepRegistration(s);
   s.effects = s.effects.filter((e) => --e.life > 0);
   s.corpses = s.corpses.filter((e) => s.tick - e.deadAt < 100);
   s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
@@ -27572,10 +27669,8 @@ function step5(s, inputs) {
     }
     const dx = Number(input.right) - Number(input.left), dy = Number(input.down) - Number(input.up);
     p.moving = !!(dx || dy);
-    if (p.moving) {
-      p.dir = Math.atan2(dy, dx);
-      move(s, p, dx * 5.12, dy * 5.12);
-    }
+    if (p.moving) p.dir = Math.atan2(dy, dx);
+    move(s, p, dx * 5.12, dy * 5.12);
     if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
     if (alt) {
       if (input.weapon !== void 0) {
@@ -27613,6 +27708,7 @@ function step5(s, inputs) {
     effect(s, "Effect.ScorchMark", b.x, b.y, 500);
   });
   stepExplosiveObjects(s, sound2);
+  processBarrelAffects(s);
   for (const b of s.barrels) if (b.hp <= 0 && !b.exploded) {
     b.exploded = true;
     if (b.kind !== "wall") {
@@ -27681,7 +27777,7 @@ function nums(v, keys) {
 function valid3(value) {
   if (!value || typeof value !== "object") return false;
   const s = value;
-  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (b.born === void 0 || Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && nums(p, ["x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean") && s.bullets.every((b) => nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (b.born === void 0 || Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed"]) && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"])) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
 }
 
 // src/expanded/boxhead-view.ts
@@ -29229,6 +29325,7 @@ var AuthorityEngine = class {
         clock: Date.now(),
         accumulator: 0,
         nextRoundAt: 0,
+        completedOnMap: 0,
         lastPublish: 0,
         options: {},
         inputs: /* @__PURE__ */ new Map(),
@@ -29263,11 +29360,17 @@ var AuthorityEngine = class {
       round: match.state.round,
       nextRoundAt: match.nextRoundAt,
       options: match.options,
+      ...isBomb(room2) ? { mapRotation: { every: 5, completed: match.completedOnMap } } : {},
       ...hasRecords(room2) ? { records: [...match.records.values()].sort((a, b) => b.kills - a.kills || b.wins - a.wins || a.deaths - b.deaths) } : {}
     };
   }
   begin(room2, playing2) {
     const match = room2.auth;
+    if (isBomb(room2) && match.completedOnMap >= 5) {
+      const choices = ORIGINAL_MAPS.filter((map) => map.id !== match.options.map);
+      match.options.map = choices[Math.floor(Math.random() * choices.length)].id;
+      match.completedOnMap = 0;
+    }
     match.state = newState(room2, playing2);
     match.inputs.clear();
     match.nextRoundAt = 0;
@@ -29387,6 +29490,7 @@ var AuthorityEngine = class {
     options.difficulty = difficulty;
     const candidate = createGame(123, match.state.round, false, { ...options, mode: "online", activeSeats: activeSeats(room2) });
     if (!validState(candidate)) return false;
+    if (options.map !== match.options.map) match.completedOnMap = 0;
     match.options = options;
     this.begin(room2, false);
     return true;
@@ -29467,6 +29571,7 @@ var AuthorityEngine = class {
           record.rounds++;
           if (game.winner === seat) record.wins++;
         }
+        if (game.phase === "finished") match.completedOnMap++;
       } else step2(match.state, inputs);
       match.accumulator -= stepMs;
       if (match.state.phase === "finished") {

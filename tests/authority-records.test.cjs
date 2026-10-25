@@ -5,12 +5,13 @@ function load(file,name){const out=path.join(__dirname,`../artifacts/records-tes
 const core=load("../src/authority/bomb-core.ts","core"),{AuthorityEngine}=load("../src/authority/engine.ts","engine");
 function arena(){const state=core.createGame(123,100,true,{mode:"online",activeSeats:[1,2,3,4]});state.board.fill(0);for(let i=0;i<4;i++){state.players[i].invulnerable=0;state.players[i].x=3+i*3;state.players[i].y=3;}return state;}
 const empty=Array(4).fill(core.EMPTY_INPUT);
-test("ordinary blasts grow one cell per tick; shields absorb one hit, human stage lives are not health",()=>{
+test("ordinary blasts grow one cell per tick; shields precede extra online lives and final death ownership",()=>{
   const state=arena();state.players[1].x=4;state.players[1].shield=true;state.players[1].life=2;
   state.bombs=[{id:1,x:3,y:3,owner:1,range:2,explodeAt:1}];core.step(state,empty);
   assert.equal(state.players[0].killedBy,1);assert(!state.players[0].alive);assert(state.players[1].alive);assert.equal(state.players[1].killedBy,0);
   core.step(state,empty);assert(state.players[1].alive);assert.equal(state.players[1].life,2);assert.equal(state.players[1].shield,false);
-  state.players[1].invulnerable=0;core.step(state,empty);assert(!state.players[1].alive);assert.equal(state.players[1].killedBy,1);
+  state.players[1].invulnerable=0;core.step(state,empty);assert(state.players[1].alive);assert.equal(state.players[1].life,1);assert.equal(state.players[1].killedBy,0);
+  state.players[1].invulnerable=0;core.step(state,empty);assert(!state.players[1].alive);assert.equal(state.players[1].life,0);assert.equal(state.players[1].killedBy,1);
 });
 test("a chained bomb owns its new rays and lingering fire retains attribution",()=>{
   const state=arena();state.players[0].x=0;state.players[0].y=0;state.players[1].x=0;state.players[1].y=12;state.players[2].x=8;state.players[2].y=3;
