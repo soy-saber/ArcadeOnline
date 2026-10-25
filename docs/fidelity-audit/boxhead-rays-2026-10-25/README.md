@@ -22,4 +22,8 @@
 
 可复核命令：`npm test`、`npm run test:deploy`、`npm run typecheck`、`node scripts/verify-native-build.cjs`、`npm run test:boxhead:rays:e2e`，以及 `test:boxhead:walls:e2e` / `objects:e2e` / `explosions:e2e` / `creature:e2e` / `ai:e2e` / `assets:e2e`。浏览器套件顺序运行。
 
+`0098a25` 已于北京时间2026-10-25 16:29发布腾讯云。5108文件发布包及188个公网文件哈希通过，应用/Caddy/coturn服务健康，八款资源/WSS入房通过。[公网四Chrome](public-four-player-results.json) 验证实际P2/P3/P4手枪射线Init/Normal/Delete字段、四人操作/全屏/暂停恢复/换图和最大图原AI/角色模型；[本地四人回归](local-four-player-results.json) 同样通过。公网结束时RTT采样约31～46ms。
+
+独立最大图四WSS线路416195字节、解码JSON7049013字节，减少约94.10%，完整/增量与恢复验证通过。见 [发布记录](public-deployment.json)、[188文件哈希](public-hashes.json)、[传输样本](compression-public.txt)。这是同一工作机短时实测，不是链路容量或异地延迟保证；复杂高级武器过程仍按本地证据记录，公网未使用训练夹具。
+
 浏览器夹具只清理训练场景、暂停增援、放置正常新生敌人及调整角色位置；高级武器均由正常射击解锁，保留原伤害、生命、弹药和冷却。为达到原70连击解锁轨道炮，后段使用五个间距一格的普通敌人与实际解锁的霰弹枪，不改升级门槛。单测可直接安排状态以隔离验证几何与生命周期；不把这类安排当作浏览器中的自然解锁证据。

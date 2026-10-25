@@ -52,6 +52,7 @@ let browser;
     assert.deepEqual((await a.$$eval('.player-nameplate', labels => labels.filter(label => !label.hidden).map(label => label.textContent))).sort(), Array.from({length:pages.length},(_,i)=>'Expanded P'+(i+1)).sort());
     assert(await a.evaluate(() => [...document.querySelectorAll('.player-nameplate')].filter(label => !label.hidden).every(label => { const a = label.getBoundingClientRect(), b = document.getElementById('game-canvas').getBoundingClientRect(); return a.left >= b.left - 1 && a.right <= b.right + 1 && a.top >= b.top - 1 && a.bottom <= b.bottom + 1; })));
     if (game.id !== "fbw_forest-server") await b.waitForFunction(count => document.querySelectorAll("#records-body tr").length === count, {}, pages.length);
+    if(game.id==='50737-server')await b.evaluate(()=>{window.__nativeShots=[];const net=window.__authorityTest.network,original=net.onSnapshot;net.onSnapshot=function(s,...args){original.call(this,s,...args);for(const b of s.bullets)if(b.ray)window.__nativeShots.push({tick:s.tick,...JSON.parse(JSON.stringify(b))});};});
     if (fourPlayers) {
       await pages[2].evaluate(() => document.getElementById('game-canvas').focus()); await pages[3].evaluate(() => document.getElementById('game-canvas').focus());
       await pages[2].keyboard.press('Space'); await pages[3].keyboard.press('Space');
@@ -116,12 +117,17 @@ let browser;
       assert(nativeEnemy.ai.reserved>=0);assert(nativeEnemy.ai.counter>0);
       assert.equal(nativeEnemy.body.phase,'normal');assert.equal(nativeEnemy.body.mass,1);assert(nativeEnemy.players.every(p=>p.body.mass===2&&Array.isArray(p.body.affects)));
     }
+    let nativeShots;
+    if(game.id==='50737-server'){
+      nativeShots=await b.evaluate(()=>window.__nativeShots);assert(nativeShots.length>0,'actual native ray snapshots arrived');
+      assert(nativeShots.every(b=>b.ray===true&&['init','normal','delete'].includes(b.rayPhase)&&[0,1,2].includes(b.life)&&Number.isSafeInteger(b.parent)&&b.parent>0&&['tx','ty','tz','z','vx','vy','vz','angle'].every(k=>Number.isFinite(b[k]))));
+    }
     await b.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await b.screenshot({ path: path.join(output, game.id + ".png"), fullPage: true });
     const counts = await b.evaluate(() => ({ full: window.__authorityTest.network.fullUpdates, delta: window.__authorityTest.network.deltaUpdates, bytes: window.__authorityTest.network.receivedBytes }));
     const transport=await Promise.all(pages.map(p=>p.evaluate(()=>{const n=window.__authorityTest.network;return {rtt:n.rtt,snapshotAge:n.snapshotAge,extensions:n.ws?.extensions||''};})));
     if(game.id==='50737-server')assert(transport.every(t=>t.extensions.includes('permessage-deflate')));
-    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, nativeEnemy, pauseEvidence, transport, ...counts });
+    results.push({ game: game.id, seats: summary.players, names: pages.length, maps: maps.length, nativeEnemy, nativeShots, pauseEvidence, transport, ...counts });
     console.log("Expanded E2E passed: " + game.id);
     for (const context of contexts) await context.close();
   }

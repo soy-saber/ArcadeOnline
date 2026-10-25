@@ -1,0 +1,10 @@
+Largest-map WebSocket wire measurements: [{"compressed":true,"wireBytes":112747,"decodedBytes":1878530,"full":6,"delta":24},{"compressed":true,"wireBytes":98587,"decodedBytes":1678261,"full":6,"delta":20},{"compressed":true,"wireBytes":108414,"decodedBytes":1821317,"full":6,"delta":23},{"compressed":true,"wireBytes":96447,"decodedBytes":1670905,"full":6,"delta":20}]
+✔ four largest-map clients negotiate bounded compression and recover exact AI states; local fallback remains compatible (2786.5355ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3189.035
