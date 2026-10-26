@@ -62,7 +62,10 @@ test('barrel chains initialize once on later ticks; mines arm and charge packs r
 });
 test('native wall collision, enemy fireballs and pickups affect the authoritative state',()=>{
  const s=arena(),p=s.players[0];p.x=48;p.y=272;tick(s,25,[input(1,{left:true})]);assert(p.x>=43);p.invul=0;s.bullets=[{id:901,x:p.x+20,y:p.y,z:18,vx:-7,vy:0,owner:-1,weapon:-1,damage:50,life:1,born:s.tick,parent:999,fireball:true,multiply:false,radius:8,animation:0}];tick(s);assert(p.hp<151);
- s.pickups=[{id:902,x:p.x,y:p.y,life:50,born:s.tick}];tick(s);assert.equal(p.hp,200);assert.equal(s.pickups.length,0);
+ // Native RandomPickup has zero health weight while only the pistol is active.
+ // The one-off pickup is nevertheless consumed; unlocked-ammo/health choices
+ // are covered by the original-AS2 pickup oracle, rather than inventing healing.
+ s.pickups=[{id:902,x:p.x,y:p.y,life:50,born:s.tick}];tick(s);assert.equal(p.hp,150);assert.equal(s.pickups.length,0);
 });
 test('native maze navigation routes enemies around static walls instead of walking into them',()=>{
  const s=a.create(1,true,[1],1,'original-03'),p=s.players[0],map=world.room(s);s.barrels=[];s.pickups=[];s.wave=1;s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;p.invul=100000;

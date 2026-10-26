@@ -45,6 +45,7 @@
 .authority-metrics { margin-top: 22px; max-width: 480px; background: #173632; border-color: #34564f; padding: 16px; font-size: 12px; }
 .authority-metrics dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.authority-metrics dd { margin: 0; }
 .fullscreen-tools { display: none; }
+.badminton-actions { display: flex; gap: 8px; margin-top: 10px; }
 .battle-records { margin-top: 16px; padding: 16px; background: #173632; border-color: #34564f; }
 .battle-records .seat-heading h2 { font-size: 16px; }
 .battle-records .seat-heading > span { font-size: 11px; color: #a7c0b9; }
@@ -93,7 +94,7 @@ body.game-fullscreen .room-shell { z-index: 100; }
   max-height: 100%;
   margin: 0;
 }
-#fullscreen-room:is(:fullscreen, .fullscreen-fallback) :is(.room-controls, .stage-caption, .weapon-status) { display: none !important; }
+#fullscreen-room:is(:fullscreen, .fullscreen-fallback) :is(.room-controls, .stage-caption, .weapon-status, .badminton-actions) { display: none !important; }
 #fullscreen-room:is(:fullscreen, .fullscreen-fallback) .fullscreen-tools {
   display: flex;
   position: absolute;
@@ -107,6 +108,7 @@ body.game-fullscreen .room-shell { z-index: 100; }
   background: #071019c4;
 }
 .fullscreen-tools .authority-ready { width: auto; min-width: 76px; margin: 0; }
+.fullscreen-tools #fullscreen-pause { width: auto; margin: 0; white-space: nowrap; font-size: 13px; }
 .authority-page .fullscreen-tools .fullscreen-exit { width: 36px; padding: 4px; font: 22px/24px system-ui; }
 #fullscreen-room:is(:fullscreen, .fullscreen-fallback) .touch-controls {
   position: absolute;

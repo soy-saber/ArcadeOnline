@@ -504,7 +504,7 @@ wss.on("connection", (ws) => {
         const seat = msg.seat;
         const room = member.room;
         if (!Number.isInteger(seat) || !Object.prototype.hasOwnProperty.call(room.seats, seat)) return;
-        if(authorityGames.has(room.gameId)&&!authority.canSit(room,seat)){sendTo(ws,{t:'err',msg:'单人模式由电脑使用P2席位，请选择P1或观战'});return;}
+        if(authorityGames.has(room.gameId)&&!authority.canSit(room,seat)){sendTo(ws,{t:'err',msg:'当前模式仅开放P1席位，请选择P1或观战'});return;}
         if (member.seat === seat) return;
         if (room.seats[seat] != null) {
           sendTo(ws, { t: "err", msg: "该座位已被占" });
@@ -634,6 +634,10 @@ wss.on("connection", (ws) => {
       }
       case "authBadmintonAction": {
         if(member&&authorityGames.has(member.room.gameId)&&authority.badmintonAction(member.room,member,msg))pushState(member.room);
+        break;
+      }
+      case "authGameAction": {
+        if(member&&authorityGames.has(member.room.gameId)&&authority.gameAction(member.room,member,msg))pushState(member.room);
         break;
       }
 

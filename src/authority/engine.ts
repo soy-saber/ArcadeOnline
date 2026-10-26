@@ -4,6 +4,7 @@ import { ORIGINAL_MAPS } from './maps';
 import { createUpdate, State, Update } from "./protocol";
 import { getAdapter } from "../expanded/registry";
 import { State as ExpandedState, Input as ExpandedInput, EMPTY_INPUT as EXPANDED_EMPTY, validInput as validExpandedInput } from "../expanded/types";
+import {SPEEDS as BOXHEAD_SPEEDS,DEATH_LIMITS} from '../expanded/boxhead-options';
 
 interface Socket { readyState: number; bufferedAmount: number; send(text: string): void; close(code: number, reason: string): void }
 interface Member { id: string; name?: string; seat: number | null; ready: boolean; ws: Socket | null }
@@ -17,16 +18,18 @@ interface RemoteInput { input: bomb.Input | badminton.Input | ExpandedInput; at:
 interface Match {
   state: State; roster: string; clock: number; accumulator: number; nextRoundAt: number;
   completedOnMap: number;
-  lastPublish: number; options: Partial<bomb.GameOptions> & { gameMode?: string }; inputs: Map<string, RemoteInput>; deliveries: Map<string, Delivery>;
+  lastPublish: number; options: Partial<bomb.GameOptions> & { gameMode?: string;speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number }; inputs: Map<string, RemoteInput>; deliveries: Map<string, Delivery>;
   records: Map<string, RecordRow>; roundMembers: Map<number, string>;
 }
 const isBomb = (room: Room) => room.gameId === "3881-server";
 const isSolo=(room:Room)=>room.gameId==='46923-server'&&(room.auth?.options.gameMode??'versus')!=='versus';
+const modeSettings=(room:Room)=>getAdapter(room.gameId)?.modes?.find(m=>m.id===room.auth?.options.gameMode);
 const hasRecords = (room: Room) => isBomb(room) || !!getAdapter(room.gameId) && room.gameId !== "fbw_forest-server";
 const activeSeats = (room: Room) => Object.keys(room.seats).map(Number).filter((seat) => !!room.seats[seat]);
 const allReady = (room: Room) => {
   const players = [...room.members.values()].filter((member) => member.seat != null);
-  return (isSolo(room)?players.length===1&&players[0].seat===1:players.length>=2) && players.every((member) => member.ready);
+  const mode=modeSettings(room),minimum=isSolo(room)?1:mode?.minPlayers??2,maximum=isSolo(room)?1:mode?.maxPlayers??Infinity;
+  return players.length>=minimum&&players.length<=maximum&&(!isSolo(room)||players[0].seat===1)&&players.every((member) => member.ready);
 };
 let roundId = Date.now();
 function newState(room: Room, playing: boolean): State {
@@ -60,6 +63,7 @@ export class AuthorityEngine {
       const adapter = getAdapter(room.gameId);
       if (adapter?.maps?.length) room.auth.options.map = adapter.maps[0].id as bomb.GameOptions["map"];
       if (adapter?.modes?.length) room.auth.options.gameMode = adapter.modes[0].id;
+      if(adapter?.difficulties?.length)room.auth.options.difficulty=((room.auth.state as ExpandedState).options?.difficulty??adapter.difficulties[0].id)as bomb.GameOptions['difficulty'];
     }
     const match = room.auth;
     for (const member of room.members.values()) {
@@ -166,6 +170,9 @@ export class AuthorityEngine {
       match.inputs.set(member.id, { input: neutral, at: now - 251, receivedAt: now });
       return;
     }
+    if(room.gameId==='50737-server'&&(match.state as ExpandedState).paused){
+      expireAction(room,member.seat,incoming);match.inputs.set(member.id,{input:{...incoming,left:false,right:false,up:false,down:false,trigger:false},at:now-251,receivedAt:now});return;
+    }
     if (now - (previous?.receivedAt || 0) < 5) return;
     match.inputs.set(member.id, { input: { ...incoming }, at: timestamp, receivedAt: now });
   }
@@ -178,20 +185,30 @@ export class AuthorityEngine {
       if(!badminton.MODES.some(m=>m.id===message.gameMode)||message.gameMode!=='versus'&&!!room.seats[2])return false;
       match.options.gameMode=message.gameMode as string;for(const m of room.members.values())m.ready=false;this.begin(room,false);return true;
     }
-    const difficulty=message.difficulty??match.options.difficulty??'normal';
-    if((isBomb(room)||adapter?.difficulties)&&(typeof difficulty!=='string'||!['easy','normal','hard'].includes(difficulty)))return false;
+    const difficulty=message.difficulty??match.options.difficulty??adapter?.difficulties?.[0]?.id??'normal';
+    if(adapter?.difficulties?!adapter.difficulties.some(d=>d.id===difficulty):isBomb(room)&&(typeof difficulty!=='string'||!['easy','normal','hard'].includes(difficulty)))return false;
     if (adapter) {
       const map = message.map ?? match.options.map, requestedMode = message.gameMode ?? match.options.gameMode;
       if (requestedMode !== undefined && typeof requestedMode !== "string") return false;
       const mode = requestedMode as string | undefined;
       if (typeof map !== "string" || !adapter.maps?.some((item) => item.id === map)) return false;
       if (adapter.modes && !adapter.modes.some((item) => item.id === mode)) return false;
+      const requested=adapter.modes?.find(m=>m.id===mode);
+      if(requested?.maxPlayers&&Object.entries(room.seats).some(([seat,id])=>!!id&&Number(seat)>requested.maxPlayers!))return false;
+      const boxheadSettings:Record<string,number|boolean>={};
+      if(room.gameId==='50737-server'){
+        for(const key of ['devils','collisions','damage']as const){const value=message[key]===undefined?match.options[key]??true:message[key];if(typeof value!=='boolean')return false;boxheadSettings[key]=value;}
+        const speed=message.speed===undefined?match.options.speed??1:message.speed,deathLimit=message.deathLimit===undefined?match.options.deathLimit??10:message.deathLimit;
+        if(typeof speed!=='number'||!BOXHEAD_SPEEDS.includes(speed)||typeof deathLimit!=='number'||!DEATH_LIMITS.includes(deathLimit))return false;
+        boxheadSettings.speed=speed;boxheadSettings.deathLimit=deathLimit;
+      }
       if (!adapter.modes && message.gameMode !== undefined) return false;
-      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,difficulty:String(difficulty)});
+      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,...boxheadSettings,difficulty:String(difficulty)});
       if (!adapter.valid(candidate)) return false;
       match.options.map = map as bomb.GameOptions["map"];
-      if (adapter.modes) match.options.gameMode = mode;
+      if (adapter.modes) {if(room.gameId==='50737-server'&&match.options.gameMode!==mode)for(const m of room.members.values())m.ready=false;match.options.gameMode = mode;}
       if(adapter.difficulties)match.options.difficulty=difficulty as bomb.GameOptions['difficulty'];
+      Object.assign(match.options,boxheadSettings);
       this.begin(room, false); return true;
     }
     if (!isBomb(room)) return false;
@@ -210,13 +227,29 @@ export class AuthorityEngine {
     const match=room.auth,adapter=getAdapter(room.gameId);
     if(!match||member.seat==null||room.seats[member.seat]!==member.id||match.state.phase==='playing'||(!isBomb(room)&&!adapter?.characters)||!Number.isInteger(value)||Number(value)<1||Number(value)>4)return false;
     const character=Number(value);
-    if(match.state.players.some(p=>p.seat!==member.seat&&room.seats[p.seat]&&p.character===character))return false;
-    const characters=[1,2,3,4];for(const p of match.state.players)if(room.seats[p.seat])characters[p.seat-1]=p.character;
+    const ids=adapter?.characterIds,selected=ids?ids[character-1]:character;
+    if(!adapter?.duplicateCharacters&&match.state.players.some(p=>p.seat!==member.seat&&room.seats[p.seat]&&p.character===selected))return false;
+    const characters=match.options.characters?[...match.options.characters]:[1,2,3,4];for(const p of match.state.players)if(room.seats[p.seat])characters[p.seat-1]=ids?ids.indexOf(p.character)+1:p.character;
     characters[member.seat-1]=character;match.options.characters=characters;
     this.begin(room,false);return true;
   }
 
-  canSit(room:Room,seat:number):boolean {return !isSolo(room)||seat===1;}
+  canSit(room:Room,seat:number):boolean {return isSolo(room)?seat===1:seat<=(modeSettings(room)?.maxPlayers??Infinity);}
+  gameAction(room:Room,member:Member,message:Record<string,unknown>):boolean {
+    if(room.gameId==='46923-server')return this.badmintonAction(room,member,message);
+    const match=room.auth;
+    if(room.gameId!=='50737-server'||!match||!member.seat||room.seats[member.seat]!==member.id||message.round!==match.state.round)return false;
+    const state=match.state as ExpandedState,seq=message.seq;
+    if(typeof seq!=='number'||!Number.isSafeInteger(seq)||seq<=state.actionAck[member.seat-1]||seq>=1e9)return false;
+    if(message.action==='menu'){
+      if(state.phase==='waiting')return false;for(const m of room.members.values())m.ready=false;this.begin(room,false);
+    }else if(message.action==='pause'&&state.phase==='playing'){
+      state.paused=!state.paused;state.actionAck[member.seat-1]=seq;
+      for(const m of room.members.values())if(m.seat){const pending=match.inputs.get(m.id)?.input??state.inputs[m.seat-1];if(pending)expireAction(room,m.seat,pending);match.inputs.delete(m.id);state.inputs[m.seat-1]={...state.inputs[m.seat-1],left:false,right:false,up:false,down:false,trigger:false};}
+      match.accumulator=0;
+    }else return false;
+    for(const delivery of match.deliveries.values())delivery.forceFull=true;this.publish(room);return true;
+  }
   badmintonAction(room:Room,member:Member,message:Record<string,unknown>):boolean {
     const match=room.auth;
     if(room.gameId!=='46923-server'||!match||!member.seat||room.seats[member.seat]!==member.id||message.round!==match.state.round)return false;
@@ -233,7 +266,7 @@ export class AuthorityEngine {
   pump(room: Room, now = Date.now()): void {
     const match = room.auth; if (!match || room.members.size === 0) return;
     const adapter = getAdapter(room.gameId);
-    const stepMs = adapter ? 1000 / adapter.hz : isBomb(room) ? bomb.STEP_MS : badminton.STEP_MS;
+    const stepMs = adapter ? 1000 / (adapter.rate?.(match.state as ExpandedState)??adapter.hz) : isBomb(room) ? bomb.STEP_MS : badminton.STEP_MS;
     const elapsed = Math.max(0, now - match.clock); match.clock = now;
     // Bound work per event-loop turn; a machine stall pauses match time instead
     // of replaying seconds of rules in a single burst.
@@ -272,7 +305,7 @@ export class AuthorityEngine {
           if (game.phase === "finished") for (const [seat, id] of match.roundMembers) {
             const record = match.records.get(id); if (!record) continue;
             record.rounds++;
-            if (game.winner === seat || room.gameId === "50737-server" && game.winner === 1) record.wins++;
+            if (game.winner === seat || room.gameId === "50737-server" && game.mode==='coop'&&game.winner === 1) record.wins++;
           }
         }
       }

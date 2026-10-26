@@ -62,7 +62,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const b of s.barrels)if(b.kind==='mine'||b.kind==='chargepack')sprite(c,b.kind==='mine'?'Object.Mine':'Object.ChargePack',b.x,b.y+b.z*PROJECTION,b.animation);
   for(const corpse of s.corpses){const age=s.tick-corpse.deadAt;person(c,corpse.character,age<15?'dying':'dead',corpse,s.tick,age);}
   for(const p of [...s.players,...s.zombies].filter(p=>p.body.floor&&p.body.phase!=='respawn')){c.globalAlpha=p.body.alpha;person(c,p.seat?p.character:p.devil?'devil':'zombie',p.body.action,p,s.tick,undefined,undefined,Math.floor(p.body.frame));c.globalAlpha=1;}
-  for(const p of s.pickups)if(p.life>50||s.tick%6<3)sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
+  for(const p of s.pickups)if(p.life>0&&(p.life>50||s.tick%6<3))sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
   const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.filter((z:any)=>z.ai.registered&&!z.body.floor).map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>!p.body.floor&&p.body.phase!=='respawn').map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
     if(p.entity==='object'){c.globalAlpha=p.kind==='wall'?p.wallAlpha/100:1;sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y+p.z*PROJECTION,p.kind==='wall'?p.wallFrame:0);c.globalAlpha=1;continue;}
@@ -88,7 +88,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   c.restore();
   drawBrightness(c,s.brightness,WIDTH,HEIGHT,HUD);
   c.fillStyle='#242823';c.fillRect(0,0,WIDTH,HUD);c.fillStyle='#ecebdf';c.font='bold 20px monospace';c.textAlign='left';
-  c.fillText(`BOXHEAD 2PLAY  ·  第 ${s.wave||1} 波`,20,28);
+  c.fillText(s.mode==='deathmatch'?'BOXHEAD 2PLAY · 死亡竞赛':`BOXHEAD 2PLAY  ·  第 ${s.wave||1} 波`,20,28);
   c.fillStyle='#dddac3';c.font='17px monospace';c.fillText(`SCORE ${s.score.toLocaleString()}   ×${s.combo}`,430,28);
   c.fillStyle='#b6baa9';c.font='14px sans-serif';c.textAlign='right';c.fillText(map.label+'  ·  共享视野',WIDTH-20,28);c.textAlign='left';
   for(const p of s.players){const x=20+(p.seat-1)*WIDTH/4, gun=WEAPONS[p.weapon];c.fillStyle=['#9ac8ff','#f1d585','#9edc9c','#e7a5ad'][p.seat-1];c.font='bold 15px sans-serif';
@@ -96,9 +96,10 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
     c.fillStyle='#ddd';c.font='14px sans-serif';c.fillText(`${gun.name}  ${p.ammo<0?'∞':p.ammo}  ·  ${p.kills} 击杀`,x,73);
   }
   if(s.messageUntil>s.tick&&s.phase==='playing'){c.font='bold 19px sans-serif';c.textAlign='center';const w=c.measureText(s.message).width+40;c.fillStyle='#20251fcc';c.fillRect((WIDTH-w)/2,HUD+18,w,36);c.fillStyle='#f3e5ac';c.fillText(s.message,WIDTH/2,HUD+43);c.textAlign='left';}
+  if(s.paused){c.fillStyle='#101610bb';c.fillRect(0,HUD,WIDTH,HEIGHT-HUD);c.fillStyle='#fff';c.font='bold 28px sans-serif';c.textAlign='center';c.fillText('已暂停 · 按 P 或点击继续',WIDTH/2,365);c.textAlign='left';}
   if(s.phase!=='playing'){c.fillStyle='#101610bb';c.fillRect(0,HUD,WIDTH,HEIGHT-HUD);c.fillStyle='#fff';c.font='bold 32px sans-serif';c.textAlign='center';
-    c.fillText(s.phase==='waiting'?'BOXHEAD · 2–4 人合作生存':'队伍全灭',WIDTH/2,365);
-    c.font='18px sans-serif';c.fillStyle='#d9ddcf';c.fillText(s.phase==='waiting'?'选择原版地图，入座并准备':'坚持到第 '+s.wave+' 波 · 得分 '+s.score.toLocaleString(),WIDTH/2,405);
+    c.fillText(s.phase==='waiting'?(s.mode==='single'?'BOXHEAD · 单人生存':s.mode==='deathmatch'?'BOXHEAD · 死亡竞赛':'BOXHEAD · 2–4 人合作生存'):s.mode==='deathmatch'?(s.winner?`P${s.winner} 获胜`:'平局'):'队伍全灭',WIDTH/2,365);
+    c.font='18px sans-serif';c.fillStyle='#d9ddcf';c.fillText(s.phase==='waiting'?'选择地图、人物、模式与难度，然后准备':s.mode==='deathmatch'?`死亡上限 ${s.options.deathLimit} 次`:'坚持到第 '+s.wave+' 波 · 得分 '+s.score.toLocaleString(),WIDTH/2,405);
     c.fillText('WASD / 方向键移动与瞄准 · 空格 / J 射击 · Q / E 换武器 · 1–0 选武器',WIDTH/2,444);c.textAlign='left';}
 }
 

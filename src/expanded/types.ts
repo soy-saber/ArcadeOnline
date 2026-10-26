@@ -5,8 +5,11 @@ export interface State {
 }
 export interface Adapter {
   id: string; title: string; seats: number; hz: number; width: number; height: number; controls: string;
-  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[]}): State;
+  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[];speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number}): State;
+  rate?(state:State):number;
   characters?:string[];
+  characterIds?:string[];
+  duplicateCharacters?:boolean;
   difficulties?:{id:string;label:string}[];
   step(state: State, inputs: Input[]): void;
   valid(state: unknown): state is State;
@@ -16,7 +19,7 @@ export interface Adapter {
   setVolume?(volume: number): void;
   consumeInput?(state: State, seat: number, input: Input): void;
   maps?: { id: string; label: string }[];
-  modes?: { id: string; label: string; description: string }[];
+  modes?: { id: string; label: string; description: string;minPlayers?:number;maxPlayers?:number }[];
   predict?(state: State, seat: number, input: Input, fraction: number): void;
 }
 export const EMPTY_INPUT: Input = { seq: 0, left: false, right: false, up: false, down: false, attack: 0, alt: 0 };

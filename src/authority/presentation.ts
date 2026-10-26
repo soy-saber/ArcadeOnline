@@ -71,11 +71,11 @@ export class Presentation {
       this.changed = false;
     }
     const age = Math.max(now - latest.receivedAt, serverNow - latest.time);
-    if (latest.state.phase === "playing" && age > 350 && !this.stale) {
+    if (latest.state.phase === "playing" && !('gameId'in latest.state&&latest.state.paused)&&age > 350 && !this.stale) {
       this.stale = true; this.clearPrediction(); this.samples = [latest]; this.inputFloor = now; this.requestFull();
     }
     const next = copy(latest.state);
-    if (next.phase !== "playing" || this.stale) return this.state = next;
+    if (next.phase !== "playing" || this.stale||'gameId'in next&&next.paused) return this.state = next;
     // Interpolate remote poses without advancing game rules or replaying time.
     if ("gameId" in next) {
       const adapter = getAdapter(next.gameId);

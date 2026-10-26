@@ -1,0 +1,27 @@
+Natural duel 0:control/0:control elapsed 1
+Natural duel 0:control/0:bullet-hit elapsed 9
+Natural duel 0:control/1:dying elapsed 10
+Natural duel 0:control/1:dead elapsed 10
+Natural duel 0:control/1:respawn elapsed 15
+Natural duel 0:control/1:control elapsed 15
+Natural duel 0:control/1:bullet-hit elapsed 23
+Natural duel 0:control/1:control elapsed 24
+Natural duel 0:control/1:bullet-hit elapsed 25
+Natural duel 0:control/2:dying elapsed 26
+Natural duel 0:control/2:dead elapsed 26
+Natural duel 0:control/2:respawn elapsed 31
+Natural duel 0:control/2:control elapsed 32
+Natural duel 0:control/2:bullet-hit elapsed 46
+Natural duel 0:control/3:dying elapsed 47
+Natural duel 0:control/3:dead elapsed 48
+Natural duel 0:control/3:respawn elapsed 52
+Natural duel 0:control/3:control elapsed 53
+Natural duel 0:control/3:bullet-hit elapsed 61
+Natural duel 0:control/4:dying elapsed 62
+Natural duel 0:control/4:dead elapsed 62
+Natural duel 0:control/4:respawn elapsed 66
+Natural duel 0:control/4:control elapsed 68
+Natural duel 0:control/4:bullet-hit elapsed 79
+Natural duel 0:control/5:dying elapsed 80
+Natural duel 0:control/5:dead elapsed 81
+Natural pickup, repeated supply, real five-death duel/respawns, recovery, winner-only records and next-round readiness passed.

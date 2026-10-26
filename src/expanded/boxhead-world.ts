@@ -61,7 +61,7 @@ function resolveMap(s:State,p:any,dx:number,dy:number,r:number) {
 export function move(s:State,p:any,dx:number,dy:number,radius=.45*CELL):void {
   if(solid(room(s),p.x,p.y))return;
   for(let pass=0;pass<3;pass++){
-    const circles=resolveCircles(s,p,p.x+dx,p.y+dy,radius,dx,dy);dx=circles.x-p.x;dy=circles.y-p.y;
+    const circles=s.options?.collisions===false?{x:p.x+dx,y:p.y+dy,collided:false}:resolveCircles(s,p,p.x+dx,p.y+dy,radius,dx,dy);dx=circles.x-p.x;dy=circles.y-p.y;
     const map=resolveMap(s,p,dx,dy,radius*.85);
     if(!circles.collided&&!map.collided||pass===2){p.x=map.x;p.y=map.y;return;}
   }

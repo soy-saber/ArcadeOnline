@@ -1,0 +1,95 @@
+{
+  "source": "games/50737/game.swf",
+  "sourceSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "as2": [
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/World/CUpgrades.as",
+      "sha256": "c1fc0dc277b6c4458de8cc25894c26eb7c98684fb4fc7a6d9e61fce13a03c2ca"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Screen/CScreen_SelectWorld.as",
+      "sha256": "b999a31817e9db2e7de7159eaaa06d47cbeba4a53ab47c5dc52ff540c1ffd1a7"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Creature/CThing_Creature_Player.as",
+      "sha256": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/World/CWorld.as",
+      "sha256": "acbc9bcbd52bc1bfa12c62708e9c1949e71e7453dc480957201a6f548d15522f"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/CMain.as",
+      "sha256": "ee77df6a0ff9d2f8ec065d0a6420064d1970b9379403da7b87d53856b83ce4c9"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/World/Map/CMap_Collide.as",
+      "sha256": "aa41594fa3501e1b177cb9c55c7b10ade4be82fab000f11637994d479389aa83"
+    },
+    {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Creature/CThing_Creature.as",
+      "sha256": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99"
+    }
+  ],
+  "method": "Literal original SetDifficulty switch constants and GetCollection stylesheet choices, extracted without executing the game. No claim of complete original progression/collection timing. SetDifficulty increments original level/multiplier with upgrade callbacks and silent messages.",
+  "difficultyMethod": "function SetDifficulty(tDifficulty)\n   {\n      var _loc3_ = 1;\n      var _loc2_ = 1;\n      if(World.CWorld.mGameMode == \"DeathMatch\")\n      {\n         _loc2_ = 200;\n      }\n      else\n      {\n         switch(tDifficulty)\n         {\n            case 0:\n               _loc3_ = 1;\n               _loc2_ = 1;\n               break;\n            case 1:\n               _loc3_ = 10;\n               _loc2_ = 10;\n               break;\n            case 2:\n               _loc3_ = 20;\n               _loc2_ = 30;\n               break;\n            case 3:\n               _loc3_ = 35;\n               _loc2_ = 50;\n         }\n      }\n      this.mWorld.mHud.mSilentMessages = true;\n      _loc3_ = _loc3_ - 1;\n      while(_loc3_)\n      {\n         ++this.mLevel;\n         _loc3_ = _loc3_ - 1;\n      }\n      _loc2_ = _loc2_ - 1;\n      while(_loc2_)\n      {\n         ++this.mMultiplier;\n         _loc2_ = _loc2_ - 1;\n      }\n      this.mWorld.mHud.mSilentMessages = false;\n   }",
+  "tiers": [
+    {
+      "sourceIndex": 0,
+      "firstWave": 1,
+      "multiplier": 1
+    },
+    {
+      "sourceIndex": 1,
+      "firstWave": 10,
+      "multiplier": 10
+    },
+    {
+      "sourceIndex": 2,
+      "firstWave": 20,
+      "multiplier": 30
+    },
+    {
+      "sourceIndex": 3,
+      "firstWave": 35,
+      "multiplier": 50
+    }
+  ],
+  "characters": [
+    {
+      "sourceIndex": 0,
+      "name": "SWAT"
+    },
+    {
+      "sourceIndex": 1,
+      "name": "BOND"
+    },
+    {
+      "sourceIndex": 2,
+      "name": "GIJOE"
+    },
+    {
+      "sourceIndex": 3,
+      "name": "BAMBO"
+    }
+  ],
+  "originalModes": [
+    "Single",
+    "Coop",
+    "DeathMatch"
+  ],
+  "deathLimits": [
+    5,
+    10,
+    20,
+    50
+  ],
+  "speeds": [
+    0.5,
+    1,
+    2
+  ],
+  "speedMethod": "{\n      var _loc2_ = CMain.mSaveData.mGameSpeed != 0 ? CMain.mSaveData.mGameSpeed : 0.5;\n      CMain.mFPS = 25 * _loc2_;\n      this.SetState(\"State_RunWorld\");\n   }",
+  "deathmatchMultiplier": 200,
+  "damageForcedInDeathmatch": true
+}

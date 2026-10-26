@@ -36847,7 +36847,7 @@
   function move(s, p, dx, dy, radius = 0.45 * CELL4) {
     if (solid(room(s), p.x, p.y)) return;
     for (let pass = 0; pass < 3; pass++) {
-      const circles = resolveCircles(s, p, p.x + dx, p.y + dy, radius, dx, dy);
+      const circles = s.options?.collisions === false ? { x: p.x + dx, y: p.y + dy, collided: false } : resolveCircles(s, p, p.x + dx, p.y + dy, radius, dx, dy);
       dx = circles.x - p.x;
       dy = circles.y - p.y;
       const map = resolveMap(s, p, dx, dy, radius * 0.85);
@@ -37975,6 +37975,69 @@
     return b.grenadePhase === "init" ? b.life === 60 && b.vx === 0 && b.vy === 0 && b.vz === 0 : b.grenadePhase === "delete" ? b.life === 0 : b.life >= 1 && b.life <= 59;
   }
 
+  // src/expanded/boxhead-options.ts
+  var DIFFICULTIES = [
+    { id: "beginner", label: "\u521D\u5B66\u8005", wave: 1, multiplier: 1 },
+    { id: "intermediate", label: "\u8FDB\u9636", wave: 10, multiplier: 10 },
+    { id: "expert", label: "\u4E13\u5BB6", wave: 20, multiplier: 30 },
+    { id: "nightmare", label: "\u5669\u68A6", wave: 35, multiplier: 50 }
+  ];
+  var MODES3 = [
+    { id: "coop", label: "\u591A\u4EBA\u5408\u4F5C", description: "2\u20134\u4EBA\u5171\u540C\u751F\u5B58\uFF1B\u5168\u961F\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 2, maxPlayers: 4 },
+    { id: "single", label: "\u5355\u4EBA\u751F\u5B58", description: "\u4EC5P1\u5165\u5EA7\u51C6\u5907\u5373\u53EF\u5F00\u59CB\uFF0C\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 1, maxPlayers: 1 },
+    { id: "deathmatch", label: "\u6B7B\u4EA1\u7ADE\u8D5B", description: "2\u20134\u4EBA\u5BF9\u6218\uFF0C\u5168\u6B66\u5668\u4E0E\u5347\u7EA7\u5F00\u653E\uFF0C\u5F00\u5C40\u624B\u67AA\u3001\u8865\u7ED9\u83B7\u53D6\u5F39\u836F\uFF1B\u6B7B\u4EA1\u8FBE\u5230\u4E0A\u9650\u5373\u51FA\u5C40\uFF0C\u6700\u540E\u7559\u4E0B\u8005\u83B7\u80DC\u3002", minPlayers: 2, maxPlayers: 4 }
+  ];
+  var difficulty = (id) => DIFFICULTIES.find((d) => d.id === id) ?? DIFFICULTIES[0];
+  var SPEEDS = [0.5, 1, 2];
+  var DEATH_LIMITS = [5, 10, 20, 50];
+
+  // src/expanded/boxhead-pickups.ts
+  function pickupChoice(active, ammo, total, hp, random5) {
+    const choices = [];
+    let sum = 0;
+    for (let i = active.length - 1; i >= 1; i--) if (active[i]) {
+      sum += (1 - ammo[i] / total[i]) * 0.75 + 0.25;
+      choices.push({ key: i, end: sum });
+    }
+    if (hp < 200) {
+      sum += (1 - hp / 200) * sum;
+      choices.push({ key: "life", end: sum });
+    }
+    const selected = random5() * sum;
+    return choices.find((c) => selected < c.end)?.key ?? null;
+  }
+  function takePickup(s, p, random5) {
+    const totals = WEAPONS3.map((_, i) => weaponStats(s, i).ammo), choice = pickupChoice(p.unlocked, p.inventory, totals, p.hp, random5);
+    if (choice === null) return false;
+    if (choice === "life") p.hp = 200;
+    else {
+      p.inventory[choice] = totals[choice];
+      if (p.weapon === choice) {
+        p.ammo = totals[choice];
+        p.cooldown = 0;
+      }
+    }
+    return true;
+  }
+  function stepPickups(s, random5, sound3) {
+    for (const item of s.pickups) {
+      if (item.permanent && item.life <= 0 && s.tick >= item.reappearAt) {
+        item.life = 250;
+        item.reappearAt = null;
+        item.born = s.tick - 1;
+      }
+      for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && !p.body.deadFlag && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
+        takePickup(s, p, random5);
+        item.life = 0;
+        if (item.permanent) item.reappearAt = s.tick + 25 * s.options.speed * (s.mode === "deathmatch" ? 10 : 30) + 2;
+        sound3();
+        break;
+      }
+      if (!item.permanent) item.life--;
+    }
+    s.pickups = s.pickups.filter((p) => p.permanent || p.life > 0);
+  }
+
   // src/expanded/boxhead-core.ts
   var ID = "50737-server";
   function random3(s) {
@@ -37997,8 +38060,9 @@
     s.inputs[at] = { ...next };
     return next;
   }
-  function create3(round, playing2, seats, seed, mapId) {
+  function create3(round, playing2, seats, seed, mapId, mode = "coop", settings) {
     const map = MAPS2.find((m) => m.id === mapId) || MAPS2[0];
+    const characters = settings?.characters ? [...settings.characters] : [1, 2, 3, 4];
     const s = {
       gameId: ID,
       round,
@@ -38026,18 +38090,22 @@
       devilLeft: 0,
       nextSpawn: 0,
       nextDevil: 0,
-      waveReady: 1,
+      waveReady: mode === "deathmatch" ? 0 : 1,
       nextId: 0,
       score: 0,
       combo: 1,
       peakCombo: 1,
       comboUntil: 75,
       message: "",
-      messageUntil: 0
+      messageUntil: 0,
+      mode,
+      paused: false,
+      actionAck: [0, 0, 0, 0],
+      options: { characters, difficulty: settings?.difficulty ?? "beginner", speed: settings?.speed ?? 1, devils: settings?.devils ?? true, collisions: settings?.collisions ?? true, damage: mode === "deathmatch" ? true : settings?.damage ?? true, deathLimit: settings?.deathLimit ?? 10 }
     };
     for (const b of map.barrels) s.barrels.push({ id: ++s.nextId, ...b, z: 0, kind: "barrel", hp: 1, damage: 100, owner: 0, exploded: false, armed: 0, ...objectRegistration() });
     for (const b of map.walls) s.barrels.push({ id: ++s.nextId, ...b, z: 0, kind: "wall", ...wallState(), owner: 0, exploded: false, armed: 0, ...objectRegistration() });
-    for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250, born: 0 });
+    for (const b of map.pickups) s.pickups.push({ id: ++s.nextId, ...b, life: 250, born: 0, permanent: true, reappearAt: null });
     s.enemyCells = Array(map.columns * map.rows).fill(false);
     s.navigation = navigationState(map.columns * map.rows);
     const primary = map.playerSpawns[0] || { x: map.width / 2, y: map.height / 2, dir: 0 };
@@ -38051,7 +38119,7 @@
         y: pos.y,
         dir: spawn.dir,
         body: creatureBody(true),
-        character: CHARACTERS[seat - 1],
+        character: CHARACTERS[characters[seat - 1] - 1],
         hp: 200,
         alive: true,
         lives: 1,
@@ -38080,12 +38148,26 @@
         ...playerPose()
       });
     }
+    const preset = mode === "deathmatch" ? { multiplier: 200 } : difficulty(s.options.difficulty);
+    if (preset.multiplier > 1) {
+      s.combo = preset.multiplier;
+      upgrade(s);
+      s.comboUntil = Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
+      s.message = "";
+      s.messageUntil = 0;
+    }
+    for (const p of s.players) {
+      if (mode === "deathmatch") p.inventory = WEAPONS3.map((_, i) => i === 0 || p.unlocked[i] && weaponStats(s, i).ammo < 0 ? -1 : 0);
+      p.weapon = 0;
+      p.ammo = -1;
+      p.cooldown = 0;
+    }
     return s;
   }
   function beginWave(s) {
-    s.wave++;
+    s.wave = s.wave === 0 ? difficulty(s.options.difficulty).wave : s.wave + 1;
     s.spawnLeft = 10 + 5 * (s.wave - 1);
-    s.devilLeft = s.wave === 1 ? 0 : Math.floor(1 + (s.wave - 2) * 0.25);
+    s.devilLeft = !s.options.devils || s.wave === 1 ? 0 : Math.floor(1 + (s.wave - 2) * 0.25);
     s.nextSpawn = s.tick + 15;
     s.nextDevil = s.tick + 100;
     s.waveReady = 0;
@@ -38129,6 +38211,7 @@
     queueAffect(s, target, kind, amount, owner, source, range);
   }
   function hurt(s, p, amount, owner = 0, kind = "bullet", source = p, range = null) {
+    if (!s.options.damage && (kind === "bullet" || kind === "explosion")) return;
     queueAffect(s, p, kind, amount, owner, source, range);
   }
   function explode(s, e) {
@@ -38245,7 +38328,7 @@
     s.bullets = s.bullets.filter((b) => b.life > 0 || b.rayPhase === "delete" || b.grenadePhase === "delete");
   }
   function step3(s, inputs) {
-    if (s.phase !== "playing") return;
+    if (s.phase !== "playing" || s.paused) return;
     s.tick++;
     stepWalls(s);
     stepRegistration(s);
@@ -38259,11 +38342,11 @@
     }
     s.zombies = s.zombies.filter((z) => z.body.disposeAt === null || z.body.disposeAt > s.tick);
     s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
-    if (s.combo > 1 && s.tick > s.comboUntil) {
+    if (s.mode !== "deathmatch" && s.combo > 1 && s.tick > s.comboUntil) {
       s.combo--;
       s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
     }
-    if (s.waveReady && s.tick >= s.waveReady) beginWave(s);
+    if (s.mode !== "deathmatch" && s.waveReady && s.tick >= s.waveReady) beginWave(s);
     projectiles(s);
     processExplosions(s, random3, (e) => explode(s, e));
     const respawning = /* @__PURE__ */ new Set();
@@ -38281,6 +38364,10 @@
           p.alive = false;
           p.deaths++;
           p.moving = false;
+          if (s.mode === "deathmatch") {
+            const killer = s.players.find((q) => q.seat === p.killedBy && q !== p);
+            if (killer) killer.kills++;
+          }
           return;
         }
         p.ai.collidable = false;
@@ -38293,19 +38380,38 @@
         if (random3(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: p.x, y: p.y, life: 250, born: s.tick });
       },
       playerDead: () => {
-        if (s.phase === "playing" && !s.players.some((p) => !p.body.deadFlag)) {
+        if (s.phase !== "playing") return;
+        if (s.mode === "deathmatch") {
+          const remaining = s.players.filter((p) => p.deaths < s.options.deathLimit);
+          if (remaining.length <= 1) {
+            s.phase = "finished";
+            s.winner = remaining[0]?.seat ?? 0;
+            sound2(s, "World.End.wav");
+          }
+        } else if (!s.players.some((p) => !p.body.deadFlag)) {
           s.phase = "finished";
           s.winner = 0;
           sound2(s, "World.End.wav");
         }
       },
       respawn: (p) => {
-        const other = [...s.players].reverse().find((q) => q !== p && !q.body.deadFlag);
-        if (!other) return false;
+        const deathmatch = s.mode === "deathmatch";
+        if (deathmatch && p.deaths >= s.options.deathLimit) return false;
+        const others = [...s.players].reverse().filter((q) => q !== p && !q.body.deadFlag), other = others[0];
+        if (!deathmatch && !other) return false;
         const map = room(s), spawns = [...map.playerSpawns, ...map.otherSpawns], start2 = Math.floor(random3(s) * spawns.length);
         let best = null, distance = Infinity;
         for (let i = 0; i < spawns.length; i++) {
-          const pos = spawns[(start2 + i) % spawns.length], mask = flags(s, cell(s, pos.x, pos.y)), d = (pos.x - other.x) ** 2 + (pos.y - other.y) ** 2;
+          const pos = spawns[(start2 + i) % spawns.length], mask = flags(s, cell(s, pos.x, pos.y));
+          if (deathmatch) {
+            const d2 = others.length ? Math.min(...others.map((q) => (pos.x - q.x) ** 2 + (pos.y - q.y) ** 2)) : Infinity;
+            if (!(mask & (CREATURE | OBJECT | 64)) && (!best || d2 > distance)) {
+              best = pos;
+              distance = d2;
+            }
+            continue;
+          }
+          const d = (pos.x - other.x) ** 2 + (pos.y - other.y) ** 2;
           if (!(mask & (CREATURE | OBJECT | 64)) && d >= 4 * CELL4 * CELL4 && d < distance && Math.abs(pos.x - other.x) <= 19 * CELL4 && Math.abs(pos.y - other.y) <= 13 * CELL4) {
             best = pos;
             distance = d;
@@ -38316,7 +38422,7 @@
         p.y = best.y;
         p.dir = best.dir;
         p.alive = true;
-        p.invul = 125;
+        p.invul = deathmatch ? 25 : 125;
         p.body = creatureBody(true);
         p.poseName = "";
         p.poseAction = p.drawAction = "stand";
@@ -38397,6 +38503,10 @@
         p.selectionPending = false;
       }
     }
+    if (s.mode === "deathmatch" && s.phase === "finished") {
+      const remaining = s.players.filter((p) => p.deaths < s.options.deathLimit);
+      s.winner = remaining.length === 1 ? remaining[0].seat : 0;
+    }
     processWallAffects(s, (b) => {
       const frames3 = boxhead_data_default.objects["Effect.SmokeCloud"].frames;
       effect(s, "Effect.SmokeCloud", b.x, b.y, frames3 + 1, { born: s.tick + 1, scale: 1, z: b.z });
@@ -38412,34 +38522,19 @@
       }
     }
     s.barrels = s.barrels.filter((b) => b.hp > 0 || wallBlocks(b, s.tick));
-    for (const item of s.pickups) {
-      for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && !p.body.deadFlag && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
-        const available = p.unlocked.map((v, i) => v && p.inventory[i] >= 0 && p.inventory[i] < weaponStats(s, i).ammo ? i : -1).filter((i) => i >= 0);
-        if (p.hp >= 200 && !available.length) continue;
-        if (p.hp < 200 && (!available.length || random3(s) < 1 - p.hp / 200)) p.hp = 200;
-        else if (available.length) {
-          const i = available[Math.floor(random3(s) * available.length)];
-          p.inventory[i] = weaponStats(s, i).ammo;
-          p.ammo = p.inventory[p.weapon];
-        }
-        item.life = 0;
-        sound2(s, "Object.Pickup.wav");
-      }
-      item.life--;
-    }
-    s.pickups = s.pickups.filter((i) => i.life > 0);
-    if (s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
+    stepPickups(s, () => random3(s), () => sound2(s, "Object.Pickup.wav"));
+    if (s.mode !== "deathmatch" && s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
     const decals = new Set(s.effects.filter((e) => ["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)).slice(-180));
     s.effects = s.effects.filter((e) => !["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind) || decals.has(e));
     s.sounds = s.sounds.slice(-40);
     stepNavigation(s);
-    if (s.spawnLeft > 0 && s.tick >= s.nextSpawn && s.zombies.filter((z) => !z.devil && z.hp > 0).length < Math.min(10 + 5 * (s.wave - 1), 60)) {
+    if (s.mode !== "deathmatch" && s.spawnLeft > 0 && s.tick >= s.nextSpawn && s.zombies.filter((z) => !z.devil && z.hp > 0).length < Math.min(10 + 5 * (s.wave - 1), 60)) {
       if (spawnEnemy(s, false)) {
         s.spawnLeft--;
         s.nextSpawn = s.tick + Math.max(25 - (s.wave - 1), 1);
       }
     }
-    if (s.devilLeft > 0 && s.tick >= s.nextDevil && s.zombies.filter((z) => z.devil && z.hp > 0).length < Math.min(1 + (s.wave - 2) * 0.3, 5)) {
+    if (s.mode !== "deathmatch" && s.options.devils && s.devilLeft > 0 && s.tick >= s.nextDevil && s.zombies.filter((z) => z.devil && z.hp > 0).length < Math.min(1 + (s.wave - 2) * 0.3, 5)) {
       if (spawnEnemy(s, true)) {
         s.devilLeft--;
         s.nextDevil = s.tick + Math.max(250 - (s.wave - 1), 25);
@@ -38453,7 +38548,7 @@
   function valid3(value) {
     if (!value || typeof value !== "object") return false;
     const s = value;
-    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && [null, 0].includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && validCreature(s, p) && nums(p, ["id", "x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && typeof p.selectionPending === "boolean" && (p.selectionWeapon === null || Number.isInteger(p.selectionWeapon) && p.selectionWeapon >= 0 && p.selectionWeapon < 10) && [-1, 1].includes(p.selectionStep) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z) && validCreature(s, z)) && s.bullets.every((b) => validGrenade(b) && validShot(b) && validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.floor === void 0 || e.floor === true && e.kind === "Effect.BloodSplat" && [0, 1, 5].includes(e.bloodCount)) && (e.kind !== "Effect.RocketSmoke" || nums(e, ["z", "vx", "vy"]) && e.z >= 0 && e.total === 7 && e.life === 7 - (s.tick - e.born)) && (e.kind !== "Effect.BulletHit" || Number.isFinite(e.z) && e.z >= 0 && e.total === 14 && e.life === 14 - (s.tick - e.born)) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+    return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && (s.mode === "deathmatch" ? [null, 0, 1, 2, 3, 4] : [null, 0]).includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && MODES3.some((m) => m.id === s.mode) && (s.mode !== "single" || Array.isArray(s.players) && s.players.length <= 1 && s.players.every((p) => p?.seat === 1)) && typeof s.paused === "boolean" && Array.isArray(s.actionAck) && s.actionAck.length === 4 && s.actionAck.every((n) => Number.isSafeInteger(n) && Number(n) >= 0 && Number(n) < 1e9) && !!s.options && Array.isArray(s.options.characters) && s.options.characters.length === 4 && s.options.characters.every((c) => Number.isInteger(c) && Number(c) >= 1 && Number(c) <= 4) && DIFFICULTIES.some((d) => d.id === s.options.difficulty) && SPEEDS.includes(s.options.speed) && DEATH_LIMITS.includes(s.options.deathLimit) && ["devils", "collisions", "damage"].every((k) => typeof s.options[k] === "boolean") && (s.mode !== "deathmatch" || s.options.damage && s.wave === 0 && s.spawnLeft === 0 && s.devilLeft === 0 && s.waveReady === 0) && Array.isArray(s.players) && s.players.every((p) => p && p.character === CHARACTERS[s.options.characters[p.seat - 1] - 1]) && (s.mode !== "deathmatch" || !s.winner || s.players.some((p) => p.seat === s.winner)) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && validCreature(s, p) && nums(p, ["id", "x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && typeof p.selectionPending === "boolean" && (p.selectionWeapon === null || Number.isInteger(p.selectionWeapon) && p.selectionWeapon >= 0 && p.selectionWeapon < 10) && [-1, 1].includes(p.selectionStep) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z) && validCreature(s, z)) && s.bullets.every((b) => validGrenade(b) && validShot(b) && validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick && (p.permanent === void 0 || typeof p.permanent === "boolean") && (!p.permanent || p.life >= 0 && (p.life > 0 ? p.reappearAt === null : Number.isSafeInteger(p.reappearAt) && p.reappearAt > s.tick))) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.floor === void 0 || e.floor === true && e.kind === "Effect.BloodSplat" && [0, 1, 5].includes(e.bloodCount)) && (e.kind !== "Effect.RocketSmoke" || nums(e, ["z", "vx", "vy"]) && e.z >= 0 && e.total === 7 && e.life === 7 - (s.tick - e.born)) && (e.kind !== "Effect.BulletHit" || Number.isFinite(e.z) && e.z >= 0 && e.total === 14 && e.life === 14 - (s.tick - e.born)) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
   }
 
   // src/expanded/boxhead-view.ts
@@ -38569,7 +38664,7 @@
       person(c, p.seat ? p.character : p.devil ? "devil" : "zombie", p.body.action, p, s.tick, void 0, void 0, Math.floor(p.body.frame));
       c.globalAlpha = 1;
     }
-    for (const p of s.pickups) if (p.life > 50 || s.tick % 6 < 3) sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
+    for (const p of s.pickups) if (p.life > 0 && (p.life > 50 || s.tick % 6 < 3)) sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
     const entities2 = [...s.barrels.filter((b) => b.kind !== "mine" && b.kind !== "chargepack").map((b) => ({ ...b, entity: "object" })), ...s.zombies.filter((z) => z.ai.registered && !z.body.floor).map((z) => ({ ...z, entity: "enemy" })), ...s.players.filter((p) => !p.body.floor && p.body.phase !== "respawn").map((p) => ({ ...p, entity: "human" }))].sort((a, b) => a.y - b.y || a.x - b.x);
     for (const p of entities2) {
       if (p.entity === "object") {
@@ -38622,7 +38717,7 @@
     c.fillStyle = "#ecebdf";
     c.font = "bold 20px monospace";
     c.textAlign = "left";
-    c.fillText(`BOXHEAD 2PLAY  \xB7  \u7B2C ${s.wave || 1} \u6CE2`, 20, 28);
+    c.fillText(s.mode === "deathmatch" ? "BOXHEAD 2PLAY \xB7 \u6B7B\u4EA1\u7ADE\u8D5B" : `BOXHEAD 2PLAY  \xB7  \u7B2C ${s.wave || 1} \u6CE2`, 20, 28);
     c.fillStyle = "#dddac3";
     c.font = "17px monospace";
     c.fillText(`SCORE ${s.score.toLocaleString()}   \xD7${s.combo}`, 430, 28);
@@ -38650,16 +38745,25 @@
       c.fillText(s.message, WIDTH4 / 2, HUD + 43);
       c.textAlign = "left";
     }
+    if (s.paused) {
+      c.fillStyle = "#101610bb";
+      c.fillRect(0, HUD, WIDTH4, HEIGHT4 - HUD);
+      c.fillStyle = "#fff";
+      c.font = "bold 28px sans-serif";
+      c.textAlign = "center";
+      c.fillText("\u5DF2\u6682\u505C \xB7 \u6309 P \u6216\u70B9\u51FB\u7EE7\u7EED", WIDTH4 / 2, 365);
+      c.textAlign = "left";
+    }
     if (s.phase !== "playing") {
       c.fillStyle = "#101610bb";
       c.fillRect(0, HUD, WIDTH4, HEIGHT4 - HUD);
       c.fillStyle = "#fff";
       c.font = "bold 32px sans-serif";
       c.textAlign = "center";
-      c.fillText(s.phase === "waiting" ? "BOXHEAD \xB7 2\u20134 \u4EBA\u5408\u4F5C\u751F\u5B58" : "\u961F\u4F0D\u5168\u706D", WIDTH4 / 2, 365);
+      c.fillText(s.phase === "waiting" ? s.mode === "single" ? "BOXHEAD \xB7 \u5355\u4EBA\u751F\u5B58" : s.mode === "deathmatch" ? "BOXHEAD \xB7 \u6B7B\u4EA1\u7ADE\u8D5B" : "BOXHEAD \xB7 2\u20134 \u4EBA\u5408\u4F5C\u751F\u5B58" : s.mode === "deathmatch" ? s.winner ? `P${s.winner} \u83B7\u80DC` : "\u5E73\u5C40" : "\u961F\u4F0D\u5168\u706D", WIDTH4 / 2, 365);
       c.font = "18px sans-serif";
       c.fillStyle = "#d9ddcf";
-      c.fillText(s.phase === "waiting" ? "\u9009\u62E9\u539F\u7248\u5730\u56FE\uFF0C\u5165\u5EA7\u5E76\u51C6\u5907" : "\u575A\u6301\u5230\u7B2C " + s.wave + " \u6CE2 \xB7 \u5F97\u5206 " + s.score.toLocaleString(), WIDTH4 / 2, 405);
+      c.fillText(s.phase === "waiting" ? "\u9009\u62E9\u5730\u56FE\u3001\u4EBA\u7269\u3001\u6A21\u5F0F\u4E0E\u96BE\u5EA6\uFF0C\u7136\u540E\u51C6\u5907" : s.mode === "deathmatch" ? `\u6B7B\u4EA1\u4E0A\u9650 ${s.options.deathLimit} \u6B21` : "\u575A\u6301\u5230\u7B2C " + s.wave + " \u6CE2 \xB7 \u5F97\u5206 " + s.score.toLocaleString(), WIDTH4 / 2, 405);
       c.fillText("WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6 \xB7 \u7A7A\u683C / J \u5C04\u51FB \xB7 Q / E \u6362\u6B66\u5668 \xB7 1\u20130 \u9009\u6B66\u5668", WIDTH4 / 2, 444);
       c.textAlign = "left";
     }
@@ -38759,7 +38863,7 @@
     hz: 25,
     width: WIDTH4,
     height: HEIGHT4,
-    controls: "WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BQ / E \u524D\u540E\u6362\u67AA\uFF08K / X \u4E5F\u53EF\uFF09\uFF1B1\u20130 \u9009\u6B66\u5668\u3002\u9ED8\u8BA4\u5F00\u542F\u53CB\u4F24\uFF0C\u7206\u70B8\u4E5F\u4F1A\u4F24\u5230\u81EA\u5DF1\uFF1B\u590D\u6D3B\u65F6\u6E05\u7A7A\u975E\u624B\u67AA\u5F39\u836F\uFF0C\u961F\u53CB\u5B58\u6D3B\u65F6\u53EF\u590D\u6D3B\u3002",
+    controls: "WASD / \u65B9\u5411\u952E\u79FB\u52A8\u4E0E\u7784\u51C6\uFF1B\u7A7A\u683C / J \u5C04\u51FB\uFF1BQ / E \u524D\u540E\u6362\u67AA\uFF08K / X \u4E5F\u53EF\uFF09\uFF1B1\u20130 \u9009\u6B66\u5668\uFF1BP\u6682\u505C\u3002\u9ED8\u8BA4\u5F00\u542F\u53CB\u4F24\uFF0C\u7206\u70B8\u4E5F\u4F1A\u4F24\u5230\u81EA\u5DF1\uFF1B\u5408\u4F5C\u65F6\u961F\u53CB\u5B58\u6D3B\u53EF\u590D\u6D3B\u3002",
     maps: MAPS2.map(({ id, label }) => ({ id, label })),
     create: create3,
     step: step3,
@@ -38768,6 +38872,12 @@
     confirm,
     setSound,
     setVolume,
+    characters: CHARACTERS.map((id) => id.toUpperCase()),
+    characterIds: CHARACTERS,
+    duplicateCharacters: true,
+    difficulties: [...DIFFICULTIES],
+    modes: [...MODES3],
+    rate: (s) => 25 * s.options.speed,
     consumeInput(s, seat, input) {
       const p = s.players.find((p2) => p2.seat === seat);
       if (p) {
@@ -40216,7 +40326,7 @@
         this.changed = false;
       }
       const age = Math.max(now - latest.receivedAt, serverNow - latest.time);
-      if (latest.state.phase === "playing" && age > 350 && !this.stale) {
+      if (latest.state.phase === "playing" && !("gameId" in latest.state && latest.state.paused) && age > 350 && !this.stale) {
         this.stale = true;
         this.clearPrediction();
         this.samples = [latest];
@@ -40224,7 +40334,7 @@
         this.requestFull();
       }
       const next = copy(latest.state);
-      if (next.phase !== "playing" || this.stale) return this.state = next;
+      if (next.phase !== "playing" || this.stale || "gameId" in next && next.paused) return this.state = next;
       if ("gameId" in next) {
         const adapter7 = getAdapter(next.gameId);
         const target2 = serverNow - INTERPOLATION_MS;
@@ -41000,6 +41110,38 @@
     return { left: keys.has("KeyA") || keys.has("ArrowLeft"), up: keys.has("KeyW") || keys.has("ArrowUp"), right: keys.has("KeyD") || keys.has("ArrowRight"), down: keys.has("KeyS") || keys.has("ArrowDown") };
   }
 
+  // src/expanded/boxhead-controls.ts
+  var CONTROL_LABELS = { left: "\u5411\u5DE6", up: "\u5411\u4E0A", right: "\u5411\u53F3", down: "\u5411\u4E0B", attack: "\u5C04\u51FB", previous: "\u4E0A\u4E00\u6B66\u5668", next: "\u4E0B\u4E00\u6B66\u5668" };
+  var mandatory = /^(Key[WASDP]|Arrow(Left|Right|Up|Down)|Space|Enter|Digit[0-9])$/;
+  var usable = /^(Key[A-Z]|Numpad([0-9]|Add|Subtract|Multiply|Divide|Decimal|Enter)|Bracket(Left|Right)|Semicolon|Quote|Backslash|IntlBackslash|Comma|Period|Slash|Backquote|Minus|Equal|Shift(Left|Right))$/;
+  function bindingError(bindings, control, code) {
+    if (mandatory.test(code)) return "WASD\u3001\u65B9\u5411\u952E\u3001\u7A7A\u683C\u3001\u56DE\u8F66\u3001\u6570\u5B57\u548CP\u59CB\u7EC8\u4FDD\u7559\uFF0C\u8BF7\u9009\u5176\u4ED6\u952E\u3002";
+    if (!usable.test(code)) return "\u8BF7\u9009\u62E9\u5B57\u6BCD\u3001\u7B26\u53F7\u3001\u5C0F\u952E\u76D8\u6216Shift\u952E\u3002";
+    const conflict = Object.entries(bindings).find(([role, value]) => role !== control && value === code);
+    return conflict ? `\u8BE5\u952E\u5DF2\u7528\u4E8E${CONTROL_LABELS[conflict[0]]}\u3002` : null;
+  }
+  function readBindings(raw) {
+    try {
+      const parsed = JSON.parse(raw ?? "{}");
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+      const result = {};
+      for (const control of Object.keys(CONTROL_LABELS)) {
+        const code = parsed[control];
+        if (typeof code === "string" && !bindingError(result, control, code)) result[control] = code;
+      }
+      return result;
+    } catch {
+      return {};
+    }
+  }
+  function extraControl(bindings, code) {
+    if (code === "TouchNext") return "next";
+    return Object.entries(bindings).find(([, key]) => key === code)?.[0];
+  }
+  function keyLabel(code) {
+    return code.replace(/^Key/, "").replace(/^Numpad/, "\u5C0F\u952E\u76D8 ").replace(/^ShiftLeft$/, "\u5DE6Shift").replace(/^ShiftRight$/, "\u53F3Shift");
+  }
+
   // src/authority/main.ts
   if (ensureName()) start();
   function start() {
@@ -41008,7 +41150,8 @@
     const adapter7 = getAdapter(params.get("game") || "");
     const recordsEnabled = !badminton && adapter7?.id !== "fbw_forest-server";
     const gameId = adapter7?.id || (badminton ? "46923-server" : "3881-server"), title = adapter7?.title || (badminton ? "\u706B\u67F4\u4EBA\u6253\u7FBD\u6BDB\u7403" : "Q\u7248\u6CE1\u6CE1\u5802");
-    const room2 = (params.get("room") || "lobby").slice(0, 20), hz = adapter7?.hz || (badminton ? HZ2 : HZ);
+    const room2 = (params.get("room") || "lobby").slice(0, 20);
+    let hz = adapter7?.hz || (badminton ? HZ2 : HZ);
     const net = new AuthorityClient(arcadeName(), arcadeSession(), room2, gameId);
     const presentation = new Presentation(() => net.requestFull());
     const canvas = el("game-canvas");
@@ -41028,6 +41171,14 @@
     const bombDirections = directionKeys;
     const tank = adapter7?.id === "137953-server", bomb2 = adapter7?.id === "9109-server", shooters = adapter7?.id === "50737-server" || adapter7?.id === "97734-server";
     const boxhead = adapter7?.id === "50737-server";
+    let bindings = readBindings(boxhead ? localStorage.getItem("arcade_boxhead_bindings") : null);
+    const extra = (code) => boxhead ? extraControl(bindings, code) : void 0;
+    const attackKey = (code) => extra(code) ? extra(code) === "attack" : actions.includes(code);
+    const attackHeld = () => [...keys.keys()].some(attackKey);
+    const directionFor = (code) => {
+      const role = extra(code);
+      return role && ["left", "up", "right", "down"].includes(role) ? ["left", "up", "right", "down"].indexOf(role) : directionKeys[code];
+    };
     const actions = badminton ? ["KeyS", "ArrowDown", "Space", "Enter"] : adapter7 ? ["Space", "Enter", ...boxhead ? [] : ["KeyE"], ...tank || bomb2 ? [] : ["KeyJ", "KeyZ"]] : ["Space", "Enter", "KeyE", "ShiftLeft", "ShiftRight"];
     const jumps = adapter7 ? ["KeyK", "KeyX", ...boxhead ? ["KeyQ", "KeyE"] : [], ...tank || bomb2 ? ["KeyJ", "ShiftLeft", "ShiftRight"] : []] : ["KeyW", "ArrowUp"];
     let sound3 = localStorage.getItem("arcade_native_sound") !== "off";
@@ -41042,6 +41193,7 @@
     el("my-name").textContent = arcadeName();
     localStorage.setItem("arcade_recent_game", gameId);
     if (badminton) {
+      el("badminton-actions").hidden = false;
       el("battle-records").hidden = true;
       el("round-options").hidden = false;
       el("seat-3").hidden = true;
@@ -41055,6 +41207,10 @@
       el("touch-up").setAttribute("aria-label", "\u8DF3\u8DC3");
     }
     if (adapter7) {
+      if (boxhead) {
+        el("badminton-actions").hidden = false;
+        el("fullscreen-pause").hidden = false;
+      }
       canvas.width = adapter7.width;
       canvas.height = adapter7.height;
       el("battle-records").hidden = !recordsEnabled;
@@ -41065,6 +41221,7 @@
       el("attack-button-text").textContent = "\u653B\u51FB / \u64CD\u4F5C";
       el("alt-button").hidden = !(tank || bomb2 || shooters);
       el("alt-button").textContent = tank ? "\u526F\u64CD\u4F5C" : bomb2 ? "\u6B66\u5668" : adapter7.id === "50737-server" ? "\u6362\u6B66\u5668" : "\u624B\u96F7";
+      if (boxhead) el("alt-button").dataset.key = "TouchNext";
       for (let number = adapter7.seats + 1; number <= 4; number++) el(`seat-${number}`).hidden = true;
       el("round-options").hidden = !adapter7.maps?.length;
       el("game-loadout").parentElement.hidden = true;
@@ -41075,8 +41232,22 @@
     const modeSelect = el("game-mode");
     const characterSelect = el("game-character"), difficultySelect = el("game-difficulty");
     const bombSettings = gameId === "3881-server" || gameId === "9109-server";
-    characterSelect.parentElement.hidden = !bombSettings;
-    difficultySelect.parentElement.hidden = !bombSettings;
+    const characterSettings = bombSettings || !!adapter7?.characters;
+    el("boxhead-options").hidden = !boxhead;
+    el("boxhead-controls").hidden = !boxhead;
+    const difficultySettings = bombSettings || !!adapter7?.difficulties;
+    characterSelect.parentElement.hidden = !characterSettings;
+    difficultySelect.parentElement.hidden = !difficultySettings;
+    if (adapter7?.characters) for (const [index3, label] of adapter7.characters.entries()) characterSelect.options[index3].textContent = label;
+    if (adapter7?.difficulties) {
+      difficultySelect.replaceChildren();
+      for (const d of adapter7.difficulties) {
+        const option = document.createElement("option");
+        option.value = d.id;
+        option.textContent = d.label;
+        difficultySelect.append(option);
+      }
+    }
     if (adapter7?.modes) {
       modeSelect.parentElement.hidden = false;
       for (const mode of adapter7.modes) {
@@ -41107,8 +41278,60 @@
     function notice(message) {
       el("connection-note").textContent = message;
     }
+    function bindingUi() {
+      for (const input of document.querySelectorAll("[data-boxhead-binding]")) input.value = bindings[input.dataset.boxheadBinding] ? keyLabel(bindings[input.dataset.boxheadBinding]) : "";
+    }
+    if (boxhead) {
+      for (const [role, label] of Object.entries(CONTROL_LABELS)) {
+        const field = document.createElement("label"), input = document.createElement("input");
+        field.textContent = label;
+        input.readOnly = true;
+        input.placeholder = "\u70B9\u51FB\u540E\u6309\u952E";
+        input.dataset.boxheadBinding = role;
+        input.setAttribute("aria-label", "\u989D\u5916" + label + "\u6309\u952E");
+        input.onkeydown = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          clearInput();
+          if (event.code === "Escape") {
+            input.blur();
+            return;
+          }
+          const control = role;
+          if (event.code === "Backspace" || event.code === "Delete") {
+            delete bindings[control];
+            el("boxhead-binding-note").textContent = "\u5DF2\u6E05\u9664\u8BE5\u989D\u5916\u6309\u952E\u3002";
+          } else {
+            const error = bindingError(bindings, control, event.code);
+            if (error) {
+              el("boxhead-binding-note").textContent = error;
+              return;
+            }
+            bindings[control] = event.code;
+            el("boxhead-binding-note").textContent = `${label}\uFF1A${keyLabel(event.code)}\uFF1B\u989D\u5916\u6309\u952E\u4F18\u5148\u4E8E\u539F\u5FEB\u6377\u952E\u3002`;
+          }
+          localStorage.setItem("arcade_boxhead_bindings", JSON.stringify(bindings));
+          bindingUi();
+        };
+        field.append(input);
+        el("boxhead-binding-fields").append(field);
+      }
+      el("boxhead-reset-controls").onclick = () => {
+        clearInput();
+        bindings = {};
+        localStorage.removeItem("arcade_boxhead_bindings");
+        bindingUi();
+        el("boxhead-binding-note").textContent = "\u5DF2\u6E05\u9664\u989D\u5916\u6309\u952E\uFF0C\u9ED8\u8BA4\u6309\u952E\u4FDD\u6301\u53EF\u7528\u3002";
+      };
+      bindingUi();
+    }
+    function availableSeat(number) {
+      if (badminton) return (net.authority?.options.mode ?? "versus") === "versus" || number === 1;
+      const mode = adapter7?.modes?.find((m) => m.id === (net.room.auth?.options?.gameMode ?? adapter7.modes?.[0]?.id));
+      return number <= (mode?.maxPlayers ?? adapter7?.seats ?? 4);
+    }
     function clearInput() {
-      if (boxhead && actions.some((code) => keys.has(code))) cancelledAttack = bomb;
+      if (boxhead && attackHeld()) cancelledAttack = bomb;
       if (badminton) {
         cancelledJump = jump;
         cancelledHit = hit4;
@@ -41138,6 +41361,7 @@
       if ("gameId" in state) {
         bomb = Math.max(bomb, player.lastAttack || 0);
         jump = Math.max(jump, player.lastAlt || 0);
+        if (boxhead) actionSequence = Math.max(actionSequence, state.actionAck[seat - 1]);
       } else if (isBomb(state)) bomb = Math.max(bomb, player.lastBomb);
       else {
         jump = Math.max(jump, player.lastJump);
@@ -41159,6 +41383,15 @@
       updateUi();
     };
     net.onSnapshot = (state, time, receivedAt) => {
+      if (boxhead && "gameId" in state && state.paused) clearInput();
+      if (boxhead && adapter7?.rate) {
+        const rate = adapter7.rate(state);
+        if (hz !== rate) {
+          hz = rate;
+          window.clearInterval(timer);
+          timer = window.setInterval(sendInput, 1e3 / hz);
+        }
+      }
       if (round !== state.round) {
         resetRound(state.round);
         notice(state.phase === "playing" ? "\u6BD4\u8D5B\u8FDB\u884C\u4E2D" : state.phase === "finished" ? "\u672C\u5C40\u7ED3\u675F" : "\u540C\u6B65\u5B8C\u6210\uFF0C\u5165\u5EA7\u5E76\u51C6\u5907\u5373\u53EF\u5F00\u59CB");
@@ -41197,6 +41430,10 @@
     }
     function currentInput(now) {
       const directions2 = directionState(keys);
+      if (boxhead) for (const [code] of keys) {
+        const role = extra(code);
+        if (role && ["left", "up", "right", "down"].includes(role)) directions2[role] = true;
+      }
       let preferredDirection = -1, lastDirectionAt = -1;
       if (bomb2) {
         for (const [code, at] of keys) if (bombDirections[code] !== void 0 && at >= lastDirectionAt) {
@@ -41214,7 +41451,7 @@
         attack: bomb,
         alt: jump,
         ...bomb2 ? { direction: preferredDirection } : {},
-        ...boxhead ? { trigger: actions.some((code) => keys.has(code)), cancelledAttack, weaponStep, ...selectedWeapon !== void 0 ? { weapon: selectedWeapon } : {} } : {}
+        ...boxhead ? { trigger: attackHeld(), cancelledAttack, weaponStep, ...selectedWeapon !== void 0 ? { weapon: selectedWeapon } : {} } : {}
       };
       if (badminton) {
         return {
@@ -41237,33 +41474,37 @@
       }
       return { seq: ++seq, dir, bomb, special: 0 };
     }
-    const timer = window.setInterval(() => {
+    function sendInput() {
+      if (boxhead && net.authority && "gameId" in net.authority && net.authority.paused) return;
       if (!inputEnabled || !net.connected || !seat || !(badminton && net.authority ? canControl(net.authority) : net.authority?.phase === "playing")) return;
       const now = performance.now();
       held = currentInput(now);
       if (net.control({ t: "authInput", round, input: held, serverTime: net.serverNow(now) })) presentation.input(held, now);
-    }, 1e3 / hz);
+    }
+    let timer = window.setInterval(sendInput, 1e3 / hz);
     function press(code, down) {
       if (!down) {
         keys.delete(code);
         return;
       }
+      if (boxhead && net.authority?.paused) return;
       if (!seat || !(badminton && net.authority ? canControl(net.authority) : net.authority?.phase === "playing") || keys.has(code)) return;
-      const now = performance.now(), aliasAt = heldDirectionAt(keys, code);
+      const now = performance.now(), direction3 = directionFor(code), aliasAt = boxhead && direction3 !== void 0 ? [...keys].find(([held2]) => directionFor(held2) === direction3)?.[1] : heldDirectionAt(keys, code);
       keys.set(code, aliasAt ?? now);
       inputAt = now;
       if (aliasAt !== void 0) return;
-      if (actions.includes(code)) {
+      const role = extra(code);
+      if (attackKey(code)) {
         if (badminton) hit4++;
         else {
           bomb++;
           lastHitAt = now;
         }
       }
-      if ((badminton || adapter7) && jumps.includes(code)) {
+      if ((badminton || adapter7) && (role ? role === "previous" || role === "next" : jumps.includes(code))) {
         jump++;
         selectedWeapon = void 0;
-        weaponStep = code === "KeyQ" ? -1 : 1;
+        weaponStep = role === "previous" || !role && code === "KeyQ" ? -1 : 1;
       }
       if (adapter7?.id === "50737-server" && /^Digit[0-9]$/.test(code)) {
         selectedWeapon = (Number(code.slice(-1)) + 9) % 10;
@@ -41271,9 +41512,9 @@
       }
     }
     function keyboard(event, down) {
-      if (badminton && event.code === "KeyP" && down && !event.repeat && !event.target?.matches("input,textarea,select,button")) {
+      if ((badminton || boxhead) && event.code === "KeyP" && down && !event.repeat && !event.target?.matches("input,textarea,select,button")) {
         event.preventDefault();
-        badmintonCommand("pause");
+        gameCommand("pause");
         return;
       }
       if (badminton && event.code === "Space" && net.authority?.robot) {
@@ -41292,7 +41533,7 @@
         return;
       }
       if (event.target?.matches("input, textarea, select, button")) return;
-      if (bombDirections[event.code] === void 0 && !actions.includes(event.code) && !jumps.includes(event.code) && !(adapter7?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
+      if (bombDirections[event.code] === void 0 && !actions.includes(event.code) && !jumps.includes(event.code) && !extra(event.code) && !(adapter7?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
       event.preventDefault();
       press(event.code, down);
     }
@@ -41315,6 +41556,7 @@
       };
       const cancel = () => {
         const code = button.dataset.key;
+        if (boxhead && keys.has(code) && attackKey(code)) cancelledAttack = bomb;
         if (badminton && keys.has(code)) {
           if (jumps.includes(code)) cancelledJump = jump;
           if (actions.includes(code)) cancelledHit = hit4;
@@ -41330,10 +41572,23 @@
       net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested });
       button.blur();
     };
-    function badmintonCommand(action) {
-      if (!badminton || !seat || !net.authority) return;
-      net.control({ t: "authBadmintonAction", round: net.authority.round, seq: ++actionSequence, action });
+    function gameCommand(action) {
+      if (!badminton && !boxhead || !seat || !net.authority) return;
+      net.control({ t: "authGameAction", round: net.authority.round, seq: ++actionSequence, action });
       if (action === "next" || action === "retry") play("next");
+    }
+    const pauseGame = () => {
+      gameCommand("pause");
+      canvas.focus();
+    };
+    const gameMenu = () => {
+      gameCommand("menu");
+      clearInput();
+      canvas.focus();
+    };
+    if (badminton || boxhead) {
+      el("badminton-pause").onclick = pauseGame;
+      el("badminton-menu").onclick = gameMenu;
     }
     function finishedAction() {
       const s = badminton ? net.authority : null;
@@ -41346,6 +41601,19 @@
       };
       canvas.addEventListener("pointermove", aim);
       canvas.addEventListener("pointerdown", (event) => {
+        if (event.button === 0 && seat && net.authority?.phase !== "waiting") {
+          const r = canvas.getBoundingClientRect(), x = (event.clientX - r.left) * 550 / r.width, y = (event.clientY - r.top) * 400 / r.height;
+          if (x >= 0 && x <= 50 && y >= 0 && y <= 25) {
+            event.preventDefault();
+            gameMenu();
+            return;
+          }
+          if (x >= 0 && x <= 28 && y >= 50 && y <= 75) {
+            event.preventDefault();
+            pauseGame();
+            return;
+          }
+        }
         if (!net.authority?.robot || seat !== 1 || event.button !== 0 || !canControl(net.authority)) return;
         event.preventDefault();
         aim(event);
@@ -41370,7 +41638,7 @@
         const mine = net.room.members.find((member) => member.id === net.id);
         net.control({ t: "ready", ready: !mine?.ready });
       } else if (autoSit) {
-        const available = Object.keys(net.room.seats).map(Number).find((number) => !net.room.seats[number] && (!badminton || net.authority?.options.mode === "versus" || number === 1));
+        const available = Object.keys(net.room.seats).map(Number).find((number) => !net.room.seats[number] && availableSeat(number));
         if (!available) return;
         net.control({ t: "sit", seat: available });
         net.control({ t: "ready", ready: true });
@@ -41379,16 +41647,47 @@
     }
     el("start-game").onclick = () => {
       const action = finishedAction();
-      if (action) badmintonCommand(action);
+      if (action) gameCommand(action);
       else toggleReady();
     };
     el("fullscreen-ready").onclick = () => {
+      if (boxhead && net.authority?.paused) {
+        pauseGame();
+        return;
+      }
       const action = finishedAction();
-      if (action) badmintonCommand(action);
+      if (action) gameCommand(action);
       else toggleReady(true);
     };
-    for (const key of ["map", "mode", "loadout", "difficulty"]) el(`game-${key}`).onchange = () => {
-      if (net.isController) net.control(badminton ? { t: "authOptions", gameMode: modeSelect.value } : { t: "authOptions", map: mapSelect.value, ...adapter7?.modes ? { gameMode: modeSelect.value } : {}, ...bombSettings ? { difficulty: difficultySelect.value } : {}, loadout: el("game-loadout").value });
+    el("fullscreen-pause").onclick = () => {
+      const s = net.authority;
+      if (s?.paused || s?.phase === "finished") gameMenu();
+      else pauseGame();
+    };
+    function optionsChanged(event) {
+      if (boxhead) {
+        if (!net.isController) return;
+        const target = event?.target;
+        if (!target) return;
+        const fields = { "game-map": "map", "game-mode": "gameMode", "game-difficulty": "difficulty", "boxhead-speed": "speed", "boxhead-death-limit": "deathLimit", "boxhead-devils": "devils", "boxhead-collisions": "collisions", "boxhead-damage": "damage" };
+        const field = fields[target.id];
+        if (!field) return;
+        const value = target instanceof HTMLInputElement ? target.checked : ["speed", "deathLimit"].includes(field) ? Number(target.value) : target.value;
+        net.control({ t: "authOptions", [field]: value });
+        return;
+      }
+      if (net.isController) net.control(badminton ? { t: "authOptions", gameMode: modeSelect.value } : {
+        t: "authOptions",
+        map: mapSelect.value,
+        ...adapter7?.modes ? { gameMode: modeSelect.value } : {},
+        ...difficultySettings ? { difficulty: difficultySelect.value } : {},
+        loadout: el("game-loadout").value
+      });
+    }
+    for (const key of ["map", "mode", "loadout", "difficulty"]) el(`game-${key}`).onchange = optionsChanged;
+    for (const control of document.querySelectorAll("#boxhead-options input,#boxhead-options select")) control.onchange = optionsChanged;
+    el("boxhead-reset-options").onclick = () => {
+      if (boxhead && net.isController && net.authority?.phase !== "playing") net.control({ t: "authOptions", map: mapSelect.value, gameMode: modeSelect.value, difficulty: "beginner", speed: 1, devils: true, collisions: true, damage: true, deathLimit: 10 });
     };
     characterSelect.onchange = () => {
       net.control({ t: "authCharacter", character: Number(characterSelect.value) });
@@ -41482,6 +41781,11 @@
         const button = row.querySelector("button");
         button.textContent = seat === number ? "\u79BB\u5EA7" : "\u5165\u5EA7";
         button.disabled = !net.connected || !!member && member.id !== net.id;
+        if (!availableSeat(number)) {
+          button.disabled = true;
+          button.textContent = "\u672A\u5F00\u653E";
+          row.querySelector(".who").textContent = "\u5F53\u524D\u6A21\u5F0F\u4E0D\u5F00\u653E\u6B64\u5E2D\u4F4D";
+        }
         row.classList.toggle("mine", seat === number);
         row.classList.toggle("ready", !!member?.ready);
         if (badminton && number === 2 && net.authority && net.authority.options.mode !== "versus") {
@@ -41519,7 +41823,7 @@
       ready2.textContent = mine?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
       ready2.setAttribute("aria-pressed", String(!!mine?.ready));
       const fullscreenReady = el("fullscreen-ready");
-      const hasOpenSeat = Object.entries(net.room.seats).some(([number, id]) => !id && (!badminton || net.authority?.options.mode === "versus" || number === "1"));
+      const hasOpenSeat = Object.entries(net.room.seats).some(([number, id]) => !id && availableSeat(Number(number)));
       fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
       fullscreenReady.textContent = seat ? ready2.textContent : hasOpenSeat ? "\u5165\u5EA7\u5E76\u51C6\u5907" : "\u5E2D\u4F4D\u5DF2\u6EE1";
       fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
@@ -41548,9 +41852,14 @@
       if (adapter7?.modes) {
         modeSelect.value = net.room.auth?.options?.gameMode || adapter7.modes[0].id;
         const mode = adapter7.modes.find((item) => item.id === modeSelect.value);
-        el("mode-note").textContent = `${mode?.description || ""} \u81F3\u5C11\u4E24\u4EBA\u5165\u5EA7\uFF0C\u5168\u5458\u51C6\u5907\u5F00\u5C40\uFF1B\u7ED3\u675F 3 \u79D2\u540E\u81EA\u52A8\u7EED\u5C40\u3002`;
+        el("mode-note").textContent = `${mode?.description || ""} ${mode?.minPlayers === 1 ? "P1" : "\u81F3\u5C11\u4E24\u4EBA\u5165\u5EA7\uFF0C\u5168\u5458"}\u51C6\u5907\u5F00\u5C40\uFF1B\u7ED3\u675F 3 \u79D2\u540E\u81EA\u52A8\u7EED\u5C40\u3002`;
+        if (boxhead) el("host-line").textContent = net.isController ? "\u4F60\u53EF\u9009\u62E9\u5730\u56FE\u3001\u6A21\u5F0F\u548C\u96BE\u5EA6\uFF1B\u5355\u4EBA\u6A21\u5F0F\u53EA\u5F00\u653EP1" : "\u623F\u95F4\u7BA1\u7406\u8005\u53EF\u9009\u5730\u56FE\u3001\u6A21\u5F0F\u548C\u96BE\u5EA6\uFF1B\u4EBA\u7269\u7531\u672C\u4EBA\u9009\u62E9";
+        for (const option of modeSelect.options) {
+          const config = adapter7.modes.find((m) => m.id === option.value);
+          option.disabled = !!config?.maxPlayers && Object.entries(net.room.seats).some(([seat2, id]) => !!id && Number(seat2) > config.maxPlayers);
+        }
         const playingKill = bomb2 && state && "gameId" in state && state.mode === "kill";
-        el("attack-button-text").textContent = playingKill ? "\u4F7F\u7528\u6B66\u5668" : "\u653E\u70B8\u5F39";
+        el("attack-button-text").textContent = boxhead ? "\u5C04\u51FB" : playingKill ? "\u4F7F\u7528\u6B66\u5668" : "\u653E\u70B8\u5F39";
         el("controls-guide").textContent = playingKill ? "\u65B9\u5411\u952E / WASD \u79FB\u52A8\uFF1B\u7A7A\u683C / J / Shift \u4F7F\u7528\u5F53\u524D\u6B66\u5668\uFF1B\u57FA\u7840\u9524\u5B50\u53EF\u53CD\u590D\u4F7F\u7528\u3002" : adapter7.controls;
         const player = bomb2 && state && "gameId" in state ? state.players.find((p) => p.seat === seat) : null;
         if (player) {
@@ -41563,13 +41872,44 @@
       modeSelect.disabled = mapSelect.disabled;
       el("game-loadout").disabled = mapSelect.disabled;
       difficultySelect.disabled = mapSelect.disabled;
-      if (bombSettings) {
+      if (boxhead && state && "gameId" in state) {
+        const settings = state.options, deathmatch = state.mode === "deathmatch", locked = !net.isController || state.phase === "playing";
+        el("boxhead-speed").value = String(settings.speed);
+        el("boxhead-death-limit").value = String(settings.deathLimit);
+        el("boxhead-death-limit-label").hidden = !deathmatch;
+        for (const key of ["devils", "collisions", "damage"]) {
+          const control = el("boxhead-" + key);
+          control.checked = settings[key];
+          control.disabled = locked || deathmatch && key === "damage";
+        }
+        for (const key of ["speed", "death-limit"]) el("boxhead-" + key).disabled = locked;
+        el("boxhead-reset-options").disabled = locked;
+        if (deathmatch) el("score-line").textContent = state.players.map((p) => `P${p.seat} \u5269\u4F59 ${Math.max(0, settings.deathLimit - p.deaths)} \u6B21`).join("\u3000");
+        else el("score-line").textContent = "";
+        const fullPause = el("fullscreen-pause");
+        fullPause.disabled = !net.connected || !seat || state.phase === "waiting";
+        fullPause.textContent = state.paused || state.phase === "finished" ? "\u8FD4\u56DE\u51C6\u5907" : "\u6682\u505C";
+        if (state.paused) {
+          fullscreenReady.textContent = "\u7EE7\u7EED";
+          fullscreenReady.disabled = !net.connected || !seat;
+        }
+        const custom = Object.entries(bindings).map(([role, code]) => `${CONTROL_LABELS[role]} ${keyLabel(code)}`).join("\uFF0C");
+        if (custom) el("controls-guide").textContent = `WASD\uFF0F\u65B9\u5411\u952E\u79FB\u52A8\uFF0C\u7A7A\u683C\u5C04\u51FB\uFF0C\u6570\u5B57\u9009\u67AA\uFF0CP\u6682\u505C\u3002\u989D\u5916\u6309\u952E\u4F18\u5148\uFF1A${custom}`;
+      }
+      if (badminton || boxhead) {
+        const s = state, pauseButton = el("badminton-pause"), menuButton = el("badminton-menu");
+        pauseButton.textContent = s?.paused ? "\u7EE7\u7EED" : "\u6682\u505C";
+        pauseButton.setAttribute("aria-pressed", String(!!s?.paused));
+        pauseButton.disabled = !net.connected || !seat || s?.phase !== "playing";
+        menuButton.disabled = !net.connected || !seat || !s || s.phase === "waiting";
+      }
+      if (characterSettings) {
         const people = state?.players || [];
         const me = people.find((p) => p.seat === seat);
-        if (me?.character) characterSelect.value = String(me.character);
+        if (me?.character) characterSelect.value = String(adapter7?.characterIds ? adapter7.characterIds.indexOf(String(me.character)) + 1 : me.character);
         characterSelect.disabled = !seat || state?.phase === "playing";
-        for (const option of characterSelect.options) option.disabled = people.some((p) => p.seat !== seat && net.room.members.some((m) => m.seat === p.seat) && p.character === Number(option.value));
-        difficultySelect.value = net.room.auth?.options?.difficulty || "normal";
+        for (const option of characterSelect.options) option.disabled = !adapter7?.duplicateCharacters && people.some((p) => p.seat !== seat && net.room.members.some((m) => m.seat === p.seat) && p.character === (adapter7?.characterIds ? adapter7.characterIds[Number(option.value) - 1] : Number(option.value)));
+        difficultySelect.value = net.room.auth?.options?.difficulty || adapter7?.difficulties?.[0]?.id || "normal";
         if (bomb2 && state && "gameId" in state) {
           const p = state.players.find((p2) => p2.seat === seat);
           el("attack-button-text").textContent = p && (p.weapon || p.attack || state.mode === "kill" || state.bombs.some((b) => b.owner === seat && b.kind === "remote")) ? "\u4F7F\u7528\u6B66\u5668" : "\u653E\u70B8\u5F39";
@@ -41578,7 +41918,8 @@
       const nextAt = net.room.auth?.nextRoundAt;
       if (!net.connected) el("round-status").textContent = "\u8FDE\u63A5\u4E2D";
       else if (!badminton) {
-        if (state?.phase === "playing") {
+        if (boxhead && state && "gameId" in state && state.paused) el("round-status").textContent = "\u5DF2\u6682\u505C \xB7 P\u7EE7\u7EED";
+        else if (state?.phase === "playing") {
           const rotation2 = net.room.auth?.mapRotation;
           el("round-status").textContent = "\u6BD4\u8D5B\u8FDB\u884C\u4E2D" + (rotation2 ? ` \xB7 \u672C\u56FE\u7B2C ${Math.min(rotation2.every, rotation2.completed + 1)}/${rotation2.every} \u5C40` : "");
         } else if (state?.phase === "finished" && nextAt) {

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10272b">
   <title>在线联机 - ArcadeOnline</title>
   <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/authority/style.css?v=bomb1-life-map5-20261025">
+  <link rel="stylesheet" href="/authority/style.css?v=functional-options-20261027">
 <link rel="stylesheet" href="/theme.css?v=soft-faces-20261022">
   <script src="/arcade.js"></script>
 </head>
@@ -23,10 +23,12 @@
     <div id="fullscreen-room">
       <div class="fullscreen-tools">
         <button id="fullscreen-ready" class="btn authority-ready" type="button" disabled>准备</button>
+        <button id="fullscreen-pause" class="btn ghost compact" type="button" hidden disabled>暂停</button>
         <button id="exit-fullscreen" class="btn fullscreen-exit" type="button" aria-label="退出全屏" title="退出全屏">×</button>
       </div>
       <section class="stage-column">
         <div id="native-stage"><canvas id="game-canvas" tabindex="0" aria-label="联机游戏画面"></canvas></div>
+        <div id="badminton-actions" class="badminton-actions" hidden><button id="badminton-pause" class="btn ghost compact" type="button" disabled>暂停</button><button id="badminton-menu" class="btn ghost compact" type="button" disabled>返回准备</button></div>
         <div class="stage-caption"><span id="controls-guide">WASD / 方向键移动，空格 / 回车攻击。躲开爆炸，收集道具。</span><div class="sound-controls"><button id="sound-toggle" class="topbar-action" type="button" aria-pressed="true">音效：开</button><label for="sound-volume">音量 <input id="sound-volume" type="range" min="0" max="100" value="24"><span id="sound-volume-value">24%</span></label></div></div>
         <p id="weapon-status" class="weapon-status" aria-live="polite">空格 / 回车 放炸弹</p>
         <div class="touch-controls" aria-label="触屏控制"><div class="direction-pad"><button id="touch-up" data-key="KeyW" class="up" aria-label="向上">↑</button><button data-key="KeyA" class="left" aria-label="向左">←</button><button id="touch-down" data-key="KeyS" class="down" aria-label="向下">↓</button><button data-key="KeyD" class="right" aria-label="向右">→</button></div><div class="action-pad"><button id="attack-button" data-key="Space" class="bomb-button"><span id="attack-button-text">放炸弹</span></button><button id="alt-button" data-key="KeyK" class="bomb-button" hidden>副操作</button></div></div>
@@ -41,6 +43,8 @@
           <button id="start-game" class="btn authority-ready" disabled>准备</button>
           <p id="mode-note" class="native-note">至少两人入座，全员准备后自动开始。结束 3 秒后自动开下一局；取消准备可退出下一局。</p>
           <p id="score-line" class="native-note"></p>
+          <div id="boxhead-options" class="round-options" hidden><label>速度<select id="boxhead-speed"><option value="0.5">慢速</option><option value="1" selected>正常</option><option value="2">快速</option></select></label><label id="boxhead-death-limit-label" hidden>每人死亡上限<select id="boxhead-death-limit"><option value="5">5 次</option><option value="10" selected>10 次</option><option value="20">20 次</option><option value="50">50 次</option></select></label><label><input id="boxhead-devils" type="checkbox" checked> 恶魔</label><label title="关闭后可穿过人物和可破坏物，地图墙壁仍然阻挡"><input id="boxhead-collisions" type="checkbox" checked> 移动时实体碰撞</label><label title="关闭后仍会受到僵尸近战和恶魔火球伤害；死亡竞赛强制开启"><input id="boxhead-damage" type="checkbox" checked> 玩家枪弹／爆炸伤害</label><button id="boxhead-reset-options" class="btn ghost compact" type="button">恢复默认选项</button></div>
+          <details id="boxhead-controls" class="native-note" hidden><summary>个人额外按键</summary><p>点击输入框后按键，退格可清除。仅保存于当前浏览器；WASD／方向键、空格、回车、数字和P始终保留。</p><div id="boxhead-binding-fields" class="round-options"></div><button id="boxhead-reset-controls" class="btn ghost compact" type="button">清除额外按键</button><p id="boxhead-binding-note" role="status"></p></details>
           <div id="round-options" class="round-options"><label for="game-mode" hidden>模式<select id="game-mode"></select></label><label for="game-map">地图<select id="game-map"></select></label><label for="game-difficulty" hidden>难度<select id="game-difficulty"><option value="easy">简单</option><option value="normal" selected>普通</option><option value="hard">困难</option></select></label><label for="game-character" hidden>我的角色<select id="game-character"><option value="1">角色 1</option><option value="2">角色 2</option><option value="3">角色 3</option><option value="4">角色 4</option></select></label><label for="game-loadout">开局武器<select id="game-loadout"><option value="none">地图拾取</option><option value="rocket">火箭</option><option value="mine">地雷</option><option value="grenade">手榴弹</option><option value="gas">汽弹</option><option value="ice">冰箭</option><option value="fire">火焰箭</option></select></label></div>
           <p id="host-line" class="native-note"></p>
           <p id="connection-note" class="native-note" role="status">正在连接房间…</p><input id="invite-link" aria-label="邀请链接" readonly hidden>
@@ -54,6 +58,6 @@
     </div>
     <details class="panel authority-metrics"><summary>连接诊断</summary><dl><dt>最近状态更新</dt><dd id="metrics-age">等待同步</dd><dt>本地输入到绘制</dt><dd id="metrics-predict">操作后采样</dd><dt>收发数据</dt><dd id="metrics-bandwidth">—</dd></dl></details>
   </main>
-  <script src="/authority/game.js?v=badminton-solo-20261026"></script>
+  <script src="/authority/game.js?v=functional-options-20261027"></script>
 </body>
 </html>
