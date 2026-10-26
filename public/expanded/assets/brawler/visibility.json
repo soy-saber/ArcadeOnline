@@ -1,0 +1,658 @@
+{
+  "sourceSwfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+  "visibilitySource": "__Packages/World.as constructor",
+  "visibilitySourceSha256": "3ebb36470de3face4188d1ca41f449e520e7287b2e9f0dbd5786be201f601c42",
+  "hiddenPrefixes": [
+    "AI",
+    "Boom",
+    "Fixed",
+    "Killer",
+    "Moving",
+    "SpawnH"
+  ],
+  "removedStagePlacements": [
+    {
+      "spriteId": 726,
+      "name": "Fixed1",
+      "depth": 75
+    },
+    {
+      "spriteId": 726,
+      "name": "Moving2",
+      "depth": 77
+    },
+    {
+      "spriteId": 726,
+      "name": "Moving1",
+      "depth": 79
+    },
+    {
+      "spriteId": 726,
+      "name": "Moving3",
+      "depth": 81
+    },
+    {
+      "spriteId": 726,
+      "name": "Fixed4",
+      "depth": 83
+    },
+    {
+      "spriteId": 726,
+      "name": "Fixed5",
+      "depth": 85
+    },
+    {
+      "spriteId": 726,
+      "name": "Moving4",
+      "depth": 90
+    },
+    {
+      "spriteId": 726,
+      "name": "SpawnH1",
+      "depth": 92
+    },
+    {
+      "spriteId": 726,
+      "name": "SpawnH2",
+      "depth": 94
+    },
+    {
+      "spriteId": 726,
+      "name": "SpawnH3",
+      "depth": 96
+    },
+    {
+      "spriteId": 726,
+      "name": "SpawnH4",
+      "depth": 98
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J1",
+      "depth": 108
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J2",
+      "depth": 110
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J3",
+      "depth": 112
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J4",
+      "depth": 114
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J5",
+      "depth": 116
+    },
+    {
+      "spriteId": 726,
+      "name": "AI_J6",
+      "depth": 118
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed2",
+      "depth": 22
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed3",
+      "depth": 24
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed4",
+      "depth": 26
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed5",
+      "depth": 28
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed6",
+      "depth": 30
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed7",
+      "depth": 32
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed8",
+      "depth": 34
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed9",
+      "depth": 36
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed10",
+      "depth": 38
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed11",
+      "depth": 40
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed1",
+      "depth": 42
+    },
+    {
+      "spriteId": 832,
+      "name": "Moving1",
+      "depth": 44
+    },
+    {
+      "spriteId": 832,
+      "name": "Moving2",
+      "depth": 46
+    },
+    {
+      "spriteId": 832,
+      "name": "Moving3",
+      "depth": 48
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed12",
+      "depth": 50
+    },
+    {
+      "spriteId": 832,
+      "name": "Fixed13",
+      "depth": 52
+    },
+    {
+      "spriteId": 832,
+      "name": "SpawnH1",
+      "depth": 54
+    },
+    {
+      "spriteId": 832,
+      "name": "SpawnH2",
+      "depth": 56
+    },
+    {
+      "spriteId": 832,
+      "name": "SpawnH3",
+      "depth": 58
+    },
+    {
+      "spriteId": 832,
+      "name": "SpawnH4",
+      "depth": 60
+    },
+    {
+      "spriteId": 832,
+      "name": "Boom1",
+      "depth": 62
+    },
+    {
+      "spriteId": 832,
+      "name": "Boom2",
+      "depth": 64
+    },
+    {
+      "spriteId": 873,
+      "name": "Fixed3",
+      "depth": 70
+    },
+    {
+      "spriteId": 873,
+      "name": "Moving2",
+      "depth": 121
+    },
+    {
+      "spriteId": 873,
+      "name": "Fixed1",
+      "depth": 123
+    },
+    {
+      "spriteId": 873,
+      "name": "Killer1",
+      "depth": 125
+    },
+    {
+      "spriteId": 873,
+      "name": "SpawnH1",
+      "depth": 127
+    },
+    {
+      "spriteId": 873,
+      "name": "Fixed2",
+      "depth": 129
+    },
+    {
+      "spriteId": 873,
+      "name": "SpawnH2",
+      "depth": 131
+    },
+    {
+      "spriteId": 873,
+      "name": "SpawnH3",
+      "depth": 133
+    },
+    {
+      "spriteId": 873,
+      "name": "SpawnH4",
+      "depth": 135
+    },
+    {
+      "spriteId": 873,
+      "name": "Moving1",
+      "depth": 186
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed1",
+      "depth": 18
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed2",
+      "depth": 20
+    },
+    {
+      "spriteId": 886,
+      "name": "Moving1",
+      "depth": 22
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed5",
+      "depth": 24
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed6",
+      "depth": 26
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed3",
+      "depth": 28
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed4",
+      "depth": 30
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed7",
+      "depth": 32
+    },
+    {
+      "spriteId": 886,
+      "name": "Fixed8",
+      "depth": 34
+    },
+    {
+      "spriteId": 886,
+      "name": "SpawnH1",
+      "depth": 44
+    },
+    {
+      "spriteId": 886,
+      "name": "SpawnH3",
+      "depth": 46
+    },
+    {
+      "spriteId": 886,
+      "name": "SpawnH2",
+      "depth": 48
+    },
+    {
+      "spriteId": 886,
+      "name": "SpawnH4",
+      "depth": 50
+    }
+  ],
+  "removedPlacementCallbacks": 62,
+  "preservedNonStageTagsSha256": "597832b53620eb04045e23e4507018525657b2362ec8a0da24a56c0e62ee3eaf",
+  "method": "Read original helper names/frame-aware display-list lifetimes from XML, remove hidden stage placement tags directly from the original SWF binary, and retain only stage frame1 for static export bounds. All non-stage tags and visible first-frame tags preserve their original bytes. Original XML remains the collision/spawn source; no XML recompilation, raster masking or painted-over shapes. This does not restore animated stage timelines.",
+  "retainedExistingBackgroundsAndFighters": true,
+  "stageRasters": [
+    {
+      "id": "Rooftop",
+      "sourceFirstFrameBounds": [
+        148.7,
+        16.75,
+        1026.9,
+        599.15
+      ],
+      "exportSize": [
+        879,
+        585
+      ],
+      "crop": [
+        0,
+        2,
+        879,
+        585
+      ],
+      "rasterBounds": [
+        148,
+        16,
+        1027,
+        599
+      ]
+    },
+    {
+      "id": "Mogadishu",
+      "sourceFirstFrameBounds": [
+        -1235.85,
+        -96.1,
+        1955.95,
+        1122.8
+      ],
+      "exportSize": [
+        3192,
+        1219
+      ],
+      "crop": [
+        0,
+        0,
+        3192,
+        1219
+      ],
+      "rasterBounds": [
+        -1236,
+        -97,
+        1956,
+        1122
+      ]
+    },
+    {
+      "id": "B52",
+      "sourceFirstFrameBounds": [
+        -3697.5798066499997,
+        -78.15,
+        1296.9685741500004,
+        807.61457625
+      ],
+      "exportSize": [
+        7502,
+        898
+      ],
+      "crop": [
+        4,
+        5,
+        5000,
+        892
+      ],
+      "rasterBounds": [
+        -3698,
+        -79,
+        1298,
+        808
+      ]
+    },
+    {
+      "id": "Space",
+      "sourceFirstFrameBounds": [
+        -674.2074020340001,
+        -224.8,
+        737.0,
+        507.85
+      ],
+      "exportSize": [
+        1412,
+        733
+      ],
+      "crop": [
+        3,
+        0,
+        1412,
+        733
+      ],
+      "rasterBounds": [
+        -675,
+        -225,
+        734,
+        508
+      ]
+    }
+  ],
+  "rasterRegistration": "Crop first-frame transparent export padding (nested animation bounds may include other frames); draw at natural pixel size anchored to floor(original first-frame visible vector bounds). Raster/vector edge rounding is not a Flash pixel-equivalence claim.",
+  "exports": {
+    "AuberginePlayer-1.png": {
+      "sha256": "6ba58b4aa988651ef47a451b1032b9345935325f2028ef9de219b78b53ea4c67",
+      "size": [
+        26,
+        33
+      ]
+    },
+    "AuberginePlayer-2.png": {
+      "sha256": "a8e51f48d06a194963612417b894a1ce6734f4577ebaadd2488e5e9e48991d8f",
+      "size": [
+        26,
+        33
+      ]
+    },
+    "AuberginePlayer-3.png": {
+      "sha256": "cb0c0c6fa683413376e5b7336c3f46cad8f41381c936aa296ce9d449cf9cf50f",
+      "size": [
+        26,
+        31
+      ]
+    },
+    "AuberginePlayer-4.png": {
+      "sha256": "cb0c0c6fa683413376e5b7336c3f46cad8f41381c936aa296ce9d449cf9cf50f",
+      "size": [
+        26,
+        31
+      ]
+    },
+    "B52.png": {
+      "sha256": "0e79093c12e7745001834017b02dcd15d14d4da941aca69a7da575ee7b7b5e23",
+      "size": [
+        4996,
+        887
+      ]
+    },
+    "B52_Background.png": {
+      "sha256": "d57fb1e3e2d4375376fd8d62cb7ce5dc2cbbeaa02ad2227ab425873b527d8d39",
+      "size": [
+        1000,
+        538
+      ]
+    },
+    "CoffeePlayer-1.png": {
+      "sha256": "970dc69273f651420d341067423f3c023a492b854eaead8b4ddd5c9215906595",
+      "size": [
+        27,
+        28
+      ]
+    },
+    "CoffeePlayer-2.png": {
+      "sha256": "7b534ceef1d0ebbeda6ef83dc57b25aeac536020fb244d0471f92f5bd392f96b",
+      "size": [
+        27,
+        28
+      ]
+    },
+    "CoffeePlayer-3.png": {
+      "sha256": "9053a6793d53d30f1eb8f7b79e1dbe89168f8e12fcf38d763782449106288fa6",
+      "size": [
+        27,
+        26
+      ]
+    },
+    "CoffeePlayer-4.png": {
+      "sha256": "9053a6793d53d30f1eb8f7b79e1dbe89168f8e12fcf38d763782449106288fa6",
+      "size": [
+        27,
+        26
+      ]
+    },
+    "DefaultPlayer-1.png": {
+      "sha256": "1eec0d8577282293ee03cee01b0bab1ef3cb9e760d6540ad09855c30fab0822f",
+      "size": [
+        26,
+        28
+      ]
+    },
+    "DefaultPlayer-2.png": {
+      "sha256": "e54c6fdbd0187affa8ee9d5f63968bbe2a851ef8a6cd4f550743600c53125f44",
+      "size": [
+        26,
+        28
+      ]
+    },
+    "DefaultPlayer-3.png": {
+      "sha256": "cb8f6627c7ca36d22e4830daccf366962c58b7c2eec8af0469e0e75612c8f4c2",
+      "size": [
+        26,
+        26
+      ]
+    },
+    "DefaultPlayer-4.png": {
+      "sha256": "cb8f6627c7ca36d22e4830daccf366962c58b7c2eec8af0469e0e75612c8f4c2",
+      "size": [
+        26,
+        26
+      ]
+    },
+    "Mogadishu.png": {
+      "sha256": "6c03e5ae3abe2ddbdfd11a03952f24b308cb2e1992dad569e968efcdfc28df59",
+      "size": [
+        3192,
+        1219
+      ]
+    },
+    "Mogadishu_Background.png": {
+      "sha256": "541466b66d3430abb03bd5dba15cf2ff34b56bd0f5f8ce487aeed872b7cde5a4",
+      "size": [
+        3748,
+        534
+      ]
+    },
+    "PeachPlayer-1.png": {
+      "sha256": "9ba32679f43cc51c8f1bb9e8d60955f03aaeb9e15f468d27ca5673adef85f2c8",
+      "size": [
+        27,
+        30
+      ]
+    },
+    "PeachPlayer-2.png": {
+      "sha256": "e621db4db322504bfff260b77aa7ad8f9a94918f9d6165fc0b9279bf0b0dc423",
+      "size": [
+        27,
+        30
+      ]
+    },
+    "PeachPlayer-3.png": {
+      "sha256": "5a4b913a8f47709248ef32566ac37ddd9ff1aed84a4657c86376d674d398ccfb",
+      "size": [
+        27,
+        28
+      ]
+    },
+    "PeachPlayer-4.png": {
+      "sha256": "5a4b913a8f47709248ef32566ac37ddd9ff1aed84a4657c86376d674d398ccfb",
+      "size": [
+        27,
+        28
+      ]
+    },
+    "Rooftop.png": {
+      "sha256": "ce5827cf0ec36f7af51e3e42cafb2a64b14013a1531c1292ff1834c1dfb948ac",
+      "size": [
+        879,
+        583
+      ]
+    },
+    "Rooftop_Background.png": {
+      "sha256": "bae9a09d5a1e1c19e07e6abe19312df1a3e95c49b4ef8ebc922fd78739f4da0a",
+      "size": [
+        1288,
+        638
+      ]
+    },
+    "SBLPlayer-1.png": {
+      "sha256": "3e9c7dcb66021b88a4bfe2ee2f9457428b0a659650b9ff2ee697f41d2acf79a8",
+      "size": [
+        26,
+        32
+      ]
+    },
+    "SBLPlayer-2.png": {
+      "sha256": "b181d32a3a8a5038d065b1170e09e67dcacece47e5872b1c35b47e6cd0a3253d",
+      "size": [
+        26,
+        32
+      ]
+    },
+    "SBLPlayer-3.png": {
+      "sha256": "251975bf70700bb24cd43345959b7793a2373d35f335718bca8882b7da6a7858",
+      "size": [
+        26,
+        30
+      ]
+    },
+    "SBLPlayer-4.png": {
+      "sha256": "251975bf70700bb24cd43345959b7793a2373d35f335718bca8882b7da6a7858",
+      "size": [
+        26,
+        30
+      ]
+    },
+    "Space.png": {
+      "sha256": "df6a60c8c2b2d87c310a71228fc051ab5504c04976c2463fa9b2a47fe5c70fdf",
+      "size": [
+        1409,
+        733
+      ]
+    },
+    "Space_Background.png": {
+      "sha256": "cb7142aa2f82cf0a4e156bb58390c22690f4f60997c7d71e01a9f9f630f37706",
+      "size": [
+        2771,
+        2771
+      ]
+    },
+    "TrashPlayer-1.png": {
+      "sha256": "61c3bdfc10c7d9d57dd81c5ac2808aabe5bd1477b363c90da2c24d76c1ce9730",
+      "size": [
+        26,
+        37
+      ]
+    },
+    "TrashPlayer-2.png": {
+      "sha256": "9046a5471ba69acdf5124f1a21809dc2ba6c830870eca45aecbdff965ee67a47",
+      "size": [
+        26,
+        37
+      ]
+    },
+    "TrashPlayer-3.png": {
+      "sha256": "5a4a8f54be8f45ab6b876c4695f50d1243310d4f98c9b9333ea630f552cebfeb",
+      "size": [
+        26,
+        35
+      ]
+    },
+    "TrashPlayer-4.png": {
+      "sha256": "5a4a8f54be8f45ab6b876c4695f50d1243310d4f98c9b9333ea630f552cebfeb",
+      "size": [
+        26,
+        35
+      ]
+    }
+  }
+}

@@ -1,8 +1,8 @@
 'use strict';
 const fs=require('fs'),path=require('path'),assert=require('assert/strict'),{spawn}=require('child_process'),puppeteer=require('puppeteer-core');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/authority-keyboard-e2e'),port=45000+Math.floor(Math.random()*1000),base=`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/authority-keyboard-e2e'),port=45000+Math.floor(Math.random()*1000),base=process.env.KEYBOARD_BASE_URL||`http://127.0.0.1:${port}`;fs.mkdirSync(out,{recursive:true});
 const errors=[],results=[],wait=ms=>new Promise(r=>setTimeout(r,ms));let browser;
-const server=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe']});server.stderr.on('data',d=>errors.push(d.toString()));
+const server=process.env.KEYBOARD_BASE_URL?null:spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe']});server?.stderr.on('data',d=>errors.push(d.toString()));
 const pairs=[['KeyW','ArrowUp','up',1],['KeyA','ArrowLeft','left',0],['KeyS','ArrowDown','down',3],['KeyD','ArrowRight','right',2]];
 const motion=(packet,game,name,dir)=>game==='3881-server'?packet.input.dir===dir:game==='46923-server'&&(name==='up'||name==='down')?true:packet.input[name]===true;
 const neutral=(packet,game)=>game==='3881-server'?packet.input.dir===-1:!packet.input.left&&!packet.input.right&&!packet.input.up&&!packet.input.down;
@@ -40,5 +40,5 @@ async function key(page,code,down){await page.keyboard[down?'down':'up'](code);c
   const last=await a.evaluate(()=>window.__keyPackets.at(-1));await b.waitForFunction(seq=>window.__authorityTest.authority.ack[0]>=seq,{},last.input.seq);
   const details={game:game.id,checks,serverAcknowledgedSequence:last.input.seq,formFocusRelease:true,typingDoesNotMoveGame:true};results.push(details);await a.screenshot({path:path.join(out,game.id+'.png'),fullPage:true});console.log('WASD/arrow alternatives verified: '+game.id);for(const context of contexts)await context.close();
  }
- assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),games:results,errors},null,2));
-})().catch(async e=>{console.error(e,errors);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{console.error(JSON.stringify(await p.evaluate(()=>({url:location.href,phase:window.__authorityTest?.authority?.phase,tick:window.__authorityTest?.authority?.tick,packets:window.__keyPackets?.slice(-10)}))));await p.screenshot({path:path.join(out,'failure.png')});}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();});
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),base,games:results,errors},null,2));
+})().catch(async e=>{console.error(e,errors);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{console.error(JSON.stringify(await p.evaluate(()=>({url:location.href,phase:window.__authorityTest?.authority?.phase,tick:window.__authorityTest?.authority?.tick,packets:window.__keyPackets?.slice(-10)}))));await p.screenshot({path:path.join(out,'failure.png')});}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

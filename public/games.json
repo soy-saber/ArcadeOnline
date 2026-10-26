@@ -94,7 +94,7 @@
       {
         "seat": 1,
         "label": "P1",
-        "hint": "A/D ? ?/? ?? ? W/? ?? ? S/? ??",
+        "hint": "A/D 或 ←/→ 移动；W/↑ 跳跃；S/↓ 发球／挥拍；P 暂停",
         "keys": [
           "KeyA",
           "KeyD",
@@ -109,7 +109,7 @@
       {
         "seat": 2,
         "label": "P2",
-        "hint": "A/D ? ?/? ?? ? W/? ?? ? S/? ??",
+        "hint": "A/D 或 ←/→ 移动；W/↑ 跳跃；S/↓ 发球／挥拍；P 暂停",
         "keys": [
           "ArrowLeft",
           "ArrowRight",

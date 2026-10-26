@@ -1,0 +1,2214 @@
+{
+  "at": "2026-10-26T18:27:16.800Z",
+  "base": "http://127.0.0.1:58463",
+  "normalInputOnly": true,
+  "brawler": [
+    {
+      "id": "Rooftop",
+      "platforms": 7,
+      "players": [
+        [
+          1,
+          372.25,
+          251.05
+        ],
+        [
+          2,
+          229.2,
+          251.05
+        ]
+      ],
+      "drawn": {
+        "images": {
+          "Rooftop_Background.png": {
+            "width": 1288,
+            "height": 638
+          },
+          "Rooftop.png": {
+            "width": 879,
+            "height": 583
+          },
+          "DefaultPlayer-3.png": {
+            "width": 26,
+            "height": 26
+          },
+          "CoffeePlayer-3.png": {
+            "width": 27,
+            "height": 26
+          }
+        },
+        "frames": {},
+        "layers": []
+      }
+    },
+    {
+      "id": "Mogadishu",
+      "platforms": 16,
+      "players": [
+        [
+          1,
+          -113.9,
+          88.75
+        ],
+        [
+          2,
+          477.5,
+          109.1
+        ]
+      ],
+      "drawn": {
+        "images": {
+          "DefaultPlayer-3.png": {
+            "width": 26,
+            "height": 26
+          },
+          "CoffeePlayer-3.png": {
+            "width": 27,
+            "height": 26
+          },
+          "Mogadishu_Background.png": {
+            "width": 3748,
+            "height": 534
+          },
+          "Mogadishu.png": {
+            "width": 3192,
+            "height": 1219
+          }
+        },
+        "frames": {},
+        "layers": []
+      }
+    },
+    {
+      "id": "B52",
+      "platforms": 5,
+      "players": [
+        [
+          1,
+          362.25,
+          9.75
+        ],
+        [
+          2,
+          467.2,
+          9.75
+        ]
+      ],
+      "drawn": {
+        "images": {
+          "DefaultPlayer-3.png": {
+            "width": 26,
+            "height": 26
+          },
+          "CoffeePlayer-3.png": {
+            "width": 27,
+            "height": 26
+          },
+          "B52_Background.png": {
+            "width": 1000,
+            "height": 538
+          },
+          "B52.png": {
+            "width": 4996,
+            "height": 887
+          }
+        },
+        "frames": {},
+        "layers": []
+      }
+    },
+    {
+      "id": "Space",
+      "platforms": 9,
+      "players": [
+        [
+          1,
+          -211.55,
+          154.55
+        ],
+        [
+          2,
+          -588.25,
+          271.15
+        ]
+      ],
+      "drawn": {
+        "images": {
+          "DefaultPlayer-3.png": {
+            "width": 26,
+            "height": 26
+          },
+          "CoffeePlayer-3.png": {
+            "width": 27,
+            "height": 26
+          },
+          "Space_Background.png": {
+            "width": 2771,
+            "height": 2771
+          },
+          "Space.png": {
+            "width": 1409,
+            "height": 733
+          }
+        },
+        "frames": {},
+        "layers": []
+      }
+    }
+  ],
+  "forest": [
+    {
+      "id": "forest_01",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pusher_block0000": 24,
+          "lever_base0000": 12,
+          "lever_stick0000": 12,
+          "BarCenter0000": 24,
+          "movingbox0000": 12
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "movingbox0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_02",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pusher_block0000": 24,
+          "BarCenter0000": 12,
+          "hanging_platform0000": 12
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "hanging_platform0000",
+          "hanging_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_03",
+      "wind": 2,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 18,
+          "wind_base_light_on0000": 18,
+          "wind_effect0000": 18
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000",
+          "wind_effect0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_04",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 1,
+          "lever_stick0000": 1,
+          "pusher_block0000": 1,
+          "BarCenter0000": 2,
+          "movingbox0000": 1,
+          "pulley_platform0000": 2
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "movingbox0000",
+          "pulley_platform0000",
+          "pulley_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_05",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "BarCenter0000": 15,
+          "lever_base0000": 15,
+          "lever_stick0000": 15,
+          "pulley_platform0000": 10
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "BarCenter0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "pulley_platform0000",
+          "pulley_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_06",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {},
+        "layers": []
+      }
+    },
+    {
+      "id": "forest_07",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "BarCenter0000": 25,
+          "pusher_block0000": 20,
+          "lever_base0000": 5,
+          "lever_stick0000": 5,
+          "ball0000": 15
+        },
+        "layers": [
+          "character",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "ball0000",
+          "ball0000",
+          "ball0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_08",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pusher_block0000": 8,
+          "lever_base0000": 8,
+          "lever_stick0000": 8,
+          "BarCenter0000": 16,
+          "ball0000": 8
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "ball0000",
+          "ball0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_09",
+      "wind": 1,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 8,
+          "wind_base_light_on0000": 8,
+          "lever_base0000": 8,
+          "lever_stick0000": 8,
+          "wind_effect0000": 8
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_10",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 2,
+          "lever_stick0000": 2,
+          "BarCenter0000": 2
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_11",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 6,
+          "lever_stick0000": 6,
+          "pusher_block0000": 3,
+          "BarCenter0000": 9
+        },
+        "layers": [
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_12",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "hanging_platform0000": 15
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "hanging_platform0000",
+          "hanging_platform0000",
+          "hanging_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_13",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 25,
+          "lever_stick0000": 25,
+          "pusher_block0000": 10,
+          "movingbox0000": 20,
+          "BarCenter0000": 30
+        },
+        "layers": [
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "movingbox0000",
+          "movingbox0000",
+          "movingbox0000",
+          "movingbox0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_14",
+      "wind": 1,
+      "roman": 1,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 7,
+          "wind_base_light_on0000": 7,
+          "movingbox0000": 7,
+          "roman_base0000": 7,
+          "roman_bar0000": 14,
+          "roman_end0000": 14,
+          "wind_effect0000": 7,
+          "roman_center0000": 7
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "movingbox0000",
+          "roman_base0000",
+          "roman_bar0000",
+          "roman_bar0000",
+          "roman_end0000",
+          "roman_end0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000",
+          "roman_center0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_15",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "BarCenter0000": 18,
+          "pusher_block0000": 8,
+          "lever_base0000": 8,
+          "lever_stick0000": 8
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_16",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 10,
+          "lever_stick0000": 10,
+          "BarCenter0000": 10
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_17",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 20,
+          "lever_stick0000": 20,
+          "BarCenter0000": 44
+        },
+        "layers": [
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_18",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "lever_base0000": 6,
+          "lever_stick0000": 6,
+          "pusher_block0000": 6,
+          "BarCenter0000": 15
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_19",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "ball0000": 3,
+          "pusher_block0000": 12,
+          "BarCenter0000": 18,
+          "hanging_platform0000": 6
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "ball0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "hanging_platform0000",
+          "hanging_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_20",
+      "wind": 1,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pusher_block0000": 42,
+          "BarCenter0000": 56,
+          "ball0000": 21,
+          "wind_base0000": 7,
+          "wind_base_light_off0000": 7,
+          "lever_base0000": 14,
+          "lever_stick0000": 14
+        },
+        "layers": [
+          "character",
+          "pusher_block0000",
+          "BarCenter0000",
+          "ball0000",
+          "pusher_block0000",
+          "ball0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "ball0000",
+          "BarCenter0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_21",
+      "wind": 3,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "movingbox0000": 7,
+          "lever_base0000": 21,
+          "lever_stick0000": 21,
+          "wind_base0000": 21,
+          "wind_base_light_off0000": 21,
+          "pulley_platform0000": 14
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "movingbox0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "pulley_platform0000",
+          "pulley_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_22",
+      "wind": 5,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 40,
+          "wind_base_light_on0000": 40,
+          "BarCenter0000": 40,
+          "pusher_block0000": 16,
+          "wind_effect0000": 40
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_23",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "BarCenter0000": 15,
+          "pusher_block0000": 10,
+          "lever_base0000": 5,
+          "lever_stick0000": 5
+        },
+        "layers": [
+          "character",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_24",
+      "wind": 0,
+      "roman": 2,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "movingbox0000": 6,
+          "BarCenter0000": 6,
+          "pusher_block0000": 6,
+          "pulley_platform0000": 12,
+          "roman_base0000": 12,
+          "roman_bar0000": 24,
+          "roman_end0000": 24,
+          "roman_center0000": 12
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "movingbox0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pulley_platform0000",
+          "roman_base0000",
+          "roman_bar0000",
+          "roman_bar0000",
+          "roman_end0000",
+          "roman_end0000",
+          "roman_base0000",
+          "roman_bar0000",
+          "roman_bar0000",
+          "roman_end0000",
+          "roman_end0000",
+          "pulley_platform0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "roman_center0000",
+          "roman_center0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_25",
+      "wind": 1,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 2,
+          "wind_base_light_off0000": 2,
+          "lever_base0000": 4,
+          "lever_stick0000": 4,
+          "pusher_block0000": 2,
+          "BarCenter0000": 4,
+          "hanging_platform0000": 2
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "hanging_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_26",
+      "wind": 5,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 35,
+          "wind_base_light_on0000": 35,
+          "wind_effect0000": 35
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000",
+          "wind_effect0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_27",
+      "wind": 3,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "BarCenter0000": 12,
+          "wind_base0000": 12,
+          "wind_base_light_off0000": 12,
+          "lever_base0000": 8,
+          "lever_stick0000": 8,
+          "pusher_block0000": 4,
+          "ball0000": 4
+        },
+        "layers": [
+          "character",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "pusher_block0000",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "ball0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_28",
+      "wind": 2,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "wind_base0000": 18,
+          "wind_base_light_off0000": 9,
+          "wind_base_light_on0000": 9,
+          "lever_base0000": 36,
+          "lever_stick0000": 36,
+          "BarCenter0000": 18,
+          "wind_effect0000": 9
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_base0000",
+          "wind_base_light_off0000",
+          "wind_base0000",
+          "wind_base_light_on0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "character",
+          "character",
+          "character",
+          "character",
+          "wind_effect0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_29",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "movingbox0000": 6,
+          "BarCenter0000": 24,
+          "pusher_block0000": 12,
+          "lever_base0000": 6,
+          "lever_stick0000": 6,
+          "ball0000": 6,
+          "pulley_platform0000": 12
+        },
+        "layers": [
+          "character",
+          "movingbox0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "ball0000",
+          "pulley_platform0000",
+          "pulley_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_30",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pulley_platform0000": 6,
+          "movingbox0000": 9,
+          "lever_base0000": 3,
+          "lever_stick0000": 3,
+          "pusher_block0000": 6,
+          "BarCenter0000": 9
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "pulley_platform0000",
+          "movingbox0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "movingbox0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "movingbox0000",
+          "pulley_platform0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_31",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "pusher_block0000": 2,
+          "lever_base0000": 2,
+          "lever_stick0000": 2,
+          "BarCenter0000": 3
+        },
+        "layers": [
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "character",
+          "pusher_block0000",
+          "pusher_block0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "lever_base0000",
+          "lever_stick0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "BarCenter0000"
+        ]
+      }
+    },
+    {
+      "id": "forest_32",
+      "wind": 0,
+      "roman": 0,
+      "drawn": {
+        "images": {
+          "TempleHallForest.jpg": {
+            "width": 1366,
+            "height": 768
+          },
+          "TempleAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "GroundAssets.png": {
+            "width": 1024,
+            "height": 2048
+          },
+          "CharAssets.png": {
+            "width": 2048,
+            "height": 2048
+          },
+          "MechAssets.png": {
+            "width": 2048,
+            "height": 2048
+          }
+        },
+        "frames": {
+          "movingbox0000": 1,
+          "pusher_block0000": 2,
+          "BarCenter0000": 2,
+          "ball0000": 1
+        },
+        "layers": [
+          "character",
+          "movingbox0000",
+          "pusher_block0000",
+          "pusher_block0000",
+          "BarCenter0000",
+          "BarCenter0000",
+          "ball0000"
+        ]
+      }
+    }
+  ],
+  "brawlerNormalInput": {
+    "round": 1793039239469,
+    "ack": [
+      8,
+      7,
+      0,
+      0
+    ],
+    "players": [
+      {
+        "seat": 1,
+        "x": 386.746,
+        "y": 254.04995188102754,
+        "vx": 0.25600000000000006,
+        "vy": 0,
+        "alive": true,
+        "damage": 0,
+        "stocks": 3,
+        "facing": 1,
+        "grounded": true,
+        "jumps": 0,
+        "stun": 0,
+        "invincible": 52,
+        "cooldown": 11,
+        "attackFrame": 11,
+        "shield": 100,
+        "guarding": false,
+        "lastAttack": 1,
+        "lastAlt": 0,
+        "upHeld": false,
+        "killedBy": null,
+        "kos": 0,
+        "deaths": 0,
+        "respawn": 0,
+        "combo": 2,
+        "character": 0
+      },
+      {
+        "seat": 2,
+        "x": 229.2,
+        "y": 254.04995188102754,
+        "vx": 0,
+        "vy": 0,
+        "alive": true,
+        "damage": 0,
+        "stocks": 3,
+        "facing": -1,
+        "grounded": true,
+        "jumps": 0,
+        "stun": 0,
+        "invincible": 52,
+        "cooldown": 0,
+        "attackFrame": 0,
+        "shield": 100,
+        "guarding": false,
+        "lastAttack": 0,
+        "lastAlt": 0,
+        "upHeld": false,
+        "killedBy": null,
+        "kos": 0,
+        "deaths": 0,
+        "respawn": 0,
+        "combo": 2,
+        "character": 1
+      }
+    ],
+    "overlay": 0
+  },
+  "windAnimation": {
+    "tick": 177,
+    "drawn": {
+      "images": {
+        "TempleHallForest.jpg": {
+          "width": 1366,
+          "height": 768
+        },
+        "TempleAssets.png": {
+          "width": 1024,
+          "height": 2048
+        },
+        "GroundAssets.png": {
+          "width": 1024,
+          "height": 2048
+        },
+        "CharAssets.png": {
+          "width": 2048,
+          "height": 2048
+        },
+        "MechAssets.png": {
+          "width": 2048,
+          "height": 2048
+        }
+      },
+      "frames": {
+        "wind_base0000": 180,
+        "wind_base_light_on0000": 408,
+        "wind_effect0000": 118,
+        "wind_base0002": 72,
+        "wind_effect0002": 6,
+        "wind_effect0004": 14,
+        "wind_base0001": 90,
+        "wind_effect0005": 12,
+        "wind_base0003": 66,
+        "wind_effect0007": 6,
+        "wind_effect0009": 6,
+        "wind_effect0011": 12,
+        "wind_effect0013": 12,
+        "wind_effect0015": 10,
+        "wind_effect0017": 12,
+        "wind_effect0018": 12,
+        "wind_effect0020": 12,
+        "wind_effect0022": 10,
+        "wind_effect0024": 10,
+        "wind_effect0025": 12,
+        "wind_effect0027": 12,
+        "wind_effect0029": 12,
+        "wind_effect0001": 12,
+        "wind_effect0003": 12,
+        "wind_effect0006": 14,
+        "wind_effect0008": 8,
+        "wind_effect0010": 14,
+        "wind_effect0019": 8,
+        "wind_effect0021": 14,
+        "wind_effect0026": 12,
+        "wind_effect0012": 6,
+        "wind_effect0014": 8,
+        "wind_effect0016": 6,
+        "wind_effect0023": 4,
+        "wind_effect0028": 2
+      },
+      "layers": [
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "character",
+        "wind_base0000",
+        "wind_base_light_on0000",
+        "wind_base0000",
+        "wind_base_light_on0000",
+        "character",
+        "character",
+        "character",
+        "wind_effect0028",
+        "wind_effect0028"
+      ]
+    }
+  },
+  "errors": []
+}

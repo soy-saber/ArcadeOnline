@@ -17,6 +17,7 @@
     "test:badminton:solo:e2e": "node scripts/build-native.cjs && node tests/badminton-solo-e2e.cjs",
     "test:functional:e2e": "node scripts/build-native.cjs && node tests/functional-options-e2e.cjs",
     "test:boxhead:deathmatch:e2e": "node scripts/build-native.cjs && node tests/boxhead-deathmatch-e2e.cjs",
+    "test:display:e2e": "node scripts/build-native.cjs && node tests/expanded-display-repair-e2e.cjs",
     "test:native:e2e": "node tests/native-e2e.cjs",
     "test:deploy": "node --test tests/deploy.test.cjs",
     "test:authority": "node --test tests/authority-protocol.test.cjs tests/authority-engine.test.cjs tests/authority-relay.test.cjs tests/authority-presentation.test.cjs tests/authority-records.test.cjs tests/authority-mechanics.test.cjs tests/original-maps.test.cjs",
