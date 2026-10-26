@@ -41,3 +41,11 @@
 本地 [439项默认测试](tests.log)、[8项原羽毛球及5项部署](legacy-deploy-tests.log)、[21项新模式/原函数/完整运行对照](targeted-tests.log)、类型与构建来源全部通过。[46个缓存导入输出](cached-rebuild.json) 重新运行后逐字节一致，包括42图集、2份元数据与2音频；[来源与像素哈希](source.json) 和 [参考统计](reference-summary.json) 可独立审查。
 
 最终构建 [单人实际过程](local-solo-results.json) 在正常输入下完成人类自然失败/重试、触屏取消与机器人六级挑战，六关均获胜且没有失败重试；六关部分约286秒。见 [六关结束截图](local-robot-six-completed.png)、[全屏](local-robot-fullscreen.png) 与 [人类自然失败](local-human-native-loss.png)。[实际双人回球与自然0:7](local-restoration-results.json)、[按住/替代键/自然7:0/结束延时](local-controls-results.json)、[原人物八帧/注册点/相位恢复](local-characters-results.json)、[球体/网/粒子/音效与恢复](local-physics-results.json) 及 [僵尸四Chrome过程](local-boxhead-four-results.json) 全部通过。部分大记录只保存精简证据并保留原完整采集SHA256，测试源码包含实际断言，未以截图代替过程检查。
+
+`3ab8a50` 已于北京时间2026-10-26 21:43发布至腾讯云，当前 `/opt/arcade-online/releases/20261026134317-693700`，上一版 `/opt/arcade-online/releases/20261026111526-659908`。5397文件发布清单、包与源码构建、服务及健康检查通过；[317项公网文件哈希](public-hashes.json) 匹配固定包。完整路径/包及构建哈希/验证范围见 [发布记录](public-deployment.json)。
+
+公网 [单人真实过程](public-solo-results.json) 全部通过：人类原下手动作、CPU实际回球、自然0:7失败/Retry、触屏取消、暂停和完整恢复；机器人鼠标跟随/持续击球/取消、刷新保留阶段和命令序号、全屏及六关普通输入推进。六关约291秒，零失败重试，第六关7:2取胜，两端原图裁剪/注册点与完整层级断言通过，观战端观察全部六种CPU。见 [六关完成](public-robot-six-completed.png)、[全屏](public-robot-fullscreen.png) 和 [人类失败](public-human-native-loss.png)。公网 [双人回球/自然0:7/观战重开](public-restoration-results.json)、[控制/自然7:0/原结束延时](public-controls-results.json)、[人物帧/相位/全屏](public-characters-results.json)、[碰网/双层球体/拖尾/音效/恢复](public-physics-results.json) 与 [僵尸四人](public-boxhead-four-results.json) 均通过；碰网专项首次正常出手即达到目标，三端分别观察8/8/6个网面帧。
+
+公网测试仪器另做三处修正：单人席位断言等待UI收到实际模式；每帧以Canvas根setTransform重置绘制记录，避免冷加载尚未出现net图时把相邻帧混成一组；暂停恢复等待观战端实际收到更高tick，而非假定固定550ms足够。人类低球出手持续至观察到真实下手动作，替代错误的绝对tick180限制，避免加载/暂停已消耗该窗口。双人回球控制器预先安装正常DOM按键，根据已收快照与最小RTT安排出手，避免看到下降球后切换Chrome标签耗尽窗口。线上游戏构建没有因这些仪器问题改动，碰撞、计分和动画断言未放宽；第一次六关完成但记录器冷加载失败的诊断保留在 [记录](public-driver-diagnostic.log)。
+
+本批真实公网过程来自同一Windows工作机的独立Chrome会话；未新增跨设备长期体验、链路容量或实际TURN中继测量。完整原UI/教学/关卡文字/暂停按钮/胜负淡入与结局影片/胜利粒子/更多音频时点，以及僵尸完整集合/Mapwho/波次/补给等仍按双清单继续，整体goal保持active。

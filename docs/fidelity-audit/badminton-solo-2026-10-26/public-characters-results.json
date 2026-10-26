@@ -1,0 +1,433 @@
+{
+  "at": "2026-10-26T14:07:12.631Z",
+  "base": "https://43.142.142.215",
+  "normalInputOnly": true,
+  "frames": {
+    "p1-normal": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "p1-walkforward": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "p1-walkbackward": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "p1-walkup": [
+      1
+    ],
+    "p2-normal": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "p2-walkforward": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "p2-walkbackward": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "p2-walkup": [
+      1
+    ]
+  },
+  "decode": [
+    {
+      "file": "p1-body-normal.png",
+      "width": 572,
+      "height": 98
+    },
+    {
+      "file": "p1-body-walkbackward.png",
+      "width": 416,
+      "height": 98
+    },
+    {
+      "file": "p1-body-walkforward.png",
+      "width": 416,
+      "height": 98
+    },
+    {
+      "file": "p1-body-walkup.png",
+      "width": 1408,
+      "height": 94
+    },
+    {
+      "file": "p1-body-walkdown.png",
+      "width": 572,
+      "height": 98
+    },
+    {
+      "file": "p2-body-normal.png",
+      "width": 572,
+      "height": 97
+    },
+    {
+      "file": "p2-body-walkforward.png",
+      "width": 416,
+      "height": 97
+    },
+    {
+      "file": "p2-body-walkbackward.png",
+      "width": 416,
+      "height": 97
+    },
+    {
+      "file": "p2-body-walkdown.png",
+      "width": 832,
+      "height": 97
+    },
+    {
+      "file": "p2-body-walkup.png",
+      "width": 26,
+      "height": 75
+    }
+  ],
+  "recoveries": [
+    {
+      "before": {
+        "full": 2,
+        "p": {
+          "jumping": false,
+          "jumps": 0,
+          "motion": "walkforward",
+          "motionAt": 101,
+          "racket": {
+            "frame": 1,
+            "playing": false,
+            "serveFrame": 1,
+            "servePlaying": false,
+            "ready": true,
+            "active": false,
+            "consumed": false,
+            "angle": 0.9028280037455261,
+            "strokes": 0,
+            "strokeAt": -1
+          },
+          "x": 393.25,
+          "y": 376.25,
+          "vy": 119,
+          "swing": 0,
+          "swingHit": false,
+          "servePose": 0,
+          "underhand": 0,
+          "lastJump": 0,
+          "lastHit": 0,
+          "facing": -1
+        }
+      },
+      "after": {
+        "round": 1793023625480,
+        "tick": 122,
+        "phase": "playing",
+        "rally": "serve",
+        "serve": 1,
+        "winner": 0,
+        "score": [
+          0,
+          0
+        ],
+        "players": [
+          {
+            "jumping": false,
+            "jumps": 0,
+            "motion": "normal",
+            "motionAt": 64,
+            "racket": {
+              "frame": 1,
+              "playing": false,
+              "serveFrame": 1,
+              "servePlaying": false,
+              "ready": true,
+              "active": false,
+              "consumed": false,
+              "angle": -2.0489195419941097,
+              "strokes": 0,
+              "strokeAt": -1
+            },
+            "x": 150.45,
+            "y": 376.25,
+            "vy": 122,
+            "swing": 0,
+            "swingHit": false,
+            "servePose": 0,
+            "underhand": 0,
+            "lastJump": 0,
+            "lastHit": 0,
+            "facing": 1
+          },
+          {
+            "jumping": false,
+            "jumps": 0,
+            "motion": "walkforward",
+            "motionAt": 101,
+            "racket": {
+              "frame": 1,
+              "playing": false,
+              "serveFrame": 1,
+              "servePlaying": false,
+              "ready": true,
+              "active": false,
+              "consumed": false,
+              "angle": 0.48038435634225607,
+              "strokes": 0,
+              "strokeAt": -1
+            },
+            "x": 375.55,
+            "y": 376.25,
+            "vy": 122,
+            "swing": 0,
+            "swingHit": false,
+            "servePose": 0,
+            "underhand": 0,
+            "lastJump": 0,
+            "lastHit": 0,
+            "facing": -1
+          }
+        ],
+        "birdie": {
+          "x": 174.25,
+          "y": 346.75,
+          "vx": 0,
+          "vy": 0,
+          "lastHitter": 0,
+          "contactBy": 0,
+          "born": 0,
+          "leftSide": false,
+          "rightSide": false,
+          "topSide": false,
+          "bottomSide": false,
+          "rotation": 90,
+          "speed": 0
+        },
+        "ack": [
+          111,
+          112
+        ],
+        "inputs": [
+          {
+            "seq": 111,
+            "left": false,
+            "right": false,
+            "jump": 0,
+            "hit": 0,
+            "jumpHeld": false,
+            "hitHeld": false,
+            "cancelledJump": 0,
+            "cancelledHit": 0
+          },
+          {
+            "seq": 112,
+            "left": true,
+            "right": false,
+            "jump": 0,
+            "hit": 0,
+            "jumpHeld": false,
+            "hitHeld": false,
+            "cancelledJump": 0,
+            "cancelledHit": 0
+          }
+        ],
+        "pointTicks": 0,
+        "lastPoint": 0,
+        "resetAt": null,
+        "finishAt": null,
+        "lastResetAt": null,
+        "rng": 387475163,
+        "servingSpot": 1,
+        "chance1": null,
+        "particles": [],
+        "nextParticle": 0,
+        "net": {
+          "frame": 1,
+          "playing": false,
+          "hits": 0,
+          "at": -1
+        },
+        "hits": 0,
+        "hitAt": -1,
+        "options": {
+          "mode": "versus"
+        },
+        "level": 1,
+        "paused": false,
+        "cpu": null,
+        "robot": null,
+        "actionAck": [
+          0,
+          0
+        ],
+        "scoreEvents": 0,
+        "scoreAt": -1
+      }
+    }
+  ],
+  "fullscreen": true,
+  "paints": [
+    {
+      "errors": [],
+      "bodyCount": 246,
+      "groupCount": 350,
+      "loaded": {
+        "p2-body-normal.png": [
+          572,
+          97
+        ],
+        "p1-body-normal.png": [
+          572,
+          98
+        ],
+        "p1-body-walkbackward.png": [
+          416,
+          98
+        ],
+        "p1-body-walkforward.png": [
+          416,
+          98
+        ],
+        "p2-body-walkbackward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkforward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkup.png": [
+          26,
+          75
+        ],
+        "p1-body-walkup.png": [
+          1408,
+          94
+        ]
+      }
+    },
+    {
+      "errors": [],
+      "bodyCount": 246,
+      "groupCount": 299,
+      "loaded": {
+        "p2-body-normal.png": [
+          572,
+          97
+        ],
+        "p1-body-normal.png": [
+          572,
+          98
+        ],
+        "p1-body-walkbackward.png": [
+          416,
+          98
+        ],
+        "p1-body-walkforward.png": [
+          416,
+          98
+        ],
+        "p2-body-walkbackward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkforward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkup.png": [
+          26,
+          75
+        ],
+        "p1-body-walkup.png": [
+          1408,
+          94
+        ]
+      }
+    },
+    {
+      "errors": [],
+      "bodyCount": 226,
+      "groupCount": 196,
+      "loaded": {
+        "p2-body-normal.png": [
+          572,
+          97
+        ],
+        "p1-body-normal.png": [
+          572,
+          98
+        ],
+        "p1-body-walkbackward.png": [
+          416,
+          98
+        ],
+        "p1-body-walkforward.png": [
+          416,
+          98
+        ],
+        "p2-body-walkbackward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkforward.png": [
+          416,
+          97
+        ],
+        "p2-body-walkup.png": [
+          26,
+          75
+        ],
+        "p1-body-walkup.png": [
+          1408,
+          94
+        ]
+      }
+    }
+  ],
+  "rawResultSha256": "b594966a205343d5f3fe46567eb056972fc6794a96fff062df88cd3db04e1f75",
+  "method": "Compact record from successful ordinary-input browser run; source driver retains the executable assertions. Raw full local capture is not required to read this record.",
+  "errors": []
+}

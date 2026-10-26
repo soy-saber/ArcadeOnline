@@ -1,0 +1,3 @@
+Physics attempt 1, offset 34
+{"offset":34,"tick":100,"net":{"frame":1,"playing":false,"hits":1,"at":84},"score":[1,0],"birdie":{"x":322.5,"y":376.25,"vx":0.7086704605512709,"vy":0,"lastHitter":2,"contactBy":2,"born":38,"leftSide":false,"rightSide":true,"topSide":false,"bottomSide":true,"rotation":90,"speed":0.7086704605512709},"frames":[[1,2,3,5,6,9,11,12],[1,2,3,5,6,9,11,12],[1,2,3,5,11,12]],"strokeAt":73,"born":38}
+Normal late return, floor/net impact, native net frames/trails/filter registration/depths/rotation, audio and full effect recovery passed in three Chrome clients.

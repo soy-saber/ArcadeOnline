@@ -1,0 +1,79 @@
+Human native underhand, natural CPU return/loss, pause/full recovery, Retry and touch tap cancellation passed.
+Robot campaign 1:0:1:playing natural losses 0 elapsed 1
+Robot campaign 1:1:1:playing natural losses 0 elapsed 5
+Robot campaign 1:2:1:playing natural losses 0 elapsed 10
+Robot campaign 1:3:1:playing natural losses 0 elapsed 17
+Robot campaign 1:4:1:playing natural losses 0 elapsed 23
+Robot campaign 1:4:2:playing natural losses 0 elapsed 31
+Robot campaign 1:5:2:playing natural losses 0 elapsed 34
+Robot campaign 1:6:2:playing natural losses 0 elapsed 40
+Robot campaign 1:6:3:playing natural losses 0 elapsed 47
+Robot campaign 1:7:3:playing natural losses 0 elapsed 52
+Robot campaign 2:0:0:playing natural losses 0 elapsed 53
+Robot campaign 2:1:0:playing natural losses 0 elapsed 58
+Robot campaign 2:2:0:playing natural losses 0 elapsed 64
+Robot campaign 2:3:0:playing natural losses 0 elapsed 69
+Robot campaign 2:4:0:playing natural losses 0 elapsed 75
+Robot campaign 2:5:0:playing natural losses 0 elapsed 81
+Robot campaign 2:6:0:playing natural losses 0 elapsed 86
+Robot campaign 2:7:0:playing natural losses 0 elapsed 92
+Robot campaign 3:0:0:playing natural losses 0 elapsed 93
+Robot campaign 3:1:0:playing natural losses 0 elapsed 102
+Robot campaign 3:2:0:playing natural losses 0 elapsed 106
+Robot campaign 3:3:0:playing natural losses 0 elapsed 113
+Robot campaign 3:4:0:playing natural losses 0 elapsed 116
+Robot campaign 3:5:0:playing natural losses 0 elapsed 120
+Robot campaign 3:6:0:playing natural losses 0 elapsed 125
+Robot campaign 3:7:0:playing natural losses 0 elapsed 130
+Robot campaign 4:0:0:playing natural losses 0 elapsed 132
+Robot campaign 4:1:0:playing natural losses 0 elapsed 135
+Robot campaign 4:2:0:playing natural losses 0 elapsed 139
+Robot campaign 4:3:0:playing natural losses 0 elapsed 143
+Robot campaign 4:4:0:playing natural losses 0 elapsed 147
+Robot campaign 4:5:0:playing natural losses 0 elapsed 152
+Robot campaign 4:6:0:playing natural losses 0 elapsed 156
+Robot campaign 4:7:0:playing natural losses 0 elapsed 160
+Robot campaign 5:0:0:playing natural losses 0 elapsed 161
+Robot campaign 5:1:0:playing natural losses 0 elapsed 169
+Robot campaign 5:1:1:playing natural losses 0 elapsed 177
+Robot campaign 5:2:1:playing natural losses 0 elapsed 181
+Robot campaign 5:3:1:playing natural losses 0 elapsed 187
+Robot campaign 5:3:2:playing natural losses 0 elapsed 195
+Robot campaign 5:4:2:playing natural losses 0 elapsed 198
+Robot campaign 5:4:3:playing natural losses 0 elapsed 204
+Robot campaign 5:5:3:playing natural losses 0 elapsed 210
+Robot campaign 5:5:4:playing natural losses 0 elapsed 215
+Robot campaign 5:6:4:playing natural losses 0 elapsed 219
+Robot campaign 5:6:5:playing natural losses 0 elapsed 226
+Robot campaign 5:6:6:playing natural losses 0 elapsed 232
+Robot campaign 5:7:6:playing natural losses 0 elapsed 235
+Robot campaign 6:0:0:playing natural losses 0 elapsed 236
+Robot campaign 6:1:0:playing natural losses 0 elapsed 241
+Robot campaign 6:2:0:playing natural losses 0 elapsed 247
+Robot campaign 6:3:0:playing natural losses 0 elapsed 256
+Robot campaign 6:3:1:playing natural losses 0 elapsed 269
+Robot campaign 6:3:2:playing natural losses 0 elapsed 276
+Robot campaign 6:4:2:playing natural losses 0 elapsed 280
+Robot campaign 6:5:2:playing natural losses 0 elapsed 285
+Robot campaign 6:6:2:playing natural losses 0 elapsed 292
+Robot campaign 6:7:2:playing natural losses 0 elapsed 296
+Robot campaign 6:7:2:finished natural losses 0 elapsed 298
+node.exe : AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+所在位置 行:2 字符: 504
++ ... tput ('RUN PUBLIC '+$check[0]); & node $check[0] *> $check[1]; if($LA ...
++                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (AssertionError ...strictly equal::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+43 !== 0
+
+    at D:\github repo\ArcadeOnline\tests\badminton-solo-e2e.cjs:60:371
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 43,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

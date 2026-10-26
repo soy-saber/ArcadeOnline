@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "3ab8a50cfb33e2ea6e6c1ad0e16ddbd8470b1e80",
+  "archiveSha256": "4e4b14d3600e72bddc306d1f7003d9c3bfdd9c45431af1a2ed32304ff6e978ef",
+  "bytes": 110325770,
+  "files": 5397,
+  "remoteUpload": "/root/arcade-deploy-20261026-solo-4e4b14d3",
+  "previous": "/opt/arcade-online/releases/20261026111526-659908",
+  "hashes": {
+    "server.js": "9b1c832c9724dad6bc1c7d6b215db67f3946e262eaaf69805fc5e8c77c18c3f1",
+    "public/authority/game.js": "b9b8fd8a285f28bccbec5b35ac01afcbb24ede5782d6ae10f50d046c95252488",
+    "runtime/authority.cjs": "360dd950560409edc1f9a47a7b2df06b757bd0b68d7bcd4599b1c5a43e99c30e",
+    "public/authority-room.html": "d63028b4ed04b99022bfe4c286f121848cbaae8920b9e987c38228c8284d3982"
+  },
+  "current": "/opt/arcade-online/releases/20261026134317-693700",
+  "deployedAt": "2026-10-26T13:43:17Z",
+  "origin": "https://43.142.142.215",
+  "checks": {
+    "pinnedArchive": true,
+    "releaseManifestFiles": 5397,
+    "nativeBuildMatchesSource": true,
+    "servicesActive": [
+      "arcade-online",
+      "caddy",
+      "coturn"
+    ],
+    "servicesEnabled": [
+      "arcade-online",
+      "caddy",
+      "coturn"
+    ],
+    "health": true,
+    "publicFileHashes": 317,
+    "eightGamesAndCoversAndBackground": true,
+    "retiredResources404": true,
+    "temporaryTurnCredentials": true,
+    "wssRoomJoin": true,
+    "localDefaultTests": 439,
+    "originalBadmintonTests": 8,
+    "deploymentTests": 5,
+    "newModeAndOriginalReferenceTests": 21,
+    "cachedRebuildOutputs": 46,
+    "publicSoloHumanLossRetryAndTouchCancel": true,
+    "publicRobotNaturalSixLevels": true,
+    "publicVersusFourThreeChromeSuites": true,
+    "publicBoxheadFourChrome": true
+  },
+  "publicRobotCampaign": {
+    "seconds": 291.283,
+    "naturalLosses": 0,
+    "finalScore": [
+      7,
+      2
+    ]
+  },
+  "scope": "One Windows machine using separate Chrome contexts over public HTTPS/WSS. Normal game input only. Media play calls observed, not subjective audio quality. No new link-capacity, cross-device or TURN-relay measurement. Full original UI/films and remaining Boxhead scope continue."
+}

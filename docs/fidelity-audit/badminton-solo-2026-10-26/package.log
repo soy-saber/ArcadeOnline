@@ -1,0 +1,10 @@
+
+> arcade-online@0.1.0 package:linux
+> node scripts/package-linux.cjs
+
+Native build matches source.
+Release verified (5397 files).
+Native build matches source.
+Linux package: D:\github repo\ArcadeOnline\artifacts\releases\arcade-online-linux.tar.gz
+SHA256: 4e4b14d3600e72bddc306d1f7003d9c3bfdd9c45431af1a2ed32304ff6e978ef
+Size: 105.2 MiB
