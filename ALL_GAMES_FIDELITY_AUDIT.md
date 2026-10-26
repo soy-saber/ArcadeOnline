@@ -1,5 +1,7 @@
 # 全部游戏原作还原检查
 
+2026-10-27 02:33最新公网为 `6e4619a`，目录 `/opt/arcade-online/releases/20261026183329-760017`，包SHA256 `54de997b3e564c8d63188ea86abcfd8b6667432c11bd8c1ea41848701a244753`。357公网文件、四张小人场景/32冰火人图及全部缺失机关组件、正常操作/恢复、八款双Chrome键盘回归均通过。见 [本批发布与限制](docs/fidelity-audit/display-repair-2026-10-27/README.md)。全部八款目标继续active，按 [总清单](ALL_GAMES_REPAIR_PLAN.md) 完成剩余机制与流程，不能据这批显示修复宣称整体完成。
+
 2026-10-27当前用户目标为“修复所有游戏”，覆盖全部八款，按 [总修复清单](ALL_GAMES_REPAIR_PLAN.md) 继续；此前两款阶段目标/usageLimited状态是历史记录。原菜单等外观可简化，全部相应功能及比赛原素材/玩法保留。本批已修小人战斗62个辅助实例泄漏、重复碰撞台和四图静态注册，恢复冰火人24个风机/3个跷跷板的原组件、灯光/动画与层级；463规则/5部署及八款正常键盘回归通过。实际范围、源码依据、现有近似物理及角色/音频/流程等剩余项见 [本批记录](docs/fidelity-audit/display-repair-2026-10-27/README.md)，上线状态以部署记录为准。
 
 2026-10-27 01:48最新公网为 `c0326bc`，目录 `/opt/arcade-online/releases/20261026174855-749470`，包SHA256 `360193560417bc84d1c32cbbe34673cf76b66ce10c8a6820a48cf0ada0f3dbf9`（5441文件/111.9MiB）。317公网哈希、完整功能/改键/暂停/全屏、正常输入死亡竞赛自然五杀/胜场/再开、羽毛球两套三Chrome与僵尸四Chrome回归通过。见 [本批发布证据](docs/fidelity-audit/functional-options-2026-10-27/public-deployment.json) 和 [功能范围/剩余机制](docs/fidelity-audit/functional-options-2026-10-27/README.md)。用户免除原菜单等外观，保留全部相应功能及原比赛素材/玩法要求；旧记录中的原UI视觉阻塞和旧“最新公网”均以本条为准。

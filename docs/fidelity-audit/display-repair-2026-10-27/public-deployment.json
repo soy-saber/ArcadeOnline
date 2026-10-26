@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "6e4619afbfb8404c478cf14f7cb3c2adf2ef200f",
+  "archiveSha256": "54de997b3e564c8d63188ea86abcfd8b6667432c11bd8c1ea41848701a244753",
+  "bytes": 122672867,
+  "files": 5480,
+  "remoteUpload": "/root/arcade-deploy-20261027-display-54de997b",
+  "previous": "/opt/arcade-online/releases/20261026174855-749470",
+  "hashes": {
+    "server.js": "262d0f56df29aa5bd22bff1cdc3e4df7fa5fd8f31eefb942386204b732380eba",
+    "public/authority/game.js": "3248b05c656d0f072c759c6bd9e393cab95ebe43fa9435ae81a77f7052dda17f",
+    "runtime/authority.cjs": "8995c9c8946a1e624f923265c0fcd6f23118826e1e8f30817d587b7544ec753b",
+    "public/authority-room.html": "120cfa9a872675f9dbe158f1a669a3ac9ca7cacd5eda756b24f4151e0fae9115",
+    "public/authority/style.css": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a",
+    "public/games.json": "37e8b4f9f1d4f30a8c5de635c34027eb7a08fa73df46008c70f7b74d3dc7c98e"
+  },
+  "current": "/opt/arcade-online/releases/20261026183329-760017",
+  "deployedAt": "2026-10-26T18:33:29Z",
+  "origin": "https://43.142.142.215",
+  "verifiedAt": "2026-10-26T18:38:23.406208+00:00",
+  "publicHashes": 357,
+  "services": "arcade-online, caddy, coturn active/enabled; health and eight-game assets/WSS checks passed",
+  "normalInputBrowserChecks": {
+    "brawlerMaps": 4,
+    "forestMaps": 32,
+    "windDevices": 24,
+    "romanDevices": 3,
+    "windBaseFrames": 4,
+    "windEffectFrames": 30,
+    "keyboardGames": 8
+  },
+  "limits": "Display component/static stage fixes and ordinary-input regression only. No complete original camera/animated stages/skills/physics/route/audio fidelity claim; all eight-game goal remains active. Same workstation clients, no fresh bandwidth/capacity or actual TURN relay measurement."
+}

@@ -1,0 +1,29 @@
+Authenticated to 43.142.142.215 as root
+arcade-online-linux.tar.gz: OK
+Release verified (5480 files).
+
+[arcade-online] 发布应用文件到 /opt/arcade-online/releases/20261026183329-760017。
+Native build matches source.
+Release verified (5480 files).
+
+added 1 package, and audited 2 packages in 644ms
+
+found 0 vulnerabilities
+
+[arcade-online] 等待服务健康检查 http://127.0.0.1:8000/healthz。
+
+[arcade-online] 服务已就绪。
+
+[arcade-online] 部署完成。
+本机访问:  http://127.0.0.1:8000
+局域网访问: http://10.0.0.17:8000
+日志命令:  bash /root/arcade-deploy-20261027-display-54de997b/release/deploy-linux.sh logs
+/opt/arcade-online/releases/20261026183329-760017
+/opt/arcade-online/releases/20261026174855-749470
+active
+active
+active
+enabled
+enabled
+enabled
+{"status":"ok","rooms":0}
