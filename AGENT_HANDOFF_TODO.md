@@ -1,5 +1,9 @@
 **ArcadeOnline 项目进展与 Agent 交接 TODO**
 
+下一批优先处理已定位的原规则：僵尸非正常速度下回血/尸体/波次等CMain.mFPS计时；原每五连杀/恶魔必掉/死亡竞赛玩家死亡的一次性补给；自然NewWeapon不自动选枪。详细源码差异已写入2026-10-27功能记录，不能把本批选项可操作或五杀通过当作这些机制已还原。
+
+2026-10-27 01:48最新公网为 `c0326bc`，目录 `/opt/arcade-online/releases/20261026174855-749470`，包SHA256 `360193560417bc84d1c32cbbe34673cf76b66ce10c8a6820a48cf0ada0f3dbf9`（5441文件/111.9MiB）。317公网哈希、完整功能/改键/暂停/全屏、正常输入死亡竞赛自然五杀/胜场/再开、羽毛球两套三Chrome与僵尸四Chrome回归通过。见 [本批发布证据](docs/fidelity-audit/functional-options-2026-10-27/public-deployment.json) 和 [功能范围/剩余机制](docs/fidelity-audit/functional-options-2026-10-27/README.md)。用户免除原菜单等外观，保留全部相应功能及原比赛素材/玩法要求；旧记录中的原UI视觉阻塞和旧“最新公网”均以本条为准。
+
 2026-10-27最新用户指示：原菜单等外观无需复刻，完整提供选图/换人物等功能即可。本批已补僵尸三模式/四难度/四人物/原功能选项、补给权重与重现、额外改键、两款暂停/返回准备与全屏功能。463默认单测与真实Chrome UI通过；来源、回归/发布证据和限制见 [功能记录](docs/fidelity-audit/functional-options-2026-10-27/README.md)，线上版本见DEPLOYMENT_STATUS.md。后续继续原玩法机制差异，不再把菜单/HUD字体/教学或结局影片当视觉阻塞；全局集合/Mapwho/复杂AI/完整波次连击升级掉落等仍须核对。当前goal此前返回usageLimited，不能自行改为complete或声称全目标完成。
 
 2026-10-26 21:43最新公网为 `3ab8a50`，目录 `/opt/arcade-online/releases/20261026134317-693700`，上一版 `/opt/arcade-online/releases/20261026111526-659908`。包SHA256 `4e4b14d3600e72bddc306d1f7003d9c3bfdd9c45431af1a2ed32304ff6e978ef`，5397文件/105.2MiB；439默认/8原羽毛球/5部署、317公网哈希、单人自然六关/人类输球重试/触屏取消/暂停恢复/刷新/全屏，四套三Chrome双人和僵尸四人回归通过。[单人/六级CPU记录](docs/fidelity-audit/badminton-solo-2026-10-26/README.md) 已补原角色/AI、根层球拍alpha/滤镜、鼠标机器人和原回调顺序，并更正909cd5c误判的服务第4帧尾部p1Hit/p2Hit，禁止发球方再触自己的球。下一步继续原菜单/选人/教学、原HUD/暂停按钮/关卡文字、胜负淡入/结局影片/胜利粒子与音频时点，并继续僵尸完整集合/Mapwho/波次/补给等双清单。整体goal仍active，不把本批部署或六关通关当作原作全部流程完成。

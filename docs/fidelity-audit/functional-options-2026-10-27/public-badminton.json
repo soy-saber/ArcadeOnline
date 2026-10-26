@@ -1,0 +1,645 @@
+{
+  "evidence": "Compact normal-input browser result. Long arrays/world geometry replaced by counts and SHA256; original result hash identifies the full local capture.",
+  "originalResultSha256": "32cd8a66ccad4d7568c34c8431b31a08bd0f37806c77998c0c2f5c5a855cc20f",
+  "result": {
+    "at": "2026-10-26T17:54:22.836Z",
+    "base": "https://43.142.142.215",
+    "normalInputOnly": true,
+    "returnedHit": true,
+    "finish": {
+      "round": 1793037236989,
+      "tick": 704,
+      "phase": "finished",
+      "rally": "point",
+      "serve": 0,
+      "winner": 2,
+      "score": [
+        0,
+        7
+      ],
+      "players": [
+        {
+          "jumping": false,
+          "jumps": 0,
+          "motion": "normal",
+          "motionAt": 0,
+          "racket": {
+            "frame": 1,
+            "playing": false,
+            "serveFrame": 1,
+            "servePlaying": false,
+            "ready": true,
+            "active": false,
+            "consumed": false,
+            "angle": 1.8434222578071058,
+            "strokes": 0,
+            "strokeAt": -1
+          },
+          "x": 132.85,
+          "y": 376.25,
+          "vy": 704,
+          "swing": 0,
+          "swingHit": false,
+          "servePose": 0,
+          "underhand": 0,
+          "lastJump": 0,
+          "lastHit": 1,
+          "facing": 1
+        },
+        {
+          "jumping": false,
+          "jumps": 0,
+          "motion": "normal",
+          "motionAt": 12,
+          "racket": {
+            "frame": 15,
+            "playing": false,
+            "serveFrame": 1,
+            "servePlaying": false,
+            "ready": true,
+            "active": false,
+            "consumed": false,
+            "angle": 2.4365543702151626,
+            "strokes": 1,
+            "strokeAt": 58
+          },
+          "x": 440.45,
+          "y": 376.25,
+          "vy": 704,
+          "swing": 0,
+          "swingHit": false,
+          "servePose": 0,
+          "underhand": 0,
+          "lastJump": 0,
+          "lastHit": 7,
+          "facing": 1
+        }
+      ],
+      "birdie": {
+        "x": 81.45,
+        "y": 376.25,
+        "vx": -0.7,
+        "vy": -4.385083260452734,
+        "lastHitter": 2,
+        "contactBy": 2,
+        "born": 660,
+        "leftSide": true,
+        "rightSide": false,
+        "topSide": false,
+        "bottomSide": true,
+        "rotation": -176.00712738489358,
+        "speed": 10.989382598243665
+      },
+      "ack": [
+        662,
+        661
+      ],
+      "inputs": [
+        {
+          "seq": 662,
+          "left": false,
+          "right": false,
+          "jump": 0,
+          "hit": 1,
+          "jumpHeld": false,
+          "hitHeld": false,
+          "cancelledJump": 0,
+          "cancelledHit": 0
+        },
+        {
+          "seq": 661,
+          "left": false,
+          "right": false,
+          "jump": 0,
+          "hit": 7,
+          "jumpHeld": false,
+          "hitHeld": false,
+          "cancelledJump": 0,
+          "cancelledHit": 0
+        }
+      ],
+      "pointTicks": 0,
+      "lastPoint": 2,
+      "resetAt": null,
+      "finishAt": null,
+      "lastResetAt": 650,
+      "rng": 3730971310,
+      "servingSpot": 2,
+      "chance1": null,
+      "particles": [
+        {
+          "id": 135,
+          "kind": "ball",
+          "born": 665,
+          "x": 246.35,
+          "y": 315.15,
+          "vx": -1.971802049432429,
+          "vy": 1.5814565557266622,
+          "rotation": -24.06676868442446,
+          "spin": 35.93711752910167,
+          "scale": 0.13345000997551798,
+          "shrink": 0.949669022927992,
+          "width": 0.6
+        },
+        {
+          "id": 141,
+          "kind": "ball",
+          "born": 669,
+          "x": 301.8,
+          "y": 262.55,
+          "vx": 1.5434546201809003,
+          "vy": 1.7029787007081525,
+          "rotation": -161.8659270880744,
+          "spin": 24.555767117999494,
+          "scale": 0.11005356539275281,
+          "shrink": 0.9388955063419416,
+          "width": 0.5
+        }
+      ],
+      "nextParticle": 144,
+      "net": {
+        "frame": 1,
+        "playing": false,
+        "hits": 0,
+        "at": -1
+      },
+      "hits": 8,
+      "hitAt": 660,
+      "options": {
+        "mode": "versus"
+      },
+      "level": 1,
+      "paused": false,
+      "cpu": null,
+      "robot": null,
+      "actionAck": [
+        0,
+        0
+      ],
+      "scoreEvents": 7,
+      "scoreAt": 704
+    },
+    "scores": [
+      {
+        "tick": 114,
+        "score": [
+          0,
+          1
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 213,
+        "score": [
+          0,
+          2
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 311,
+        "score": [
+          0,
+          3
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 408,
+        "score": [
+          0,
+          4
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 506,
+        "score": [
+          0,
+          5
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 605,
+        "score": [
+          0,
+          6
+        ],
+        "lastPoint": 2
+      },
+      {
+        "tick": 704,
+        "score": [
+          0,
+          7
+        ],
+        "lastPoint": 2
+      }
+    ],
+    "watch": {
+      "snapshots": {
+        "count": 376,
+        "sha256": "5e80e8a69c0c92144481700a058e0e1bc932fd9eb2abcba2525ba2ba8d423149",
+        "first": {
+          "round": 1793037236989,
+          "tick": 3,
+          "phase": "playing",
+          "rally": "serve",
+          "serve": 1,
+          "winner": 0,
+          "score": [
+            0,
+            0
+          ],
+          "players": [
+            {
+              "jumping": false,
+              "jumps": 0,
+              "motion": "normal",
+              "motionAt": 0,
+              "racket": {
+                "frame": 1,
+                "playing": false,
+                "serveFrame": 1,
+                "servePlaying": false,
+                "ready": true,
+                "active": false,
+                "consumed": false,
+                "angle": -0.08093863958492875,
+                "strokes": 0,
+                "strokeAt": -1
+              },
+              "x": 132.85,
+              "y": 376.25,
+              "vy": 3,
+              "swing": 0,
+              "swingHit": false,
+              "servePose": 0,
+              "underhand": 0,
+              "lastJump": 0,
+              "lastHit": 0,
+              "facing": 1
+            },
+            {
+              "jumping": false,
+              "jumps": 0,
+              "motion": "normal",
+              "motionAt": 0,
+              "racket": {
+                "frame": 1,
+                "playing": false,
+                "serveFrame": 1,
+                "servePlaying": false,
+                "ready": true,
+                "active": false,
+                "consumed": false,
+                "angle": 2.077348636230454,
+                "strokes": 0,
+                "strokeAt": -1
+              },
+              "x": 416.85,
+              "y": 376.25,
+              "vy": 3,
+              "swing": 0,
+              "swingHit": false,
+              "servePose": 0,
+              "underhand": 0,
+              "lastJump": 0,
+              "lastHit": 0,
+              "facing": -1
+            }
+          ],
+          "birdie": {
+            "x": 156.65,
+            "y": 346.75,
+            "vx": 0,
+            "vy": 0,
+            "lastHitter": 0,
+            "contactBy": 0,
+            "born": 0,
+            "leftSide": false,
+            "rightSide": false,
+            "topSide": false,
+            "bottomSide": false,
+            "rotation": 90,
+            "speed": 0
+          },
+          "ack": [
+            1,
+            1
+          ],
+          "inputs": [
+            {
+              "seq": 1,
+              "left": false,
+              "right": false,
+              "jump": 0,
+              "hit": 0,
+              "jumpHeld": false,
+              "hitHeld": false,
+              "cancelledJump": 0,
+              "cancelledHit": 0
+            },
+            {
+              "seq": 1,
+              "left": false,
+              "right": false,
+              "jump": 0,
+              "hit": 0,
+              "jumpHeld": false,
+              "hitHeld": false,
+              "cancelledJump": 0,
+              "cancelledHit": 0
+            }
+          ],
+          "pointTicks": 0,
+          "lastPoint": 0,
+          "resetAt": null,
+          "finishAt": null,
+          "lastResetAt": null,
+          "rng": 2077957886,
+          "servingSpot": 2,
+          "chance1": null,
+          "particles": [],
+          "nextParticle": 0,
+          "net": {
+            "frame": 1,
+            "playing": false,
+            "hits": 0,
+            "at": -1
+          },
+          "hits": 0,
+          "hitAt": -1,
+          "options": {
+            "mode": "versus"
+          },
+          "level": 1,
+          "paused": false,
+          "cpu": null,
+          "robot": null,
+          "actionAck": [
+            0,
+            0
+          ],
+          "scoreEvents": 0,
+          "scoreAt": -1
+        },
+        "last": {
+          "round": 1793037236989,
+          "tick": 704,
+          "phase": "finished",
+          "rally": "point",
+          "serve": 0,
+          "winner": 2,
+          "score": [
+            0,
+            7
+          ],
+          "players": [
+            {
+              "jumping": false,
+              "jumps": 0,
+              "motion": "normal",
+              "motionAt": 0,
+              "racket": {
+                "frame": 1,
+                "playing": false,
+                "serveFrame": 1,
+                "servePlaying": false,
+                "ready": true,
+                "active": false,
+                "consumed": false,
+                "angle": 1.8434222578071058,
+                "strokes": 0,
+                "strokeAt": -1
+              },
+              "x": 132.85,
+              "y": 376.25,
+              "vy": 704,
+              "swing": 0,
+              "swingHit": false,
+              "servePose": 0,
+              "underhand": 0,
+              "lastJump": 0,
+              "lastHit": 1,
+              "facing": 1
+            },
+            {
+              "jumping": false,
+              "jumps": 0,
+              "motion": "normal",
+              "motionAt": 12,
+              "racket": {
+                "frame": 15,
+                "playing": false,
+                "serveFrame": 1,
+                "servePlaying": false,
+                "ready": true,
+                "active": false,
+                "consumed": false,
+                "angle": 2.4365543702151626,
+                "strokes": 1,
+                "strokeAt": 58
+              },
+              "x": 440.45,
+              "y": 376.25,
+              "vy": 704,
+              "swing": 0,
+              "swingHit": false,
+              "servePose": 0,
+              "underhand": 0,
+              "lastJump": 0,
+              "lastHit": 7,
+              "facing": 1
+            }
+          ],
+          "birdie": {
+            "x": 81.45,
+            "y": 376.25,
+            "vx": -0.7,
+            "vy": -4.385083260452734,
+            "lastHitter": 2,
+            "contactBy": 2,
+            "born": 660,
+            "leftSide": true,
+            "rightSide": false,
+            "topSide": false,
+            "bottomSide": true,
+            "rotation": -176.00712738489358,
+            "speed": 10.989382598243665
+          },
+          "ack": [
+            662,
+            661
+          ],
+          "inputs": [
+            {
+              "seq": 662,
+              "left": false,
+              "right": false,
+              "jump": 0,
+              "hit": 1,
+              "jumpHeld": false,
+              "hitHeld": false,
+              "cancelledJump": 0,
+              "cancelledHit": 0
+            },
+            {
+              "seq": 661,
+              "left": false,
+              "right": false,
+              "jump": 0,
+              "hit": 7,
+              "jumpHeld": false,
+              "hitHeld": false,
+              "cancelledJump": 0,
+              "cancelledHit": 0
+            }
+          ],
+          "pointTicks": 0,
+          "lastPoint": 2,
+          "resetAt": null,
+          "finishAt": null,
+          "lastResetAt": 650,
+          "rng": 3730971310,
+          "servingSpot": 2,
+          "chance1": null,
+          "particles": [
+            {
+              "id": 135,
+              "kind": "ball",
+              "born": 665,
+              "x": 246.35,
+              "y": 315.15,
+              "vx": -1.971802049432429,
+              "vy": 1.5814565557266622,
+              "rotation": -24.06676868442446,
+              "spin": 35.93711752910167,
+              "scale": 0.13345000997551798,
+              "shrink": 0.949669022927992,
+              "width": 0.6
+            },
+            {
+              "id": 141,
+              "kind": "ball",
+              "born": 669,
+              "x": 301.8,
+              "y": 262.55,
+              "vx": 1.5434546201809003,
+              "vy": 1.7029787007081525,
+              "rotation": -161.8659270880744,
+              "spin": 24.555767117999494,
+              "scale": 0.11005356539275281,
+              "shrink": 0.9388955063419416,
+              "width": 0.5
+            }
+          ],
+          "nextParticle": 144,
+          "net": {
+            "frame": 1,
+            "playing": false,
+            "hits": 0,
+            "at": -1
+          },
+          "hits": 8,
+          "hitAt": 660,
+          "options": {
+            "mode": "versus"
+          },
+          "level": 1,
+          "paused": false,
+          "cpu": null,
+          "robot": null,
+          "actionAck": [
+            0,
+            0
+          ],
+          "scoreEvents": 7,
+          "scoreAt": 704
+        }
+      },
+      "request": {
+        "tick": 60,
+        "full": 2,
+        "swing": 12,
+        "swingHit": true,
+        "frame": 4,
+        "ready": false,
+        "score": [
+          0,
+          0
+        ]
+      },
+      "recovery": {
+        "tick": 61,
+        "swing": 11,
+        "swingHit": true,
+        "frame": 5,
+        "ready": false,
+        "score": [
+          0,
+          0
+        ]
+      }
+    },
+    "draws": {
+      "count": 1462,
+      "sha256": "41e3569148dec9dba46fa581ef553cab9d75ae1f414513625fd7bd41a9298d8b",
+      "first": {
+        "file": "p2-racket-swing.png",
+        "seat": 2,
+        "frame": 1,
+        "args": [
+          0,
+          0,
+          181,
+          173,
+          312.35,
+          223,
+          181,
+          173
+        ],
+        "expected": [
+          0,
+          0,
+          181,
+          173,
+          312.35,
+          223,
+          181,
+          173
+        ],
+        "tick": 0
+      },
+      "last": {
+        "file": "p1-racket-swing.png",
+        "seat": 1,
+        "frame": 1,
+        "args": [
+          0,
+          0,
+          205,
+          204,
+          34.55,
+          218.3,
+          205,
+          204
+        ],
+        "expected": [
+          0,
+          0,
+          205,
+          204,
+          34.55,
+          218.3,
+          205,
+          204
+        ],
+        "tick": 704
+      }
+    },
+    "automaticRematch": true,
+    "errors": []
+  }
+}

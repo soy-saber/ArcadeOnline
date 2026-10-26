@@ -1,0 +1,23 @@
+{
+  "evidence": "Compact normal-input browser result. Long arrays/world geometry replaced by counts and SHA256; original result hash identifies the full local capture.",
+  "originalResultSha256": "e4059f04d0c851bf215bf0be54d498ff5e192a423cc3a84bb4a7f0019a6a6896",
+  "result": {
+    "results": [
+      {
+        "game": "50737-server",
+        "seats": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "names": 4,
+        "maps": 18,
+        "full": 15,
+        "delta": 37,
+        "bytes": 1362943
+      }
+    ],
+    "errors": []
+  }
+}

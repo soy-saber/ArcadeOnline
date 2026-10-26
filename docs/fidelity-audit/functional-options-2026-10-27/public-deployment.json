@@ -1,0 +1,34 @@
+{
+  "sourceCommit": "c0326bc20ede2c7b4272ebd88251c855ce49f5dd",
+  "archiveSha256": "360193560417bc84d1c32cbbe34673cf76b66ce10c8a6820a48cf0ada0f3dbf9",
+  "bytes": 117341006,
+  "files": 5441,
+  "remoteUpload": "/root/arcade-deploy-20261027-functional-36019356",
+  "previous": "/opt/arcade-online/releases/20261026134317-693700",
+  "hashes": {
+    "server.js": "262d0f56df29aa5bd22bff1cdc3e4df7fa5fd8f31eefb942386204b732380eba",
+    "public/authority/game.js": "58fc4d9d64767212b648c39fe99af967e96a15fd4166fb99c3015af028342bae",
+    "runtime/authority.cjs": "6e1b444d6bf01a0eb877a777c9d723ecceda27808b40bb4b5cac1454cb730426",
+    "public/authority-room.html": "b0ba04dd9262fd66f9c6c49c90add56f50aec25aabaedd10f16404bd0c3610a2",
+    "public/authority/style.css": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a"
+  },
+  "current": "/opt/arcade-online/releases/20261026174855-749470",
+  "deployedAt": "2026-10-26T17:48:55Z",
+  "origin": "https://43.142.142.215",
+  "verifiedAt": "2026-10-26T17:55:46.551118+00:00",
+  "services": {
+    "arcade-online": "active/enabled",
+    "caddy": "active/enabled",
+    "coturn": "active/enabled"
+  },
+  "publicHashes": 317,
+  "normalInputBrowserChecks": [
+    "four-context functional options, mode/skin/map and extra keys",
+    "three-context natural five-death duel and victory/records/rematch",
+    "three-context badminton actual return and seven-point match",
+    "three-context badminton held keys/aliases/cancellation/fullscreen and seven-point match",
+    "four-context Boxhead gameplay/recovery/fullscreen"
+  ],
+  "naturalDuelSeconds": 127.483,
+  "limits": "Same workstation browser clients; no fresh capacity, cross-region guarantee or actual TURN relay throughput claim. Original global collection/Mapwho/progression and remaining in-game fidelity work continues. Original menu/UI/transition appearance exempted by user."
+}
