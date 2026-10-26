@@ -1,0 +1,29 @@
+Physics attempt 1, offset 34
+{"offset":34,"tick":89,"net":{"frame":1,"playing":false,"hits":1,"at":74},"score":[1,0],"birdie":{"x":313.9,"y":376.25,"vx":0.5014750720000001,"vy":0,"lastHitter":2,"contactBy":2,"born":27,"leftSide":false,"rightSide":true,"topSide":false,"bottomSide":true,"rotation":90,"speed":0.5014750720000001},"frames":[[],[],[]],"strokeAt":62,"born":27}
+node : Error: TypeError: group is not iterable
+所在位置 行:2 字符: 78
++ ... FSETS='34'; node tests/badminton-physics-e2e.cjs *> artifacts/tencent ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: TypeError: group is not iterable:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+    at CanvasRenderingContext2D.drawImage (:18:175)
+    at art (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34985:61)
+    at render (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34937:12)
+    at render6 (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:35632:41)
+    at D:\github repo\ArcadeOnline\tests\badminton-physics-e2e.cjs:60:531
+TypeError: group is not iterable
+    at CanvasRenderingContext2D.drawImage (:18:175)
+    at art (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34985:61)
+    at render (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34937:12)
+    at render6 (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:35632:41)
+TypeError: group is not iterable
+    at CanvasRenderingContext2D.drawImage (:18:175)
+    at art (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34985:61)
+    at render (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34937:12)
+    at render6 (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:35632:41)
+TypeError: group is not iterable
+    at CanvasRenderingContext2D.drawImage (:18:175)
+    at art (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34985:61)
+    at render (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:34937:12)
+    at render6 (https://43.142.142.215/authority/game.js?v=badminton-physics-20261026:35632:41)

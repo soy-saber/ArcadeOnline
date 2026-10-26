@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-26T11:34:20.597213+00:00",
+  "sourceCommit": "909cd5cbdd2a7db70b37ca7b997b1c5dee4f4d00",
+  "origin": "https://43.142.142.215",
+  "deployedAtUtc": "2026-10-26T11:15:26Z",
+  "current": "/opt/arcade-online/releases/20261026111526-659908",
+  "previous": "/opt/arcade-online/releases/20261025145507-384447",
+  "upload": "/root/arcade-deploy-20261026-physics-687baec2/release",
+  "archive": {
+    "sha256": "687baec2118769d648c2cb16ed983aa559b4e49fee77ec7ca9b43fbf33067dd5",
+    "bytes": 101522336,
+    "files": 5305
+  },
+  "hashes": {
+    "server.js": "c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432",
+    "runtime/authority.cjs": "2d76f4acfda70d59d509d4f65e6015f06643166d341e0dffc4f6ae05fe6e94db",
+    "public/authority/game.js": "e7237c334bd80ebf3f5ef7fdc664e182bdf5f653c26985f1093775e619b37fa8",
+    "public/authority-room.html": "dddee39067de96e4336f96eec9df175a00fb90e2a103406cb69bdaa96fdb4192"
+  },
+  "services": {
+    "arcade-online": "active/enabled",
+    "caddy": "active/enabled",
+    "coturn": "active/enabled"
+  },
+  "local": {
+    "defaultTests": 418,
+    "legacyBadmintonTests": 8,
+    "targetedTestsIncludingLegacy": 51,
+    "deployTests": 5,
+    "typecheck": true,
+    "sourceBuild": true,
+    "releaseManifest": true,
+    "originalAS2BallVectors": 107,
+    "originalAS2Contacts": 36,
+    "originalRacketGetterFrames": 44,
+    "nativeParticleTraceCallbacks": 18,
+    "cachedRebuildIdenticalFiles": 93
+  },
+  "public": {
+    "fileHashes": 273,
+    "health": true,
+    "eightGameEntries": true,
+    "coversAndBackground": true,
+    "retiredEntries404": true,
+    "temporaryTurnCredentials": true,
+    "webSocketRoomJoin": true,
+    "badmintonPhysicsThreeChrome": "passed normal inputs, natural net/floor bounce, native effect transforms and full recovery, hit-play counters without duplicate",
+    "badmintonCharactersThreeChrome": "passed all eight walking frames, fixed jumps, source registrations/depths, phase recovery and fullscreen",
+    "badmintonControlsThreeChrome": "passed held/aliases/cancel, exact reset, natural7:0 delayed victory and rematch",
+    "badmintonMatchThreeChrome": "passed actual return and consumed-stroke recovery, natural0:7 immediate victory, spectator and rematch",
+    "boxheadFourChrome": "passed original shot/creature fields, maximum-map AI, input/fullscreen/pause recovery/maps/rematch"
+  },
+  "testDriverCorrection": "Cold public loading delivered small net sprite before court PNG; trace-only instrumentation previously spread a null group and interrupted its test page. Driver now begins a paint group at each net draw, reports first page error and logs each legal input attempt. Production game build unchanged. Final driver also passed locally.",
+  "limits": [
+    "Reference AS2 executed in recorded Ruffle version; no independent Adobe Flash binary run.",
+    "Native PNG vector/filter rasterization remains approximate; full pixel equivalence unproven.",
+    "Physics suite intercepts HTMLMediaElement.play to count confirmed events; it does not measure hearing quality.",
+    "No fresh link-capacity, long-term-load, cross-region or actual TURN relay test.",
+    "Full badminton/Boxhead restoration remains incomplete; original plans retain CPU/modes/UI/shape-edge/global-callback and Boxhead collection/Mapwho/waves/supplies/upgrade/mode/UI work."
+  ]
+}

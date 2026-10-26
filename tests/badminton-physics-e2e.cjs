@@ -12,16 +12,16 @@ async function shot(p,name){const data=await p.evaluate(()=>document.querySelect
   const context=await browser.createBrowserContext(),p=await context.newPage();pages.push(p);p.setDefaultTimeout(15000);await p.setViewport({width:1500,height:1050});p.on('pageerror',e=>errors.push(e.stack||e.message));
   await p.evaluateOnNewDocument((i,art)=>{
    localStorage.setItem('arcade_name','Physics '+i);localStorage.setItem('arcade_native_sound','on');localStorage.setItem('arcade_native_volume','24');
-   const w=window.__physics={errors:[],errorCount:0,draws:[],audio:[],snapshots:[],recoveries:[],requests:[],attempts:[]},seen=new Set();let group=null,trailIndex=0;
+   const w=window.__physics={errors:[],errorCount:0,draws:[],audio:[],snapshots:[],recoveries:[],requests:[],attempts:[]},seen=new Set();let group=[],trailIndex=0;
    HTMLMediaElement.prototype.play=function(){if(this.src.includes('badminton'))w.audio.push({file:this.src.split('/').pop(),tick:window.__authorityTest?.authority?.tick});return Promise.resolve();};
    const draw=CanvasRenderingContext2D.prototype.drawImage;
    CanvasRenderingContext2D.prototype.drawImage=function(...args){const result=draw.apply(this,args);if(this.canvas.id!=='game-canvas')return result;
     const file=(args[0]?.src||'').split('/').pop(),s=window.__authorityTest?.state;if(file==='court.png'){group=[];trailIndex=0;return result;}if(!s)return result;
     if(/^(p[12])-(body|swing|serve)/.test(file))group?.push(file.startsWith('p1')?'p1':'p2');
-    const name=file?.replace('.png',''),m=art.art[name];if(!m)return result;group?.push(name);
+    const name=file?.replace('.png',''),m=art.art[name];if(!m)return result;if(name==='net'){group=[];trailIndex=0;}group.push(name);
     const matrix=this.getTransform(),actual=[matrix.a,matrix.b,matrix.c,matrix.d,matrix.e,matrix.f];let x=0,y=0,r=0,scale=1,frame=1,p;
     if(name==='net')frame=s.net.frame;
-    else if(name==='trail'){p=[...s.particles].sort((a,b)=>a.id-b.id)[trailIndex++];if(!p){w.errors.push('Unexpected trail');return result;}({x,y,rotation:r,scale}=p);}
+    else if(name==='trail'){p=[...s.particles].sort((a,b)=>a.id-b.id)[trailIndex++];if(!p){w.errorCount++;if(w.errors.length<10)w.errors.push('Unexpected trail');return result;}({x,y,rotation:r,scale}=p);}
     else{({x,y,rotation:r}=s.birdie);if(name==='bird-shadow'){x+=art.shadowOffset[0];y+=art.shadowOffset[1];}}
     // Blink stores translate arguments in float32; compare that exact numeric
     // conversion rather than allowing an arbitrary pixel error.
@@ -53,10 +53,11 @@ async function shot(p,name){const data=await p.evaluate(()=>document.querySelect
  });
  }
  const attempts=[];let netHit=false;
- for(const offset of [34,34,35,33,34,35,34,33]){
+ for(const offset of (process.env.PHYSICS_OFFSETS||'34,34,35,33,34,35,34,33').split(',').map(Number)){
   await prepare(attempts.length);
+  console.log('Physics attempt '+(attempts.length+1)+', offset '+offset);
   await a.waitForFunction(()=>{const s=window.__authorityTest.authority;return s.rally==='serve'&&s.serve===1;});await b.evaluate(offset=>window.__physics.offset=offset,offset);await focus(a);await a.keyboard.press('KeyS');
-  await v.waitForFunction(()=>window.__authorityTest.authority.rally==='point');await wait(650);const s=await v.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority))),frames=await Promise.all(pages.map(p=>p.evaluate(()=>[...new Set(window.__physics.draws.filter(d=>d.name==='net').map(d=>d.frame))])));attempts.push({offset,tick:s.tick,net:s.net,score:s.score,birdie:s.birdie,frames});if(s.net.hits&&frames.every(f=>f.length>=4)){netHit=true;break;}
+  await v.waitForFunction(()=>window.__authorityTest.authority.rally==='point');await wait(650);const s=await v.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority))),frames=await Promise.all(pages.map(p=>p.evaluate(()=>[...new Set(window.__physics.draws.filter(d=>d.name==='net').map(d=>d.frame))])));attempts.push({offset,tick:s.tick,net:s.net,score:s.score,birdie:s.birdie,frames,strokeAt:s.players[1].racket.strokeAt,born:s.birdie.born});console.log(JSON.stringify(attempts.at(-1)));if(errors.length)throw Error(errors[0]);if(s.net.hits&&frames.every(f=>f.length>=4)){netHit=true;break;}
  }
  assert(netHit,'A legal low return must produce a native net impact');await v.waitForFunction(()=>window.__physics.recoveries.some(r=>r.kind==='net'));await shot(v,'native-net-and-dead-ball.png');
  await v.waitForFunction(()=>{const s=window.__authorityTest.authority;return s.net.hits&&!s.net.playing&&s.net.frame===1;});await v.click('#fullscreen-stage');await v.waitForFunction(()=>document.fullscreenElement||document.querySelector('.fullscreen-fallback'));await shot(v,'native-effects-fullscreen.png');await v.click('#exit-fullscreen');await b.evaluate(()=>clearInterval(window.__physics.controller));
@@ -66,4 +67,4 @@ async function shot(p,name){const data=await p.evaluate(()=>document.querySelect
  const watch=records[2];assert(watch.snapshots.some(s=>s.particles.length>=12));assert(watch.snapshots.some(s=>s.rally==='point'&&s.particles.length));assert(watch.requests.some(r=>r.kind==='trail'));assert(watch.recoveries.some(r=>r.kind==='trail'));assert(watch.snapshots.some(s=>s.birdie.contactBy===2));assert(watch.audio.some(e=>e.file==='badminton-hit.mp3'));assert(watch.audio.some(e=>e.file==='badminton-score.mp3'));assert.deepEqual(errors,[]);
  const hits=Math.max(...watch.snapshots.map(s=>s.hits));for(const r of records)assert.equal(r.audio.filter(e=>e.file==='badminton-hit.mp3').length,hits,'Full recovery must not replay confirmed hit sounds');
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({at:new Date().toISOString(),base,normalInputOnly:true,netHit,attempts,records,fullscreen:true,errors},null,2));console.log('Normal late return, floor/net impact, native net frames/trails/filter registration/depths/rotation, audio and full effect recovery passed in three Chrome clients.');
-})().catch(async e=>{console.error(e);for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify(await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),physics:window.__physics})),null,2));await shot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});
+})().catch(async e=>{console.error(e);if(errors.length)console.error(errors.slice(0,3).join('\n'));for(const p of await browser?.pages()||[])if(p.url().includes('authority-room'))try{fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify({errors,...await p.evaluate(()=>({state:window.__authorityTest?.snapshot(),physics:window.__physics}))},null,2));await shot(p,'failure.png');}catch{}process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

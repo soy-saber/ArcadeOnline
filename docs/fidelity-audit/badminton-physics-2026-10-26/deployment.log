@@ -1,0 +1,31 @@
+Authenticated to 43.142.142.215 as root
+arcade-online-linux.tar.gz: OK
+Release verified (5305 files).
+
+[arcade-online] 发布应用文件到 /opt/arcade-online/releases/20261026111526-659908。
+Native build matches source.
+Release verified (5305 files).
+
+added 1 package, and audited 2 packages in 653ms
+
+found 0 vulnerabilities
+
+[arcade-online] 等待服务健康检查 http://127.0.0.1:8000/healthz。
+
+[arcade-online] 服务已就绪。
+
+[arcade-online] 部署完成。
+本机访问:  http://127.0.0.1:8000
+局域网访问: http://10.0.0.17:8000
+日志命令:  bash /root/arcade-deploy-20261026-physics-687baec2/release/deploy-linux.sh logs
+/opt/arcade-online/releases/20261026111526-659908
+/opt/arcade-online/releases/20261025145507-384447
+active
+active
+active
+enabled
+enabled
+enabled
+{"status":"ok","rooms":0}e7237c334bd80ebf3f5ef7fdc664e182bdf5f653c26985f1093775e619b37fa8  /opt/arcade-online/current/public/authority/game.js
+2d76f4acfda70d59d509d4f65e6015f06643166d341e0dffc4f6ae05fe6e94db  /opt/arcade-online/current/runtime/authority.cjs
+c96ad12fb68a9ed0cd0f40c068cefd1a476a9f5e9d775a4cc910a55e095bb432  /opt/arcade-online/current/server.js
