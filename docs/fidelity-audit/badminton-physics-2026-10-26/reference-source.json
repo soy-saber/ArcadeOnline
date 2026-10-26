@@ -1,0 +1,13 @@
+{
+  "source": "games/46923/game.swf",
+  "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "method": "Original setupBirdie, mothershipTrail, turn, setupHero1/setupHero2 functions compiled by JPEXS with native symbols/markers. Score/audio test stubs; trace-only instrumentation; vectors isolated from production.",
+  "functions": [
+    "setupBirdie",
+    "mothershipTrail",
+    "turn",
+    "setupHero1",
+    "setupHero2"
+  ],
+  "vectors": 107
+}

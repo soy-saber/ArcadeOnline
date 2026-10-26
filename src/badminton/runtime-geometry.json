@@ -1,0 +1,553 @@
+{
+  "source": "games/46923/game.swf",
+  "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "referenceEngine": "0.6.0-nightly.2026.8.6",
+  "method": "Original native symbols queried in isolated AS2 through getBounds/_rotation/hitTest, localToGlobal and native stage properties. Coordinates in integer twips; both hitbox extrema tested inclusive. Reference Ruffle version is recorded; this is not a separate Adobe Flash binary execution.",
+  "net": {
+    "x": 275,
+    "y": 354.65,
+    "width": 32.4,
+    "height": 88.5
+  },
+  "ground": 376.25,
+  "netLimit": {
+    "x": 274.95,
+    "y": 351.6,
+    "width": 129.7,
+    "height": 73
+  },
+  "rackets": {
+    "1": [
+      {
+        "frame": 1,
+        "rotation": 0,
+        "twips": [
+          -1308,
+          -2391,
+          -52,
+          -1193
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 2,
+        "rotation": 0,
+        "twips": [
+          -1308,
+          -2391,
+          -52,
+          -1193
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 3,
+        "rotation": 18.5661362174006,
+        "twips": [
+          -1017,
+          -2621,
+          175,
+          -1367
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 4,
+        "rotation": 37.3519507407587,
+        "twips": [
+          -611,
+          -2693,
+          393,
+          -1515
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 5,
+        "rotation": 74.9272857928126,
+        "twips": [
+          9,
+          -2608,
+          1067,
+          -1400
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 6,
+        "rotation": 93.2999341654219,
+        "twips": [
+          191,
+          -2439,
+          1407,
+          -1185
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 7,
+        "rotation": 112.060792673878,
+        "twips": [
+          362,
+          -2120,
+          1612,
+          -954
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 8,
+        "rotation": 130.850020450137,
+        "twips": [
+          503,
+          -1697,
+          1653,
+          -741
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 9,
+        "rotation": 149.519550119765,
+        "twips": [
+          523,
+          -1311,
+          1599,
+          -471
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 10,
+        "rotation": 124.584827428467,
+        "twips": [
+          458,
+          -1847,
+          1656,
+          -809
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 11,
+        "rotation": 99.5510939139344,
+        "twips": [
+          249,
+          -2345,
+          1491,
+          -1107
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 12,
+        "rotation": 74.9272857928126,
+        "twips": [
+          9,
+          -2606,
+          1067,
+          -1398
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 13,
+        "rotation": 49.8827657659886,
+        "twips": [
+          -296,
+          -2645,
+          520,
+          -1587
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 14,
+        "rotation": 24.8260142088445,
+        "twips": [
+          -890,
+          -2662,
+          252,
+          -1418
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 15,
+        "rotation": 0,
+        "twips": [
+          -1308,
+          -2391,
+          -52,
+          -1193
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 16,
+        "rotation": 0,
+        "twips": [
+          -1308,
+          -2391,
+          -52,
+          -1193
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 17,
+        "rotation": -32.8255267913373,
+        "twips": [
+          -1450,
+          -1687,
+          -404,
+          -887
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 18,
+        "rotation": -65.6966608838913,
+        "twips": [
+          -1486,
+          -1302,
+          -242,
+          -156
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 19,
+        "rotation": -98.3155521849452,
+        "twips": [
+          -1074,
+          -916,
+          54,
+          322
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 20,
+        "rotation": -131.351436261631,
+        "twips": [
+          -389,
+          -659,
+          447,
+          411
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 21,
+        "rotation": -164.213234414609,
+        "twips": [
+          -33,
+          -897,
+          1175,
+          355
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 22,
+        "rotation": 163.172814892198,
+        "twips": [
+          347,
+          -1200,
+          1543,
+          -166
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 23,
+        "rotation": 130.172526792514,
+        "twips": [
+          460,
+          -1720,
+          1616,
+          -756
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 24,
+        "rotation": 168.48780652285,
+        "twips": [
+          291,
+          -1146,
+          1515,
+          -50
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 25,
+        "rotation": -153.202883388293,
+        "twips": [
+          -158,
+          -798,
+          964,
+          438
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 26,
+        "rotation": -114.823851519111,
+        "twips": [
+          -709,
+          -732,
+          217,
+          400
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 27,
+        "rotation": -76.7052403931741,
+        "twips": [
+          -1387,
+          -1164,
+          -137,
+          58
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 28,
+        "rotation": -38.3351777337855,
+        "twips": [
+          -1443,
+          -1575,
+          -407,
+          -789
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 29,
+        "rotation": 0,
+        "twips": [
+          -1308,
+          -2391,
+          -52,
+          -1193
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      }
+    ],
+    "2": [
+      {
+        "frame": 1,
+        "rotation": 0,
+        "twips": [
+          80,
+          -2351,
+          1336,
+          -1153
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 2,
+        "rotation": 0,
+        "twips": [
+          80,
+          -2351,
+          1336,
+          -1153
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 3,
+        "rotation": 18.5661362174006,
+        "twips": [
+          -147,
+          -2581,
+          1045,
+          -1327
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 4,
+        "rotation": 37.3519507407587,
+        "twips": [
+          -365,
+          -2653,
+          639,
+          -1475
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 5,
+        "rotation": 74.9272857928126,
+        "twips": [
+          -1039,
+          -2568,
+          19,
+          -1360
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 6,
+        "rotation": 93.2999341654219,
+        "twips": [
+          -1379,
+          -2399,
+          -163,
+          -1145
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 7,
+        "rotation": 112.060792673878,
+        "twips": [
+          -1584,
+          -2080,
+          -334,
+          -914
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 8,
+        "rotation": 130.850020450137,
+        "twips": [
+          -1625,
+          -1657,
+          -475,
+          -701
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 9,
+        "rotation": 149.519550119765,
+        "twips": [
+          -1571,
+          -1271,
+          -495,
+          -431
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 10,
+        "rotation": 127.583497083535,
+        "twips": [
+          -1627,
+          -1735,
+          -451,
+          -735
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 11,
+        "rotation": 109.318022550739,
+        "twips": [
+          -1562,
+          -2134,
+          -310,
+          -948
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 12,
+        "rotation": 92.5211302208058,
+        "twips": [
+          -1367,
+          -2406,
+          -155,
+          -1152
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 13,
+        "rotation": 74.7053434112715,
+        "twips": [
+          -1034,
+          -2567,
+          20,
+          -1361
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 14,
+        "rotation": 53.1206429222602,
+        "twips": [
+          -523,
+          -2581,
+          239,
+          -1563
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      },
+      {
+        "frame": 15,
+        "rotation": 0,
+        "twips": [
+          80,
+          -2351,
+          1336,
+          -1153
+        ],
+        "minInclusive": true,
+        "maxInclusive": true
+      }
+    ]
+  }
+}

@@ -4,7 +4,7 @@ function load(file){const name=path.resolve(__dirname,file),m=new Module(name,mo
 const c=load('../src/badminton/core.ts'),protocol=load('../src/authority/protocol.ts');
 const input=(seq,patch={})=>({...c.EMPTY_INPUT,seq,...patch}),close=(a,b)=>assert(Math.abs(a-b)<1e-8,`${a} != ${b}`);
 function idle(){const s=c.createGame(1,true);s.serve=1;return s;}
-function land(s,seat){s.rally='flight';s.serve=0;s.birdie={x:seat===1?450:100,y:c.GROUND-1,vx:0,vy:2,lastHitter:seat};c.step(s,[]);}
+function land(s,seat){s.rally='flight';s.serve=0;Object.assign(s.birdie,{x:seat===1?450:100,y:c.GROUND-1,vx:0,vy:2,lastHitter:seat});c.step(s,[]);}
 
 test('a held key repeats overhead on native ready frame15, without client counter increments',()=>{
  const s=idle(),p=s.players[1],starts=[];
@@ -51,7 +51,8 @@ test('held jumping repeats at landing; native ground gravity accumulates and a l
 });
 
 test('native wall tests permit one-step overshoot and both-held executes right before left',()=>{
- const s=idle();for(let n=0;n<100;n++)c.movePlayer(s,1,-1);close(s.players[0].x,44.35);
+ const native=Object.fromEntries(require('./fixtures/badminton-as2.json').movementProbes.map(([key,value])=>[key,Number(value)]));
+ const s=idle();for(let n=0;n<100;n++)c.movePlayer(s,1,-1);close(s.players[0].x,native.MOVE_LEFT);
  for(let n=0;n<100;n++)c.movePlayer(s,2,1);close(s.players[1].x,505.35);
  const p=s.players[0];p.x=215.45;s.serve=0;c.moveControls(s,1,true,true);close(p.x,209.55);assert.equal(p.motion,'walkbackward');
  p.y=290;p.x=272;c.movePlayer(s,1,1);close(p.x,277.9); // native broad netLimit ends below this height
@@ -68,7 +69,8 @@ test('normal points reset exactly45callbacks after award and retain live player/
   for(let n=1;n<=44;n++)c.step(s,[]);assert.equal(s.rally,'point');assert.equal(s.pointTicks,1);
   const p=s.players[seat-1];p.x=seat===1?210:340;p.y=290;p.vy=-1;p.jumping=true;Object.assign(p.racket,{frame:5,playing:true,ready:false,active:true});
   c.step(s,[]);assert.equal(s.rally,'serve');assert.equal(s.serve,seat);assert.equal(s.resetAt,null);assert.equal(s.lastResetAt,at+45);assert.equal(s.pointTicks,0);assert.equal(p.racket.frame,6);assert(p.jumping);close(p.y,290);
-  close(p.x,274.95+(seat===1?-1:1)*(10.5*6.177414+65));assert.deepEqual(s.score,seat===1?[1,0]:[0,1]);assert(c.validState(s));
+  const native=Object.fromEntries(require('./fixtures/badminton-as2.json').movementProbes.map(([key,value])=>[key,Number(value)]));
+  close(p.x,native[seat===1?'RESET_LEFT':'RESET_RIGHT']);assert.deepEqual(s.score,seat===1?[1,0]:[0,1]);assert(c.validState(s));
  }
 });
 

@@ -19,7 +19,9 @@ test('native parent labels, child timelines, stopped jump, alpha/filters and dep
  for(const side of ['p1','p2'])for(const kind of ['walkforward','walkbackward'])assert.equal(new Set(art.poses[side][kind].frameSha256).size,8);
  for(const group of Object.values(art.poses))for(const meta of Object.values(group))for(const layer of meta.layers){assert(!/name="gun(?:Serve)?"/.test(layer));assert(Number(/depth="(\d+)"/.exec(layer)[1])>8);}
  assert(art.poses.p1.normal.layers.some(s=>s.includes('alphaMultTerm="230"')&&s.includes('DROPSHADOWFILTER')));assert(art.poses.p2.normal.layers.some(s=>s.includes('BLURFILTER')));assert(art.poses.p2.normal.layers.some(s=>s.includes('characterId="260"')&&s.includes('scaleX="-1.0036163"')));
- assert.equal(art.poses.p1.normal.x,-16.7);assert.equal(art.poses.p1.normal.y,-77.25);assert.equal(art.poses.p2.walkup.x,-10.35);
+ assert.equal(art.poses.p1.normal.svgX,-16.7);assert.equal(art.poses.p1.normal.svgY,-77.25);assert.equal(art.poses.p2.walkup.svgX,-10.35);
+ for(const group of Object.values(art.poses))for(const m of Object.values(group)){assert.equal(m.x,m.svgX-m.filterPadding[0]);assert.equal(m.y,m.svgY-m.filterPadding[1]);}
+ assert.deepEqual(art.poses.p1.normal.filterPadding,[9,9]);assert.equal(art.poses.p1.normal.x,-25.7);assert.equal(art.poses.p1.normal.y,-86.25);
 });
 
 test('held walking loops all8frames, repeated parent label leaves the child running; blockage retains its animation',()=>{
@@ -44,7 +46,7 @@ test('jump switches parent pose once, source child305 stays stopped; landing fol
 });
 
 test('source gameOver switches grounded characters to normal while keeping airborne jump pose',()=>{
- const s=c.createGame(4,true);s.serve=0;s.rally='flight';s.score[1]=6;s.tick=20;const [p,q]=s.players;motion.setMotion(p,'walkforward',20);q.jumping=true;q.y-=60;q.vy=-1;motion.setMotion(q,'walkup',20);s.birdie={x:100,y:c.GROUND-1,vx:0,vy:2,lastHitter:2};c.step(s,[input(1),input(1)]);
+ const s=c.createGame(4,true);s.serve=0;s.rally='flight';s.score[1]=6;s.tick=20;const [p,q]=s.players;motion.setMotion(p,'walkforward',20);q.jumping=true;q.y-=60;q.vy=-1;motion.setMotion(q,'walkup',20);Object.assign(s.birdie,{x:100,y:c.GROUND-1,vx:0,vy:2,lastHitter:2});c.step(s,[input(1),input(1)]);
  assert.equal(s.phase,'finished');assert.equal(p.motion,'normal');assert.equal(q.motion,'walkup');assert(c.validState(s));
 });
 

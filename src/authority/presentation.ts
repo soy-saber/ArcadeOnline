@@ -1,6 +1,7 @@
 import { State } from "./protocol";
 import { GameState as BombState, Input as BombInput, Player as BombPlayer, HEIGHT, WIDTH, index, position } from "./bomb-core";
 import { GameState as BadmintonState, Input as BadmintonInput, GROUND, moveControls } from "../badminton/core";
+import {pixel} from '../badminton/stage';
 import { Input as ExpandedInput } from "../expanded/types";
 import { getAdapter } from "../expanded/registry";
 import {walkingPosition} from '../expanded/bomb2-walking';
@@ -153,7 +154,7 @@ export class Presentation {
       else {
         const item = input as BadmintonInput, local = next.players[seat - 1];
         if (fraction === 1) {
-          local.vy++;local.y+=local.vy;
+          local.vy++;local.y=pixel(local.y+local.vy);
           if(local.y>=GROUND){local.y=GROUND;local.jumping=false;}
           const jump=item.jumpHeld||item.jump>Math.max(previewJump,item.cancelledJump||0);
           previewJump=Math.max(previewJump,item.jump);

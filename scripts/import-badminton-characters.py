@@ -3,6 +3,7 @@ from pathlib import Path
 from PIL import Image
 import argparse, copy, hashlib, json, os, re, subprocess
 import xml.etree.ElementTree as ET
+from badminton_export import filter_padding
 
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description=__doc__)
@@ -84,7 +85,9 @@ for side,group in poses.items():
         sheet=Image.new('RGBA',(w*len(images),h))
         for i,im in enumerate(images):sheet.alpha_composite(im,(i*w,0))
         name=f'{side}-body-{motion}.png';target=out/name;sheet.save(target)
-        meta.update({'file':name,'w':w,'h':h,'x':offsets[0][0],'y':offsets[0][1],'sha256':sha(target),
+        export_symbols={int(e.get('spriteId')):e for e in root.iter() if e.get('type')=='DefineSpriteTag'}
+        padding=filter_padding(sid,export_symbols)
+        meta.update({'file':name,'w':w,'h':h,'x':offsets[0][0]-padding[0],'y':offsets[0][1]-padding[1],'svgX':offsets[0][0],'svgY':offsets[0][1],'filterPadding':padding,'sha256':sha(target),
             'frameSha256':[hashlib.sha256(im.tobytes()).hexdigest() for im in images],
             'bounds':[list(im.getbbox()) if im.getbbox() else None for im in images]})
 record={'source':'games/46923/game.swf','sourceSha256':sha(source),'xmlSha256':sha(xml),'rootFrameRate':float(root.get('frameRate')),

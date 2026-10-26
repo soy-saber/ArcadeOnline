@@ -28,8 +28,14 @@
         "file": "p1-body-normal.png",
         "w": 52,
         "h": 98,
-        "x": -16.7,
-        "y": -77.25,
+        "x": -25.7,
+        "y": -86.25,
+        "svgX": -16.7,
+        "svgY": -77.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50",
         "frameSha256": [
           "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
@@ -127,8 +133,14 @@
         "file": "p1-body-walkbackward.png",
         "w": 52,
         "h": 98,
-        "x": -16.7,
-        "y": -77.25,
+        "x": -25.7,
+        "y": -86.25,
+        "svgX": -16.7,
+        "svgY": -77.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "c18b3788ea7c20a6558eb40127178717d6023e1b11c911475057ab18eca1f15d",
         "frameSha256": [
           "f87d0c8911297dbfa2e17ea707c34b0f351ea9187e5c69133424ffaf01fa7805",
@@ -205,8 +217,14 @@
         "file": "p1-body-walkforward.png",
         "w": 52,
         "h": 98,
-        "x": -16.7,
-        "y": -76.65,
+        "x": -25.7,
+        "y": -85.65,
+        "svgX": -16.7,
+        "svgY": -76.65,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "8e3b2b24371d98dc2b3cb0634503b75be6d6b9c9aec7b1b885fd2451be8a10bb",
         "frameSha256": [
           "b985fc71e9a66cf657ea7f0adbfe6843916459b12a071e5961568f7a701dfb78",
@@ -282,8 +300,14 @@
         "file": "p1-body-walkup.png",
         "w": 44,
         "h": 94,
-        "x": -11.65,
-        "y": -77.25,
+        "x": -20.65,
+        "y": -86.25,
+        "svgX": -11.65,
+        "svgY": -77.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "dcc22d8d0e0634fb08bacab71e1fe4f575f56099c7f4607872e7d3f55fa0b2b9",
         "frameSha256": [
           "a56674b45b46772158204ae39d8d83d25181ee34185c2afd15d84615e02235af",
@@ -528,8 +552,14 @@
         "file": "p1-body-walkdown.png",
         "w": 52,
         "h": 98,
-        "x": -16.7,
-        "y": -77.25,
+        "x": -25.7,
+        "y": -86.25,
+        "svgX": -16.7,
+        "svgY": -77.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50",
         "frameSha256": [
           "ece527de0c5fcd8288a6101c98a393839ad5aee2f049bc55657d25ca624eb433",
@@ -630,8 +660,14 @@
         "file": "p2-body-normal.png",
         "w": 52,
         "h": 97,
-        "x": -15.15,
-        "y": -76.25,
+        "x": -24.15,
+        "y": -85.25,
+        "svgX": -15.15,
+        "svgY": -76.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff",
         "frameSha256": [
           "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
@@ -730,8 +766,14 @@
         "file": "p2-body-walkforward.png",
         "w": 52,
         "h": 97,
-        "x": -15.15,
-        "y": -76.25,
+        "x": -24.15,
+        "y": -85.25,
+        "svgX": -15.15,
+        "svgY": -76.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580",
         "frameSha256": [
           "a186ecc630e55e823ac4cfa23953be4d1a6c007ae50fbe8b89894fbab6c9756b",
@@ -809,8 +851,14 @@
         "file": "p2-body-walkbackward.png",
         "w": 52,
         "h": 97,
-        "x": -15.15,
-        "y": -76.25,
+        "x": -24.15,
+        "y": -85.25,
+        "svgX": -15.15,
+        "svgY": -76.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49",
         "frameSha256": [
           "7c28ae3874e4e640eec19a3c1fc4e721fc68b251240def398251f1564c4cc170",
@@ -888,8 +936,14 @@
         "file": "p2-body-walkdown.png",
         "w": 52,
         "h": 97,
-        "x": -15.15,
-        "y": -76.25,
+        "x": -24.15,
+        "y": -85.25,
+        "svgX": -15.15,
+        "svgY": -76.25,
+        "filterPadding": [
+          9,
+          9
+        ],
         "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8",
         "frameSha256": [
           "58e19cb71cb9ba69c9768073fb4a8952e27c7513af7e69a48b698c7ca384b371",
@@ -1024,6 +1078,12 @@
         "h": 75,
         "x": -10.35,
         "y": -76.25,
+        "svgX": -10.35,
+        "svgY": -76.25,
+        "filterPadding": [
+          0,
+          0
+        ],
         "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7",
         "frameSha256": [
           "1bfb4258ba2fbddd9302f120e609a517d1b047a023ed16c494e24daa1903b30a"

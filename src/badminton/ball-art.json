@@ -1,0 +1,113 @@
+{
+  "source": "games/46923/game.swf",
+  "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "xmlSha256": "0ed596d2814f473f4ab20bc796112799d7c3a38c886d9ac49bd003643e36583e",
+  "art": {
+    "net": {
+      "symbol": 425,
+      "wrapper": 5100,
+      "file": "net.png",
+      "frames": 12,
+      "w": 88,
+      "h": 131,
+      "x": 225.95,
+      "y": 275.65,
+      "svgX": 232.95,
+      "svgY": 277.65,
+      "filterPadding": [
+        7,
+        2
+      ],
+      "sha256": "89cd33ad99a18bbb7da550a80b9bee86c843b590c1962f37765a138e32baad09",
+      "frameSha256": [
+        "9ed043a71d933d9ca0d7d9dc06abc4989a0004bcbd837e417c102b01f39dcd03",
+        "bec2cf1302d07222952fe10d6c698500d2c834a622189082722a3d8269c1708f",
+        "bec2cf1302d07222952fe10d6c698500d2c834a622189082722a3d8269c1708f",
+        "9ed043a71d933d9ca0d7d9dc06abc4989a0004bcbd837e417c102b01f39dcd03",
+        "9ed043a71d933d9ca0d7d9dc06abc4989a0004bcbd837e417c102b01f39dcd03",
+        "4bd555680ac829d09cf39cdc8849cd86d426bbbf26cacd06d766e9ae971489cd",
+        "4bd555680ac829d09cf39cdc8849cd86d426bbbf26cacd06d766e9ae971489cd",
+        "4bd555680ac829d09cf39cdc8849cd86d426bbbf26cacd06d766e9ae971489cd",
+        "4bd555680ac829d09cf39cdc8849cd86d426bbbf26cacd06d766e9ae971489cd",
+        "55550baadbaacc777bb59bea4b74072267c68d09d4949bdd0d38ca17afe8bcab",
+        "55550baadbaacc777bb59bea4b74072267c68d09d4949bdd0d38ca17afe8bcab",
+        "9ed043a71d933d9ca0d7d9dc06abc4989a0004bcbd837e417c102b01f39dcd03"
+      ]
+    },
+    "bird-glow": {
+      "symbol": 132,
+      "wrapper": 5101,
+      "file": "bird-glow.png",
+      "frames": 1,
+      "w": 23,
+      "h": 26,
+      "x": -11.15,
+      "y": -7.55,
+      "svgX": -6.15,
+      "svgY": -2.55,
+      "filterPadding": [
+        5,
+        5
+      ],
+      "sha256": "13277ed8d69da54c381a5b42821be2433a27bfce2b2eb76d63ed85f70e38a6ee",
+      "frameSha256": [
+        "4fc20ddd7dab720afe6edc180bec4375617b58ece9618c4f406179b5aeeb2a1b"
+      ]
+    },
+    "bird-shadow": {
+      "symbol": 132,
+      "wrapper": 5102,
+      "file": "bird-shadow.png",
+      "frames": 1,
+      "w": 33,
+      "h": 36,
+      "x": -16.15,
+      "y": -12.55,
+      "svgX": -6.15,
+      "svgY": -2.55,
+      "filterPadding": [
+        10,
+        10
+      ],
+      "sha256": "df89759ccfce4e1f568b48b647a38fbc550a93a83138e257c40fe05961cb5416",
+      "frameSha256": [
+        "9397a27d791bd0acb6d0a1daf1b3e2d0b6ff1aa6bb7c51daff33acf603dba1df"
+      ]
+    },
+    "trail": {
+      "symbol": 16,
+      "wrapper": 16,
+      "file": "trail.png",
+      "frames": 1,
+      "w": 8,
+      "h": 7,
+      "x": -3.25,
+      "y": -3.25,
+      "svgX": -1.25,
+      "svgY": -1.25,
+      "filterPadding": [
+        2,
+        2
+      ],
+      "sha256": "c4582daed7b2da895a48fa052421b2126bcfb8f6a8dd0409775a87d20b381f65",
+      "frameSha256": [
+        "45cbee95efce5de7e82832b0b887cc415a996fe892c1938bb254189032e62bf3"
+      ]
+    }
+  },
+  "court": {
+    "file": "court.png",
+    "sha256": "173097347ef4cb430a99471f6a0b332868d0221740debdf77b2aaea367b95952",
+    "removedPlacement": "<item type=\"PlaceObject3Tag\" characterId=\"425\" depth=\"27\" forceWriteAsLong=\"true\" name=\"netSprite\" placeFlagHasBlendMode=\"false\" placeFlagHasCacheAsBitmap=\"false\" placeFlagHasCharacter=\"true\" placeFlagHasClassName=\"false\" placeFlagHasClipActions=\"false\" placeFlagHasClipDepth=\"false\" placeFlagHasColorTransform=\"false\" placeFlagHasFilterList=\"true\" placeFlagHasImage=\"false\" placeFlagHasMatrix=\"true\" placeFlagHasName=\"true\" placeFlagHasRatio=\"true\" placeFlagHasVisible=\"false\" placeFlagMove=\"false\" placeFlagOpaqueBackground=\"false\" ratio=\"37\" reserved=\"false\">\n<matrix type=\"MATRIX\" hasRotate=\"false\" hasScale=\"true\" nRotateBits=\"0\" nScaleBits=\"18\" nTranslateBits=\"14\" scaleX=\"1.0\" scaleY=\"1.0599976\" translateX=\"5480\" translateY=\"7047\" />\n<surfaceFilterList>\n<item type=\"BEVELFILTER\" angle=\"0.0\" blurX=\"2.0\" blurY=\"2.0\" compositeSource=\"true\" distance=\"5.0\" id=\"3\" innerShadow=\"true\" knockout=\"false\" onTop=\"false\" passes=\"1\" strength=\"0.15625\">\n<shadowColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"0\" />\n<highlightColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"0\" />\n</item>\n</surfaceFilterList>\n</item>"
+  },
+  "netPlacement": "<item type=\"PlaceObject3Tag\" characterId=\"425\" depth=\"27\" forceWriteAsLong=\"true\" name=\"netSprite\" placeFlagHasBlendMode=\"false\" placeFlagHasCacheAsBitmap=\"false\" placeFlagHasCharacter=\"true\" placeFlagHasClassName=\"false\" placeFlagHasClipActions=\"false\" placeFlagHasClipDepth=\"false\" placeFlagHasColorTransform=\"false\" placeFlagHasFilterList=\"true\" placeFlagHasImage=\"false\" placeFlagHasMatrix=\"true\" placeFlagHasName=\"true\" placeFlagHasRatio=\"true\" placeFlagHasVisible=\"false\" placeFlagMove=\"false\" placeFlagOpaqueBackground=\"false\" ratio=\"37\" reserved=\"false\">\n<matrix type=\"MATRIX\" hasRotate=\"false\" hasScale=\"true\" nRotateBits=\"0\" nScaleBits=\"18\" nTranslateBits=\"14\" scaleX=\"1.0\" scaleY=\"1.0599976\" translateX=\"5480\" translateY=\"7047\" />\n<surfaceFilterList>\n<item type=\"BEVELFILTER\" angle=\"0.0\" blurX=\"2.0\" blurY=\"2.0\" compositeSource=\"true\" distance=\"5.0\" id=\"3\" innerShadow=\"true\" knockout=\"false\" onTop=\"false\" passes=\"1\" strength=\"0.15625\">\n<shadowColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"0\" />\n<highlightColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"0\" />\n</item>\n</surfaceFilterList>\n</item>",
+  "birdFilters": [
+    "<item type=\"GLOWFILTER\" blurX=\"5.0\" blurY=\"5.0\" compositeSource=\"true\" id=\"2\" innerGlow=\"false\" knockout=\"false\" passes=\"1\" strength=\"1.0\">\n<glowColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"255\" />\n</item>",
+    "<item type=\"DROPSHADOWFILTER\" angle=\"0.7853851318359375\" blurX=\"5.0\" blurY=\"5.0\" compositeSource=\"true\" distance=\"5.0\" id=\"0\" innerShadow=\"false\" knockout=\"false\" passes=\"1\" strength=\"0.296875\">\n<dropShadowColor type=\"RGBA\" alpha=\"255\" blue=\"0\" green=\"0\" red=\"0\" />\n</item>"
+  ],
+  "shadowOffset": [
+    3.5355799791601,
+    3.535487832104965
+  ],
+  "method": "JPEXS native PNG/SVG export. Court frame38 excludes only netSprite. Net retains root matrix/bevel and all12 authored frames. Shuttle glow and centered shadow are exported separately so the drop-shadow offset remains fixed in parent space while the bird rotates. Trail retains original child matrix/blur. PNG rasterization approximates the original vector/filter renderer."
+}

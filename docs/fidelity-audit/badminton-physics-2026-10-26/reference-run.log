@@ -1,0 +1,24 @@
+Trace lines: 618 Snapshots: 59
+GEOMETRY|275|354.65|32.4|88.5|376.25
+PARTICLE_PRE|100|3.8|undefined
+PARTICLE_NAN|100|3.8
+PARTICLE_ROT45|100|4.55
+TWIPS|0|5.1
+TWIPS|1|5.1
+TWIPS|2|-5.1
+TWIPS|3|-5.1
+STROKE|17|1|true
+SCRIPT|17|frame_2|true|false
+SCRIPT|23|frame_9|false|false
+SCRIPT|29|frame_15|false|true
+STROKE|30|15|true
+SCRIPT|30|frame_2|true|false
+SCRIPT|36|frame_9|false|false
+SCRIPT|42|frame_15|false|true
+STROKE|43|15|true
+SCRIPT|43|frame_2|true|false
+SCRIPT|49|frame_9|false|false
+SCRIPT|55|frame_15|false|true
+STROKE|56|15|true
+SCRIPT|56|frame_2|true|false
+DONE|60

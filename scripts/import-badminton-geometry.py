@@ -1,6 +1,7 @@
 """Read native racket hitTest(false) bounds and service markers from SWF XML."""
 from pathlib import Path
-import argparse, copy, hashlib, json, math, os, re, shutil, subprocess, xml.etree.ElementTree as ET
+import argparse, copy, hashlib, json, math, os, re, shutil, struct, subprocess, xml.etree.ElementTree as ET
+from badminton_export import filter_padding
 
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--export-art',action='store_true')
@@ -23,6 +24,14 @@ def multiply(a,b):
     return [a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]]
 
 def point(m,x,y):return [m[0]*x+m[2]*y+m[4],m[1]*x+m[3]*y+m[5]]
+
+def f32(v):return struct.unpack('<f',struct.pack('<f',v))[0]
+def native_matrix(m):return [*map(f32,m[:4]),round(m[4]*20),round(m[5]*20)]
+def native_multiply(a,b):
+    add=lambda x,y:f32(f32(x)+f32(y))
+    return [add(a[0]*b[0],a[2]*b[1]),add(a[1]*b[0],a[3]*b[1]),add(a[0]*b[2],a[2]*b[3]),add(a[1]*b[2],a[3]*b[3]),
+        round(add(a[0]*b[4],a[2]*b[5]))+a[4],round(add(a[1]*b[4],a[3]*b[5]))+a[5]]
+def native_point(m,x,y):return [round(f32(f32(m[0]*x)+f32(m[2]*y)))+m[4],round(f32(f32(m[1]*x)+f32(m[3]*y)))+m[5]]
 
 def frames(sid):
     display={};result=[]
@@ -59,8 +68,16 @@ for side,hero in [('p1',306),('p2',268)]:
             assert inner['symbol']==186
             composed=multiply(multiply(multiply(gun['matrix'],outer['matrix']),inner['matrix']),hitbox['matrix'])
             points=[point(composed,*p) for p in corners]
+            # getBounds/hitTest query the leaf's local-to-global matrix, built
+            # from the child upward. f32/twip concatenation is not associative.
+            native=native_matrix(hitbox['matrix'])
+            for item in [inner,outer,gun]:native=native_multiply(native_matrix(item['matrix']),native)
+            native_points=[native_point(native,x*20,y*20) for x,y in corners]
+            local=native_matrix(outer['matrix'])
             records.append({'frame':frame,'active':2<=frame<=8 or 16<=frame<=22,'rotation':math.degrees(math.atan2(outer['matrix'][1],outer['matrix'][0])),
-                'matrix':composed,'bounds':[min(p[0] for p in points),min(p[1] for p in points),max(p[0] for p in points),max(p[1] for p in points)]})
+                'matrix':composed,'bounds':[min(p[0] for p in points),min(p[1] for p in points),max(p[0] for p in points),max(p[1] for p in points)],
+                'native':{'rotation':math.degrees(math.atan2(local[1],local[0])),'matrix':native,
+                    'twips':[min(p[0] for p in native_points),min(p[1] for p in native_points),max(p[0] for p in native_points),max(p[1] for p in native_points)]}})
         data[side+'-'+kind]=records
     records=[]
     for frame,display in enumerate(timelines[serve['symbol']],1):
@@ -86,7 +103,8 @@ if (cache/'svg').exists():
             name=f'{side}-{kind}-{index:02d}';svg=ET.parse(svgdir/f'{frame}.svg').getroot();group=svg.find('{http://www.w3.org/2000/svg}g')
             m=[float(v) for v in re.search(r'matrix\(([^)]+)\)',group.get('transform'))[1].replace(',',' ').split()];assert m[:4]==[1,0,0,1]
             png=pngdir/f'{frame}.png';image=Image.open(png);shutil.copyfile(png,out/(name+'.png'))
-            art[name]={'file':name+'.png','symbol':sid,'frame':frame,'x':-m[4],'y':-m[5],'w':image.width,'h':image.height,'sha256':hashlib.sha256(png.read_bytes()).hexdigest()}
+            padding=filter_padding(sid,symbols)
+            art[name]={'file':name+'.png','symbol':sid,'frame':frame,'x':-m[4]-padding[0],'y':-m[5]-padding[1],'svgX':-m[4],'svgY':-m[5],'filterPadding':padding,'w':image.width,'h':image.height,'sha256':hashlib.sha256(png.read_bytes()).hexdigest()}
     record['art']=art
 else:
     raise SystemExit('Run with --export-art and --ffdec to create native PNG/SVG registration evidence before writing metadata.')

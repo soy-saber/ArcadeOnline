@@ -48,7 +48,7 @@ function start(): void {
   let sound = localStorage.getItem("arcade_native_sound") !== "off";
   let volume = Math.max(0, Math.min(100, Number(localStorage.getItem("arcade_native_volume") ?? 24)));
   if (!Number.isFinite(volume)) volume = 24;
-  let heard: { round: number; score: string; hitter: number; winner: number | null; strokes:number[] } | null = null;
+  let heard: { round: number; score: string; hits: number; winner: number | null; strokes:number[] } | null = null;
   const sounds: Record<string, string> = { whoosh: "badminton-whoosh", hit: "badminton-hit", score: "badminton-score", cheer: "badminton-cheer" };
 
   document.title = `${title} · 在线联机 - ArcadeOnline`;
@@ -132,11 +132,11 @@ function start(): void {
     if ("gameId" in state) { adapter?.confirm?.(state as ExpandedState); return; }
     if (isBomb(state)) bombView!.confirm(state);
     else {
-      const next = { round: state.round, score: state.score.join(":"), hitter: state.birdie.lastHitter, winner: state.winner, strokes:state.players.map(p=>p.racket.strokes) };
+      const next = { round: state.round, score: state.score.join(":"), hits: state.hits, winner: state.winner, strokes:state.players.map(p=>p.racket.strokes) };
       if (heard?.round === state.round) {
         state.players.forEach((p,i)=>{if(next.strokes[i]>heard!.strokes[i]&&state.tick-p.racket.strokeAt<=3)play('whoosh');});
         if (next.score !== heard.score) play("score");
-        else if (next.hitter && next.hitter !== heard.hitter) play("hit");
+        if (next.hits > heard.hits && state.tick-state.hitAt<=3) play("hit");
         if (next.winner && next.winner !== heard.winner) play("cheer");
       }
       heard = next;

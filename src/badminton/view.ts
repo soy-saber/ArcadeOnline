@@ -2,6 +2,7 @@ import { GameState, HEIGHT, WIDTH } from "./core";
 import geometry from './geometry.json';
 import characters from './character-art.json';
 import {bodyPose} from './motion';
+import ballArt from './ball-art.json';
 
 const ASSET_ROOT = "/authority/assets/badminton/";
 type ImageKey = string;
@@ -16,7 +17,7 @@ export class BadmintonView {
   constructor(private canvas: HTMLCanvasElement) {
     canvas.width = WIDTH * 2; canvas.height = HEIGHT * 2;
     this.ctx = canvas.getContext("2d")!;
-    for (const name of ['court','birdie',...Object.values(characters.poses).flatMap(group=>Object.values(group).map(m=>m.file.replace('.png','')))])this.load(name);
+    for (const name of ['court',...Object.keys(ballArt.art),...Object.values(characters.poses).flatMap(group=>Object.values(group).map(m=>m.file.replace('.png','')))])this.load(name);
     for (const side of ["p1", "p2"] as const) {
       for (let frame = 1; frame <= 15; frame++) this.load(`${side}-swing-${String(frame).padStart(2, "0")}`);
       for (let frame = 1; frame <= 13; frame++) this.load(`${side}-serve-${String(frame).padStart(2, "0")}`);
@@ -45,15 +46,19 @@ export class BadmintonView {
     ctx.shadowColor = "#f11920"; ctx.shadowBlur = 4;
     ctx.fillText(state ? `${String(state.score[0]).padStart(2, "0")} - ${String(state.score[1]).padStart(2, "0")}` : "00 - 00", 275, 42);
     ctx.shadowBlur = 0;
+    this.art('net',state?.net.frame??1);
     if (state) {
-      // Original attachMovie depths: P2=59998, P1=59999, birdie=119999.
+      // Native depths: net=27, P2=59998, P1=59999, bird=119999,
+      // trail slots=180000+id. A playing net resumes rather than restarting.
       this.player(state,1);this.player(state,0);
       if (state.rally !== "serve") {
         const bird = state.birdie;
-        ctx.save(); ctx.translate(bird.x, bird.y);
-        ctx.rotate(Math.atan2(bird.vy, bird.vx) + Math.PI / 2);
-        this.draw("birdie", -20.5, -22);
-        ctx.restore();
+        const angle=bird.rotation*Math.PI/180,[dx,dy]=ballArt.shadowOffset;
+        ctx.save();ctx.translate(bird.x+dx,bird.y+dy);ctx.rotate(angle);this.art('bird-shadow');ctx.restore();
+        ctx.save();ctx.translate(bird.x,bird.y);ctx.rotate(angle);this.art('bird-glow');ctx.restore();
+      }
+      for(const p of [...state.particles].sort((a,b)=>a.id-b.id)){
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.scale(p.scale,p.scale);this.art('trail');ctx.restore();
       }
       if (state.phase === "waiting") this.banner("双方入座并准备后开始");
       else if (state.phase === "finished") this.banner(`P${state.winner} 获胜 · 再次准备可重开`);
@@ -68,6 +73,11 @@ export class BadmintonView {
     this.frames++;
     const now = performance.now();
     if (now - this.fpsAt >= 1000) { this.fps = Math.round(this.frames * 1000 / (now - this.fpsAt)); this.frames = 0; this.fpsAt = now; }
+  }
+
+  private art(key:keyof typeof ballArt.art,frame=1):void {
+    const m=ballArt.art[key],image=this.images.get(key);
+    if(image?.complete&&image.naturalWidth)this.ctx.drawImage(image,(frame-1)*m.w,0,m.w,m.h,m.x,m.y,m.w,m.h);
   }
 
   private player(state: GameState, index: number): void {

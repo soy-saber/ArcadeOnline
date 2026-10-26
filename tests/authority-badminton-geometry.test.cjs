@@ -4,6 +4,8 @@ function load(file){const name=path.resolve(__dirname,file),source=require('esbu
 const core=load('../src/badminton/core.ts'),geometry=load('../src/badminton/geometry.ts'),protocol=load('../src/authority/protocol.ts'),data=require('../src/badminton/geometry.json');
 const input=(seq,patch={})=>({...core.EMPTY_INPUT,seq,...patch}),close=(a,b)=>assert(Math.abs(a-b)<1e-8,`${a} != ${b}`);
 function flight(){const s=core.createGame(42,true);s.rally='flight';s.serve=0;s.birdie.lastHitter=2;return s;}
+function stroke(s,seat=1){const controls=[input(1),input(1)];controls[seat-1].hit=1;core.step(s,controls);return s.players[seat-1];}
+function contact(s,seat=1){const p=s.players[seat-1],b=geometry.racketFramePose(seat,3).bounds;Object.assign(s.birdie,{x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:seat===1?2:1});core.step(s,[input(2,{hit:seat===1?1:0}),input(2,{hit:seat===2?1:0})]);}
 
 test('native source hash, all44racket frames,26service markers and70filtered original images remain reproducible',()=>{
  const root=path.resolve(__dirname,'..');assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,data.source))).digest('hex'),data.sourceSha256);
@@ -20,19 +22,19 @@ test('all native transparent hitbox corners compose into their recorded stage-ax
 });
 
 test('native rectangular corner hits replace the old30px circle, and the old circle cannot hit outside the native bounds',()=>{
- const s=flight(),p=s.players[0],bounds=data.timelines['p1-swing'][1].bounds;s.birdie={x:p.x+bounds[0]+.01,y:p.y+bounds[1]+.01,vx:0,vy:0,lastHitter:2};
- assert(Math.hypot(s.birdie.x-(p.x-24),s.birdie.y-(p.y-84))>30);core.step(s,[input(1,{hit:1}),core.EMPTY_INPUT]);assert.equal(s.birdie.lastHitter,1);assert(p.swingHit);assert.equal(p.swing,14);
- const t=flight(),q=t.players[0];t.birdie={x:q.x+5,y:q.y-84,vx:0,vy:0,lastHitter:2};core.step(t,[input(1,{hit:1}),core.EMPTY_INPUT]);assert.equal(t.birdie.lastHitter,2);assert(!q.swingHit);
+ const s=flight(),p=stroke(s),bounds=geometry.racketFramePose(1,3).bounds;Object.assign(s.birdie,{x:p.x+bounds[0]+.05,y:p.y+bounds[1]+.05,vx:0,vy:0,lastHitter:2});
+ assert(Math.hypot(s.birdie.x-(p.x-24),s.birdie.y-(p.y-84))>30);core.step(s,[input(2,{hit:1}),input(2)]);assert.equal(s.birdie.lastHitter,1);assert(p.swingHit);assert.equal(p.swing,13);
+ const t=flight(),q=stroke(t);Object.assign(t.birdie,{x:q.x-24,y:q.y-55,vx:0,vy:0,lastHitter:2});assert(Math.hypot(t.birdie.x-(q.x-24),t.birdie.y-(q.y-84))<30);assert(!geometry.racketFrameContains(q,1,3,t.birdie.x,t.birdie.y));core.step(t,[input(2,{hit:1}),input(2)]);assert.equal(t.birdie.lastHitter,2);assert(!q.swingHit);
 });
 
 test('P2 mirror and airborne character translation use original transformed rectangles, with frame9 closing the hit window',()=>{
- const s=flight(),p=s.players[1];p.y-=80;p.vy=-1;Object.assign(p.racket,{frame:1,playing:true,ready:false});const b=data.timelines['p2-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:1};core.step(s,[core.EMPTY_INPUT,core.EMPTY_INPUT]);assert.equal(s.birdie.lastHitter,2);
+ const s=flight(),p=stroke(s,2);p.y-=80;p.vy=-1;contact(s,2);assert.equal(s.birdie.lastHitter,2);
  const q={x:0,y:0,swing:7,underhand:0};assert.equal(geometry.racketPose(1,q.swing,0).frame,9);assert.equal(geometry.racketContains(q,1,0,-50),false);
 });
 
 test('contact consumes this swing without interrupting its remaining native animation or allowing an immediate new stroke',()=>{
- const s=flight(),p=s.players[0],b=data.timelines['p1-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:2};core.step(s,[input(1,{hit:1}),core.EMPTY_INPUT]);assert.equal(p.swing,14);assert(p.swingHit);
- core.step(s,[input(2,{hit:2}),core.EMPTY_INPUT]);assert.equal(p.swing,13);assert(p.swingHit);assert.equal(p.lastHit,2);for(let i=0;i<13;i++)core.step(s,[input(3+i,{hit:2}),core.EMPTY_INPUT]);assert.equal(p.swing,0);
+ const s=flight(),p=stroke(s);contact(s);assert.equal(p.swing,13);assert(p.swingHit);
+ core.step(s,[input(3,{hit:2}),input(3)]);assert.equal(p.swing,12);assert(p.swingHit);assert.equal(p.lastHit,2);for(let i=0;i<13;i++)core.step(s,[input(4+i,{hit:2}),core.EMPTY_INPUT]);assert.equal(p.swing,0);
  core.step(s,[input(20,{hit:3}),core.EMPTY_INPUT]);assert.equal(p.swing,14);assert(!p.swingHit);
 });
 
@@ -41,19 +43,20 @@ test('two-human low-ball strokes follow original setupHero1 overhead; source sin
  assert.deepEqual(data.timelines['p1-underhand'].filter(p=>p.active).map(p=>p.frame),[16,17,18,19,20,21,22]);
 });
 
-test('both native release markers are transformed through the original serve gun, then immediately take the first ballistic step',()=>{
+test('both native release markers create an unmoved shuttle; its first callback runs on the following frame',()=>{
  for(const seat of [1,2]){const s=core.createGame(1,true);s.serve=seat;for(let n=1;n<=4;n++){const controls=[input(n),input(n)];controls[seat-1].hit=1;core.step(s,controls);}
-  const p=s.players[seat-1],point=geometry.servePoint(seat,4);close(s.birdie.x,p.x+point.x+(seat===1?27.6:-27.6));close(s.birdie.y,p.y+point.y-26.825);assert.equal(s.rally,'flight');assert.equal(s.birdie.lastHitter,seat);
+  const p=s.players[seat-1],point=geometry.servePoint(seat,4);close(s.birdie.x,p.x+point.x);close(s.birdie.y,p.y+point.y);assert.equal(s.birdie.vx,seat===1?30:-30);assert.equal(s.birdie.vy,-30);assert.equal(s.rally,'flight');assert.equal(s.birdie.lastHitter,seat);
+  const birth={...s.birdie};core.step(s,[]);close(s.birdie.x,Math.trunc((birth.x+(seat===1?27.6:-27.6))*20)/20);close(s.birdie.y,Math.trunc((birth.y-26.825)*20)/20);
  }
  close(geometry.servePoint(1,4).x,23.8);close(geometry.servePoint(1,4).y,-29.5);close(geometry.servePoint(2,4).x,-21.65);close(geometry.servePoint(2,4).y,-28.5);
 });
 
 test('point-over ball can still be struck through native hit flags without incrementing the settled score',()=>{
- const s=flight(),p=s.players[0];s.rally='point';s.score=[1,0];s.pointTicks=40;const b=data.timelines['p1-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:2};core.step(s,[input(1,{hit:1}),core.EMPTY_INPUT]);assert.equal(s.birdie.lastHitter,1);assert.deepEqual(s.score,[1,0]);
+ const s=flight();s.rally='point';s.score=[1,0];s.resetAt=40;stroke(s);contact(s);assert.equal(s.birdie.lastHitter,1);assert.deepEqual(s.score,[1,0]);
 });
 
 test('full/delta recovery preserves a consumed stroke throughout its remaining animation and cannot replay contact',()=>{
- const s=flight(),p=s.players[0],b=data.timelines['p1-swing'][1].bounds;s.birdie={x:p.x+(b[0]+b[2])/2,y:p.y+(b[1]+b[3])/2,vx:0,vy:0,lastHitter:2};core.step(s,[input(1,{hit:1}),core.EMPTY_INPUT]);let client=protocol.applyUpdate(null,protocol.createUpdate(null,s,1,true));assert(client.players[0].swingHit);
+ const s=flight();stroke(s);contact(s);let client=protocol.applyUpdate(null,protocol.createUpdate(null,s,1,true));assert(client.players[0].swingHit);
  for(let n=0;n<20;n++){const before=JSON.parse(JSON.stringify(s)),recovered=JSON.parse(JSON.stringify(client));core.step(s,[]);core.step(recovered,[]);assert.deepEqual(recovered,s);client=protocol.applyUpdate(client,JSON.parse(JSON.stringify(protocol.createUpdate(before,s,2+n,false))));assert.deepEqual(client,s);assert(core.validState(client));}
  for(const edit of [p=>delete p.swingHit,p=>p.swingHit=1,p=>p.swing=15,p=>p.underhand=2]){const bad=JSON.parse(JSON.stringify(s));edit(bad.players[0]);assert(!core.validState(bad));}
 });
