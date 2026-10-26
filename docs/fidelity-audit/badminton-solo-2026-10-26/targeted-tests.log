@@ -1,0 +1,29 @@
+✔ original live solo run0 matches player/CPU/ball/particles, cached angles and the shared random stream (10.613ms)
+✔ original live solo run1 matches player/CPU/ball/particles, cached angles and the shared random stream (3.269ms)
+✔ original live solo run2 matches player/CPU/ball/particles, cached angles and the shared random stream (2.4301ms)
+✔ original live solo run3 matches player/CPU/ball/particles, cached angles and the shared random stream (3.1438ms)
+✔ original live solo run4 matches player/CPU/ball/particles, cached angles and the shared random stream (3.0987ms)
+✔ original live solo run5 matches player/CPU/ball/particles, cached angles and the shared random stream (2.2203ms)
+✔ original live solo run6 matches player/CPU/ball/particles, cached angles and the shared random stream (4.2937ms)
+✔ original live solo run7 matches player/CPU/ball/particles, cached angles and the shared random stream (3.5108ms)
+✔ solo mode admission, controller options and CPU ownership are enforced by the server (1.8954ms)
+✔ pause commands reject spectators, stale rounds, string sequences and replay; publish same-tick full recovery (3.8993ms)
+✔ six-level Next and Retry preserve native actors, global variables, particles and monotonic events (2.831ms)
+✔ solo finish keeps native callbacks, never auto-rematches, and menu returns to unready level one (6.5781ms)
+✔ robot reconnect cancels held attacks and preserves pointer, CPU, stage, random stream and command nonce (3.57ms)
+✔ solo full and delta snapshots round-trip every mode, AI phase and particle kind; reject corrupt authoritative state (65.8889ms)
+✔ robot preview changes local pose only and paused snapshots freeze ball rendering and movement (1.0305ms)
+✔ native ball and robot particle slots coexist by depth across shared counter wrap, replacing only the same kind/depth (5.8875ms)
+✔ all134 original actor racket getters and104service markers match f32/twip geometry, including short and special rackets (0.5096ms)
+✔ all84 original shape/bounds edge queries match source winding and inverse rounding, including distinct left-wall boundaries (0.588ms)
+✔ all1376 original CPU callbacks match movement/pose, strict serve timer, persistent undefined branches, action order and random draws (9.2213ms)
+✔ all42 original sheets/495frames retain native pixels, root alpha/filters and corrected PNG registration (156.8011ms)
+✔ all32 original robot callbacks match mouse follow/bob, serve clamp, pause/finish, pose-only jump and native trail spawn (10.6636ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 484.7023

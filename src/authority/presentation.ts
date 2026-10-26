@@ -2,6 +2,7 @@ import { State } from "./protocol";
 import { GameState as BombState, Input as BombInput, Player as BombPlayer, HEIGHT, WIDTH, index, position } from "./bomb-core";
 import { GameState as BadmintonState, Input as BadmintonInput, GROUND, moveControls } from "../badminton/core";
 import {pixel} from '../badminton/stage';
+import {runRobot} from '../badminton/robot';
 import { Input as ExpandedInput } from "../expanded/types";
 import { getAdapter } from "../expanded/registry";
 import {walkingPosition} from '../expanded/bomb2-walking';
@@ -135,24 +136,30 @@ export class Presentation {
           next.players[i].y = mix(before.state.players[i].y, after.state.players[i].y, amount);
         }
       }
-      if (!isBomb(next) && !isBomb(before.state) && !isBomb(after.state) &&
+      if (!isBomb(next) && !next.paused && !isBomb(before.state) && !isBomb(after.state) &&
           before.state.rally === "flight" && after.state.rally === "flight" && before.state.lastPoint === after.state.lastPoint) {
         next.birdie.x = mix(before.state.birdie.x, after.state.birdie.x, amount);
         next.birdie.y = mix(before.state.birdie.y, after.state.birdie.y, amount);
       }
     }
-    if (!seat || !held || !next.players[seat - 1] || age > PREDICTION_MS) return this.state = next;
+    if (!seat || !held || !next.players[seat - 1] || age > PREDICTION_MS||!isBomb(next)&&next.paused) return this.state = next;
     // Pending input history is bounded in real time; a backlog never triggers
     // seconds of replay. Use the latest held input for any fractional preview.
     const entries = this.pending.filter((entry) => entry.at >= this.inputFloor && now - entry.at <= PREDICTION_MS);
     const frameMs = 1000 / hz;
     const total = Math.min(hz * PREDICTION_MS / 1000, entries.length + Math.max(0, now - (entries[entries.length - 1]?.at ?? now)) / frameMs);
     let previewJump=isBomb(next)?0:next.players[seat-1].lastJump;
+    const robotPhase=!isBomb(next)&&next.robot?{phase:next.robot.phase}:null;
     for (let i = 0; i < Math.ceil(total); i++) {
       const input = entries[i]?.input || held, fraction = Math.min(1, total - i);
       if (isBomb(next)) bombMove(next, next.players[seat - 1], (input as BombInput).dir, fraction);
       else {
         const item = input as BadmintonInput, local = next.players[seat - 1];
+        if(next.robot&&seat===1&&robotPhase){
+          const x=local.x,y=local.y;
+          runRobot({tick:next.tick,started:false,paused:false,over:false,serve:next.serve,player:local,robot:robotPhase,pointer:{x:item.pointerX??next.robot.pointerX,y:item.pointerY??next.robot.pointerY},hit:false,jump:false},()=>{});
+          local.x=mix(x,local.x,fraction);local.y=mix(y,local.y,fraction);this.predictionSteps++;continue;
+        }
         if (fraction === 1) {
           local.vy++;local.y=pixel(local.y+local.vy);
           if(local.y>=GROUND){local.y=GROUND;local.jumping=false;}

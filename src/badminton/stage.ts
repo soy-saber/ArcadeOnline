@@ -1,4 +1,6 @@
 import native from './runtime-geometry.json';
+import actors from './actor-geometry.json';
+export const SPAWN1=actors.markers.gunnerPoint,SPAWN2=actors.markers.gunnerPoint2;
 
 export const HZ=30,STEP_MS=1000/HZ,WIDTH=550,HEIGHT=400,TARGET=7;
 export const GROUND=native.ground,LEFT_WALL=36.5,RIGHT_WALL=513.5;

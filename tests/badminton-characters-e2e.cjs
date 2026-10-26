@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'artifacts/badminton-
 const errors=[],wait=ms=>new Promise(r=>setTimeout(r,ms));let browser;
 const server=process.env.BADMINTON_BASE_URL?null:spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port)},windowsHide:true,stdio:['ignore','pipe','pipe']});server?.stderr.on('data',d=>errors.push(d.toString()));
 const snapshot=p=>p.evaluate(()=>JSON.parse(JSON.stringify(window.__authorityTest.authority)));
-async function focus(p){await p.bringToFront();await p.evaluate(()=>document.querySelector('#game-canvas').focus());}
+async function focus(p){await p.bringToFront();await p.waitForFunction(()=>!document.hidden&&document.hasFocus());await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{document.querySelector('#game-canvas').focus();resolve();}))));}
 async function screenshot(p,name){const image=await p.evaluate(()=>({png:document.querySelector('#game-canvas').toDataURL(),state:JSON.parse(JSON.stringify(window.__authorityTest.authority))}));fs.writeFileSync(path.join(out,name),Buffer.from(image.png.split(',')[1],'base64'));return image.state;}
 (async()=>{
  for(let n=0;n<100;n++){try{if((await fetch(base+'/healthz')).ok)break;}catch{}await wait(50);}
@@ -16,7 +16,7 @@ async function screenshot(p,name){const image=await p.evaluate(()=>({png:documen
    const draw=CanvasRenderingContext2D.prototype.drawImage;let group=null,lastTick={};
    CanvasRenderingContext2D.prototype.drawImage=function(...args){const result=draw.apply(this,args);if(this.canvas.id!=='game-canvas')return result;
     const file=(args[0]?.src||'').split('/').pop(),w=window.__characterPaint,s=window.__authorityTest?.state;if(file==='court.png'){group=[];if(s)w.groups.push(group);return result;}if(!s)return result;
-    const side=/^(p[12])-/.exec(file)?.[1];if(/^(p[12])-(swing|serve|underhand)-/.test(file))group?.push(side+'-gun');
+    const side=/^(p[12])-/.exec(file)?.[1];if(/^(p[12])-(?:(swing|serve|underhand)-|racket-(swing|serve)\.png)/.test(file))group?.push(side+'-gun');
     const match=/^(p[12])-body-(normal|walkforward|walkbackward|walkup|walkdown)\.png$/.exec(file);if(match){
      const p=s.players[Number(match[1][1])-1],m=poses[match[1]][p.motion],frame=m.playing?(s.tick-p.motionAt)%m.frames+1:1,expected=[(frame-1)*m.w,0,m.w,m.h,p.x+m.x,p.y+m.y,m.w,m.h];
      group?.push(match[1]+'-body');w.loaded[file]=[args[0].naturalWidth,args[0].naturalHeight];if(file!==m.file||args.length!==9||args.slice(1).some((n,j)=>Math.abs(n-expected[j])>1e-7))w.errors.push({file,tick:s.tick,motion:p.motion,motionAt:p.motionAt,actual:args.slice(1),expected});

@@ -4,7 +4,7 @@ import { GameView } from "./bomb-view";
 import { ORIGINAL_MAPS } from "./maps";
 import { HZ as BOMB_HZ, Input as BombInput, ITEM_LABELS } from "./bomb-core";
 import { BadmintonView } from "../badminton/view";
-import { GameState as BadmintonState, Input as BadmintonInput, HZ as BADMINTON_HZ } from "../badminton/core";
+import { GameState as BadmintonState, Input as BadmintonInput, HZ as BADMINTON_HZ,MODES,canControl } from "../badminton/core";
 import { State, hashState } from "./protocol";
 import { getAdapter } from "../expanded/registry";
 import type { State as ExpandedState } from "../expanded/types";
@@ -36,6 +36,7 @@ function start(): void {
   let weaponStep = 1;
   let cancelledAttack = 0;
   let cancelledJump=0,cancelledHit=0;
+  let pointer:{x:number;y:number}|null=null,actionSequence=0;
   let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
   let adapterFrames = 0, adapterFps = 0, fpsAt = performance.now();
@@ -48,8 +49,8 @@ function start(): void {
   let sound = localStorage.getItem("arcade_native_sound") !== "off";
   let volume = Math.max(0, Math.min(100, Number(localStorage.getItem("arcade_native_volume") ?? 24)));
   if (!Number.isFinite(volume)) volume = 24;
-  let heard: { round: number; score: string; hits: number; winner: number | null; strokes:number[] } | null = null;
-  const sounds: Record<string, string> = { whoosh: "badminton-whoosh", hit: "badminton-hit", score: "badminton-score", cheer: "badminton-cheer" };
+  let heard: { round: number; score: number; hits: number; winner: number | null; strokes:number[] } | null = null;
+  const sounds: Record<string, string> = { whoosh: "badminton-whoosh", hit: "badminton-hit", score: "badminton-score", cheer: "badminton-cheer",sigh:'badminton-sigh',next:'badminton-next' };
 
   document.title = `${title} · 在线联机 - ArcadeOnline`;
   document.body.classList.toggle("badminton-page", badminton);
@@ -57,7 +58,7 @@ function start(): void {
   localStorage.setItem("arcade_recent_game", gameId);
   if (badminton) {
     el("battle-records").hidden = true;
-    el("round-options").hidden = true; el("seat-3").hidden = true; el("seat-4").hidden = true;
+    el("round-options").hidden = false; el("seat-3").hidden = true; el("seat-4").hidden = true;
     el("weapon-status").hidden = true;
     el("controls-guide").textContent = "A/D 或 ←/→ 移动，W/↑ 跳跃，S/↓ 发球和挥拍。先得 7 分获胜。";
     el("mode-note").textContent = "两人入座并准备后开始。比赛结束 3 秒后自动开下一局；取消准备可退出下一局。";
@@ -90,6 +91,10 @@ function start(): void {
     modeSelect.parentElement!.hidden = false;
     for (const mode of adapter.modes) { const option = document.createElement("option"); option.value = mode.id; option.textContent = mode.label; modeSelect.append(option); }
   }
+  if(badminton){
+    mapSelect.parentElement!.hidden=true;el<HTMLSelectElement>('game-loadout').parentElement!.hidden=true;modeSelect.parentElement!.hidden=false;
+    for(const mode of MODES){const option=document.createElement('option');option.value=mode.id;option.textContent=mode.label;modeSelect.append(option);}
+  }
   for (const map of adapter?.maps || ORIGINAL_MAPS) { const option = document.createElement("option"); option.value = map.id; option.textContent = map.label; mapSelect.append(option); }
   if(!adapter&&!badminton)mapSelect.title='每完成5局随机切换一个不同的原作场景；手动换图重新计数';
   function notice(message: string): void { el("connection-note").textContent = message; }
@@ -108,7 +113,7 @@ function start(): void {
     if (!player) return;
     if ("gameId" in state) { bomb = Math.max(bomb, player.lastAttack || 0); jump = Math.max(jump, player.lastAlt || 0); }
     else if (isBomb(state)) bomb = Math.max(bomb, player.lastBomb);
-    else { jump = Math.max(jump, player.lastJump); hit = Math.max(hit, player.lastHit); }
+    else { jump = Math.max(jump, player.lastJump); hit = Math.max(hit, player.lastHit);actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
   }
   net.onRoom = () => {
     if (seat !== net.seat) { seat = net.seat; clearInput(); if (net.authority) alignCounters(net.authority); }
@@ -132,12 +137,12 @@ function start(): void {
     if ("gameId" in state) { adapter?.confirm?.(state as ExpandedState); return; }
     if (isBomb(state)) bombView!.confirm(state);
     else {
-      const next = { round: state.round, score: state.score.join(":"), hits: state.hits, winner: state.winner, strokes:state.players.map(p=>p.racket.strokes) };
+      const next = { round: state.round, score: state.scoreEvents, hits: state.hits, winner: state.winner, strokes:state.players.map(p=>p.racket.strokes) };
       if (heard?.round === state.round) {
         state.players.forEach((p,i)=>{if(next.strokes[i]>heard!.strokes[i]&&state.tick-p.racket.strokeAt<=3)play('whoosh');});
-        if (next.score !== heard.score) play("score");
+        if (next.score>heard.score&&state.tick-state.scoreAt<=3) play("score");
         if (next.hits > heard.hits && state.tick-state.hitAt<=3) play("hit");
-        if (next.winner && next.winner !== heard.winner) play("cheer");
+        if (next.winner && next.winner !== heard.winner) play(state.options.mode!=='versus'&&next.winner===2?'sigh':'cheer');
       }
       heard = next;
     }
@@ -152,20 +157,20 @@ function start(): void {
       ...(boxhead ? {trigger:actions.some(code=>keys.has(code)),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
       return { seq: ++seq, left: directions.left, right: directions.right, jump, hit,
-        jumpHeld:jumps.some(code=>keys.has(code)),hitHeld:actions.some(code=>keys.has(code)),cancelledJump,cancelledHit };
+        jumpHeld:jumps.some(code=>keys.has(code))||keys.has('RobotJump'),hitHeld:actions.some(code=>keys.has(code))||keys.has('MouseHit'),cancelledJump,cancelledHit,...(pointer?{pointerX:pointer.x,pointerY:pointer.y}:{}) };
     }
     let dir: BombInput["dir"] = -1, time = -1;
     for (const [code, at] of keys) if (bombDirections[code] !== undefined && at >= time) { dir = bombDirections[code]; time = at; }
     return { seq: ++seq, dir, bomb, special: 0 };
   }
   const timer = window.setInterval(() => {
-    if (!inputEnabled || !net.connected || !seat || net.authority?.phase !== "playing") return;
+    if (!inputEnabled || !net.connected || !seat || !(badminton&&net.authority?canControl(net.authority as BadmintonState):net.authority?.phase==='playing')) return;
     const now = performance.now(); held = currentInput(now);
     if (net.control({ t: "authInput", round, input: held, serverTime: net.serverNow(now) })) presentation.input(held, now);
   }, 1000 / hz);
   function press(code: string, down: boolean): void {
     if (!down) { keys.delete(code); return; }
-    if (!seat || net.authority?.phase !== "playing" || keys.has(code)) return;
+    if (!seat || !(badminton&&net.authority?canControl(net.authority as BadmintonState):net.authority?.phase==='playing') || keys.has(code)) return;
     const now = performance.now(),aliasAt=heldDirectionAt(keys,code);keys.set(code,aliasAt??now);inputAt=now;
     // Pressing the alternative for an already-held direction is not a second
     // jump/swing, and does not steal the latest-direction priority.
@@ -175,6 +180,12 @@ function start(): void {
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {
+    if(badminton&&event.code==='KeyP'&&down&&!event.repeat&&!(event.target as HTMLElement)?.matches('input,textarea,select,button')){event.preventDefault();badmintonCommand('pause');return;}
+    if(badminton&&event.code==='Space'&&(net.authority as BadmintonState|null)?.robot){
+      if(!down){keys.delete('RobotJump');return;}
+      if(seat!==1||!canControl(net.authority as BadmintonState)||(event.target as HTMLElement)?.matches('input,textarea,select,button'))return;
+      event.preventDefault();if(!keys.has('RobotJump'))jump++;keys.set('RobotJump',performance.now());return;
+    }
     if(!down&&keys.has(event.code)){press(event.code,false);return;}
     if ((event.target as HTMLElement)?.matches("input, textarea, select, button")) return;
     if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code) && !(adapter?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
@@ -187,28 +198,47 @@ function start(): void {
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-key]")) {
     button.onpointerdown = (event) => { event.preventDefault(); button.setPointerCapture(event.pointerId); press(button.dataset.key!, true); };
     const release = () => { press(button.dataset.key!, false); button.blur(); };
-    button.onpointerup = release; button.onpointercancel = release; button.onlostpointercapture = release;
+    const cancel=()=>{const code=button.dataset.key!;if(badminton&&keys.has(code)){if(jumps.includes(code))cancelledJump=jump;if(actions.includes(code))cancelledHit=hit;}release();};
+    button.onpointerup = release; button.onpointercancel = cancel; button.onlostpointercapture = cancel;
   }
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-seat]")) button.onclick = () => {
     const requested = Number(button.dataset.seat); net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested }); button.blur();
   };
+  function badmintonCommand(action:string):void {
+    if(!badminton||!seat||!net.authority)return;
+    net.control({t:'authBadmintonAction',round:net.authority.round,seq:++actionSequence,action});
+    if(action==='next'||action==='retry')play('next');
+  }
+  function finishedAction():string|null {
+    const s=badminton?net.authority as BadmintonState|null:null;
+    return s?.phase==='finished'&&s.options.mode!=='versus'?s.winner===2?'retry':s.level<6?'next':'menu':null;
+  }
+  if(badminton){
+    const aim=(event:PointerEvent)=>{const r=canvas.getBoundingClientRect();pointer={x:(event.clientX-r.left)*550/r.width,y:(event.clientY-r.top)*400/r.height};};
+    canvas.addEventListener('pointermove',aim);
+    canvas.addEventListener('pointerdown',event=>{
+      if(!(net.authority as BadmintonState|null)?.robot||seat!==1||event.button!==0||!canControl(net.authority as BadmintonState))return;
+      event.preventDefault();aim(event);canvas.focus();canvas.setPointerCapture(event.pointerId);if(!keys.has('MouseHit'))hit++;keys.set('MouseHit',performance.now());
+    });
+    const release=()=>keys.delete('MouseHit'),cancel=()=>{if(keys.has('MouseHit')){cancelledHit=hit;release();}};canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('lostpointercapture',cancel);
+  }
   function toggleReady(autoSit = false): void {
     if (!net.connected) return;
     if (seat) {
       const mine = net.room.members.find((member) => member.id === net.id);
       net.control({ t: "ready", ready: !mine?.ready });
     } else if (autoSit) {
-      const available = Object.keys(net.room.seats).map(Number).find(number => !net.room.seats[number]);
+      const available = Object.keys(net.room.seats).map(Number).find(number => !net.room.seats[number]&&(!badminton||(net.authority as BadmintonState|null)?.options.mode==='versus'||number===1));
       if (!available) return;
       net.control({ t: "sit", seat: available });
       net.control({ t: "ready", ready: true });
     }
     canvas.focus({ preventScroll: true });
   }
-  el<HTMLButtonElement>("start-game").onclick = () => toggleReady();
-  el<HTMLButtonElement>("fullscreen-ready").onclick = () => toggleReady(true);
+  el<HTMLButtonElement>("start-game").onclick = () => {const action=finishedAction();if(action)badmintonCommand(action);else toggleReady();};
+  el<HTMLButtonElement>("fullscreen-ready").onclick = () => {const action=finishedAction();if(action)badmintonCommand(action);else toggleReady(true);};
   for (const key of ["map", "mode", "loadout", "difficulty"] as const) el<HTMLSelectElement>(`game-${key}`).onchange = () => {
-    if (net.isController) net.control({ t: "authOptions", map: mapSelect.value, ...(adapter?.modes ? { gameMode: modeSelect.value } : {}), ...(bombSettings?{difficulty:difficultySelect.value}:{}), loadout: el<HTMLSelectElement>("game-loadout").value });
+    if (net.isController) net.control(badminton?{t:'authOptions',gameMode:modeSelect.value}:{ t: "authOptions", map: mapSelect.value, ...(adapter?.modes ? { gameMode: modeSelect.value } : {}), ...(bombSettings?{difficulty:difficultySelect.value}:{}), loadout: el<HTMLSelectElement>("game-loadout").value });
   };
   characterSelect.onchange=()=>{net.control({t:'authCharacter',character:Number(characterSelect.value)});characterSelect.blur();};
   el("copy-invite").onclick = async () => {
@@ -267,6 +297,9 @@ function start(): void {
       const button = row.querySelector<HTMLButtonElement>("button")!;
       button.textContent = seat === number ? "离座" : "入座"; button.disabled = !net.connected || !!member && member.id !== net.id;
       row.classList.toggle("mine", seat === number); row.classList.toggle("ready", !!member?.ready);
+      if(badminton&&number===2&&net.authority&&(net.authority as BadmintonState).options.mode!=='versus'){
+        const s=net.authority as BadmintonState|null;row.querySelector<HTMLElement>('.who')!.textContent=`电脑 · 第 ${s?.level??1} 级`;button.textContent='电脑';button.disabled=true;
+      }
     }
     const ready = el<HTMLButtonElement>("start-game"); ready.disabled = !net.connected || !seat;
     if (recordsEnabled) {
@@ -288,10 +321,19 @@ function start(): void {
     ready.textContent = mine?.ready ? "取消准备" : "准备";
     ready.setAttribute("aria-pressed", String(!!mine?.ready));
     const fullscreenReady = el<HTMLButtonElement>("fullscreen-ready");
-    const hasOpenSeat = Object.values(net.room.seats).some(id => !id);
+    const hasOpenSeat = Object.entries(net.room.seats).some(([number,id]) => !id&&(!badminton||(net.authority as BadmintonState|null)?.options.mode==='versus'||number==='1'));
     fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
     fullscreenReady.textContent = seat ? ready.textContent : hasOpenSeat ? "入座并准备" : "席位已满";
     fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
+    if(badminton){
+      const s=net.authority as BadmintonState|null,mode=s?.options.mode??'versus',action=finishedAction();modeSelect.value=mode;
+      el('host-line').textContent=net.isController?'你可以选择单人角色或双人对战；切换前请让P2离座':'房间管理者可选择单人角色或双人对战';
+      el('mode-note').textContent=mode==='versus'?'两人入座并准备后开始；结束3秒后继续下一局。':'P1准备后挑战六级电脑；胜利后进入下一级，失败可重试当前级。';
+      el('controls-guide').textContent=mode==='robot'?'鼠标或触摸拖动，按住左键、触点或S/↓发球和击球，P暂停。':'A/D 或 ←/→ 移动，W/↑跳跃，S/↓发球和挥拍，P暂停。'+(mode==='human'?'人类可下手接低球。':'');
+      (document.querySelector('.direction-pad') as HTMLElement).hidden=mode==='robot';
+      if(action){const label=action==='next'?'下一关':action==='retry'?'再试一次':'返回准备';ready.textContent=fullscreenReady.textContent=label;ready.disabled=fullscreenReady.disabled=!net.connected||seat!==1;}
+      el('round-status').textContent=s?.paused?'已暂停 · P继续':s?.phase==='finished'?mode==='versus'?'比赛结束':s.winner===1&&s.level===6?'六级挑战完成':`第 ${s.level} 级结束`:mode==='versus'?'双人对战':`第 ${s?.level??1} / 6 级`;
+    }
     if (state && isBomb(state)) {
       mapSelect.value = state.options.map; el<HTMLSelectElement>("game-loadout").value = state.options.loadout;
       const player = seat ? state.players[seat - 1] : null;
@@ -329,9 +371,11 @@ function start(): void {
     }
     const nextAt = net.room.auth?.nextRoundAt;
     if (!net.connected) el("round-status").textContent = "连接中";
-    else if (state?.phase === "playing") { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = "比赛进行中"+(rotation?` · 本图第 ${Math.min(rotation.every,rotation.completed+1)}/${rotation.every} 局`:''); }
-    else if (state?.phase === "finished" && nextAt) { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1000))} 秒后${rotation&&rotation.completed>=rotation.every?'换图并':''}开始下一局`; }
-    else el("round-status").textContent = "入座并准备后自动开始";
+    else if(!badminton){
+      if (state?.phase === "playing") { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = "比赛进行中"+(rotation?` · 本图第 ${Math.min(rotation.every,rotation.completed+1)}/${rotation.every} 局`:''); }
+      else if (state?.phase === "finished" && nextAt) { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1000))} 秒后${rotation&&rotation.completed>=rotation.every?'换图并':''}开始下一局`; }
+      else el("round-status").textContent = "入座并准备后自动开始";
+    }
     if (badminton && state && !isBomb(state)) el("score-line").textContent = `P1 ${state.score[0]} : ${state.score[1]} P2`;
     el("metrics-age").textContent = Number.isFinite(net.snapshotAge) ? `${Math.round(net.snapshotAge)} ms` : "等待同步";
     el("metrics-bandwidth").textContent = `${Math.round(net.receivedBytes / 1024)} KB 收 / ${Math.round(net.sentBytes / 1024)} KB 发`;

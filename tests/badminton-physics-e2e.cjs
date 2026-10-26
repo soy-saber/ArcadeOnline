@@ -17,7 +17,7 @@ async function shot(p,name){const data=await p.evaluate(()=>document.querySelect
    const draw=CanvasRenderingContext2D.prototype.drawImage;
    CanvasRenderingContext2D.prototype.drawImage=function(...args){const result=draw.apply(this,args);if(this.canvas.id!=='game-canvas')return result;
     const file=(args[0]?.src||'').split('/').pop(),s=window.__authorityTest?.state;if(file==='court.png'){group=[];trailIndex=0;return result;}if(!s)return result;
-    if(/^(p[12])-(body|swing|serve)/.test(file))group?.push(file.startsWith('p1')?'p1':'p2');
+    if(/^(p[12])-(body|swing|serve|racket)/.test(file))group?.push(file.startsWith('p1')?'p1':'p2');
     const name=file?.replace('.png',''),m=art.art[name];if(!m)return result;if(name==='net'){group=[];trailIndex=0;}group.push(name);
     const matrix=this.getTransform(),actual=[matrix.a,matrix.b,matrix.c,matrix.d,matrix.e,matrix.f];let x=0,y=0,r=0,scale=1,frame=1,p;
     if(name==='net')frame=s.net.frame;

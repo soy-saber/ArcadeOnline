@@ -1,0 +1,190 @@
+{
+  "at": "2026-10-26T13:39:56.238Z",
+  "method": "Cached original JPEXS PNG/SVG inputs; complete importer runs again including original audio, JSON, registration, PNG composition and every output byte.",
+  "files": [
+    {
+      "file": "src/badminton/solo-art.json",
+      "sha256": "965f96261788fc25d1448ad090c3a19121e8e90db7528588b173d19f8af1e7b2"
+    },
+    {
+      "file": "src/badminton/actor-geometry.json",
+      "sha256": "387371c165e297908edbbd5167af5b5ec2e2624dfda90814cc933b3b1e1b2b61"
+    },
+    {
+      "file": "public/authority/assets/badminton/robot-trail.png",
+      "sha256": "921966116757b1fe2b8e1135eff35f3f969bf344060495e5879e1572c045d3fa"
+    },
+    {
+      "file": "public/authority/assets/badminton/p1-racket-swing.png",
+      "sha256": "53a58520e56c35f5a645df63a57bb211f514c4a33436379a1c77b114c5d2524b"
+    },
+    {
+      "file": "public/authority/assets/badminton/p1-racket-serve.png",
+      "sha256": "72b133db766cc64225e6269c941c5bcb65aa65495322fb3635931715e1d3fed9"
+    },
+    {
+      "file": "public/authority/assets/badminton/p2-racket-swing.png",
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a"
+    },
+    {
+      "file": "public/authority/assets/badminton/p2-racket-serve.png",
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-1-body-normal.png",
+      "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-1-body-walkforward.png",
+      "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-1-body-walkbackward.png",
+      "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-1-body-walkdown.png",
+      "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-1-body-walkup.png",
+      "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-2-body-normal.png",
+      "sha256": "b5cf73f1c5870c4ac998b0fffb25758ef1eb299f90cb968305fe49a35d26df61"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-2-body-walkforward.png",
+      "sha256": "7b07206a7d140b0a077253f5355a9c264d03fc3050bf87ef8187fd0682b0f88d"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-2-body-walkbackward.png",
+      "sha256": "b42680bfabf90298b7f6f21759a7627eff3d7f62e81e6ccff1b46c7229116206"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-2-body-walkdown.png",
+      "sha256": "2c2a96621309ca191b7cf29e1795a71b959ad7ac0d903f12bf57519f817282cd"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-2-body-walkup.png",
+      "sha256": "c2b397c8bd1aea7b122834b68c89ff22dc67842376b9e984b6c8882a57bfa3c3"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-body-normal.png",
+      "sha256": "dc07d4e4f9191773868af1aedcd1c180e012b441fa045bf6cc84453771d68a6d"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-body-walkforward.png",
+      "sha256": "45d12eecf069ff3cbdab274d09507fa2b7208d986973251bcfe6cbcdbc9a7d6f"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-body-walkbackward.png",
+      "sha256": "ad6dd8a81b31f2e1387cd31e2f433689d69c8ab73b3127e71a03485dbe5aab5a"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-body-walkdown.png",
+      "sha256": "1f058b66d6943967195da45ded5966770bb01d366ac9be44e26d1bed4b757093"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-body-walkup.png",
+      "sha256": "d4a1a1b167853bbc15e673a881930c652ddaf9d23b2ed6d053d64f73d38b7557"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-racket-swing.png",
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-3-racket-serve.png",
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-body-normal.png",
+      "sha256": "263b992cf929f304003273ab5b554a47cbfa50375261b11ff658c2471b0ef1e6"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-body-walkforward.png",
+      "sha256": "0015b2d7e9dfc337a84ee0610320ca714549e70e72254cfa9635732e1a08a62f"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-body-walkbackward.png",
+      "sha256": "cb3df7b849f6319ca429b4b3bbf2a628f07757b8d87f157f49b9a3cfa18188db"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-body-walkdown.png",
+      "sha256": "51c89afa45166bd17e7ccab0cf7878bbc42a40d578690333d4bce6258681ce86"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-body-walkup.png",
+      "sha256": "b9e59ad9facc25741d1a181d774b083a70e6729a7a035222272ff1ff60ff398a"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-racket-swing.png",
+      "sha256": "62262568560c34666e46f1f846c80d9670bdecbf37629cd84d9eb62a515c7a2c"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-4-racket-serve.png",
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-5-body-normal.png",
+      "sha256": "09edfba6e6cdf7771b155cbc349cb69231d4557cb926e6f38ef2fcf633438a1e"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-5-body-walkforward.png",
+      "sha256": "0f522f80e88d724167bb5f394d565db164f3d59608ac7228f412b43142881c07"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-5-body-walkbackward.png",
+      "sha256": "20f52643ed4aa1c7802d126150d5015f3e4a79eacfd962cb370112190dee59db"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-5-body-walkdown.png",
+      "sha256": "93f108e35a06df0675dd6e8f2711f7fa8f94eae5f2429f56e3afe0ddde2fbe34"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-5-body-walkup.png",
+      "sha256": "ca34016ccf8cc9422370ebb64ba63778adc0f210814b233255ae11f75c7dbe80"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-6-body-normal.png",
+      "sha256": "3d689f57859c741acd3187ce2ad8b22a2c1d29e3a200ad3c19f050dfcfe9a036"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-6-body-walkforward.png",
+      "sha256": "8fd9e54cb01ce98e24cb873b0920a395013782cef2391d8735260008162fa254"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-6-body-walkbackward.png",
+      "sha256": "83e76dcb8673dd4897e1fdb3a065f8074e87bcb8881de1808288feb032b4c3ab"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-6-body-walkdown.png",
+      "sha256": "cb4ffcb78f8a4b0755bf8780d1f11933c1e3372ff700fb2a91c0726453b7e3b9"
+    },
+    {
+      "file": "public/authority/assets/badminton/cpu-6-body-walkup.png",
+      "sha256": "0e23e69162aa69b8db0608ab37b9b1af3c662cee04e3f9991f4a364f622485db"
+    },
+    {
+      "file": "public/authority/assets/badminton/robot-body-normal.png",
+      "sha256": "7dd68b76b7885c92f555d444896fb5a7702ce7208b9f80e4e6896bfcb1955de5"
+    },
+    {
+      "file": "public/authority/assets/badminton/robot-racket-swing.png",
+      "sha256": "2e0195623303edadd40455759647cc93617c81bc99906a25ecf7fbbfaa0c9ed9"
+    },
+    {
+      "file": "public/authority/assets/badminton/robot-racket-serve.png",
+      "sha256": "95485d88f1f6ebaacc5b1ed423909fb205bb4f15a164bda2d3c6b1d6e3c0f304"
+    },
+    {
+      "file": "public/authority/assets/badminton-sigh.mp3",
+      "sha256": "fbc9b0f6e7ae2449e32f1f96375be85b9b09244f47c2d73c1a04072063bf111f"
+    },
+    {
+      "file": "public/authority/assets/badminton-next.mp3",
+      "sha256": "21b5d4757cb21f3cb46c1dc40870a08df829d62dcbff79dc5e2e37a33186604a"
+    }
+  ]
+}

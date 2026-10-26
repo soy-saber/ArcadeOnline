@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "game": "50737-server",
+      "seats": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "names": 4,
+      "maps": 18,
+      "full": 12,
+      "delta": 31,
+      "bytes": 924924
+    }
+  ],
+  "errors": [],
+  "rawResultSha256": "ee777194c75a5a0dc4044cfe213e425c592d38c96cdc7632f8323351c7588e7e"
+}

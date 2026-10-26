@@ -1,0 +1,272 @@
+{
+  "at": "2026-10-26T13:36:17.119Z",
+  "base": "http://127.0.0.1:55829",
+  "normalInputOnly": true,
+  "returnedHit": true,
+  "finish": {
+    "round": 1793021750680,
+    "tick": 701,
+    "phase": "finished",
+    "rally": "point",
+    "serve": 0,
+    "winner": 2,
+    "score": [
+      0,
+      7
+    ],
+    "players": [
+      {
+        "jumping": false,
+        "jumps": 0,
+        "motion": "normal",
+        "motionAt": 0,
+        "racket": {
+          "frame": 1,
+          "playing": false,
+          "serveFrame": 1,
+          "servePlaying": false,
+          "ready": true,
+          "active": false,
+          "consumed": false,
+          "angle": -0.2053798653651029,
+          "strokes": 0,
+          "strokeAt": -1
+        },
+        "x": 132.85,
+        "y": 376.25,
+        "vy": 701,
+        "swing": 0,
+        "swingHit": false,
+        "servePose": 0,
+        "underhand": 0,
+        "lastJump": 0,
+        "lastHit": 1,
+        "facing": 1
+      },
+      {
+        "jumping": false,
+        "jumps": 0,
+        "motion": "normal",
+        "motionAt": 6,
+        "racket": {
+          "frame": 15,
+          "playing": false,
+          "serveFrame": 1,
+          "servePlaying": false,
+          "ready": true,
+          "active": false,
+          "consumed": false,
+          "angle": -1.3597611244767904,
+          "strokes": 1,
+          "strokeAt": 47
+        },
+        "x": 440.45,
+        "y": 376.25,
+        "vy": 701,
+        "swing": 0,
+        "swingHit": false,
+        "servePose": 0,
+        "underhand": 0,
+        "lastJump": 0,
+        "lastHit": 7,
+        "facing": 1
+      }
+    ],
+    "birdie": {
+      "x": 81.45,
+      "y": 376.25,
+      "vx": -0.7,
+      "vy": -4.385083260452734,
+      "lastHitter": 2,
+      "contactBy": 2,
+      "born": 657,
+      "leftSide": true,
+      "rightSide": false,
+      "topSide": false,
+      "bottomSide": true,
+      "rotation": -176.00712738489358,
+      "speed": 10.989382598243665
+    },
+    "ack": [
+      661,
+      650
+    ],
+    "inputs": [
+      {
+        "seq": 661,
+        "left": false,
+        "right": false,
+        "jump": 0,
+        "hit": 1,
+        "jumpHeld": false,
+        "hitHeld": false,
+        "cancelledJump": 0,
+        "cancelledHit": 0
+      },
+      {
+        "seq": 650,
+        "left": false,
+        "right": false,
+        "jump": 0,
+        "hit": 7,
+        "jumpHeld": false,
+        "hitHeld": false,
+        "cancelledJump": 0,
+        "cancelledHit": 0
+      }
+    ],
+    "pointTicks": 0,
+    "lastPoint": 2,
+    "resetAt": null,
+    "finishAt": null,
+    "lastResetAt": 647,
+    "rng": 1971063687,
+    "servingSpot": 2,
+    "chance1": null,
+    "particles": [
+      {
+        "id": 127,
+        "kind": "ball",
+        "born": 658,
+        "x": 482.55,
+        "y": 356.8,
+        "vx": 1.5344697735836734,
+        "vy": 0.1059853574981298,
+        "rotation": 57.03837465494871,
+        "spin": 24.685625424608588,
+        "scale": 0.10960124979146287,
+        "shrink": 0.9498830281198025,
+        "width": 0.5
+      },
+      {
+        "id": 142,
+        "kind": "ball",
+        "born": 667,
+        "x": 196.25,
+        "y": 143.15,
+        "vx": -1.2443733309289586,
+        "vy": -1.4878800862183454,
+        "rotation": -34.141163947060704,
+        "spin": 32.81373645644635,
+        "scale": 0.09914936527097663,
+        "shrink": 0.9342844397062435,
+        "width": 0.5
+      }
+    ],
+    "nextParticle": 144,
+    "net": {
+      "frame": 1,
+      "playing": false,
+      "hits": 0,
+      "at": -1
+    },
+    "hits": 8,
+    "hitAt": 657,
+    "options": {
+      "mode": "versus"
+    },
+    "level": 1,
+    "paused": false,
+    "cpu": null,
+    "robot": null,
+    "actionAck": [
+      0,
+      0
+    ],
+    "scoreEvents": 7,
+    "scoreAt": 701
+  },
+  "scores": [
+    {
+      "tick": 102,
+      "score": [
+        0,
+        1
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 203,
+      "score": [
+        0,
+        2
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 304,
+      "score": [
+        0,
+        3
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 405,
+      "score": [
+        0,
+        4
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 504,
+      "score": [
+        0,
+        5
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 603,
+      "score": [
+        0,
+        6
+      ],
+      "lastPoint": 2
+    },
+    {
+      "tick": 701,
+      "score": [
+        0,
+        7
+      ],
+      "lastPoint": 2
+    }
+  ],
+  "automaticRematch": true,
+  "recovery": {
+    "request": {
+      "tick": 49,
+      "full": 2,
+      "swing": 12,
+      "swingHit": true,
+      "frame": 4,
+      "ready": false,
+      "score": [
+        0,
+        0
+      ]
+    },
+    "recovery": {
+      "tick": 49,
+      "swing": 12,
+      "swingHit": true,
+      "frame": 4,
+      "ready": false,
+      "score": [
+        0,
+        0
+      ]
+    }
+  },
+  "snapshotCount": 414,
+  "racketDrawCount": 1584,
+  "observedSeats": [
+    2,
+    1
+  ],
+  "rawResultSha256": "02d3ba846237cf75c71d6c93c45092c03495138ae4cf63d95ea2c8610f871c58",
+  "method": "Compact record from successful ordinary-input browser run; source driver retains the executable assertions. Raw full local capture is not required to read this record.",
+  "errors": []
+}

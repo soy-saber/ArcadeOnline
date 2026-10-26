@@ -21,11 +21,12 @@ interface Match {
   records: Map<string, RecordRow>; roundMembers: Map<number, string>;
 }
 const isBomb = (room: Room) => room.gameId === "3881-server";
+const isSolo=(room:Room)=>room.gameId==='46923-server'&&(room.auth?.options.gameMode??'versus')!=='versus';
 const hasRecords = (room: Room) => isBomb(room) || !!getAdapter(room.gameId) && room.gameId !== "fbw_forest-server";
 const activeSeats = (room: Room) => Object.keys(room.seats).map(Number).filter((seat) => !!room.seats[seat]);
 const allReady = (room: Room) => {
   const players = [...room.members.values()].filter((member) => member.seat != null);
-  return players.length >= 2 && players.every((member) => member.ready);
+  return (isSolo(room)?players.length===1&&players[0].seat===1:players.length>=2) && players.every((member) => member.ready);
 };
 let roundId = Date.now();
 function newState(room: Room, playing: boolean): State {
@@ -33,7 +34,7 @@ function newState(room: Room, playing: boolean): State {
   const adapter = getAdapter(room.gameId);
   if (adapter) return { ...adapter.create(round, playing, activeSeats(room), Math.floor(Math.random() * 0x100000000), room.auth?.options.map, room.auth?.options.gameMode,room.auth?.options), gameId: adapter.id };
   return isBomb(room) ? bomb.createGame(Math.floor(Math.random() * 0x100000000), round, playing,
-    { ...room.auth?.options, mode: "online", bots: [], activeSeats: activeSeats(room) }) : badminton.createGame(round, playing);
+    { ...room.auth?.options, mode: "online", bots: [], activeSeats: activeSeats(room) }) : badminton.createGame(round, playing,(room.auth?.options.gameMode??'versus')as badminton.GameMode);
 }
 const copy = (state: State) => JSON.parse(JSON.stringify(state)) as State;
 function expireAction(room: Room, seat: number, input: bomb.Input | badminton.Input | ExpandedInput): void {
@@ -55,6 +56,7 @@ export class AuthorityEngine {
       room.auth = { state: newState(room, false), roster: "", clock: Date.now(), accumulator: 0, nextRoundAt: 0,
         completedOnMap: 0, lastPublish: 0, options: {}, inputs: new Map(), deliveries: new Map(), records: new Map(), roundMembers: new Map() };
       if (isBomb(room)) room.auth.options = { ...(room.auth.state as bomb.GameState).options };
+      if(room.gameId==='46923-server')room.auth.options.gameMode='versus';
       const adapter = getAdapter(room.gameId);
       if (adapter?.maps?.length) room.auth.options.map = adapter.maps[0].id as bomb.GameOptions["map"];
       if (adapter?.modes?.length) room.auth.options.gameMode = adapter.modes[0].id;
@@ -149,7 +151,7 @@ export class AuthorityEngine {
 
   input(room: Room, member: Member, message: Record<string, unknown>, now = Date.now()): void {
     const match = room.auth;
-    if (!match || !member.seat || message.round !== match.state.round || match.state.phase !== "playing") return;
+    if (!match || !member.seat || message.round !== match.state.round || !(match.state.phase==='playing'||isSolo(room)&&badminton.canControl(match.state as badminton.GameState))||isSolo(room)&&member.seat!==1) return;
     const input = message.input;
     const adapter = getAdapter(room.gameId);
     if (!(adapter ? validExpandedInput(input) : isBomb(room) ? bomb.validInput(input) : badminton.validInput(input))) return;
@@ -172,6 +174,10 @@ export class AuthorityEngine {
     const match = room.auth;
     if (!match || room.controllerId !== member.id || match.state.phase === "playing") return false;
     const adapter = getAdapter(room.gameId);
+    if(room.gameId==='46923-server'){
+      if(!badminton.MODES.some(m=>m.id===message.gameMode)||message.gameMode!=='versus'&&!!room.seats[2])return false;
+      match.options.gameMode=message.gameMode as string;for(const m of room.members.values())m.ready=false;this.begin(room,false);return true;
+    }
     const difficulty=message.difficulty??match.options.difficulty??'normal';
     if((isBomb(room)||adapter?.difficulties)&&(typeof difficulty!=='string'||!['easy','normal','hard'].includes(difficulty)))return false;
     if (adapter) {
@@ -210,6 +216,20 @@ export class AuthorityEngine {
     this.begin(room,false);return true;
   }
 
+  canSit(room:Room,seat:number):boolean {return !isSolo(room)||seat===1;}
+  badmintonAction(room:Room,member:Member,message:Record<string,unknown>):boolean {
+    const match=room.auth;
+    if(room.gameId!=='46923-server'||!match||!member.seat||room.seats[member.seat]!==member.id||message.round!==match.state.round)return false;
+    const state=match.state as badminton.GameState,seq=message.seq;
+    if(typeof seq!=='number'||!Number.isSafeInteger(seq)||seq<=state.actionAck[member.seat-1]||seq>=1e9)return false;
+    if(message.action==='menu'){
+      if(isSolo(room)&&member.seat!==1)return false;
+      for(const m of room.members.values())m.ready=false;this.begin(room,false);
+    }else if(!badminton.action(state,member.seat,seq,message.action))return false;
+    for(const d of match.deliveries.values())d.forceFull=true;
+    this.publish(room);return true;
+  }
+
   pump(room: Room, now = Date.now()): void {
     const match = room.auth; if (!match || room.members.size === 0) return;
     const adapter = getAdapter(room.gameId);
@@ -219,7 +239,8 @@ export class AuthorityEngine {
     // of replaying seconds of rules in a single burst.
     match.accumulator += Math.min(elapsed, stepMs * 2);
     let changed = false;
-    while (match.state.phase === "playing" && match.accumulator >= stepMs) {
+    while ((match.state.phase === "playing"||isSolo(room)&&match.state.phase==='finished') && match.accumulator >= stepMs) {
+      const previousPhase=match.state.phase;
       const inputs = Object.keys(room.seats).map(Number).map((seat) => {
         const id = room.seats[seat], remote = id ? match.inputs.get(id) : null;
         const empty = adapter ? EXPANDED_EMPTY : isBomb(room) ? bomb.EMPTY_INPUT : badminton.EMPTY_INPUT;
@@ -274,10 +295,10 @@ export class AuthorityEngine {
       }
       else badminton.step(match.state as badminton.GameState, inputs as badminton.Input[]);
       match.accumulator -= stepMs;
-      if ((match.state.phase as string) === "finished") { match.nextRoundAt = now + 3000; changed = true; }
+      if ((match.state.phase as string) === "finished"&&previousPhase!=='finished') { if(!isSolo(room))match.nextRoundAt = now + 3000; changed = true; }
     }
-    if (match.state.phase !== "playing") match.accumulator = 0;
-    if (match.state.phase === "finished" && now >= match.nextRoundAt) {
+    if (match.state.phase !== "playing"&&!(isSolo(room)&&match.state.phase==='finished')) match.accumulator = 0;
+    if (match.state.phase === "finished"&&!isSolo(room) && now >= match.nextRoundAt) {
       this.begin(room, allReady(room)); changed = true;
     }
     if (changed) this.changed(room);

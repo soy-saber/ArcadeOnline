@@ -45,7 +45,7 @@ test('two-human low-ball strokes follow original setupHero1 overhead; source sin
 
 test('both native release markers create an unmoved shuttle; its first callback runs on the following frame',()=>{
  for(const seat of [1,2]){const s=core.createGame(1,true);s.serve=seat;for(let n=1;n<=4;n++){const controls=[input(n),input(n)];controls[seat-1].hit=1;core.step(s,controls);}
-  const p=s.players[seat-1],point=geometry.servePoint(seat,4);close(s.birdie.x,p.x+point.x);close(s.birdie.y,p.y+point.y);assert.equal(s.birdie.vx,seat===1?30:-30);assert.equal(s.birdie.vy,-30);assert.equal(s.rally,'flight');assert.equal(s.birdie.lastHitter,seat);
+  const p=s.players[seat-1],point=geometry.servePoint(seat,4);close(s.birdie.x,p.x+point.x);close(s.birdie.y,p.y+point.y);assert.equal(s.birdie.vx,seat===1?30:-30);assert.equal(s.birdie.vy,-30);assert.equal(s.rally,'flight');assert.equal(s.birdie.lastHitter,seat);assert.equal(s.birdie.contactBy,seat);
   const birth={...s.birdie};core.step(s,[]);close(s.birdie.x,Math.trunc((birth.x+(seat===1?27.6:-27.6))*20)/20);close(s.birdie.y,Math.trunc((birth.y-26.825)*20)/20);
  }
  close(geometry.servePoint(1,4).x,23.8);close(geometry.servePoint(1,4).y,-29.5);close(geometry.servePoint(2,4).x,-21.65);close(geometry.servePoint(2,4).y,-28.5);

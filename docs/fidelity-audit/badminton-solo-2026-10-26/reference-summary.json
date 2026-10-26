@@ -1,0 +1,5329 @@
+{
+  "isolated": {
+    "source": {
+      "source": "games/46923/game.swf",
+      "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+      "as2Sha256": "5366272533e09090da751adcbe2f2ce9c0b958f256c71d936cff3795272f6935",
+      "pcodeSha256": "c56365a704a17d210dbbc5e56561326c0eaf3abb7692207c70ed37055d0230eb",
+      "cpuCases": 1376,
+      "robotCases": 32,
+      "method": "Original setupCPU/setupHero/setupHero1p/mothershipTrail2/turn and native nested scripts/symbols. Key/mouse/random/time providers replace only external inputs. P-code GetTime verified for CPU serveTime and strict500ms comparison; decompiler constants replaced accordingly. Trace-only action observers; sound/unused release stubs. Isolated reference, not production."
+    },
+    "referenceEngine": "0.6.0-nightly.2026.8.6",
+    "traceSha256": "632fe2e7547dff729f75f78b8cc403727e1a69dfcf257a40df40b2c2ce33ecb9",
+    "referenceSwfSha256": "b0ab391b611962ac56439e52748d174955eaf8bc69fc8074a86fd3e97c5855ab",
+    "method": "CPU/robot callbacks invoked once per isolated vector in the initial root action. Clip goto frame getters are immediate; queued native frame scripts have not yet flushed at each row. Snapshot flag fields are retained as observations and are not asserted as post-frame flags. Callback ordering and actual held-track flags require separate live-frame traces.",
+    "particleSlots": [
+      {
+        "case": "coexist",
+        "next": 2,
+        "checks": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "case": "ball-wrap",
+        "next": 0,
+        "checks": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "case": "robot-wrap",
+        "next": 1,
+        "checks": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "isolatedCounts": {
+    "cpu": 1376,
+    "robots": 32,
+    "rackets": 134,
+    "service": 104,
+    "shapes": 84
+  },
+  "live": {
+    "source": {
+      "source": "games/46923/game.swf",
+      "sha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+      "method": "Live original setupCPU/setupHero/setupHero1p/setupBirdie/trails/turn and nested scripts. External random provider uses the same specified seeded sequence; CPU GetTime provider uses native callback count with verified strict500ms P-code semantics. Original real Key/Mouse events. Score callbacks record point-over without next-point timers so60-frame segments stop before reset. Initial CPU/P1 creation order and CPU replacement order modeled separately. Native timelines/callback queues execute in Ruffle; captures are after native frames through ExternalInterface. No independent Adobe Flash binary run.",
+      "runs": 8,
+      "callbacksPerRun": 60
+    },
+    "referenceEngine": "0.6.0-nightly.2026.8.6",
+    "traceSha256": "eb8577c73be1156a1e74dde90b8fa12b6082981d8d298b3c019e985c5ded4fae",
+    "referenceSwfSha256": "74d3f43ae89eafb3e722ce6b4ba811c2aa4f45edae02c77f2e7ebefd0815c1e1",
+    "orders": [
+      {
+        "run": 0,
+        "tick": 1,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 2,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 3,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 4,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 5,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 0,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 1,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 2,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 3,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 4,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 5,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 1,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 2,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 3,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 4,
+        "callbacks": [
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 6,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p1gun",
+          "p1",
+          "p2gun",
+          "cpu"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 1,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 2,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 3,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 4,
+        "callbacks": [
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 5,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 6,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 7,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 8,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 9,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 10,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 11,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 12,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 13,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 14,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 15,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 16,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 17,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 18,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 19,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 20,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 21,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 22,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 23,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 24,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 25,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 26,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 27,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 28,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 29,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 30,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 31,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 32,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 33,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 34,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 35,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 36,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 37,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 38,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 39,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 40,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 41,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 42,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 43,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 44,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 45,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 46,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 47,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 48,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 49,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 50,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 51,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 52,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 53,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 54,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 55,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 56,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 57,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 58,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 59,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      },
+      {
+        "run": 7,
+        "tick": 60,
+        "callbacks": [
+          "bird",
+          "p2gun",
+          "cpu",
+          "p1gun",
+          "p1"
+        ]
+      }
+    ]
+  },
+  "liveInputCount": 480,
+  "liveSampleCount": 278,
+  "samplesByRun": {
+    "0": 59,
+    "1": 36,
+    "2": 37,
+    "3": 34,
+    "4": 35,
+    "5": 37,
+    "6": 20,
+    "7": 20
+  }
+}

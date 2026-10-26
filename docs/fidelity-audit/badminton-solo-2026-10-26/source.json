@@ -1,0 +1,1531 @@
+{
+  "source": "games/46923/game.swf",
+  "sourceSha256": "a4b0f9bc5ed2cbc73eb681b2d2a93567a5134d68e57e6e6b2a8c51ba360fb9cf",
+  "xmlSha256": "0ed596d2814f473f4ab20bc796112799d7c3a38c886d9ac49bd003643e36583e",
+  "method": "Original human/two-player, six CPU skins and mouse robot. Complete root-filtered racket placements and original body labels; original PNG/SVG export, f32/twip hitbox composition, native service markers and PNG filter-padding registration. Static raster export; runtime/reference equivalence checked separately.",
+  "sounds": {
+    "sigh": {
+      "source": "artifacts/swf-analysis/46923/sounds/312_sigh.mp3.mp3",
+      "path": "public/authority/assets/badminton-sigh.mp3",
+      "sha256": "fbc9b0f6e7ae2449e32f1f96375be85b9b09244f47c2d73c1a04072063bf111f",
+      "method": "Unmodified original JPEXS MP3 export."
+    },
+    "next": {
+      "source": "artifacts/swf-analysis/46923/sounds/111_shotgun.mp3.mp3",
+      "path": "public/authority/assets/badminton-next.mp3",
+      "sha256": "21b5d4757cb21f3cb46c1dc40870a08df829d62dcbff79dc5e2e37a33186604a",
+      "method": "Unmodified original JPEXS MP3 export."
+    }
+  },
+  "actors": {
+    "p1": {
+      "symbol": 306,
+      "depth": 59999,
+      "racket": {
+        "swing": 5200,
+        "serve": 5201
+      },
+      "poses": {}
+    },
+    "p2": {
+      "symbol": 268,
+      "depth": 59998,
+      "racket": {
+        "swing": 5202,
+        "serve": 5203
+      },
+      "poses": {}
+    },
+    "cpu-1": {
+      "symbol": 268,
+      "depth": 59998,
+      "racket": {
+        "swing": 5202,
+        "serve": 5203
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5204
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5205
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5206
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5207
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5208
+        }
+      }
+    },
+    "cpu-2": {
+      "symbol": 267,
+      "depth": 59998,
+      "racket": {
+        "swing": 5202,
+        "serve": 5203
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5209
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5210
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5211
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5212
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": 241,
+          "playing": true,
+          "export": 5213
+        }
+      }
+    },
+    "cpu-3": {
+      "symbol": 261,
+      "depth": 59998,
+      "racket": {
+        "swing": 5219,
+        "serve": 5220
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5214
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5215
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5216
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5217
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": 241,
+          "playing": true,
+          "export": 5218
+        }
+      }
+    },
+    "cpu-4": {
+      "symbol": 255,
+      "depth": 59998,
+      "racket": {
+        "swing": 5226,
+        "serve": 5227
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5221
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5222
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5223
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5224
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": 241,
+          "playing": true,
+          "export": 5225
+        }
+      }
+    },
+    "cpu-5": {
+      "symbol": 248,
+      "depth": 59998,
+      "racket": {
+        "swing": 5202,
+        "serve": 5203
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5228
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5229
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5230
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5231
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": 241,
+          "playing": true,
+          "export": 5232
+        }
+      }
+    },
+    "cpu-6": {
+      "symbol": 242,
+      "depth": 59998,
+      "racket": {
+        "swing": 5202,
+        "serve": 5203
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": 200,
+          "playing": true,
+          "export": 5233
+        },
+        "walkforward": {
+          "rootFrame": 13,
+          "bodySymbol": 220,
+          "playing": true,
+          "export": 5234
+        },
+        "walkbackward": {
+          "rootFrame": 23,
+          "bodySymbol": 229,
+          "playing": true,
+          "export": 5235
+        },
+        "walkdown": {
+          "rootFrame": 33,
+          "bodySymbol": 238,
+          "playing": true,
+          "export": 5236
+        },
+        "walkup": {
+          "rootFrame": 45,
+          "bodySymbol": 241,
+          "playing": true,
+          "export": 5237
+        }
+      }
+    },
+    "robot": {
+      "symbol": 271,
+      "depth": 139969,
+      "racket": {
+        "swing": 5239,
+        "serve": 5240
+      },
+      "poses": {
+        "normal": {
+          "rootFrame": 1,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5238
+        },
+        "walkbackward": {
+          "rootFrame": 12,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5238
+        },
+        "walkforward": {
+          "rootFrame": 23,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5238
+        },
+        "walkup": {
+          "rootFrame": 32,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5238
+        },
+        "walkdown": {
+          "rootFrame": 43,
+          "bodySymbol": null,
+          "playing": false,
+          "export": 5238
+        }
+      }
+    }
+  },
+  "exports": {
+    "5200": {
+      "file": "p1-racket-swing.png",
+      "frames": 29,
+      "w": 205,
+      "h": 204,
+      "x": -98.3,
+      "y": -157.95,
+      "svgX": -89.3,
+      "svgY": -148.95,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "53a58520e56c35f5a645df63a57bb211f514c4a33436379a1c77b114c5d2524b",
+      "frameSha256": [
+        "d402f473d7882ddcae8977947ebe13f831f7cca29d9849b96ac7a509b53ab18d",
+        "d402f473d7882ddcae8977947ebe13f831f7cca29d9849b96ac7a509b53ab18d",
+        "5ddb631ce5207f5725daab4e496dd3c94e7d3fd7f5a6628cb8f1fe4210ab0679",
+        "5f2c07cbedbc1123328ed19cb30c4e3b99f2b4f35e9f44d20ef10e19d28d2d40",
+        "53b8906813b94193d1f44eca3bb4f83a4c96650d091a45db38b4324adf441767",
+        "9365cb18f99d5d521891e8a159100f6005c1bb8ef853936aacb6757eb32959df",
+        "b8e780dfd068d2632b2b9ddf00c35827a5121e9bdea942084326b29f52ac40b2",
+        "41ad7691d80b835524143ee56ef9096afc4ca9ecd1a7d9a5e3c01d44283ca9da",
+        "3502cfe6edf5bb123053d633fa2a67f44441502193583896b2a753efe6bc01d4",
+        "94bd91ac6cbd9aa98394bff573dd2f414b14617a1893751c90bba05f6f527a68",
+        "1a70f3cba322191d6be0683060ded45047445d66b3e3ae53dd5997364c7e21d5",
+        "e9354d7ff48bd7f73fdc6091f433b4e5f32ab30c1f6fe66287e1784ac611d420",
+        "fa606a08d33261d93268248de8d76e7f087afa9081518deddc17bbf2b94ab7b5",
+        "e38e42592d6159f09faf1e64020aa910b3c8e6f8a85102322e306bffff095c9f",
+        "d402f473d7882ddcae8977947ebe13f831f7cca29d9849b96ac7a509b53ab18d",
+        "84b6e8293f509db88a96c54f4bce9355e1454bb5d370b9ccbe15ca520ee063af",
+        "86810156001b0378e72ca2bc2ee4b3abed67ade41e9df30be732bbde74bc5419",
+        "c5b09eb7eb74240af7133f90acc4b67ef5f8618c66e9269a361b8f1d435c8d1e",
+        "44799220db3c8ee44e79e60765dac4e16d8f36bf6d1fa404f3b2e9fc33d0ba0d",
+        "e24d312016e7109ab7fda28dcd27e5c1184c1d81d9e4c31259cb64afa5d6dd78",
+        "6928b50c174ccafe3cdff7cd3ae846a9c2789a3f37197080f96ea593cdc4f377",
+        "6b24e35607beec8e91597e742dc704073c5c94a7a3d059d22fc4ef1c60b43406",
+        "b499a81771e209d13e72d975d07e53765cb2c6735132de0d9effc67c58cd79b3",
+        "08059f473091c09be6d3c2b5ea04536ba8b762cf7209a5e0a9fce2294b12fa17",
+        "bd4b6081a55ff28a859d52393703c66fe049976b9d8d601f9f2360292a613611",
+        "f8fd6ac095e4ca9352cafbc6d96d56cd12920c4687556b0e9dbcd078396802de",
+        "ad3bdeb8022345c37c07f9a5f82dd7561125bb9697021aed455848bf98d6d4c3",
+        "0fdc8848fca72dfcc718e46adab084b559e9654559e15d77ff7142d20699b708",
+        "b19d276ee100e44088ab16a83cecbf667488b37c4aadb9bce291a6872d4656a1"
+      ]
+    },
+    "5201": {
+      "file": "p1-racket-serve.png",
+      "frames": 13,
+      "w": 192,
+      "h": 215,
+      "x": -79.85,
+      "y": -164.05,
+      "svgX": -65.85,
+      "svgY": -150.05,
+      "filterPadding": [
+        14,
+        14
+      ],
+      "sha256": "72b133db766cc64225e6269c941c5bcb65aa65495322fb3635931715e1d3fed9",
+      "frameSha256": [
+        "cc9e9abd1ae46160cff53a78c3911ce76fc54ab2419be9a763fd151a485afb62",
+        "2d2edf63b4d0e56516ab6b2013973caa8a025410101c3edd47bf5299dd4552fb",
+        "653df830706412023417a4797542baef7e070d8a9d6c76d3266f8e1f500442c6",
+        "e824206ae9f73d236403d015cb329ede8ab07710e7bfdeaf0ba17db89f87be1a",
+        "2d63766f57db878543a236950d8f220fdf4e5fa0707c1fe0ac3ad6474347e032",
+        "b8a6011be6d256c806039983fa0ca842dedec87c99258156fe9365bf49462dc8",
+        "6651fe7b9f04e9a1843b0e86c045e3af8d94f02c93dc32e4e8a06611756e188c",
+        "9a09f6605e4f5a2aa00b99f328011ef87b9fe70123a8fd1318b9e57732890c3f",
+        "50d782546b3183a859540b154a9a3db19a41692f12135fe6c29261be2a060128",
+        "770e5d091ae48b20e4a37d461892a6ef10f0e092f9636e71bd2c1cb3f21c4ee8",
+        "98fb39ba6ae6ffcf85cfe614094043fbe40a1a8e2eed636bd92784887e2423f9",
+        "e7251f662f4254a5abaa8a53ac655711dd83571fa6e94919bb3ea53a03497478",
+        "625b5c4509aca770ac2742eb3f00475d5f3de5e9b5a7f7e7bdd1b2e8c47e63f2"
+      ]
+    },
+    "5202": {
+      "file": "p2-racket-swing.png",
+      "frames": 15,
+      "w": 181,
+      "h": 173,
+      "x": -104.5,
+      "y": -155.5,
+      "svgX": -95.5,
+      "svgY": -146.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a",
+      "frameSha256": [
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3",
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3",
+        "8e417beb9a4b585eefe7ecec97399ca3ed736613300f80ad46b1496b39b6fa21",
+        "c32eb0a3027ce5c48587e55f795800bc5f23712599434d9ca0941c89e44fcfd8",
+        "748cbee95e5366ebd589cf1e5c14f1d2f91f6fb2d3d7125d9683d025f1286bce",
+        "1662ef237d2367675e9b43043ab9b683b8ea9525f9b1735d491036cb5fe1212d",
+        "ef71282a0759d118f8b8c63740ce16e1fb80a0ff9aef71281b4f33fcbd46edef",
+        "b6dbe72930d29a5ca89ae9b6d0d1458f8134c31d3933bb5f7108343a4ae74316",
+        "88f1d514c6204efae534f5ac485d8133d2d2ea7cc2c136ea3a0485877864db98",
+        "0489e9d7abc774330dbfe0da6523e51eb683ebf5bb801b4ec0e83a9891f07d31",
+        "70da6805ec750a3692c1ca8010caf65d2282cd21d1f8de5c0559feb8de621e31",
+        "223992df0ae32d2d7ef93e404936a5c6754c999618814fd048cd8c59d5893f0b",
+        "3e3b802f4c710cd38da7f3ed9a7dc5ac27e3269921685ab09b0f4595150b85fc",
+        "f72e2f40e6fb3a2f03baae122b21fa9f46299bc814406483570109f745ff60ad",
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3"
+      ]
+    },
+    "5203": {
+      "file": "p2-racket-serve.png",
+      "frames": 13,
+      "w": 192,
+      "h": 215,
+      "x": -109.05,
+      "y": -163.05,
+      "svgX": -95.05,
+      "svgY": -149.05,
+      "filterPadding": [
+        14,
+        14
+      ],
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd",
+      "frameSha256": [
+        "09fcf1b02939da8a72e6d938eb1c5631ca60720b378743fc880008d266846794",
+        "8308aeb5e5288961f6585b6c0973cb37c710f31ed6ea4e3aab7eff525cdda895",
+        "762d586df83c4f9513264465ac7f2cc96178c5b41e9491df33fcd14d21514556",
+        "d7db6d693c2a2230e6311c2a61a59d03433052da80279cfccb7daab7578dfcbc",
+        "7f4204b52c7080074f15980f8aadb0fe6e34bf3326579dccdfd8234a4d51f573",
+        "29f72237d5850e37bf3f62a4dac9115aacf3d9f66583694d877e7e5ff3dabd48",
+        "03082f2b3aca09b97ca4ec3bbbaf747aa18b4bdfbaa6ef976a9b46a7e0daa6c2",
+        "02bd720306e32cc96ee8617dbb8c727ccb55a50253a7152b7773c98411d4b926",
+        "a8c448df35dd397a9b02c70e068a3e64984a1c91ac57239d1e48402befa44460",
+        "7c9daf182e05b1531b926eb9111ba5878c7da6794a47cfbcdc1bedd4d25ac2ff",
+        "1eec3b66dee032b4d6294f821851df076858835a1c9fbcd451c1431551c481f4",
+        "bdacd1831282f436534921d98bfcfeea7b8d0d1db0708588e58720cf5deb6426",
+        "0b08918c1cb922f15266dd17192b7559729ef190a558a606a06c0f6363d66377"
+      ]
+    },
+    "5204": {
+      "file": "cpu-1-body-normal.png",
+      "frames": 11,
+      "w": 52,
+      "h": 97,
+      "x": -24.15,
+      "y": -85.25,
+      "svgX": -15.15,
+      "svgY": -76.25,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff",
+      "frameSha256": [
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542",
+        "456f25c453e0dfb5c4678af57091f7da64835923191b5e1a8d434bf84dd5f542"
+      ]
+    },
+    "5205": {
+      "file": "cpu-1-body-walkforward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 97,
+      "x": -24.15,
+      "y": -85.25,
+      "svgX": -15.15,
+      "svgY": -76.25,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580",
+      "frameSha256": [
+        "a186ecc630e55e823ac4cfa23953be4d1a6c007ae50fbe8b89894fbab6c9756b",
+        "88c74b7b1b4a61d6ec2892bc8f29159408a14f0b37d091c5564dc82829b20b22",
+        "a4b3d20ce9593b3c60a0ed51010b274afa295e0c5bf6b7748621716b03e1fc7f",
+        "7fe143549e09050defc2dd9cc08b1614d898507a64f6f2e56d1e44e024bd3ecc",
+        "fcb9993d38e73c1cc507ec6dc274f836c716ca6172225c30ea5079b1a80406da",
+        "eb3bd27ee52df608605ac41bf9c3056a1d9f22aca7695b7c89d397be43d3058a",
+        "5f36b414c4ecab076c754822774b190caded5227ff7807670e56c68d1e963730",
+        "3f657836ac2f6af81745177271db674e77f15080870cc7bdaac8826503bbc791"
+      ]
+    },
+    "5206": {
+      "file": "cpu-1-body-walkbackward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 97,
+      "x": -24.15,
+      "y": -85.25,
+      "svgX": -15.15,
+      "svgY": -76.25,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49",
+      "frameSha256": [
+        "7c28ae3874e4e640eec19a3c1fc4e721fc68b251240def398251f1564c4cc170",
+        "26f71e80d6e74f8c9adf812b4e151b0fbd713f1e6a2bacf15ecc939eed12d915",
+        "1452a5d3d3d32dd9649ac601c0f656084898d6888f0da2895f3befb3d3a8fb48",
+        "caa277aeec71ce44b7ad1db56177165b53e524c2a60ddcf0c4f3d78d339736a0",
+        "882bba71bf590abc49a406216c5201e84d05d5ada1ab2a4e43e66e9818460147",
+        "4538d1cc6b63915d4bce7753b91effc427b3e5f6d20d550962b4f2e9bb10f03f",
+        "0f693d9b428f5772c019db3793f8912f7e22a6d7845022987d665d1f6cbbfdad",
+        "43af887f8d589dd1c0671dd03f56bf9b9328621e77ba1d4de023d6ceab4b2d27"
+      ]
+    },
+    "5207": {
+      "file": "cpu-1-body-walkdown.png",
+      "frames": 16,
+      "w": 52,
+      "h": 97,
+      "x": -24.15,
+      "y": -85.25,
+      "svgX": -15.15,
+      "svgY": -76.25,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8",
+      "frameSha256": [
+        "58e19cb71cb9ba69c9768073fb4a8952e27c7513af7e69a48b698c7ca384b371",
+        "58e19cb71cb9ba69c9768073fb4a8952e27c7513af7e69a48b698c7ca384b371",
+        "32a549589f0a87b8b08dc3a38ac56d702b32cf824a51ddafeb20c7ec4e6aaa4b",
+        "32a549589f0a87b8b08dc3a38ac56d702b32cf824a51ddafeb20c7ec4e6aaa4b",
+        "27d9f53da1fd8676433b4b01b7cdb1c5d05fafe420b2ede654f242434ad1964c",
+        "27d9f53da1fd8676433b4b01b7cdb1c5d05fafe420b2ede654f242434ad1964c",
+        "3a738f1933571be47d03a3e70fd21b48681971bb7b97c3ac12e74694efde1f46",
+        "3a738f1933571be47d03a3e70fd21b48681971bb7b97c3ac12e74694efde1f46",
+        "b404f4f8137163adaff549db0ccf57c4257505bfd79770dbd28195e0087be91d",
+        "b404f4f8137163adaff549db0ccf57c4257505bfd79770dbd28195e0087be91d",
+        "0e0c5f8d9178649e5bc081bd5a51a711714e9bc9f55c256fc9694286c4101b75",
+        "0e0c5f8d9178649e5bc081bd5a51a711714e9bc9f55c256fc9694286c4101b75",
+        "8874a983f8eac7e2a97b4af945714dc936ca6367eab7ab3226f8dd988fc183a4",
+        "8874a983f8eac7e2a97b4af945714dc936ca6367eab7ab3226f8dd988fc183a4",
+        "8bb5ad355b6254bf9f763f7739d43125dc869596904ec310d368231a91f7a7aa",
+        "8bb5ad355b6254bf9f763f7739d43125dc869596904ec310d368231a91f7a7aa"
+      ]
+    },
+    "5208": {
+      "file": "cpu-1-body-walkup.png",
+      "frames": 1,
+      "w": 26,
+      "h": 75,
+      "x": -10.35,
+      "y": -76.25,
+      "svgX": -10.35,
+      "svgY": -76.25,
+      "filterPadding": [
+        0,
+        0
+      ],
+      "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7",
+      "frameSha256": [
+        "1bfb4258ba2fbddd9302f120e609a517d1b047a023ed16c494e24daa1903b30a"
+      ]
+    },
+    "5209": {
+      "file": "cpu-2-body-normal.png",
+      "frames": 11,
+      "w": 52,
+      "h": 98,
+      "x": -24.15,
+      "y": -85.7,
+      "svgX": -15.15,
+      "svgY": -76.7,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "b5cf73f1c5870c4ac998b0fffb25758ef1eb299f90cb968305fe49a35d26df61",
+      "frameSha256": [
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da",
+        "7adf66f0bfd3c6f2af6979c76850f161968878a7e898056bf692dd28962bf7da"
+      ]
+    },
+    "5210": {
+      "file": "cpu-2-body-walkforward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 98,
+      "x": -24.15,
+      "y": -85.7,
+      "svgX": -15.15,
+      "svgY": -76.7,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "7b07206a7d140b0a077253f5355a9c264d03fc3050bf87ef8187fd0682b0f88d",
+      "frameSha256": [
+        "8c7f7d7b0639db475a6de7c7478b216dff9b542b17fbcdf615b2961f39cc931f",
+        "a6489670bddc41038759984e68d4a0c3ccec482b08bb38a0aef800bbfec9e9c7",
+        "e3395065b2a39218f8bfa2fdc675537b4a998e60825f36a4ccfe616cf7cee0e3",
+        "ede0c0fcf49433e405fb03d33958bae23e175efcbe14419f074f83a16ba9951b",
+        "47b471f3dbe97e0efdcd7d014bb9acde99d4ea16bd9854122ebad1cb69e42afa",
+        "9df12aeb505cfb0c132aac949ec1ae10e17dde28fd9eda20ef8d517bb5305880",
+        "8ec0b644c203853ad34d0ab7ebb1a12818f32a18402a8cb8078a0043fc37d6e4",
+        "141b28713a9910b31a0318b78dd859c07512cd6844c0b817f211d84a7410ee73"
+      ]
+    },
+    "5211": {
+      "file": "cpu-2-body-walkbackward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 98,
+      "x": -24.15,
+      "y": -85.7,
+      "svgX": -15.15,
+      "svgY": -76.7,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "b42680bfabf90298b7f6f21759a7627eff3d7f62e81e6ccff1b46c7229116206",
+      "frameSha256": [
+        "568d4b8e947f35591b35c36805e05b1d5a08c747b3784e5ff55366221a628941",
+        "e35c8cf5812170ae3044be1c259151963d14afafc9ba3ebe385d7f3e0c827f5f",
+        "f060bb25c151e7fe15626158b4a15913289002025e1688aa644eca517813d526",
+        "d0977e611a049efe793021b33982ad4b00300bc1af1f38979eb732296c79a5f9",
+        "7e9ef7c8e06dcc3b6d814cfb78a60a3b3d9540dfa16468c206bd34c58471981e",
+        "355959e18011c90be22791f6b21a3de84a28db707dcd48f0d9997a2241007e6a",
+        "753e79b191aaff66f5c86215bb9d5bae11abffe1e9f71ff5ae14b8472cfff746",
+        "b562b4ff37a7eb1a3e4a5ec12d7e7349cafc9e1efabefca9960ed60812dc3e0e"
+      ]
+    },
+    "5212": {
+      "file": "cpu-2-body-walkdown.png",
+      "frames": 16,
+      "w": 52,
+      "h": 98,
+      "x": -24.15,
+      "y": -85.7,
+      "svgX": -15.15,
+      "svgY": -76.7,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "2c2a96621309ca191b7cf29e1795a71b959ad7ac0d903f12bf57519f817282cd",
+      "frameSha256": [
+        "f429bda888559b4b71e4e51541341ea85cdc5b81dea029d90eed1c04c6869ad1",
+        "f429bda888559b4b71e4e51541341ea85cdc5b81dea029d90eed1c04c6869ad1",
+        "7759acb602d584f56a0b98bf8698dd92a22befe25ae489b09aca45eca3739f75",
+        "7759acb602d584f56a0b98bf8698dd92a22befe25ae489b09aca45eca3739f75",
+        "5cb54130753aef2307a3f8ad4317c070d6782fd9c9f4e692932496e152e05f4c",
+        "5cb54130753aef2307a3f8ad4317c070d6782fd9c9f4e692932496e152e05f4c",
+        "375ebd6a441221b59cdd89b2e44f9070abbf6fa9dda9a0be75f4bab7ab3b6d64",
+        "375ebd6a441221b59cdd89b2e44f9070abbf6fa9dda9a0be75f4bab7ab3b6d64",
+        "5a7cdd603b5f385ebb90e89939ca3b386f443beb5bc26816790a770e845a4dd8",
+        "5a7cdd603b5f385ebb90e89939ca3b386f443beb5bc26816790a770e845a4dd8",
+        "a07fd3bdb511af18763e1fc100879b3b3d8e9968a206f1b6978a7acae981a0ce",
+        "a07fd3bdb511af18763e1fc100879b3b3d8e9968a206f1b6978a7acae981a0ce",
+        "9562d6100333c1aaecf378f4301c7270554af529f6ea6dd66f1a84d7c03d9df0",
+        "9562d6100333c1aaecf378f4301c7270554af529f6ea6dd66f1a84d7c03d9df0",
+        "6a727acf4dbba5faab3123d57d0271e049efbd9a72c45ff18296871f3de03c1d",
+        "6a727acf4dbba5faab3123d57d0271e049efbd9a72c45ff18296871f3de03c1d"
+      ]
+    },
+    "5213": {
+      "file": "cpu-2-body-walkup.png",
+      "frames": 16,
+      "w": 37,
+      "h": 94,
+      "x": -19.35,
+      "y": -85.7,
+      "svgX": -10.35,
+      "svgY": -76.7,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "c2b397c8bd1aea7b122834b68c89ff22dc67842376b9e984b6c8882a57bfa3c3",
+      "frameSha256": [
+        "e16e43da9762c9c6811bc93e1cb164ce2d0fd85291e920263dbef577bbc60172",
+        "e16e43da9762c9c6811bc93e1cb164ce2d0fd85291e920263dbef577bbc60172",
+        "657420ed4170ac194c7917da82b242a0336aa6af235801febfbb9488af212979",
+        "657420ed4170ac194c7917da82b242a0336aa6af235801febfbb9488af212979",
+        "19c887699f09ec21f55e07f477418982196e661684ab690f0af3ebe199a3772e",
+        "19c887699f09ec21f55e07f477418982196e661684ab690f0af3ebe199a3772e",
+        "7fa7c7d5e709cb620a13a769aee9b65c27a54979c39221b2e796418c0d958c87",
+        "7fa7c7d5e709cb620a13a769aee9b65c27a54979c39221b2e796418c0d958c87",
+        "0dd40cf919b24a10c916735a7ab12182454039344a778c6fbea45788ef3ec5eb",
+        "0dd40cf919b24a10c916735a7ab12182454039344a778c6fbea45788ef3ec5eb",
+        "52b426ec19a7dbedeb29211d3d1f3e14aa5bd5b86496e6714610fad8aa80504b",
+        "52b426ec19a7dbedeb29211d3d1f3e14aa5bd5b86496e6714610fad8aa80504b",
+        "23ab8c59200bb5a7df346f454c71da6af8531364498b17b90b1b3ba819af2683",
+        "23ab8c59200bb5a7df346f454c71da6af8531364498b17b90b1b3ba819af2683",
+        "09511835825e5bdf185935d1e2b9f99cb87d9e97e797a29456ce34c3ff88e6c2",
+        "09511835825e5bdf185935d1e2b9f99cb87d9e97e797a29456ce34c3ff88e6c2"
+      ]
+    },
+    "5214": {
+      "file": "cpu-3-body-normal.png",
+      "frames": 11,
+      "w": 52,
+      "h": 81,
+      "x": -24.15,
+      "y": -69.2,
+      "svgX": -15.15,
+      "svgY": -60.2,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "dc07d4e4f9191773868af1aedcd1c180e012b441fa045bf6cc84453771d68a6d",
+      "frameSha256": [
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c",
+        "65ce6bc314813dc89e7a8f6b46cad44167bc6ff96971838bd383c4b335dd8e1c"
+      ]
+    },
+    "5215": {
+      "file": "cpu-3-body-walkforward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 81,
+      "x": -24.15,
+      "y": -69.2,
+      "svgX": -15.15,
+      "svgY": -60.2,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "45d12eecf069ff3cbdab274d09507fa2b7208d986973251bcfe6cbcdbc9a7d6f",
+      "frameSha256": [
+        "8d54d0d441ec2889a5d98b84cc3cc4a0fdb17f817d33968736d3c77d00532769",
+        "240ac2697ca9cfff5f5d50568aa068b0cccd69ce5c80e745fdf423be101b8e45",
+        "900f5047cca6e3800498436b236b93434983017b399277a5f68ed721528c5c29",
+        "7b4dee1552062ef9a3182d4bb82af2550e178c545fab9feba14164139b57fba9",
+        "f8d3eed11d4f5ff99906452c9a485648518f214003ca6e1a7d5ba16be4b134c2",
+        "8aa066397ca5463baf6af9533c546851b0fadf0a2ca55cd0f3922bcbc274a3d0",
+        "88c83f4217ffcd6750fdc5e8d1a6bf958e9541de53d5e3d8d71574ca26a19f9b",
+        "3a16e93d1be281574a520aee07029869fed0164394efef307088c83bb08116cb"
+      ]
+    },
+    "5216": {
+      "file": "cpu-3-body-walkbackward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 81,
+      "x": -24.15,
+      "y": -69.2,
+      "svgX": -15.15,
+      "svgY": -60.2,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "ad6dd8a81b31f2e1387cd31e2f433689d69c8ab73b3127e71a03485dbe5aab5a",
+      "frameSha256": [
+        "75ae567758abfcb599c56a7ffea468932a4f087eb295e0c853bb2b130184ebe1",
+        "9b45230ec2d72408b16f838dfa0e43e3f3ce41fbd1c2713d0363f46025819f01",
+        "c4e8faaf87357ea64ddd7bcf17f6f841b927550dd8034f6d2e3233d10879a15d",
+        "2118ba0e03902b8d4b07240ea31ea588a569c6f7e5ab3d5e1ba61f6ceaf1e4a4",
+        "a5f5eedebab0697929a81cb22c48a74a8c08d9f17a23a6f18c39a6f611f51b3c",
+        "ed156e03e708fdc97577e49161166c8013cfcba0515486ba8863dbc80da8890f",
+        "bc55cf49099ad5652fa934aa6093cd00d960a2ce44f2431d71d95582a11f9a4a",
+        "15b98be9b9a19314bb047ecc7a0983731cbf7165534b0f575da0ebe863101197"
+      ]
+    },
+    "5217": {
+      "file": "cpu-3-body-walkdown.png",
+      "frames": 16,
+      "w": 52,
+      "h": 81,
+      "x": -24.15,
+      "y": -69.2,
+      "svgX": -15.15,
+      "svgY": -60.2,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "1f058b66d6943967195da45ded5966770bb01d366ac9be44e26d1bed4b757093",
+      "frameSha256": [
+        "99374f5b999b41b32713257b376df7ada254cec1dc79562b782006441f66486d",
+        "99374f5b999b41b32713257b376df7ada254cec1dc79562b782006441f66486d",
+        "ea8f92a1139f389383cf5b85176eafcc12f73cba7e4dfcb7d64d15fe5710a215",
+        "ea8f92a1139f389383cf5b85176eafcc12f73cba7e4dfcb7d64d15fe5710a215",
+        "ea3ff41f76079e3cd130e6ac936c9ff0a5612c8151fc60a7b748fc785d2bfbbd",
+        "ea3ff41f76079e3cd130e6ac936c9ff0a5612c8151fc60a7b748fc785d2bfbbd",
+        "44edb80256c5f26e053d106366382c4d14c6d0ddf4300e8d80a67566325b63da",
+        "44edb80256c5f26e053d106366382c4d14c6d0ddf4300e8d80a67566325b63da",
+        "fb421bf9f30fa46bb593aa07c5ec9d6bb6a727a6ec1e46cf1f942ff6593c3d4a",
+        "fb421bf9f30fa46bb593aa07c5ec9d6bb6a727a6ec1e46cf1f942ff6593c3d4a",
+        "9db72c276817a8381a7e20f80d73b608b9d4b34ee70b750d030db894254b7461",
+        "9db72c276817a8381a7e20f80d73b608b9d4b34ee70b750d030db894254b7461",
+        "f6d76a6e71818d7ea48a3ce3ace1164eb8f646482bfaaffd5574f4f6c66e0691",
+        "f6d76a6e71818d7ea48a3ce3ace1164eb8f646482bfaaffd5574f4f6c66e0691",
+        "ab33ce706565246cde0ac6d31b9db975cdd02c85b079db191dbd7f9657323b1d",
+        "ab33ce706565246cde0ac6d31b9db975cdd02c85b079db191dbd7f9657323b1d"
+      ]
+    },
+    "5218": {
+      "file": "cpu-3-body-walkup.png",
+      "frames": 16,
+      "w": 42,
+      "h": 78,
+      "x": -24.1,
+      "y": -69.2,
+      "svgX": -15.1,
+      "svgY": -60.2,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "d4a1a1b167853bbc15e673a881930c652ddaf9d23b2ed6d053d64f73d38b7557",
+      "frameSha256": [
+        "b5d44e114b2d4a4aac0c2499fa01113719becf0ff3953a7f920e0d8a33e2bb26",
+        "b5d44e114b2d4a4aac0c2499fa01113719becf0ff3953a7f920e0d8a33e2bb26",
+        "a4c9421713d0bb04eb464bb7947d412f1de51062aebccebe7895ff63a922fc31",
+        "a4c9421713d0bb04eb464bb7947d412f1de51062aebccebe7895ff63a922fc31",
+        "059408c89483e0a896ebb46b25c469b9a6b713645b35e44f53a57daa65fe6aea",
+        "059408c89483e0a896ebb46b25c469b9a6b713645b35e44f53a57daa65fe6aea",
+        "4fe2599d9d018836553f7a197dc852bea594dbff96f679f242e09715e53956cf",
+        "4fe2599d9d018836553f7a197dc852bea594dbff96f679f242e09715e53956cf",
+        "bb7ee8e119601ab7b80c4a95e6438f6cbe6038920348e4ae67af70fbff089ef2",
+        "bb7ee8e119601ab7b80c4a95e6438f6cbe6038920348e4ae67af70fbff089ef2",
+        "073b4e1aeab4e3a561ddd74a3c6ee902629eb1928fe2bd3e903f3dc73c34fd3d",
+        "073b4e1aeab4e3a561ddd74a3c6ee902629eb1928fe2bd3e903f3dc73c34fd3d",
+        "f6971b36b18d68b621e99337df28b48eb0d01fbcf6fa856b916aa12ed17b4e91",
+        "f6971b36b18d68b621e99337df28b48eb0d01fbcf6fa856b916aa12ed17b4e91",
+        "fbe95d5968ab043429c48353f9d537c84826a2e2414c2ce2e9d58363b3a39bee",
+        "fbe95d5968ab043429c48353f9d537c84826a2e2414c2ce2e9d58363b3a39bee"
+      ]
+    },
+    "5219": {
+      "file": "cpu-3-racket-swing.png",
+      "frames": 15,
+      "w": 181,
+      "h": 173,
+      "x": -104.5,
+      "y": -134.5,
+      "svgX": -95.5,
+      "svgY": -125.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a",
+      "frameSha256": [
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3",
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3",
+        "8e417beb9a4b585eefe7ecec97399ca3ed736613300f80ad46b1496b39b6fa21",
+        "c32eb0a3027ce5c48587e55f795800bc5f23712599434d9ca0941c89e44fcfd8",
+        "748cbee95e5366ebd589cf1e5c14f1d2f91f6fb2d3d7125d9683d025f1286bce",
+        "1662ef237d2367675e9b43043ab9b683b8ea9525f9b1735d491036cb5fe1212d",
+        "ef71282a0759d118f8b8c63740ce16e1fb80a0ff9aef71281b4f33fcbd46edef",
+        "b6dbe72930d29a5ca89ae9b6d0d1458f8134c31d3933bb5f7108343a4ae74316",
+        "88f1d514c6204efae534f5ac485d8133d2d2ea7cc2c136ea3a0485877864db98",
+        "0489e9d7abc774330dbfe0da6523e51eb683ebf5bb801b4ec0e83a9891f07d31",
+        "70da6805ec750a3692c1ca8010caf65d2282cd21d1f8de5c0559feb8de621e31",
+        "223992df0ae32d2d7ef93e404936a5c6754c999618814fd048cd8c59d5893f0b",
+        "3e3b802f4c710cd38da7f3ed9a7dc5ac27e3269921685ab09b0f4595150b85fc",
+        "f72e2f40e6fb3a2f03baae122b21fa9f46299bc814406483570109f745ff60ad",
+        "38ae90a8736dc649fddee1faafe0c4732ba57e873ff304a82894d9b7442b0ac3"
+      ]
+    },
+    "5220": {
+      "file": "cpu-3-racket-serve.png",
+      "frames": 13,
+      "w": 192,
+      "h": 215,
+      "x": -109.05,
+      "y": -142.05,
+      "svgX": -95.05,
+      "svgY": -128.05,
+      "filterPadding": [
+        14,
+        14
+      ],
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd",
+      "frameSha256": [
+        "09fcf1b02939da8a72e6d938eb1c5631ca60720b378743fc880008d266846794",
+        "8308aeb5e5288961f6585b6c0973cb37c710f31ed6ea4e3aab7eff525cdda895",
+        "762d586df83c4f9513264465ac7f2cc96178c5b41e9491df33fcd14d21514556",
+        "d7db6d693c2a2230e6311c2a61a59d03433052da80279cfccb7daab7578dfcbc",
+        "7f4204b52c7080074f15980f8aadb0fe6e34bf3326579dccdfd8234a4d51f573",
+        "29f72237d5850e37bf3f62a4dac9115aacf3d9f66583694d877e7e5ff3dabd48",
+        "03082f2b3aca09b97ca4ec3bbbaf747aa18b4bdfbaa6ef976a9b46a7e0daa6c2",
+        "02bd720306e32cc96ee8617dbb8c727ccb55a50253a7152b7773c98411d4b926",
+        "a8c448df35dd397a9b02c70e068a3e64984a1c91ac57239d1e48402befa44460",
+        "7c9daf182e05b1531b926eb9111ba5878c7da6794a47cfbcdc1bedd4d25ac2ff",
+        "1eec3b66dee032b4d6294f821851df076858835a1c9fbcd451c1431551c481f4",
+        "bdacd1831282f436534921d98bfcfeea7b8d0d1db0708588e58720cf5deb6426",
+        "0b08918c1cb922f15266dd17192b7559729ef190a558a606a06c0f6363d66377"
+      ]
+    },
+    "5221": {
+      "file": "cpu-4-body-normal.png",
+      "frames": 11,
+      "w": 67,
+      "h": 105,
+      "x": -39.2,
+      "y": -93.35,
+      "svgX": -30.2,
+      "svgY": -84.35,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "263b992cf929f304003273ab5b554a47cbfa50375261b11ff658c2471b0ef1e6",
+      "frameSha256": [
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48",
+        "3c652ced3b47000f6c9e9bcf44aa9cee4daabb22eeac3036588327d347e07d48"
+      ]
+    },
+    "5222": {
+      "file": "cpu-4-body-walkforward.png",
+      "frames": 8,
+      "w": 67,
+      "h": 105,
+      "x": -39.2,
+      "y": -93.35,
+      "svgX": -30.2,
+      "svgY": -84.35,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "0015b2d7e9dfc337a84ee0610320ca714549e70e72254cfa9635732e1a08a62f",
+      "frameSha256": [
+        "583ba6e9e493ac7d3fbae2b977db21f3f1a06451d26d7464d76d1b483b092e34",
+        "0d60924d712ccb8ef2bd0f41290e729404c99aaea6fbae7d8f91acd4ff157810",
+        "da747b4be83bd89e44a2e27dbeab4cbad76e8ea7f838ead384fcfe4bac5290d1",
+        "d152b67d3145bd115da22f586ed271a91839179efd2ce45f1b9feec74a84b494",
+        "4d5ae18f3ce75ac5330a74f4dfa696fbe620b53fc9294e650aeac0253d1022c8",
+        "96a6ad6de018d797d0c1f6bd5803882fc3f2760856caa34b642445258de96f6b",
+        "850ffe9afdd6157079f1881467cb8cc31561fea04e35297bd395289b4319414e",
+        "c6b06a26f3fa509b18658e203d506fb93f87272e00d54a6006656e2b16b259d6"
+      ]
+    },
+    "5223": {
+      "file": "cpu-4-body-walkbackward.png",
+      "frames": 8,
+      "w": 67,
+      "h": 105,
+      "x": -39.2,
+      "y": -93.35,
+      "svgX": -30.2,
+      "svgY": -84.35,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "cb3df7b849f6319ca429b4b3bbf2a628f07757b8d87f157f49b9a3cfa18188db",
+      "frameSha256": [
+        "77ab431b1ab1fe5a34221fc47f6073f4e96cbf5925930c51a677b78644f9b401",
+        "fa383201090a4ea7fa7260df479ea61b3ff544e4ee49ddc1916648c647813cb4",
+        "0ed0e31ae3dbe8dc04173a9276f8cc0b2f2cf54a3cd6e11c83b265fb015b08ae",
+        "1a04e3d45c45f14a2cb4400d4fabfa03d1c404217e4106a83a3fe5e737dd2343",
+        "a6564b0db1eee864f82e10636a2af3b7dc8656921f2cfb7422d9be39ef154fdb",
+        "e9477f6612600905138e7b11ae5f08a66f0a754d56a9183a988eb6e4c58b8a44",
+        "dabdd8d149ed2897fde2d1429e4a54313477929e70700034d1468d49eee9c6cb",
+        "1038a99f122fa50e5c3f35c9ce5f8ebee13921c15219038ee44457f5e5a90f1d"
+      ]
+    },
+    "5224": {
+      "file": "cpu-4-body-walkdown.png",
+      "frames": 16,
+      "w": 67,
+      "h": 105,
+      "x": -39.2,
+      "y": -93.35,
+      "svgX": -30.2,
+      "svgY": -84.35,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "51c89afa45166bd17e7ccab0cf7878bbc42a40d578690333d4bce6258681ce86",
+      "frameSha256": [
+        "7e6bc9c5e94ebefe2eeea245b8844028179a66335da404e47ce8946a224b6095",
+        "7e6bc9c5e94ebefe2eeea245b8844028179a66335da404e47ce8946a224b6095",
+        "992afe106168fb29118529a6bf769c4101f5554290e679f9dd9e75cdc1f4a91b",
+        "992afe106168fb29118529a6bf769c4101f5554290e679f9dd9e75cdc1f4a91b",
+        "8dfa33a853bf6de43d65bbdcd461fe5d0abd2d38827d3a7e88927afd189da195",
+        "8dfa33a853bf6de43d65bbdcd461fe5d0abd2d38827d3a7e88927afd189da195",
+        "5f8cc8eee5d1ebf0f1071bcd3dccd0bd96a0fe313b8fddd8f633c42be6ffb116",
+        "5f8cc8eee5d1ebf0f1071bcd3dccd0bd96a0fe313b8fddd8f633c42be6ffb116",
+        "65a04e9e0a36c6332e2afa22e45c25118cf242a2bd85a803b40ed26a4f2bbf8a",
+        "65a04e9e0a36c6332e2afa22e45c25118cf242a2bd85a803b40ed26a4f2bbf8a",
+        "71459925117275154d0ec32fef86e8bc3a8605e47bd686f578eaacac87f0a831",
+        "71459925117275154d0ec32fef86e8bc3a8605e47bd686f578eaacac87f0a831",
+        "94a7725c2733140918d646bd755cbdef89e6757af58087dc60b036e9a0a4e41d",
+        "94a7725c2733140918d646bd755cbdef89e6757af58087dc60b036e9a0a4e41d",
+        "9405497a1c9b0a570fae9fc044393dee68602efddee23129fe4e0275475c8686",
+        "9405497a1c9b0a570fae9fc044393dee68602efddee23129fe4e0275475c8686"
+      ]
+    },
+    "5225": {
+      "file": "cpu-4-body-walkup.png",
+      "frames": 16,
+      "w": 61,
+      "h": 101,
+      "x": -39.2,
+      "y": -93.35,
+      "svgX": -30.2,
+      "svgY": -84.35,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "b9e59ad9facc25741d1a181d774b083a70e6729a7a035222272ff1ff60ff398a",
+      "frameSha256": [
+        "74c82b8523408f8e46071a42444f0db1272b4a4a04bb7f3bc37cc7a821978a14",
+        "74c82b8523408f8e46071a42444f0db1272b4a4a04bb7f3bc37cc7a821978a14",
+        "4d70276b932ead9f66868295a74139b02129fc64c3ba3cfe0ee8855aa67d3a22",
+        "4d70276b932ead9f66868295a74139b02129fc64c3ba3cfe0ee8855aa67d3a22",
+        "cac0f58fc6f1e966f1ef7bb242c5bff7efe9f5a654b6246f88adaa189ccb52f3",
+        "cac0f58fc6f1e966f1ef7bb242c5bff7efe9f5a654b6246f88adaa189ccb52f3",
+        "2ec67eacf9d5325a836f1e3cbf68b9d5f91e540583a7d020f8f3d7a6e7b7688b",
+        "2ec67eacf9d5325a836f1e3cbf68b9d5f91e540583a7d020f8f3d7a6e7b7688b",
+        "b492c66d4770a5da6d117e9aedad5dda570b92baef387da3aad96906227da731",
+        "b492c66d4770a5da6d117e9aedad5dda570b92baef387da3aad96906227da731",
+        "796285dbdbf09f7860e53ebac6a62464e4d872630860424d17fc592270fd14ea",
+        "796285dbdbf09f7860e53ebac6a62464e4d872630860424d17fc592270fd14ea",
+        "37222daad5a2d0828043ecf907e68625b1eb6e0d44ae1b7d9a8aa5571bdd4b6e",
+        "37222daad5a2d0828043ecf907e68625b1eb6e0d44ae1b7d9a8aa5571bdd4b6e",
+        "59dde07e096bd1f8d8d23de5edd1d1e08bf8848e4b28d8c9061586ec903d6bce",
+        "59dde07e096bd1f8d8d23de5edd1d1e08bf8848e4b28d8c9061586ec903d6bce"
+      ]
+    },
+    "5226": {
+      "file": "cpu-4-racket-swing.png",
+      "frames": 15,
+      "w": 181,
+      "h": 173,
+      "x": -103.7,
+      "y": -155.8,
+      "svgX": -94.7,
+      "svgY": -146.8,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "62262568560c34666e46f1f846c80d9670bdecbf37629cd84d9eb62a515c7a2c",
+      "frameSha256": [
+        "aef45c17d1364afbdcbd1b6eebbb60f7254edcd3b70707b3c596b2377c826eac",
+        "aef45c17d1364afbdcbd1b6eebbb60f7254edcd3b70707b3c596b2377c826eac",
+        "12cbe93b4a64528cb086c86270a8e45782cb7657b7ab9d106adc6a148c527ce3",
+        "4676346f1d5288ed573aea24cee1365e29a88da51c839d72c5d7fd3058feaa69",
+        "f8cf4af01b1777d643303944bb474968eb63fed9a123e7d460b5dc09ce35fc56",
+        "1c4a0e7d700c317412c018da65380dda8e9d7b107c175645921653586041cc9b",
+        "5d87fbc0a5c6e9d990f99b817c361a3dd8e117a3d4456367f23d759b767dd025",
+        "6665230196d1475586040b88e0df8f2b89c82e127168c677cb2d6451d7adfd77",
+        "634cd07db5caaabdde1d5d051e956535354ce42a62fa5a39342578c3ee72c6c2",
+        "38145d6630609c0da0f8a7d3dc1a80e2d9b5ae2b513b53da10125f9269307b09",
+        "b5d736d269cfa21f2c63cff24c85e6e6aa410edbbb3abd3d76851a59cc4b60b7",
+        "03158d7bc8f92946ca555c728414b002c233d2501496db5cd7f3d7dd54d2fff3",
+        "5fa0c39fd009dcf7605f7adf9035c6c4c76095935de13dc638395e6e42c0f245",
+        "3362f3eaa49967937b71b6b0b25cc738ca3941708745548d9b8ac73d7bbd28fb",
+        "aef45c17d1364afbdcbd1b6eebbb60f7254edcd3b70707b3c596b2377c826eac"
+      ]
+    },
+    "5227": {
+      "file": "cpu-4-racket-serve.png",
+      "frames": 13,
+      "w": 192,
+      "h": 215,
+      "x": -108.05,
+      "y": -163.05,
+      "svgX": -94.05,
+      "svgY": -149.05,
+      "filterPadding": [
+        14,
+        14
+      ],
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd",
+      "frameSha256": [
+        "09fcf1b02939da8a72e6d938eb1c5631ca60720b378743fc880008d266846794",
+        "8308aeb5e5288961f6585b6c0973cb37c710f31ed6ea4e3aab7eff525cdda895",
+        "762d586df83c4f9513264465ac7f2cc96178c5b41e9491df33fcd14d21514556",
+        "d7db6d693c2a2230e6311c2a61a59d03433052da80279cfccb7daab7578dfcbc",
+        "7f4204b52c7080074f15980f8aadb0fe6e34bf3326579dccdfd8234a4d51f573",
+        "29f72237d5850e37bf3f62a4dac9115aacf3d9f66583694d877e7e5ff3dabd48",
+        "03082f2b3aca09b97ca4ec3bbbaf747aa18b4bdfbaa6ef976a9b46a7e0daa6c2",
+        "02bd720306e32cc96ee8617dbb8c727ccb55a50253a7152b7773c98411d4b926",
+        "a8c448df35dd397a9b02c70e068a3e64984a1c91ac57239d1e48402befa44460",
+        "7c9daf182e05b1531b926eb9111ba5878c7da6794a47cfbcdc1bedd4d25ac2ff",
+        "1eec3b66dee032b4d6294f821851df076858835a1c9fbcd451c1431551c481f4",
+        "bdacd1831282f436534921d98bfcfeea7b8d0d1db0708588e58720cf5deb6426",
+        "0b08918c1cb922f15266dd17192b7559729ef190a558a606a06c0f6363d66377"
+      ]
+    },
+    "5228": {
+      "file": "cpu-5-body-normal.png",
+      "frames": 11,
+      "w": 52,
+      "h": 114,
+      "x": -24.15,
+      "y": -101.5,
+      "svgX": -15.15,
+      "svgY": -92.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "09edfba6e6cdf7771b155cbc349cb69231d4557cb926e6f38ef2fcf633438a1e",
+      "frameSha256": [
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87",
+        "a064c1b836c6e0987bbffdf1ab79835b5be0e397dfe9f86e8406941b5d576f87"
+      ]
+    },
+    "5229": {
+      "file": "cpu-5-body-walkforward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 114,
+      "x": -24.15,
+      "y": -101.5,
+      "svgX": -15.15,
+      "svgY": -92.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "0f522f80e88d724167bb5f394d565db164f3d59608ac7228f412b43142881c07",
+      "frameSha256": [
+        "79b17d4a009b3507ef5fa40ee70963aec3ce8ad7ce345dc3e6679655047099dd",
+        "19afcd81a3b8154da5678ef4969da60acfa85fa4c8edc78d0d0c77bb3ae45f1b",
+        "7c74d6fd5f24155a02b82cd8402bc4cff4122aa854caf8f095251003a7561909",
+        "45ff92057c1f21a62646b71a82a3b95ff7a8f9f00f2fee501dac63ca711b4fd8",
+        "6c220b8935db1d8c3c1fab0b1302cf5b0269065bdb1cbbb93a535fd70f7c9281",
+        "77c3ccf3a23f27a3763470c71a9d37395b8771a7422b6839074a4d5f56224598",
+        "984b9b0e0b7c887e36194273561e6688ea44435f630164f030e54bdf20d11f23",
+        "0206809024e19a932ffa4d8718e9c5f69364e0836896bce9ab9b58061363a571"
+      ]
+    },
+    "5230": {
+      "file": "cpu-5-body-walkbackward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 114,
+      "x": -24.15,
+      "y": -101.5,
+      "svgX": -15.15,
+      "svgY": -92.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "20f52643ed4aa1c7802d126150d5015f3e4a79eacfd962cb370112190dee59db",
+      "frameSha256": [
+        "1a2c54638324bbf3a8678730dc6b43e288ad9b1ca861c1ab164e22270055e067",
+        "d157557e1cb1260cfd7ef4981196094f2f31766b895c94a1b38cfef8f7382c1e",
+        "86fad15454fd5dbe0e896f276d506631181d62b724dff5fd2ecba8ead2a5b5d2",
+        "c61adcef339ed73707be9f7c4ab206ae0abda05a930108972800e2a1fcfccccf",
+        "2b9b1059a2b56629754815f8b28c853d37ac74d7edac68c9d8af8b7a75430b9a",
+        "5ec7ef6a70224c217a2b98f5289f2ab7f549c2d353f1da9e9c5ab9b8b00d9bec",
+        "d3baa6b633e05a47fef3431ac12e2c734728c2ad5144ce990ab0450afe91091a",
+        "2386799248cd11d05282a0e8389c6a057c664041fcfb534cfb047bcbbf376e69"
+      ]
+    },
+    "5231": {
+      "file": "cpu-5-body-walkdown.png",
+      "frames": 16,
+      "w": 52,
+      "h": 114,
+      "x": -24.15,
+      "y": -101.5,
+      "svgX": -15.15,
+      "svgY": -92.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "93f108e35a06df0675dd6e8f2711f7fa8f94eae5f2429f56e3afe0ddde2fbe34",
+      "frameSha256": [
+        "59ef5e6bbe7746cf2ba0e814ea2c1017129121c8274b862ce189d2c99dfc77f1",
+        "59ef5e6bbe7746cf2ba0e814ea2c1017129121c8274b862ce189d2c99dfc77f1",
+        "88fef3153dc2b47a55f33c72bb1f596cf996912bde724615ceae663fba06f638",
+        "88fef3153dc2b47a55f33c72bb1f596cf996912bde724615ceae663fba06f638",
+        "032e8a4a5a6c465a0399a4cb3b037c5b160db343d5913da9074807ceb614171d",
+        "032e8a4a5a6c465a0399a4cb3b037c5b160db343d5913da9074807ceb614171d",
+        "6d04784536831a389c4cf875800966f75bc55b6c39daceda993944fd383dbab7",
+        "6d04784536831a389c4cf875800966f75bc55b6c39daceda993944fd383dbab7",
+        "f1c118abd8e1ee0e81f6340cd53c51c1294812f4546624942f05c4b180909aaa",
+        "f1c118abd8e1ee0e81f6340cd53c51c1294812f4546624942f05c4b180909aaa",
+        "1fe5309665ebc48d6c87b17f1ff75a0eae6f51f74df33a2b096583afd8539b0e",
+        "1fe5309665ebc48d6c87b17f1ff75a0eae6f51f74df33a2b096583afd8539b0e",
+        "de5f82d8a86280ee90ef6245a9c6fbbf405fecea2900732b795c3e4a382367bf",
+        "de5f82d8a86280ee90ef6245a9c6fbbf405fecea2900732b795c3e4a382367bf",
+        "8520df92097115c1ea50b8906b302bc18fa90ab38dd5e6a72e4ed5cb64ef6173",
+        "8520df92097115c1ea50b8906b302bc18fa90ab38dd5e6a72e4ed5cb64ef6173"
+      ]
+    },
+    "5232": {
+      "file": "cpu-5-body-walkup.png",
+      "frames": 16,
+      "w": 43,
+      "h": 110,
+      "x": -19.35,
+      "y": -101.5,
+      "svgX": -10.35,
+      "svgY": -92.5,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "ca34016ccf8cc9422370ebb64ba63778adc0f210814b233255ae11f75c7dbe80",
+      "frameSha256": [
+        "bbd6b88fe56a3506092c3e5a235de406b4d187706141bbda77496c88f086665a",
+        "bbd6b88fe56a3506092c3e5a235de406b4d187706141bbda77496c88f086665a",
+        "0fdc58406ff387d2ec3fe8ff640df8f06b8c68df005d43f76af21efef7cd1c19",
+        "0fdc58406ff387d2ec3fe8ff640df8f06b8c68df005d43f76af21efef7cd1c19",
+        "44cc09c93fe6d54774bdf76d501630d782697e44946fb8049027dfa1dd2d3cff",
+        "44cc09c93fe6d54774bdf76d501630d782697e44946fb8049027dfa1dd2d3cff",
+        "fc416476ecdfe4c218b99098b18614079a0a21a32d4f67e43ab34a87069a5140",
+        "fc416476ecdfe4c218b99098b18614079a0a21a32d4f67e43ab34a87069a5140",
+        "b264268b0614e0211f06de5a5f957a3d6a3d8bd9081ac5383fefddd38b463a8b",
+        "b264268b0614e0211f06de5a5f957a3d6a3d8bd9081ac5383fefddd38b463a8b",
+        "cbffbea9dbee9aca27797d8c086e623a9621ea53a6cdad9db950809a8f14a893",
+        "cbffbea9dbee9aca27797d8c086e623a9621ea53a6cdad9db950809a8f14a893",
+        "9818406ee4ca2b66b74fe5d18edeb6611ce5fcc4c8d943b694430e33e3b720ab",
+        "9818406ee4ca2b66b74fe5d18edeb6611ce5fcc4c8d943b694430e33e3b720ab",
+        "90f5de8b7a2f7b6ad85d908f7c9589c2e39cf855c4ac39e1d099f5ff53085ced",
+        "90f5de8b7a2f7b6ad85d908f7c9589c2e39cf855c4ac39e1d099f5ff53085ced"
+      ]
+    },
+    "5233": {
+      "file": "cpu-6-body-normal.png",
+      "frames": 11,
+      "w": 52,
+      "h": 100,
+      "x": -24.15,
+      "y": -88.1,
+      "svgX": -15.15,
+      "svgY": -79.1,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "3d689f57859c741acd3187ce2ad8b22a2c1d29e3a200ad3c19f050dfcfe9a036",
+      "frameSha256": [
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78",
+        "fbff0d05ffd18263ab5ffe7d39c7a5d72818e24d352477a84f02fe5acbd45c78"
+      ]
+    },
+    "5234": {
+      "file": "cpu-6-body-walkforward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 100,
+      "x": -24.15,
+      "y": -88.1,
+      "svgX": -15.15,
+      "svgY": -79.1,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "8fd9e54cb01ce98e24cb873b0920a395013782cef2391d8735260008162fa254",
+      "frameSha256": [
+        "a2929ea570caa5eae08fca10e8bfce64383cbc039696205f3743f19f88e184f0",
+        "7d316aeddac9cf8eef4cdb660e90709e796fa65662b0a7b98978b6c450196d35",
+        "901d50a8abd635c7f98958efac5c1b759e7af1cb1ac5a60fcdd9e33aa1275cd7",
+        "52b084f22e2caa2d99020392f411b52a092316b1bc0c440b4fb60da8e670f3bc",
+        "949cf66f9ea839fc48d373e549aa5964f47a66ae81e4fe6cf7643ec532266ac2",
+        "952f7c589c26159fa4a1346beb9a7da12379652ad4f1c3dfb4222a2e911f921f",
+        "dcf83025af49fc4e4645bd7fc23989cbe54adacbc45de48e340f1d22aa1101d9",
+        "c45a012d9162ef892ccc0bfe7392fce230d4b462ded18a5bc464b36f36d6b39a"
+      ]
+    },
+    "5235": {
+      "file": "cpu-6-body-walkbackward.png",
+      "frames": 8,
+      "w": 52,
+      "h": 100,
+      "x": -24.15,
+      "y": -88.1,
+      "svgX": -15.15,
+      "svgY": -79.1,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "83e76dcb8673dd4897e1fdb3a065f8074e87bcb8881de1808288feb032b4c3ab",
+      "frameSha256": [
+        "3ea3d981fe8b28fe22eedf4f0ebc0bcc7e346048d01a0bc1477b8079da21e239",
+        "8ad3f5444c8f0dc163df3ef3f6b22d4a83a50fd0b494e11f1e7adaf48dad05e0",
+        "637a5de6f92341a208ed7c511fabb62b8aa62015967d8ee12af6f586580ecc30",
+        "d69cdad1553f5fe6436816d02a6a0281dbe8a4292fe50d11184f5d5912905368",
+        "304e4c672f10a3e942bf1bf036a549f1fc430980ae3c85468aa1ff6e0aef3fab",
+        "dbf9c403592f46625c077f28c27daebbd39d094fa25367b5412dac8462ab859f",
+        "c9df1b0fd207581d6f6e13214cde778e2c62b081729651ebcf23e2ef4a561bac",
+        "5890ade40e3bc11df46d7778c6b257e9e4139322b703510c963ddd6348f5d7f6"
+      ]
+    },
+    "5236": {
+      "file": "cpu-6-body-walkdown.png",
+      "frames": 16,
+      "w": 52,
+      "h": 100,
+      "x": -24.15,
+      "y": -88.1,
+      "svgX": -15.15,
+      "svgY": -79.1,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "cb4ffcb78f8a4b0755bf8780d1f11933c1e3372ff700fb2a91c0726453b7e3b9",
+      "frameSha256": [
+        "856da3c52b15acc6640da1fa5bd2c9ba834f4e297ebf281cd1874e8c7d3fac6c",
+        "856da3c52b15acc6640da1fa5bd2c9ba834f4e297ebf281cd1874e8c7d3fac6c",
+        "f915becc8c8b9671f02e74db75c10e4c4a368d83b31cea9a1ab7cd2d252ecf45",
+        "f915becc8c8b9671f02e74db75c10e4c4a368d83b31cea9a1ab7cd2d252ecf45",
+        "524ffe5e60a2b1bd04ba9a28a9483aa18244af6c899d3c356f3f0d22f5a51995",
+        "524ffe5e60a2b1bd04ba9a28a9483aa18244af6c899d3c356f3f0d22f5a51995",
+        "b8b2b723f781ba7a38c4b57ab7cfd53f0b4e88d94cffe911bfdc817f0aa6987b",
+        "b8b2b723f781ba7a38c4b57ab7cfd53f0b4e88d94cffe911bfdc817f0aa6987b",
+        "7867d5acb70490b32c9c3d4dea352ca4433d3839ba3c465661fd54472a2959e7",
+        "7867d5acb70490b32c9c3d4dea352ca4433d3839ba3c465661fd54472a2959e7",
+        "dbc41ce62416a0b0075d33ac2a6fbbe113cbc68e30870b7b82649d080854978b",
+        "dbc41ce62416a0b0075d33ac2a6fbbe113cbc68e30870b7b82649d080854978b",
+        "a64c02c020d13f007ed5234b44f407c6d8c59c191c04f58f44642963940f8179",
+        "a64c02c020d13f007ed5234b44f407c6d8c59c191c04f58f44642963940f8179",
+        "e226e9764dbc6854d576715c03ec6f6406f3886ba1ddc99a87f90b9e3ac8b05d",
+        "e226e9764dbc6854d576715c03ec6f6406f3886ba1ddc99a87f90b9e3ac8b05d"
+      ]
+    },
+    "5237": {
+      "file": "cpu-6-body-walkup.png",
+      "frames": 16,
+      "w": 37,
+      "h": 96,
+      "x": -19.35,
+      "y": -88.1,
+      "svgX": -10.35,
+      "svgY": -79.1,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "0e23e69162aa69b8db0608ab37b9b1af3c662cee04e3f9991f4a364f622485db",
+      "frameSha256": [
+        "b3a75192328ecad4b3ca025a7815426f9d9e9bd992cce8d696d67d5004b5ef9d",
+        "b3a75192328ecad4b3ca025a7815426f9d9e9bd992cce8d696d67d5004b5ef9d",
+        "6ee283f779fa7c8b972d6d15af90d38ef3ec045451f5be2d6ea4004cc6e8b160",
+        "6ee283f779fa7c8b972d6d15af90d38ef3ec045451f5be2d6ea4004cc6e8b160",
+        "6ab8de818863b7ec0622fb8c06fa3a873389727432d660cd8eadd9599acf5952",
+        "6ab8de818863b7ec0622fb8c06fa3a873389727432d660cd8eadd9599acf5952",
+        "eeaf8293d573e450aa678f1fea3e953ec2d7870e958c70445c2228c4806a0067",
+        "eeaf8293d573e450aa678f1fea3e953ec2d7870e958c70445c2228c4806a0067",
+        "ec0520e146508df92745d2814439ed14abf7fe9ac5e7e37883fcd5e04d24ff73",
+        "ec0520e146508df92745d2814439ed14abf7fe9ac5e7e37883fcd5e04d24ff73",
+        "2b4e9d47d16b1821450ba6efe3febbc7544d666ac8b8ee9bb532226318eb396d",
+        "2b4e9d47d16b1821450ba6efe3febbc7544d666ac8b8ee9bb532226318eb396d",
+        "3a121cbb09f76e7067638cfc4fc6cd9dc87c9f383fa3c1d7d6f114564bc51b0d",
+        "3a121cbb09f76e7067638cfc4fc6cd9dc87c9f383fa3c1d7d6f114564bc51b0d",
+        "9231f30c60fb7c5c44e08b4e7177edb99260482caa58c77ab7f48af9bb9713ba",
+        "9231f30c60fb7c5c44e08b4e7177edb99260482caa58c77ab7f48af9bb9713ba"
+      ]
+    },
+    "5238": {
+      "file": "robot-body-normal.png",
+      "frames": 1,
+      "w": 149,
+      "h": 97,
+      "x": -79.2,
+      "y": -52.8,
+      "svgX": -58.2,
+      "svgY": -34.8,
+      "filterPadding": [
+        21,
+        18
+      ],
+      "sha256": "7dd68b76b7885c92f555d444896fb5a7702ce7208b9f80e4e6896bfcb1955de5",
+      "frameSha256": [
+        "d2777bf0469fe6c05dcf358372f26ffa6006d78054d781182244cb0c855a23e9"
+      ]
+    },
+    "5239": {
+      "file": "robot-racket-swing.png",
+      "frames": 15,
+      "w": 180,
+      "h": 164,
+      "x": -78.35,
+      "y": -101.55,
+      "svgX": -69.35,
+      "svgY": -92.55,
+      "filterPadding": [
+        9,
+        9
+      ],
+      "sha256": "2e0195623303edadd40455759647cc93617c81bc99906a25ecf7fbbfaa0c9ed9",
+      "frameSha256": [
+        "81b5619afddf72af3e5e68a790d565facfb2e4b2cf69359a557918debc9b1a2d",
+        "81b5619afddf72af3e5e68a790d565facfb2e4b2cf69359a557918debc9b1a2d",
+        "d93910f6d45d650ac88fc83384fb68907932a153a02fc26ac1c6c6cfdae5e888",
+        "3fcc75b81e473734fef5565860be6e0d2c2be37fdcb4564a4f5d6b449265d806",
+        "879ebd87471bb2c99870085bdc26c91a3d1e896862851d4071fc781d9584db51",
+        "686465a9dacab648c9e31f4a1656070e96890bdeb6566b1b98e772c0f5cb8c2d",
+        "708d17e13f8a00311b46dd0363b293ee1bec8e58c8410bbc5c6f35cd07c7c506",
+        "dd86cc6ca4a7a882532dc33191efde8a155e54cf8789b7e37f2e663545842c44",
+        "9bf372cc0641a42bd7612a04eb097b1ad791558f84bd5f152462b9820a17494f",
+        "4504bf5f9ad05ed3a233291ce04c54c17db5bfc8c9b3280b40a79105ed3e81c1",
+        "eb5beef478b68fb39df6be69ffd5a2e3097341a2e0415bfa938724f6c478f297",
+        "38ee951839726a58ee86318f29927eb1964db68825043162ba48de288ff57dcb",
+        "71c991b141aaf4381f60f15e25d712d35248f17992911b0b37ef257d996f57f6",
+        "5db0d4d8981392e57838f8133a99a2341a940ef9dc47cba25cebae9f45fa539e",
+        "81b5619afddf72af3e5e68a790d565facfb2e4b2cf69359a557918debc9b1a2d"
+      ]
+    },
+    "5240": {
+      "file": "robot-racket-serve.png",
+      "frames": 13,
+      "w": 190,
+      "h": 213,
+      "x": -82.95,
+      "y": -106.95,
+      "svgX": -68.95,
+      "svgY": -92.95,
+      "filterPadding": [
+        14,
+        14
+      ],
+      "sha256": "95485d88f1f6ebaacc5b1ed423909fb205bb4f15a164bda2d3c6b1d6e3c0f304",
+      "frameSha256": [
+        "e67c05f92eaf97f9720d1a2b0fdb9908c1902c878ab9bb0d11163998d9aaeb84",
+        "ce25e18a419577b9d17e680142eda176a345a4d7d83362ad15273ef86b1ca997",
+        "5881f0ca37f625a1ac8ab61429d026ac615989b11d94cd6fcb8045fe03f1bf81",
+        "1d8d54ed667865cb744b136eaba5856c729430a7a9a7a3e7cb3600d62593437f",
+        "68206a49233c4c8b8f228a9ba56394c5358657535865cb5ad0b3edbe8a0d3888",
+        "59ce396707c862cc2d7b035a981c3a1c548cde1ba4030d3af68ca7b7ec794681",
+        "8fae3aa2e7714f70838e620241e361dac96aa66a0ee5b7a0d118d42bda9f51b2",
+        "74f1ce098a37f140e7ca6e83045e58238185c6139562183b7d963134cc86dd29",
+        "86b0a22fe6de8c4f4042e89552e5c9f475639d872d788f47605487eba4ca91e7",
+        "2259319b1ae78bb84ea087fdc78ae59dd645697702855634462fde6be4a9e54c",
+        "3a6d4dafc57551a410df59d6856ec5564e0971f6e1e2b467e63e8dc2b2080484",
+        "0484854b31be30e5377746cde1538949df83c37fad4f3e93d60d307354c024d0",
+        "81a5b1621afee0a4e4e0a1d73d0f5b00274d5fccc9d30590d3dd1a52463c47cf"
+      ]
+    },
+    "13": {
+      "file": "robot-trail.png",
+      "frames": 1,
+      "w": 43,
+      "h": 36,
+      "x": -21.05,
+      "y": -17.75,
+      "svgX": -10.05,
+      "svgY": -6.75,
+      "filterPadding": [
+        11,
+        11
+      ],
+      "sha256": "921966116757b1fe2b8e1135eff35f3f969bf344060495e5879e1572c045d3fa",
+      "frameSha256": [
+        "06db2762ce6132e670f99a88dbb96d175df5df87ec7f3b05f821b4d3024b338e"
+      ]
+    }
+  }
+}

@@ -26,10 +26,10 @@ export function advanceRacket(p:Player,release:()=>void,serviceEnded:()=>void):v
   }
 }
 
-export function startRacket(p:Player,serving:boolean,tick:number):void {
+export function startRacket(p:Player,serving:boolean,tick:number,underhand=false):void {
   const r=p.racket;
   if(serving){r.servePlaying=true;return;}
-  r.frame=2;r.playing=true;r.ready=false;r.active=true;r.consumed=false;r.strokes++;r.strokeAt=tick;
+  r.frame=underhand?16:2;r.playing=true;r.ready=false;r.active=true;r.consumed=false;r.strokes++;r.strokeAt=tick;
 }
 
 /** Compact pose fields remain derived summaries for existing room consumers.
