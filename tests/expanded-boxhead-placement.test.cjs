@@ -5,7 +5,7 @@ const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/b
 const positions=require('../src/expanded/boxhead-gun-positions.json');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
 const close=(actual,expected)=>assert(Math.abs(actual-expected)<1e-10,`${actual} vs ${expected}`);
-function arena(){const s=a.create(1,true,[1,2,3,4],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*120;p.y=272;p.dir=0;p.invul=100000;});return s;}
+function arena(){const s=a.create(1,true,[1,2,3,4],17,'original-01');s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*120;p.y=272;p.dir=0;p.invul=100000;});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index,stable=true){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];if(stable)ticks(s,2);return p;}
 

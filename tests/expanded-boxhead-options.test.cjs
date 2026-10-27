@@ -6,7 +6,7 @@ function setup(){const engine=new AuthorityEngine(()=>{}),p={id:'a',seat:1,ready
 test('all four source difficulty presets start the actual native wave/multiplier and corresponding earned weapon tier',()=>{
  const unlocked=[[0],[0,1,2],[0,1,2,3,4,5],[0,1,2,3,4,5,6,7]];assert.deepEqual(a.characters,fixture.characters.map(c=>c.name));
  for(const [i,preset]of a.difficulties.entries())for(const mode of ['single','coop']){
-  const tier=fixture.tiers[i],seats=mode==='single'?[1]:[1,3,4],s=a.create(1,true,seats,42,'original-18',mode,{difficulty:preset.id,characters:[4,3,2,1]});assert(a.valid(s));assert.equal(s.wave,0);assert.equal(s.combo,tier.multiplier);assert.equal(s.peakCombo,tier.multiplier);assert.equal(s.message,'');assert.deepEqual(s.players[0].unlocked.map((v,j)=>v?j:-1).filter(j=>j>=0),unlocked[i]);assert.equal(s.players[0].weapon,0);assert.equal(s.players[0].character,'bambo');
+  const tier=fixture.tiers[i],seats=mode==='single'?[1]:[1,3,4],s=a.create(1,true,seats,42,'original-18',mode,{difficulty:preset.id,characters:[4,3,2,1]});assert(a.valid(s));assert.equal(s.wave,tier.firstWave);assert.equal(s.combo,tier.multiplier);assert.equal(s.peakCombo,tier.multiplier);assert.equal(s.message,'');assert.deepEqual(s.players[0].unlocked.map((v,j)=>v?j:-1).filter(j=>j>=0),unlocked[i]);assert.equal(s.players[0].weapon,0);assert.equal(s.players[0].character,'bambo');
   a.step(s,[]);assert.equal(s.wave,tier.firstWave);assert.equal(s.spawnLeft,10+5*(tier.firstWave-1));assert.equal(s.peakCombo,tier.multiplier);assert(a.valid(s));
  }
 });

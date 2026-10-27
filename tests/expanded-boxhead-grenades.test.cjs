@@ -5,7 +5,7 @@ const a=load('../src/expanded/boxhead.ts').adapter,g=load('../src/expanded/boxhe
 const walls=load('../src/expanded/boxhead-walls.ts'),registration=load('../src/expanded/boxhead-registration.ts'),explosions=load('../src/expanded/boxhead-explosions.ts'),protocol=load('../src/authority/protocol.ts'),placement=load('../src/expanded/boxhead-placement.ts');
 const attach=require('./helpers/boxhead-enemy.cjs'),grenadeState=require('./helpers/boxhead-grenade.cjs');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch}),close=(a,b)=>assert(Math.abs(a-b)<1e-9,`${a} != ${b}`);
-function arena(){const s=a.create(1,true,[1,2],42);s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];Object.assign(s.players[0],{x:144,y:400,dir:0});Object.assign(s.players[1],{x:624,y:464});return s;}
+function arena(){const s=a.create(1,true,[1,2],42);s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];Object.assign(s.players[0],{x:144,y:400,dir:0});Object.assign(s.players[1],{x:624,y:464});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s){const p=s.players[0];p.unlocked[4]=true;p.weapon=4;p.inventory[4]=world.weaponStats(s,4).ammo;p.ammo=p.inventory[4];return p;}
 function grenade(s,patch={}){const b={...grenadeState(s),id:++s.nextId,x:144,y:272,z:20,vx:20,vy:8,vz:0,weapon:4,owner:1,damage:150,life:30,bang:0,cluster:false,...patch};s.bullets.push(b);return b;}

@@ -5,7 +5,7 @@ function load(file){const source=require('esbuild').buildSync({entryPoints:[path
 const {adapter:a}=load('../src/expanded/boxhead.ts'),world=load('../src/expanded/boxhead-world.ts'),{nameAnchors}=load('../src/authority/nameplates.ts');
 const {objectRegistration}=load('../src/expanded/boxhead-registration.ts');
 const data=require('../src/expanded/boxhead-data.json'),input=(seq=1,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
-function arena(map){const s=a.create(1,true,[1,2,3,4],42,map);s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*96;p.y=272;p.invul=100000;});return s;}
+function arena(map){const s=a.create(1,true,[1,2,3,4],42,map);s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*96;p.y=272;p.invul=100000;});return s;}
 const zombie=(id,x,y,hp=100,devil=false)=>({id,x,y,hp,devil,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99});
 function tick(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function waitKills(s,n){for(let i=0;i<40&&s.players[0].kills<n;i++)tick(s);assert.equal(s.players[0].kills,n);}
@@ -25,8 +25,8 @@ test('duplicate, stale, malformed and reconnect input cannot repeat shots or wea
 });
 test('native hitscan damage and team multiplier unlock weapons for all four humans',()=>{
  const s=arena(),p=s.players[0];p.dir=0;s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,zombie(901,p.x+70,p.y,20))];
- a.step(s,[input(1,{attack:1})]);assert.equal(p.kills,0);waitKills(s,1);assert.equal(s.combo,5);assert.equal(s.score,400);assert.equal(s.zombies[0].body.phase,'dying');
- for(const human of s.players){assert(human.unlocked[1]);assert.equal(human.weapon,1);assert.equal(human.inventory[1],100);}
+ a.step(s,[input(1,{attack:1})]);assert.equal(p.kills,0);waitKills(s,1);assert.equal(s.combo,5);assert.equal(s.score,500);assert.equal(s.zombies[0].body.phase,'dying');
+ for(const human of s.players){assert(human.unlocked[1]);assert.equal(human.weapon,0);assert.equal(human.inventory[1],100);}
  assert.equal(p.fireAt,1);tick(s,67);assert.equal(s.zombies.length,0);
 });
 test('weapon cycling and number selection retain finite ammunition and reject locked weapons',()=>{
@@ -39,8 +39,8 @@ test('weapon cycling and number selection retain finite ammunition and reject lo
 test('each original unlock milestone and upgrade persists when the combo decays',()=>{
  for(const [threshold,index] of [[5,1],[10,2],[15,3],[20,4],[30,5],[40,6],[50,7],[55,8],[70,9]]){
   const s=arena(),p=s.players[0];s.combo=threshold-1;s.peakCombo=threshold-1;s.zombies=[attachEnemy(s,zombie(901,p.x+70,p.y,1))];p.dir=0;
-  a.step(s,[input(1,{attack:1})]);waitKills(s,1);assert(p.unlocked[index],String(threshold));assert.equal(p.weapon,index);
-  s.comboUntil=0;tick(s,100);assert(p.unlocked[index]);assert.equal(s.peakCombo,threshold);
+  a.step(s,[input(1,{attack:1})]);waitKills(s,1);assert(p.unlocked[index],String(threshold));assert.equal(p.weapon,0);
+  s.progression.multiplierTicks=0;tick(s,100);assert(p.unlocked[index]);assert.equal(s.peakCombo,threshold);
  }
  const s=arena();s.peakCombo=100;assert.equal(world.weaponStats(s,9).rate,2);assert.equal(world.weaponStats(s,1).damage,140);assert.equal(world.weaponStats(s,1).ammo,400);
 });
@@ -68,7 +68,7 @@ test('native wall collision, enemy fireballs and pickups affect the authoritativ
  s.pickups=[{id:902,x:p.x,y:p.y,life:50,born:s.tick}];tick(s);assert.equal(p.hp,150);assert.equal(s.pickups.length,0);
 });
 test('native maze navigation routes enemies around static walls instead of walking into them',()=>{
- const s=a.create(1,true,[1],1,'original-03'),p=s.players[0],map=world.room(s);s.barrels=[];s.pickups=[];s.wave=1;s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;p.invul=100000;
+ const s=a.create(1,true,[1],1,'original-03'),p=s.players[0],map=world.room(s);s.barrels=[];s.pickups=[];s.wave=1;s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;p.invul=100000;
  // Choose the most distant reachable cell using an independent breadth-first oracle.
  const grid=map.collision,queue=[[Math.floor(p.x/32),Math.floor(p.y/32),0]],seen=new Set([queue[0].slice(0,2).join(',')]);let last;
  for(let at=0;at<queue.length;at++){const [x,y,d]=queue[at];if(!world.lineClear(s,p.x,p.y,x*32+16,y*32+16))last={x:x*32+16,y:y*32+16,d};for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=nx+','+ny;if(grid[ny]?.[nx]==='0'&&!seen.has(k)){seen.add(k);queue.push([nx,ny,d+1]);}}}
@@ -79,7 +79,7 @@ test('cooperative revive requires a living teammate; simultaneous defeat ends su
  s.players.forEach(p=>p.hp=-1);tick(s);assert.equal(s.phase,'playing');tick(s,92);assert.equal(s.phase,'finished');assert.equal(s.winner,0);const t=s.tick;tick(s,20);assert.equal(s.tick,t);
 });
 test('survival continues beyond six waves and twelve minutes with native wave counts',()=>{
- const s=arena();s.wave=6;s.spawnLeft=0;s.waveReady=1;tick(s);assert.equal(s.phase,'playing');assert.equal(s.wave,7);assert.equal(s.spawnLeft,40);assert.equal(s.devilLeft,2);
+ const s=arena();load('../src/expanded/boxhead-progression.ts').enterWave(s,6);Object.assign(s.progression.level,{zombieLimit:0,zombieRemaining:0,devilLimit:0,devilRemaining:0});tick(s);assert.equal(s.phase,'playing');assert.equal(s.wave,7);assert.equal(s.spawnLeft,40);assert.equal(s.devilLeft,2);
  s.tick=25*60*12-1;tick(s);assert.equal(s.phase,'playing');
 });
 test('shared camera and nameplates contain all four separated humans on every native room',()=>{

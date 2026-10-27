@@ -6,7 +6,7 @@ function duel(seats=[1,2],settings={}){return a.create(1,true,seats,42,'original
 function dying(s,p){p.hp=-1;p.invul=0;a.step(s,[]);assert.equal(p.body.phase,'dying');}
 function advance(s,n=1){for(let i=0;i<n;i++)a.step(s,[]);}
 test('original DeathMatch preset opens200 upgrades, all weapons with cleared non-pistol ammunition, resets to pistol and suppresses enemy waves/decay',()=>{
- assert.equal(fixture.deathmatchMultiplier,200);for(const preset of a.difficulties){const s=duel([1,2,3,4],{difficulty:preset.id,damage:false});assert(a.valid(s));assert.equal(s.peakCombo,fixture.deathmatchMultiplier);assert.equal(s.combo,200);assert.equal(s.options.damage,true);for(const p of s.players){assert(p.unlocked.every(Boolean));assert.deepEqual(p.inventory,[-1,0,0,0,0,0,0,0,0,0]);assert.equal(p.weapon,0);}advance(s,400);assert.equal(s.wave,0);assert.equal(s.waveReady,0);assert.equal(s.spawnLeft,0);assert.equal(s.zombies.length,0);assert.equal(s.combo,200);assert(a.valid(s));}
+ assert.equal(fixture.deathmatchMultiplier,200);for(const preset of a.difficulties){const s=duel([1,2,3,4],{difficulty:preset.id,damage:false});assert(a.valid(s));assert.equal(s.peakCombo,fixture.deathmatchMultiplier);assert.equal(s.combo,200);assert.equal(s.options.damage,true);for(const p of s.players){assert(p.unlocked.every(Boolean));assert.deepEqual(p.inventory,[-1,0,0,0,0,0,0,0,0,0]);assert.equal(p.weapon,0);}advance(s,400);assert.equal(s.wave,1);assert.equal(s.progression.tick,0);assert.equal(s.spawnLeft,0);assert.equal(s.zombies.length,0);assert.equal(s.combo,200);assert(a.valid(s));}
 });
 test('native death thresholds5/10/20/50 end the duel after the corpse countdown and credit only the remaining player',()=>{
  for(const limit of fixture.deathLimits){const s=duel([1,4],{deathLimit:limit}),p=s.players[1];p.deaths=limit-1;dying(s,p);assert.equal(p.deaths,limit);assert.equal(s.phase,'playing');for(let n=0;n<180&&s.phase==='playing';n++)advance(s);assert.equal(s.phase,'finished');assert.equal(s.winner,1);assert(a.valid(s));}
@@ -22,7 +22,7 @@ test('deathmatch respawns far from opponents with one-second protection and reta
 });
 test('source damage toggle suppresses player bullet/explosion affects but preserves hostile melee; deathmatch forces player damage',()=>{
  assert(fixture.damageForcedInDeathmatch);for(const mode of ['coop','deathmatch'])for(const damage of [false,true]){
-  const s=a.create(1,true,[1,2],42,'original-01',mode,{damage}),p=s.players[0],q=s.players[1];s.waveReady=0;s.nextSpawn=s.nextDevil=1e9;s.barrels=[];s.pickups=[];advance(s);p.invul=0;p.x=144;p.y=272;q.x=192;q.y=272;q.dir=Math.PI;
+  const s=a.create(1,true,[1,2],42,'original-01',mode,{damage}),p=s.players[0],q=s.players[1];s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];advance(s);p.invul=0;p.x=144;p.y=272;q.x=192;q.y=272;q.dir=Math.PI;
   // Fire through the actual input/weapon/ray path, without a synthetic projectile.
   a.step(s,[undefined,{seq:1,left:false,right:false,up:false,down:false,attack:1,alt:0}]);advance(s,5);if(mode==='coop'&&!damage)assert.equal(p.hp,200);else assert(p.hp<200);assert(a.valid(s));
   for(let i=0;i<30&&p.body.phase!=='control';i++)advance(s);const before=p.hp;creature.queueAffect(s,p,'melee',10,0,q);advance(s);assert(p.hp<before);assert(a.valid(s));

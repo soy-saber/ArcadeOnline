@@ -6,6 +6,7 @@ import { drawBrightness } from './boxhead-feedback';
 import { smokeFrame } from './boxhead-walls';
 import { nativeDirection, rawPoseFrame, PROJECTION } from './boxhead-player-pose';
 import { enemyRawFrame } from './boxhead-ai';
+import {frameRate} from './boxhead-options';
 
 const base='/expanded/assets/boxhead/';
 const images=new Map<string,HTMLImageElement>();
@@ -62,7 +63,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   for(const b of s.barrels)if(b.kind==='mine'||b.kind==='chargepack')sprite(c,b.kind==='mine'?'Object.Mine':'Object.ChargePack',b.x,b.y+b.z*PROJECTION,b.animation);
   for(const corpse of s.corpses){const age=s.tick-corpse.deadAt;person(c,corpse.character,age<15?'dying':'dead',corpse,s.tick,age);}
   for(const p of [...s.players,...s.zombies].filter(p=>p.body.floor&&p.body.phase!=='respawn')){c.globalAlpha=p.body.alpha;person(c,p.seat?p.character:p.devil?'devil':'zombie',p.body.action,p,s.tick,undefined,undefined,Math.floor(p.body.frame));c.globalAlpha=1;}
-  for(const p of s.pickups)if(p.life>0&&(p.life>50||s.tick%6<3))sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);
+  for(const p of s.pickups)if(p.life>0){c.save();c.globalAlpha=p.alpha??1;sprite(c,'Object.Pickup',p.x,p.y,s.tick/3);c.restore();}
   const entities=[...s.barrels.filter((b:any)=>b.kind!=='mine'&&b.kind!=='chargepack').map((b:any)=>({...b,entity:'object'})),...s.zombies.filter((z:any)=>z.ai.registered&&!z.body.floor).map((z:any)=>({...z,entity:'enemy'})),...s.players.filter(p=>!p.body.floor&&p.body.phase!=='respawn').map(p=>({...p,entity:'human'}))].sort((a,b)=>a.y-b.y||a.x-b.x);
   for(const p of entities){
     if(p.entity==='object'){c.globalAlpha=p.kind==='wall'?p.wallAlpha/100:1;sprite(c,p.kind==='barrel'?'Object.Barrel':'Object.Wall',p.x,p.y+p.z*PROJECTION,p.kind==='wall'?p.wallFrame:0);c.globalAlpha=1;continue;}
@@ -92,7 +93,7 @@ export function render(canvas:HTMLCanvasElement,s:State|null,seat:number|null):v
   c.fillStyle='#dddac3';c.font='17px monospace';c.fillText(`SCORE ${s.score.toLocaleString()}   ×${s.combo}`,430,28);
   c.fillStyle='#b6baa9';c.font='14px sans-serif';c.textAlign='right';c.fillText(map.label+'  ·  共享视野',WIDTH-20,28);c.textAlign='left';
   for(const p of s.players){const x=20+(p.seat-1)*WIDTH/4, gun=WEAPONS[p.weapon];c.fillStyle=['#9ac8ff','#f1d585','#9edc9c','#e7a5ad'][p.seat-1];c.font='bold 15px sans-serif';
-    c.fillText(`P${p.seat}  ${p.alive?Math.max(0,Math.ceil(p.hp))+' HP':'倒地 · '+Math.ceil(p.respawn/25)+'s'}`,x,52);
+    c.fillText(`P${p.seat}  ${p.alive?Math.max(0,Math.ceil(p.hp))+' HP':'倒地 · '+Math.ceil(p.respawn/frameRate(s))+'s'}`,x,52);
     c.fillStyle='#ddd';c.font='14px sans-serif';c.fillText(`${gun.name}  ${p.ammo<0?'∞':p.ammo}  ·  ${p.kills} 击杀`,x,73);
   }
   if(s.messageUntil>s.tick&&s.phase==='playing'){c.font='bold 19px sans-serif';c.textAlign='center';const w=c.measureText(s.message).width+40;c.fillStyle='#20251fcc';c.fillRect((WIDTH-w)/2,HUD+18,w,36);c.fillStyle='#f3e5ac';c.fillText(s.message,WIDTH/2,HUD+43);c.textAlign='left';}

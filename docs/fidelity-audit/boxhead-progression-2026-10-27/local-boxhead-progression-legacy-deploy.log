@@ -1,0 +1,23 @@
+✔ serve starts the rally; a landing on the right awards P1 and the scorer serves next (3.4861ms)
+✔ movement stays on each side; legacy jump and hit counters do not repeat without held flags (0.9551ms)
+✔ original service area checks the scaled netLimit and keeps the server behind it (0.8866ms)
+✔ the server cannot jump until serve clip frame 13, then regains jump and net reach (0.4243ms)
+✔ timed racket contact sends the shuttle back; own side landing awards opponent (0.4382ms)
+✔ original overhand hit window closes at frame nine; retained single-player underhand geometry hits its source rectangle (0.132ms)
+✔ first to seven finishes the match and ignores further input (0.1741ms)
+✔ snapshot validation and local reconciliation reject stale movement (0.2507ms)
+✔ IP TLS selects public certificate without SNI and preserves existing sites (3.4001ms)
+✔ IP HTTPS uses short-lived ACME; DNS, NAT, credentials and private port match (1.1791ms)
+✔ real Caddy parser accepts IP and DNS configurations and selects public ACME (244.8641ms)
+PASS http://127.0.0.1:28186: health, eight multiplayer games, covers, character background, retired versions, TURN credentials, WebSocket room join.
+✔ public readiness probe checks a real service and websocket upgrade (217.1723ms)
+PASS TURN UDP: authenticated allocation at 203.0.113.10:49180. Verify this is the public IP and an open relay port.
+✔ TURN probe authenticates, decodes relay address and releases its allocation (20.7068ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 594.2692

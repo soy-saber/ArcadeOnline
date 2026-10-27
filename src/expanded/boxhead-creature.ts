@@ -1,6 +1,7 @@
 import type { State } from './types';
 import { CELL, room, solid, knockback } from './boxhead-world';
 import { cell, reserve } from './boxhead-navigation';
+import {frameRate} from './boxhead-options';
 
 export type HitKind='bullet'|'fireball'|'explosion'|'melee';
 export interface Affect {kind:HitKind;damage:number;owner:number;sourceId:number|null;x:number;y:number;z:number;angle:number;range:number|null;born:number}
@@ -59,12 +60,12 @@ export function stepCreature(s:State,p:any,h:Hooks):boolean {
   }
   if(b.phase==='dying'){
     h.blood(p,1);b.frame+=.34;
-    if(b.frame>=5){h.sound('Creature.HitFloor.wav');b.phase='dead';b.counter=p.seat?100:50;b.action='dead';b.frame=0;b.floor=true;clearCell(s,p);h.blood(p,5);}
+    if(b.frame>=5){h.sound('Creature.HitFloor.wav');b.phase='dead';b.counter=frameRate(s)*(p.seat?4:2);b.action='dead';b.frame=0;b.floor=true;clearCell(s,p);h.blood(p,5);}
     return false;
   }
   if(b.phase==='dead'){
-    if(p.seat&&b.counter<25)h.playerDead(p);
-    b.alpha=b.counter<25?b.counter/25:1;
+    if(p.seat&&b.counter<frameRate(s))h.playerDead(p);
+    b.alpha=b.counter<frameRate(s)?b.counter/frameRate(s):1;
     if(--b.counter<0){if(p.seat){b.phase='respawn';b.counter=25;}else{b.phase='disposed';b.disposeAt=s.tick+1;}}
     return false;
   }

@@ -4,7 +4,7 @@ function load(file){const name=path.resolve(__dirname,file),source=require('esbu
 const a=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),walls=load('../src/expanded/boxhead-walls.ts'),explosions=load('../src/expanded/boxhead-explosions.ts'),protocol=load('../src/authority/protocol.ts');
 const art=require('../src/expanded/boxhead-wall-art.json'),data=require('../src/expanded/boxhead-data.json');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
-function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=272;p.dir=0;p.invul=100000;});return s;}
+function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=272;p.dir=0;p.invul=100000;});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];return p;}
 function placedWall(){const s=arena(),p=equip(s,5);ticks(s,2);a.step(s,[input(1,{attack:1})]);assert.equal(p.ammo,4);const b=s.barrels[0];assert.equal(b.x,p.x);assert.equal(b.y,p.y);p.x=b.x-40;p.weapon=0;p.ammo=-1;ticks(s,12);assert.equal(b.objectPhase,'normal');return {s,p,b};}

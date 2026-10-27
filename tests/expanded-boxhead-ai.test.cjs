@@ -3,13 +3,13 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),path=requ
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,ai=load('../src/expanded/boxhead-ai.ts'),nav=load('../src/expanded/boxhead-navigation.ts'),world=load('../src/expanded/boxhead-world.ts'),walls=load('../src/expanded/boxhead-walls.ts'),reg=load('../src/expanded/boxhead-registration.ts'),protocol=load('../src/authority/protocol.ts');
 const close=(a,b)=>assert(Math.abs(a-b)<1e-9,`${a} vs ${b}`);
-function arena(){const s=a.create(1,true,[1],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players[0].x=400;s.players[0].y=272;s.players[0].invul=100000;return s;}
+function arena(){const s=a.create(1,true,[1],17,'original-01');s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players[0].x=400;s.players[0].y=272;s.players[0].invul=100000;return s;}
 function enemy(s,x=144,y=272,devil=false,entering=false){const z=attachEnemy(s,{id:++s.nextId,x,y,hp:devil?1000:100,devil,attack:0,dir:0,owner:0,hitAt:-99,attackAt:-99},entering);s.zombies.push(z);return z;}
 function ticks(s,n=1){for(let i=0;i<n;i++)a.step(s,[]);}
 function fireball(s,extra={}){const b={id:++s.nextId,x:144,y:272,z:26.88,vx:4.8,vy:0,owner:-1,parent:999,weapon:-1,damage:50,multiply:false,radius:8,animation:0,fireball:true,life:1,born:s.tick,...extra};s.bullets.push(b);return b;}
 
 test('native entry registers on the next callback, reserves the entrance and becomes collidable only when it can enter',()=>{
- const s=arena(),z=enemy(s,16,272,false,true);assert.equal(z.ai.registered,false);ticks(s);assert.equal(z.x,16);assert.equal(z.ai.state,'enter');assert(z.ai.registered);assert(!z.ai.collidable);assert.equal(z.ai.entry,nav.cell(s,48,272));assert(s.enemyCells[nav.cell(s,16,272)]);ticks(s);assert.equal(z.ai.state,'cell');assert(z.ai.collidable);assert.equal(z.ai.reserved,nav.cell(s,48,272));assert(!s.enemyCells[nav.cell(s,16,272)]);assert.equal(z.x,16);ticks(s,49);close(z.x,47.36);ticks(s);assert.equal(z.x,48);assert.equal(z.ai.state,'goto');assert(a.valid(s));
+ const s=arena(),z=enemy(s,16,272,false,true);assert.equal(z.ai.registered,false);ticks(s);assert.equal(z.x,16);assert.equal(z.ai.state,'enter');assert(z.ai.registered);assert(!z.ai.collidable);assert.equal(z.ai.entry,nav.cell(s,48,272));assert(s.enemyCells[nav.cell(s,16,272)]);ticks(s);assert.equal(z.ai.state,'cell');assert(z.ai.collidable);assert.equal(z.ai.reserved,nav.cell(s,48,272));assert(!s.enemyCells[nav.cell(s,16,272)]);assert.equal(z.x,16);ticks(s,45);close(z.x,47.68);ticks(s);assert.equal(z.x,48);assert.equal(z.ai.state,'goto');assert(a.valid(s));
 });
 
 test('an occupied entrance causes the source25-callback wait rather than a teleport to a nearby free position',()=>{
@@ -17,12 +17,12 @@ test('an occupied entrance causes the source25-callback wait rather than a telep
 });
 
 test('cell-to-cell movement reserves its destination before its body moves, and diagonal motion uses sqrt2 duration',()=>{
- const s=arena(),z=enemy(s);ticks(s);assert.equal(z.ai.state,'cell');assert.equal(z.ai.reserved,nav.cell(s,176,272));assert.equal(z.x,144);close(z.ai.counter,50);ticks(s);close(z.x,144.64);
- const t=arena(),p=t.players[0],q=enemy(t);p.x=400;p.y=528;q.dir=Math.PI/4;ticks(t);assert.equal(q.ai.state,'cell');close(q.ai.counter,Math.SQRT2/.02);ticks(t);close(Math.hypot(q.x-144,q.y-272),.64);assert(q.x>144&&q.y>272);assert(a.valid(t));
+ const s=arena(),z=enemy(s);ticks(s);assert.equal(z.ai.state,'cell');assert.equal(z.ai.reserved,nav.cell(s,176,272));assert.equal(z.x,144);close(z.ai.counter,1/.022);ticks(s);close(z.x,144.704);
+ const t=arena(),p=t.players[0],q=enemy(t);p.x=400;p.y=528;q.dir=Math.PI/4;ticks(t);assert.equal(q.ai.state,'cell');close(q.ai.counter,Math.SQRT2/.022);ticks(t);close(Math.hypot(q.x-144,q.y-272),.704);assert(q.x>144&&q.y>272);assert(a.valid(t));
 });
 
 test('turning takes the native angular callbacks, then returns to goto before beginning movement',()=>{
- const s=arena(),p=s.players[0],z=enemy(s);p.x=144;p.y=400;ticks(s);assert.equal(z.ai.state,'turn');close(z.ai.counter,Math.PI/2/.2);ticks(s,7);assert.equal(z.ai.state,'turn');close(z.dir,1.4);assert.equal(z.x,144);ticks(s);assert.equal(z.ai.state,'goto');close(z.dir,Math.PI/2);ticks(s);assert.equal(z.ai.state,'cell');assert(a.valid(s));
+ const s=arena(),p=s.players[0],z=enemy(s);p.x=144;p.y=400;ticks(s);assert.equal(z.ai.state,'turn');close(z.ai.counter,Math.PI/2/.22);ticks(s,7);assert.equal(z.ai.state,'turn');close(z.dir,1.54);assert.equal(z.x,144);ticks(s);assert.equal(z.ai.state,'goto');close(z.dir,Math.PI/2);ticks(s);assert.equal(z.ai.state,'cell');assert(a.valid(s));
 });
 
 test('a new direction immediately after returning from a turn enters the fractional FPS/3 sleep',()=>{
@@ -30,7 +30,7 @@ test('a new direction immediately after returning from a turn enters the fractio
 });
 
 test('zombie damage arrives after its four-frame attack animation, followed by a ten-callback sleep',()=>{
- const s=arena(),p=s.players[0],z=enemy(s);p.x=176;p.invul=0;ticks(s);assert.equal(z.ai.state,'attack');assert.equal(p.hp,200);ticks(s,17);assert.equal(p.hp,200);assert.equal(z.ai.state,'attack');ticks(s);assert.equal(p.hp,150);assert.equal(z.ai.state,'sleep');assert.equal(z.ai.counter,10);ticks(s,9);assert.equal(z.ai.state,'sleep');ticks(s);assert.equal(z.ai.state,'goto');assert(a.valid(s));
+ const s=arena(),p=s.players[0],z=enemy(s);p.x=176;p.invul=0;ticks(s);assert.equal(z.ai.state,'attack');assert.equal(p.hp,200);ticks(s,16);assert.equal(p.hp,200);assert.equal(z.ai.state,'attack');ticks(s);assert.equal(p.hp,150);assert.equal(z.ai.state,'sleep');assert.equal(z.ai.counter,10);ticks(s,9);assert.equal(z.ai.state,'sleep');ticks(s);assert.equal(z.ai.state,'goto');assert(a.valid(s));
 });
 
 test('melee affects only the facing adjacent cell; walking out during the animation avoids the hit',()=>{

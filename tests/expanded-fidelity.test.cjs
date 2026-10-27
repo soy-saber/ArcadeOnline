@@ -6,7 +6,7 @@ function load(file){const name=path.resolve(__dirname,file),source=require('esbu
 const box=load('../src/expanded/boxhead.ts').adapter,world=load('../src/expanded/boxhead-world.ts'),bomb=load('../src/authority/bomb-core.ts'),bomb2=load('../src/expanded/bomb2.ts');
 const bs=load('../src/authority/bomb-status.ts'),b2s=load('../src/expanded/bomb2-status.ts');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
-function arena(){const s=box.create(1,true,[1,2,3,4],42);s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*80;p.y=272;p.dir=0;p.invul=0;});return s;}
+function arena(){const s=box.create(1,true,[1,2,3,4],42);s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*80;p.y=272;p.dir=0;p.invul=0;});return s;}
 function equip(s,w){const p=s.players[0];p.weapon=w;p.unlocked[w]=true;p.inventory[w]=world.weaponStats(s,w).ammo;p.ammo=p.inventory[w];return p;}
 const ticks=(s,n,controls=[])=>{for(let i=0;i<n;i++)box.step(s,controls);};
 test('original default friendly bullets hit the nearer teammate, not the zombie behind; invulnerability remains effective',()=>{
@@ -14,7 +14,7 @@ test('original default friendly bullets hit the nearer teammate, not the zombie 
  q.invul=50;p.cooldown=0;box.step(s,[input(2,{attack:2})]);ticks(s,1);assert.equal(q.hp,174);assert(box.valid(s));
 });
 test('railguns damage teammates and enemies along the same ray; friendly kills are deaths, not zombie score',()=>{
- const s=arena(),p=equip(s,9),q=s.players[1];q.hp=80;s.zombies=[attachEnemy(s,{id:999,x:p.x+160,y:p.y,hp:90,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert(q.alive);ticks(s,25);assert(!q.alive);assert.equal(q.deaths,1);assert.equal(q.killedBy,1);assert.equal(p.kills,1);assert.equal(s.score,100);
+ const s=arena(),p=equip(s,9),q=s.players[1];q.hp=80;s.zombies=[attachEnemy(s,{id:999,x:p.x+160,y:p.y,hp:90,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);assert(q.alive);ticks(s,25);assert(!q.alive);assert.equal(q.deaths,1);assert.equal(q.killedBy,1);assert.equal(p.kills,1);assert.equal(s.score,200);
 });
 test('all original firearm families apply friendly damage through authoritative hits',()=>{
  for(const weapon of [0,1,2,7,9]){const s=arena(),p=equip(s,weapon),q=s.players[1];box.step(s,[input(1,{attack:1})]);ticks(s,10,[input(1,{attack:1})]);assert(q.hp<200,'friendly damage from '+world.WEAPONS[weapon].id);assert.equal(p.kills,0);assert.equal(s.score,0);assert(box.valid(s));}
@@ -39,8 +39,8 @@ test('native respawn empties finite weapons after the death timeline, pickup can
  box.step(s,[input(2,{alt:1,weapon:7})]);assert.equal(p.weapon,0);
  s.pickups=[{id:999,x:p.x,y:p.y,life:100}];ticks(s,1);assert(p.inventory.slice(1).some(n=>n>0));assert.equal(p.ammo,p.inventory[p.weapon]);
 });
-test('a dead player receives upgrade availability without new ammunition before revival',()=>{
- const s=arena(),p=s.players[1];p.hp=-1;ticks(s,1);s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,{id:999,x:s.players[0].x+30,y:272,hp:1,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);ticks(s,20);assert(p.unlocked[1]);assert.equal(p.inventory[1],0);assert.equal(p.weapon,0);
+test('a dead player receives a newly constructed unlocked weapon before revival clears its ammunition',()=>{
+ const s=arena(),p=s.players[1];p.hp=-1;ticks(s,1);s.combo=4;s.peakCombo=4;s.zombies=[attachEnemy(s,{id:999,x:s.players[0].x+30,y:272,hp:1,dir:0,owner:0,attack:0,devil:false,hitAt:-99,attackAt:-99})];box.step(s,[input(1,{attack:1})]);ticks(s,20);assert(p.unlocked[1]);assert.equal(p.inventory[1],100);assert.equal(p.weapon,0);
 });
 test('native single fire, unlocked rapid fire and UZI held fire use server cooldown and never refill ammo',()=>{
  const s=arena(),p=s.players[0];box.step(s,[input(1,{attack:1,trigger:true})]);const first=p.fireAt;ticks(s,20,[input(1,{attack:1,trigger:true})]);assert.equal(p.fireAt,first);
@@ -59,7 +59,7 @@ test('clearing controls on blur or entering fullscreen cancels a charged throw u
  const s=arena(),p=equip(s,4);box.step(s,[input(1,{attack:1,trigger:true,cancelledAttack:0})]);box.step(s,[input(2,{attack:1,trigger:false,cancelledAttack:1})]);assert.equal(p.ammo,20);box.step(s,[input(3,{attack:2,trigger:false,cancelledAttack:1})]);assert.equal(p.ammo,19);
 });
 test('the new-wave cue uses the original World.End sample instead of the menu click',()=>{
- const s=arena();s.wave=1;s.spawnLeft=0;s.waveReady=1;box.step(s,[]);assert.equal(s.wave,2);assert(s.sounds.some(e=>e.name==='World.End.wav'));assert(!s.sounds.some(e=>e.name==='CLICK.wav'));
+ const s=arena();Object.assign(s.progression.level,{zombieLimit:0,zombieRemaining:0,devilLimit:0,devilRemaining:0});box.step(s,[]);assert.equal(s.wave,2);assert(s.sounds.some(e=>e.name==='World.End.wav'));assert(!s.sounds.some(e=>e.name==='CLICK.wav'));
 });
 test('bomb status panels use authoritative counts and do not invent stock or cooldown changes',()=>{
  const s=bomb.createGame(1,1,true,{mode:'online',activeSeats:[1,4]}),p=s.players[0];p.weapon='ice';p.ammo=1;p.capacity=3;p.range=5;p.push=true;p.shield=true;p.speed=4;

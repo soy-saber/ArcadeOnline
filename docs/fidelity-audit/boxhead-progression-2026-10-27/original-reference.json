@@ -1,0 +1,72 @@
+{
+  "sourceSwfSha256": "9ecf3b4e6f8b7b1f05f536aa8577e63ba650607b464f15db138fa28e5201fe90",
+  "sources": {
+    "upgrades": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/World/CUpgrades.as",
+      "sha256": "c1fc0dc277b6c4458de8cc25894c26eb7c98684fb4fc7a6d9e61fce13a03c2ca"
+    },
+    "world": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/World/CWorld.as",
+      "sha256": "acbc9bcbd52bc1bfa12c62708e9c1949e71e7453dc480957201a6f548d15522f"
+    },
+    "player": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Creature/CThing_Creature_Player.as",
+      "sha256": "845f4f1e315a5ed4d0bd352d530fd3f83dc8a03be37792efe805d8514e0d0a61"
+    },
+    "creature": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Creature/CThing_Creature.as",
+      "sha256": "d7d977dd26b4ab190d255a5548a76a0cf2c3b299496513a4246b859ac5e5bf99"
+    },
+    "mine": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Object/CThing_Object_Mine.as",
+      "sha256": "859ba08ff12517ff7c9f76e247ff4856b6fc2321d54b4180192f0d551bd8b128"
+    },
+    "pack": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Object/CThing_Object_ChargePack.as",
+      "sha256": "c02b18da3a7d458671deabd2708b9d5ea19bba7963a2030b799a414c7468ca72"
+    },
+    "pickup": {
+      "file": "artifacts/swf-analysis/50737/clean/scripts/__Packages/Thing/Object/CThing_Object_Pickup.as",
+      "sha256": "4c3b7d1fb22c7f27fb3ce7ad5f1dbaf1970f560709c2285bcd99b5e0bcc55472"
+    }
+  },
+  "method": "Original CUpgrades methods/native AVM1 getter/setter properties, original World.LogKill and original NewWeapon/death callbacks/regen prefix. External world/spawn/HUD/collection stubs observe or supply fixtures. No full original collection, movement, AI, weapon lifecycle or Adobe Flash equivalence claim.",
+  "rates": [
+    12.5,
+    25,
+    50
+  ],
+  "stepActions": {
+    "1": "z",
+    "2": "z",
+    "3": "z",
+    "4": "z",
+    "5": "z",
+    "30": "z",
+    "31": "d",
+    "100": "z",
+    "101": "z",
+    "102": "z",
+    "103": "z",
+    "104": "z",
+    "150": "p"
+  },
+  "referenceSourceSha256": "76e54656f1cc73ad1e9809d281ab7b1cea9864fa489f4ed5501af30041cfbe89",
+  "referenceEngine": "0.6.0-nightly.2026.8.6",
+  "traceSha256": "021f7b3efe56133580102929b22cdb13bffd045ccb5ef414eb08ddf573974fac",
+  "fixtureSha256": "2a4e85bc985b83e8c53c62d5e4a40a09bbb1e329271f517b1e417cd655f56d9d",
+  "observations": {
+    "LEVEL": 618,
+    "INIT": 30,
+    "STEP": 1080,
+    "SPAWN": 69,
+    "WAVE": 6,
+    "DEAD": 6,
+    "REGEN": 3,
+    "NEW": 1,
+    "OBJECT": 6,
+    "TTL": 3,
+    "WEAPON": 8
+  },
+  "totalObservations": 1830
+}

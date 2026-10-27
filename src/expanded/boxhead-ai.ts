@@ -2,6 +2,7 @@ import type { State } from './types';
 import { CELL, room, lineClear } from './boxhead-world';
 import { cell, adjacent, flags, realFlags, reserve, direction, DELTAS, CREATURE, PLAYER, OBJECT, SOLID } from './boxhead-navigation';
 import { creatureBody } from './boxhead-creature';
+import {frameRate} from './boxhead-options';
 
 const TAU=Math.PI*2;
 const wrap=(angle:number)=>(angle%TAU+TAU)%TAU;
@@ -38,7 +39,7 @@ export function transition(s:State,z:any,state:string):void {
   }else if(state==='turn') {
     let difference=wrap(a.targetAngle)-wrap(z.dir);if(difference>Math.PI)difference-=TAU;if(difference<-Math.PI)difference+=TAU;
     a.angleDelta=a.speed*10*Math.sign(difference);a.counter=a.angleDelta?Math.abs(difference/a.angleDelta):0;animation(z,'stand');
-  }else if(state==='wait'){a.counter=25;animation(z,'stand');}
+  }else if(state==='wait'){a.counter=frameRate(s);animation(z,'stand');}
   else if(state==='sleep')animation(z,'stand');
   else if(state==='attack'){animation(z,'attack');z.attackAt=s.tick;}
   else if(state==='remove'){animation(z,'stand');}
@@ -46,7 +47,7 @@ export function transition(s:State,z:any,state:string):void {
 function turnOr(s:State,z:any,next:string,target:number,wait=false):void {
   const a=z.ai,current=heading(z.dir);
   if(target===current){transition(s,z,next);return;}
-  if(wait&&a.previous==='turn'){transition(s,z,'sleep');a.counter=25/3;return;}
+  if(wait&&a.previous==='turn'){transition(s,z,'sleep');a.counter=frameRate(s)/3;return;}
   a.targetAngle=target*Math.PI/4;transition(s,z,'turn');
 }
 function closest(s:State,z:any):any {

@@ -1,3 +1,4 @@
+import type {State} from './types';
 // Original CScreen_SelectWorld / CUpgrades.SetDifficulty, source indices0..3.
 export const DIFFICULTIES=[
   {id:'beginner',label:'初学者',wave:1,multiplier:1},
@@ -12,4 +13,5 @@ export const MODES=[
 ] as const;
 export const difficulty=(id:string)=>DIFFICULTIES.find(d=>d.id===id)??DIFFICULTIES[0];
 export const SPEEDS=[.5,1,2],DEATH_LIMITS=[5,10,20,50];
+export const frameRate=(state:State):number=>25*(state.options?.speed??1);
 export interface Settings {characters?:number[];difficulty?:string;speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number}

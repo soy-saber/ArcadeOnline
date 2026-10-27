@@ -2,7 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),Module=require('node:module');
 function load(file){const name=path.resolve(__dirname,file),source=require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,m=new Module(name,module);m.paths=module.paths;m._compile(source,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,feedback=load('../src/expanded/boxhead-feedback.ts'),world=load('../src/expanded/boxhead-world.ts'),explosions=load('../src/expanded/boxhead-explosions.ts'),{nameAnchors}=load('../src/authority/nameplates.ts');
-function arena(){const s=a.create(1,true,[1,2,3,4],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*64;p.y=400;p.invul=100000;});return s;}
+function arena(){const s=a.create(1,true,[1,2,3,4],17,'original-01');s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*64;p.y=400;p.invul=100000;});return s;}
 
 test('native explosion impulses use soft amplitude cap and alternating half-amplitude decay',()=>{
  const s=arena();s.brightness=0;feedback.explosionFeedback(s);feedback.explosionFeedback(s);feedback.explosionFeedback(s);assert.equal(s.shakeY,60);feedback.stepFeedback(s);assert.equal(s.shakeY,-30);

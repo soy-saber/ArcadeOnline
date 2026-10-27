@@ -34812,6 +34812,23 @@ function validNavigation(s) {
   return Array.isArray(s.enemyCells) && s.enemyCells.length === size && s.enemyCells.every((v) => typeof v === "boolean") && !!n && ["restart", "resume", "finished"].includes(n.phase) && Number.isSafeInteger(n.timer) && n.timer >= -1 && n.timer <= s.tick && Number.isSafeInteger(n.session) && n.session >= -1 && n.session <= s.tick && Number.isSafeInteger(n.distance) && n.distance >= 0 && n.distance <= size && Number.isSafeInteger(n.fullScans) && n.fullScans >= 0 && Array.isArray(n.frontier) && n.frontier.length <= size && new Set(n.frontier).size === n.frontier.length && n.frontier.every((v) => Number.isSafeInteger(v) && v >= 0 && v < size) && Array.isArray(n.tags) && n.tags.length === size && n.tags.every((v) => Number.isSafeInteger(v) && v >= -1 && v <= s.tick) && Array.isArray(n.distances) && n.distances.length === size && n.distances.every((v) => v === null || Number.isSafeInteger(v) && v >= 0 && v <= size);
 }
 
+// src/expanded/boxhead-options.ts
+var DIFFICULTIES = [
+  { id: "beginner", label: "\u521D\u5B66\u8005", wave: 1, multiplier: 1 },
+  { id: "intermediate", label: "\u8FDB\u9636", wave: 10, multiplier: 10 },
+  { id: "expert", label: "\u4E13\u5BB6", wave: 20, multiplier: 30 },
+  { id: "nightmare", label: "\u5669\u68A6", wave: 35, multiplier: 50 }
+];
+var MODES3 = [
+  { id: "coop", label: "\u591A\u4EBA\u5408\u4F5C", description: "2\u20134\u4EBA\u5171\u540C\u751F\u5B58\uFF1B\u5168\u961F\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 2, maxPlayers: 4 },
+  { id: "single", label: "\u5355\u4EBA\u751F\u5B58", description: "\u4EC5P1\u5165\u5EA7\u51C6\u5907\u5373\u53EF\u5F00\u59CB\uFF0C\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 1, maxPlayers: 1 },
+  { id: "deathmatch", label: "\u6B7B\u4EA1\u7ADE\u8D5B", description: "2\u20134\u4EBA\u5BF9\u6218\uFF0C\u5168\u6B66\u5668\u4E0E\u5347\u7EA7\u5F00\u653E\uFF0C\u5F00\u5C40\u624B\u67AA\u3001\u8865\u7ED9\u83B7\u53D6\u5F39\u836F\uFF1B\u6B7B\u4EA1\u8FBE\u5230\u4E0A\u9650\u5373\u51FA\u5C40\uFF0C\u6700\u540E\u7559\u4E0B\u8005\u83B7\u80DC\u3002", minPlayers: 2, maxPlayers: 4 }
+];
+var difficulty = (id) => DIFFICULTIES.find((d) => d.id === id) ?? DIFFICULTIES[0];
+var SPEEDS = [0.5, 1, 2];
+var DEATH_LIMITS = [5, 10, 20, 50];
+var frameRate = (state) => 25 * (state.options?.speed ?? 1);
+
 // src/expanded/boxhead-objects.ts
 function ownedPacks(s, seat) {
   return s.barrels.filter((b) => b.kind === "chargepack" && b.owner === seat && b.hp > 0);
@@ -34829,11 +34846,16 @@ function stepExplosiveObjects(s, sound3) {
   for (const b of s.barrels) {
     if (b.hp <= 0 || !["mine", "chargepack"].includes(b.kind) || b.armed >= s.tick) continue;
     if (b.kind === "mine") {
+      const collision = flags(s, cell(s, b.x, b.y)) & (CREATURE | (s.mode === "deathmatch" ? PLAYER : 0));
+      if (b.mineWaiting) {
+        if (!collision) b.mineWaiting = false;
+        continue;
+      }
       if (!b.detonating) {
-        b.animation = (b.animation + 1 / 25) % 2;
-        if (flags(s, cell(s, b.x, b.y)) & CREATURE) {
+        b.animation = (b.animation + 1 / frameRate(s)) % 2;
+        if (collision) {
           b.detonating = true;
-          b.detonateAt = s.tick + 50;
+          b.detonateAt = s.tick + frameRate(s) * 2;
           sound3(s, "Object.Mine.Detonate.wav");
         }
       }
@@ -34843,9 +34865,9 @@ function stepExplosiveObjects(s, sound3) {
       }
     } else {
       if (b.detonateCounter === null) {
-        b.animation = (b.animation + 1 / 25) % 2;
+        b.animation = (b.animation + 1 / frameRate(s)) % 2;
         if (b.detonating) {
-          b.detonateCounter = 25 / 10;
+          b.detonateCounter = frameRate(s) / 10;
           sound3(s, "Object.Mine.Detonate.wav");
         }
       }
@@ -34857,7 +34879,7 @@ function stepExplosiveObjects(s, sound3) {
   }
 }
 function validExplosiveObject(b) {
-  return !["mine", "chargepack"].includes(b.kind) || Number.isFinite(b.animation) && b.animation >= 0 && b.animation < 2 && typeof b.detonating === "boolean" && (b.kind === "mine" ? Number.isSafeInteger(b.detonateAt) && b.detonateAt >= 0 : b.detonateCounter === null || b.detonating && [1.5, 0.5].includes(b.detonateCounter));
+  return !["mine", "chargepack"].includes(b.kind) || Number.isFinite(b.animation) && b.animation >= 0 && b.animation < 2 && typeof b.detonating === "boolean" && (b.kind === "mine" ? Number.isSafeInteger(b.detonateAt) && b.detonateAt >= 0 && (b.mineWaiting === void 0 || typeof b.mineWaiting === "boolean") : b.detonateCounter === null || b.detonating && [0.25, 0.5, 1.5, 0, 1, 2, 3, 4].includes(b.detonateCounter));
 }
 
 // src/expanded/boxhead-feedback.ts
@@ -35122,7 +35144,7 @@ function stepCreature(s, p, h) {
     if (b.frame >= 5) {
       h.sound("Creature.HitFloor.wav");
       b.phase = "dead";
-      b.counter = p.seat ? 100 : 50;
+      b.counter = frameRate(s) * (p.seat ? 4 : 2);
       b.action = "dead";
       b.frame = 0;
       b.floor = true;
@@ -35132,8 +35154,8 @@ function stepCreature(s, p, h) {
     return false;
   }
   if (b.phase === "dead") {
-    if (p.seat && b.counter < 25) h.playerDead(p);
-    b.alpha = b.counter < 25 ? b.counter / 25 : 1;
+    if (p.seat && b.counter < frameRate(s)) h.playerDead(p);
+    b.alpha = b.counter < frameRate(s) ? b.counter / frameRate(s) : 1;
     if (--b.counter < 0) {
       if (p.seat) {
         b.phase = "respawn";
@@ -35252,7 +35274,7 @@ function transition(s, z, state) {
     a.counter = a.angleDelta ? Math.abs(difference / a.angleDelta) : 0;
     animation2(z, "stand");
   } else if (state === "wait") {
-    a.counter = 25;
+    a.counter = frameRate(s);
     animation2(z, "stand");
   } else if (state === "sleep") animation2(z, "stand");
   else if (state === "attack") {
@@ -35270,7 +35292,7 @@ function turnOr(s, z, next, target, wait = false) {
   }
   if (wait && a.previous === "turn") {
     transition(s, z, "sleep");
-    a.counter = 25 / 3;
+    a.counter = frameRate(s) / 3;
     return;
   }
   a.targetAngle = target * Math.PI / 4;
@@ -35718,21 +35740,34 @@ function validGrenade(b) {
   return b.grenadePhase === "init" ? b.life === 60 && b.vx === 0 && b.vy === 0 && b.vz === 0 : b.grenadePhase === "delete" ? b.life === 0 : b.life >= 1 && b.life <= 59;
 }
 
-// src/expanded/boxhead-options.ts
-var DIFFICULTIES = [
-  { id: "beginner", label: "\u521D\u5B66\u8005", wave: 1, multiplier: 1 },
-  { id: "intermediate", label: "\u8FDB\u9636", wave: 10, multiplier: 10 },
-  { id: "expert", label: "\u4E13\u5BB6", wave: 20, multiplier: 30 },
-  { id: "nightmare", label: "\u5669\u68A6", wave: 35, multiplier: 50 }
-];
-var MODES3 = [
-  { id: "coop", label: "\u591A\u4EBA\u5408\u4F5C", description: "2\u20134\u4EBA\u5171\u540C\u751F\u5B58\uFF1B\u5168\u961F\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 2, maxPlayers: 4 },
-  { id: "single", label: "\u5355\u4EBA\u751F\u5B58", description: "\u4EC5P1\u5165\u5EA7\u51C6\u5907\u5373\u53EF\u5F00\u59CB\uFF0C\u5012\u4E0B\u540E\u7ED3\u675F\u3002", minPlayers: 1, maxPlayers: 1 },
-  { id: "deathmatch", label: "\u6B7B\u4EA1\u7ADE\u8D5B", description: "2\u20134\u4EBA\u5BF9\u6218\uFF0C\u5168\u6B66\u5668\u4E0E\u5347\u7EA7\u5F00\u653E\uFF0C\u5F00\u5C40\u624B\u67AA\u3001\u8865\u7ED9\u83B7\u53D6\u5F39\u836F\uFF1B\u6B7B\u4EA1\u8FBE\u5230\u4E0A\u9650\u5373\u51FA\u5C40\uFF0C\u6700\u540E\u7559\u4E0B\u8005\u83B7\u80DC\u3002", minPlayers: 2, maxPlayers: 4 }
-];
-var difficulty = (id) => DIFFICULTIES.find((d) => d.id === id) ?? DIFFICULTIES[0];
-var SPEEDS = [0.5, 1, 2];
-var DEATH_LIMITS = [5, 10, 20, 50];
+// src/expanded/boxhead-weapon-upgrades.ts
+function upgrades(s, index3) {
+  return boxhead_data_default.upgrades.filter((u) => u.threshold <= s.peakCombo && u.mClassID === "CThing_Weapon_" + WEAPONS3[index3].classId);
+}
+function weaponVersion(s, index3) {
+  return Math.max(0, ...upgrades(s, index3).map((u) => u.threshold));
+}
+function rebuildWeapon(s, p, index3) {
+  p.weaponCaps[index3] = p.inventory[index3] = weaponStats(s, index3).ammo;
+  p.weaponRevisions[index3] = weaponVersion(s, index3);
+  if (p.weapon === index3) {
+    p.ammo = p.inventory[index3];
+    p.cooldown = 0;
+    if (index3 === 8) p.chargeDetonate = false;
+  }
+}
+function refreshCurrentWeapon(s, p) {
+  const index3 = p.weapon, version = weaponVersion(s, index3);
+  if (version === p.weaponRevisions[index3]) return;
+  const props = upgrades(s, index3).map((u) => u.mProp);
+  if (props.includes("RapidFire")) p.cooldown = 0;
+  if (props.some((prop) => ["InfinateAmmo", "QuadAmmo", "DoubleAmmo"].includes(prop))) p.weaponCaps[index3] = p.inventory[index3] = weaponStats(s, index3).ammo;
+  p.weaponRevisions[index3] = version;
+  p.ammo = p.inventory[index3];
+}
+function validWeaponInventory(s, p) {
+  return Array.isArray(p.weaponCaps) && p.weaponCaps.length === 10 && p.weaponCaps.every((n, i) => Number.isSafeInteger(n) && (i === 0 ? n === -1 : Number(n) > 0)) && Array.isArray(p.weaponRevisions) && p.weaponRevisions.length === 10 && p.weaponRevisions.every((n) => Number.isSafeInteger(n) && Number(n) >= 0 && Number(n) <= s.peakCombo) && p.inventory.every((n, i) => i === 0 ? n === -1 : n >= 0 && n <= p.weaponCaps[i]);
+}
 
 // src/expanded/boxhead-pickups.ts
 function pickupChoice(active, ammo, total, hp, random7) {
@@ -35750,35 +35785,170 @@ function pickupChoice(active, ammo, total, hp, random7) {
   return choices.find((c) => selected < c.end)?.key ?? null;
 }
 function takePickup(s, p, random7) {
-  const totals = WEAPONS3.map((_, i) => weaponStats(s, i).ammo), choice = pickupChoice(p.unlocked, p.inventory, totals, p.hp, random7);
+  const choice = pickupChoice(p.unlocked, p.inventory, p.weaponCaps, p.hp, random7);
   if (choice === null) return false;
   if (choice === "life") p.hp = 200;
-  else {
-    p.inventory[choice] = totals[choice];
-    if (p.weapon === choice) {
-      p.ammo = totals[choice];
-      p.cooldown = 0;
-    }
-  }
+  else rebuildWeapon(s, p, choice);
   return true;
+}
+function dropPickup(s, position2) {
+  if (solid(room(s), position2.x, position2.y)) return;
+  const count = frameRate(s) * 10;
+  s.pickups.push({
+    id: ++s.nextId,
+    x: Math.floor(position2.x / CELL4) * CELL4 + CELL4 / 2,
+    y: Math.floor(position2.y / CELL4) * CELL4 + CELL4 / 2,
+    life: count + 2,
+    born: s.tick,
+    permanent: false,
+    deleteCounter: count,
+    initialized: false,
+    alpha: 1
+  });
 }
 function stepPickups(s, random7, sound3) {
   for (const item of s.pickups) {
+    if ((item.born ?? -1) >= s.tick) continue;
+    if (!item.permanent) {
+      if (item.initialized === false) {
+        item.initialized = true;
+        item.life = item.deleteCounter + 1;
+        continue;
+      }
+      if (item.deleteCounter === void 0) item.deleteCounter = item.life - 1;
+      if (--item.deleteCounter < 0) {
+        item.life = 0;
+        continue;
+      }
+      item.life = item.deleteCounter + 1;
+      if (item.deleteCounter < frameRate(s)) item.alpha = item.deleteCounter / frameRate(s);
+    }
     if (item.permanent && item.life <= 0 && s.tick >= item.reappearAt) {
       item.life = 250;
       item.reappearAt = null;
       item.born = s.tick - 1;
     }
-    for (const p of s.players) if ((item.born ?? -1) < s.tick && item.life > 0 && !p.body.deadFlag && Math.hypot(p.x - item.x, p.y - item.y) < 25) {
-      takePickup(s, p, random7);
+    const occupant = [...s.players].sort((a, b) => b.id - a.id).find((p) => cell(s, p.x, p.y) === cell(s, item.x, item.y));
+    if (item.life > 0 && occupant && !occupant.body.deadFlag) {
+      takePickup(s, occupant, random7);
       item.life = 0;
-      if (item.permanent) item.reappearAt = s.tick + 25 * s.options.speed * (s.mode === "deathmatch" ? 10 : 30) + 2;
+      if (item.permanent) item.reappearAt = s.tick + frameRate(s) * (s.mode === "deathmatch" ? 10 : 30) + 2;
       sound3();
-      break;
     }
-    if (!item.permanent) item.life--;
   }
   s.pickups = s.pickups.filter((p) => p.permanent || p.life > 0);
+}
+
+// src/expanded/boxhead-progression.ts
+function levelSettings(fps, devils, wave) {
+  let zombieRate = fps, zombieLimit = 10, zombieTotal = 10, devilRate = 10 * fps, devilLimit = 0, devilTotal = 0;
+  for (let i = 1; i < Math.min(wave, 100); i++) {
+    zombieRate = Math.max(zombieRate - 1, 1);
+    zombieLimit = Math.min(zombieLimit + 5, 60);
+    zombieTotal += 5;
+    if (devils) {
+      devilLimit = Math.min(i !== 1 ? devilLimit + 0.3 : 1, 5);
+      devilTotal = i !== 1 ? devilTotal + 0.25 : 1;
+      devilRate = Math.max(devilRate - 1, fps);
+    }
+  }
+  const zr = Math.floor(zombieRate), dr = devils ? Math.floor(devilRate) : 0;
+  return {
+    zombieRate: zr,
+    zombieLimit: Math.floor(zombieLimit),
+    zombieRemaining: Math.floor(zombieTotal),
+    zombieAlive: 0,
+    zombieCountdown: zr,
+    devilRate: dr,
+    devilLimit: devils ? Math.floor(devilLimit) : 0,
+    devilRemaining: devils ? Math.floor(devilTotal) : 0,
+    devilAlive: 0,
+    devilCountdown: dr
+  };
+}
+function getTicks(fps, index3) {
+  return Math.pow(100 - ((index3 <= 100 ? index3 : 100) - 1), 2.5) / 100000.00000000003 * (fps * 3 - 3) + 3;
+}
+function initProgression(s) {
+  const tier = difficulty(s.options.difficulty), multiplier = s.mode === "deathmatch" ? 200 : tier.multiplier;
+  s.wave = s.mode === "deathmatch" ? 1 : tier.wave;
+  s.combo = multiplier;
+  const total = getTicks(frameRate(s), multiplier);
+  s.progression = { tick: 0, multiple: 0, multipleTicks: 1e5, multipleTotal: 1e5, multiplierTicks: total, multiplierTotal: total, level: levelSettings(frameRate(s), s.options.devils, s.wave) };
+  summaries(s);
+}
+function summaries(s) {
+  const l = s.progression.level;
+  s.spawnLeft = s.mode === "deathmatch" ? 0 : Math.max(0, l.zombieRemaining - l.zombieAlive);
+  s.devilLeft = s.mode === "deathmatch" ? 0 : Math.max(0, l.devilRemaining - l.devilAlive);
+}
+function enterWave(s, wave) {
+  s.wave = wave;
+  s.progression.level = levelSettings(frameRate(s), s.options.devils, wave);
+  summaries(s);
+}
+function setMultiplier(s, value2, upgrade2) {
+  s.combo = Math.max(1, Math.min(999, value2));
+  const p = s.progression;
+  p.multiplierTotal = p.multiplierTicks = getTicks(frameRate(s), s.combo);
+  if (value2 > 1) upgrade2();
+}
+function enemySpawned(s, devil) {
+  const l = s.progression.level;
+  if (devil) l.devilAlive++;
+  else l.zombieAlive++;
+  summaries(s);
+}
+function enemyKilled(s, devil, upgrade2) {
+  const p = s.progression, l = p.level;
+  if (devil) {
+    l.devilAlive--;
+    l.devilRemaining--;
+    l.devilLimit = Math.min(l.devilLimit, l.devilRemaining);
+  } else {
+    l.zombieAlive--;
+    l.zombieRemaining--;
+    l.zombieLimit = Math.min(l.zombieLimit, l.zombieRemaining);
+  }
+  p.multiple++;
+  p.multipleTotal = p.multipleTicks = getTicks(frameRate(s), p.multiple) / 6;
+  setMultiplier(s, s.combo + 1, upgrade2);
+  s.score += (devil ? 1e3 : 100) * s.combo;
+  summaries(s);
+  return devil || p.multiple % 5 === 0;
+}
+function syncLiveCounts(s) {
+  const l = s.progression.level;
+  l.zombieAlive = s.zombies.filter((z) => !z.devil && !z.body.loggedKill).length;
+  l.devilAlive = s.zombies.filter((z) => z.devil && !z.body.loggedKill).length;
+}
+function stepProgression(s, hooks) {
+  if (s.mode === "deathmatch") return;
+  const p = s.progression, l = p.level;
+  p.tick++;
+  if (l.zombieLimit <= 0 && l.devilLimit <= 0 && !hooks.hasCreatures()) {
+    enterWave(s, s.wave + 1);
+    hooks.wave();
+  } else {
+    if (l.zombieAlive < Math.min(l.zombieLimit, 60) && l.zombieCountdown-- <= 0 && hooks.spawn(false)) {
+      enemySpawned(s, false);
+      l.zombieCountdown = l.zombieRate;
+    }
+    if (l.devilAlive < l.devilLimit && (l.devilCountdown -= l.zombieLimit !== 0 ? 1 : 10) <= 0 && hooks.spawn(true)) {
+      enemySpawned(s, true);
+      l.devilCountdown = l.devilRate;
+    }
+  }
+  if (p.multipleTicks-- < 0) {
+    p.multiple = 0;
+    p.multipleTicks = p.multipleTotal = 1e5;
+  }
+  if (p.multiplierTicks-- < 0) setMultiplier(s, s.combo - 1, hooks.upgrade);
+  summaries(s);
+}
+function validProgression(s) {
+  const p = s.progression, l = p?.level;
+  return !!p && Number.isSafeInteger(p.tick) && p.tick >= 0 && p.tick <= s.tick && Number.isSafeInteger(p.multiple) && p.multiple >= 0 && ["multipleTicks", "multipleTotal", "multiplierTicks", "multiplierTotal"].every((k) => Number.isFinite(p[k])) && p.multipleTicks >= -1 && p.multipleTotal > 0 && p.multiplierTicks >= -1 && p.multiplierTotal > 0 && !!l && Object.values(l).every(Number.isSafeInteger) && l.zombieRate >= 1 && l.devilRate >= 0 && ["zombieLimit", "zombieRemaining", "zombieAlive", "devilLimit", "devilRemaining", "devilAlive"].every((k) => l[k] >= 0) && Number.isSafeInteger(s.wave) && s.wave >= 1 && Number.isSafeInteger(s.combo) && s.combo >= 1 && s.combo <= 999 && Number.isSafeInteger(s.peakCombo) && s.peakCombo >= s.combo && s.peakCombo <= 999;
 }
 
 // src/expanded/boxhead-core.ts
@@ -35831,14 +36001,10 @@ function create3(round, playing2, seats, seed, mapId, mode = "coop", settings) {
     wave: 0,
     spawnLeft: 0,
     devilLeft: 0,
-    nextSpawn: 0,
-    nextDevil: 0,
-    waveReady: mode === "deathmatch" ? 0 : 1,
     nextId: 0,
     score: 0,
     combo: 1,
     peakCombo: 1,
-    comboUntil: 75,
     message: "",
     messageUntil: 0,
     mode,
@@ -35873,6 +36039,8 @@ function create3(round, playing2, seats, seed, mapId, mode = "coop", settings) {
       weapon: 0,
       unlocked: [true, ...Array(9).fill(false)],
       inventory: WEAPONS3.map((w, i) => i === 0 ? w.ammo : 0),
+      weaponCaps: WEAPONS3.map((w) => w.ammo),
+      weaponRevisions: Array(10).fill(0),
       ammo: -1,
       cooldown: 0,
       chargeDetonate: false,
@@ -35891,11 +36059,9 @@ function create3(round, playing2, seats, seed, mapId, mode = "coop", settings) {
       ...playerPose()
     });
   }
-  const preset = mode === "deathmatch" ? { multiplier: 200 } : difficulty(s.options.difficulty);
-  if (preset.multiplier > 1) {
-    s.combo = preset.multiplier;
+  initProgression(s);
+  if (s.combo > 1) {
     upgrade(s);
-    s.comboUntil = Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
     s.message = "";
     s.messageUntil = 0;
   }
@@ -35907,13 +36073,7 @@ function create3(round, playing2, seats, seed, mapId, mode = "coop", settings) {
   }
   return s;
 }
-function beginWave(s) {
-  s.wave = s.wave === 0 ? difficulty(s.options.difficulty).wave : s.wave + 1;
-  s.spawnLeft = 10 + 5 * (s.wave - 1);
-  s.devilLeft = !s.options.devils || s.wave === 1 ? 0 : Math.floor(1 + (s.wave - 2) * 0.25);
-  s.nextSpawn = s.tick + 15;
-  s.nextDevil = s.tick + 100;
-  s.waveReady = 0;
+function announceWave(s) {
   s.message = `\u7B2C ${s.wave} \u6CE2`;
   s.messageUntil = s.tick + 65;
   if (s.wave > 1) sound2(s, "World.End.wav");
@@ -35988,11 +36148,11 @@ function fire2(s, p) {
     if (gun.id === "chargepack") sound2(s, "Weapon.Mine.Place.wav");
     const map = room(s), position2 = placementCell(s, origin, map.columns, map.rows);
     if (!position2) return;
-    s.barrels.push({ id: ++s.nextId, ...position2, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null });
+    s.barrels.push({ id: ++s.nextId, ...position2, kind: gun.id === "fakewall" ? "wall" : gun.id, hp: gun.id === "barrel" ? 1 : 60, ...gun.id === "fakewall" ? wallState() : {}, ...["barrel", "fakewall"].includes(gun.id) ? objectRegistration() : {}, damage: gun.damage, owner: p.seat, exploded: false, armed: s.tick, detonateAt: 0, animation: 0, detonating: false, detonateCounter: null, ...gun.id === "mine" ? { mineWaiting: s.mode === "deathmatch" } : {} });
     if (gun.id === "chargepack") p.chargeDetonate = true;
     else sound2(s, gun.id === "mine" ? "Weapon.Mine.Place.wav" : "Object.Barrel.Place.wav");
   } else if (gun.id === "grenade") {
-    grenadeShot(s, p, origin, Math.min(0.75, Math.max(0.25, (s.tick - p.triggerAt) / 25)), gun.damage, gun.bang, gun.cluster);
+    grenadeShot(s, p, origin, Math.min(0.75, Math.max(0.25, (s.tick - p.triggerAt) / frameRate(s))), gun.damage, gun.bang, gun.cluster);
   } else if (gun.id === "rocket") {
     s.bullets.push({ id: ++s.nextId, ...origin, vz: 0, vx: Math.cos(p.dir) * 16, vy: Math.sin(p.dir) * 16, angle: p.dir, parent: p.id, owner: p.seat, weapon: p.weapon, damage: gun.damage, life: 1, bang: gun.bang, cluster: gun.cluster, born: s.tick });
   } else {
@@ -36007,38 +36167,24 @@ function fire2(s, p) {
   p.ammo = p.inventory[p.weapon];
   p.cooldown = gun.rate;
   p.fireAt = s.tick;
-  if (p.ammo === 0 && gun.id !== "chargepack") {
-    p.weapon = 0;
-    p.ammo = -1;
-  }
   if (gun.sound) sound2(s, "Weapon." + gun.sound + ".Fire.wav");
 }
 function upgrade(s) {
   if (s.combo <= s.peakCombo) return;
-  const before = s.peakCombo;
-  s.peakCombo = s.combo;
-  for (const u of boxhead_data_default.upgrades.filter((u2) => u2.threshold > before && u2.threshold <= s.peakCombo)) {
+  const before = s.peakCombo, target = s.combo;
+  for (const u of boxhead_data_default.upgrades.filter((u2) => u2.threshold > before && u2.threshold <= target)) {
+    s.peakCombo = u.threshold;
     s.message = u.mName;
     s.messageUntil = s.tick + 90;
     if (u.mClassID === "CThing_Creature_Player") {
       const index3 = WEAPONS3.findIndex((w) => w.id === u.mValue);
       if (index3 >= 0) for (const p of s.players) {
         p.unlocked[index3] = true;
-        if (p.alive) {
-          p.inventory[index3] = weaponStats(s, index3).ammo;
-          selectWeapon(s, p, index3);
-        }
-      }
-    } else if (["DoubleAmmo", "QuadAmmo", "InfinateAmmo"].includes(u.mProp)) {
-      const index3 = WEAPONS3.findIndex((w) => "CThing_Weapon_" + w.classId === u.mClassID);
-      if (index3 >= 0) {
-        for (const p of s.players) if (p.alive) {
-          p.inventory[index3] = weaponStats(s, index3).ammo;
-          p.ammo = p.inventory[p.weapon];
-        }
+        rebuildWeapon(s, p, index3);
       }
     }
   }
+  s.peakCombo = target;
 }
 function projectiles(s) {
   const hooks = {
@@ -36073,6 +36219,7 @@ function projectiles(s) {
 function step5(s, inputs) {
   if (s.phase !== "playing" || s.paused) return;
   s.tick++;
+  syncLiveCounts(s);
   stepWalls(s);
   stepRegistration(s);
   s.effects = s.effects.filter((e) => --e.life > 0);
@@ -36085,11 +36232,6 @@ function step5(s, inputs) {
   }
   s.zombies = s.zombies.filter((z) => z.body.disposeAt === null || z.body.disposeAt > s.tick);
   s.sounds = s.sounds.filter((e) => s.tick - e.tick < 10);
-  if (s.mode !== "deathmatch" && s.combo > 1 && s.tick > s.comboUntil) {
-    s.combo--;
-    s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
-  }
-  if (s.mode !== "deathmatch" && s.waveReady && s.tick >= s.waveReady) beginWave(s);
   projectiles(s);
   processExplosions(s, random5, (e) => explode(s, e));
   const respawning = /* @__PURE__ */ new Set();
@@ -36110,17 +36252,14 @@ function step5(s, inputs) {
         if (s.mode === "deathmatch") {
           const killer = s.players.find((q) => q.seat === p.killedBy && q !== p);
           if (killer) killer.kills++;
+          dropPickup(s, p);
         }
         return;
       }
       p.ai.collidable = false;
       const owner = s.players.find((q) => q.seat === p.owner);
       if (owner) owner.kills++;
-      s.score += (p.devil ? 1e3 : 100) * s.combo;
-      s.combo++;
-      s.comboUntil = s.tick + Math.max(3, Math.round(Math.pow(101 - Math.min(s.combo, 100), 2.5) / 1e5 * 72 + 3));
-      upgrade(s);
-      if (random5(s) < 0.15) s.pickups.push({ id: ++s.nextId, x: p.x, y: p.y, life: 250, born: s.tick });
+      if (enemyKilled(s, p.devil, () => upgrade(s))) dropPickup(s, p);
     },
     playerDead: () => {
       if (s.phase !== "playing") return;
@@ -36202,7 +36341,7 @@ function step5(s, inputs) {
       p.drawAction = p.body.action;
       p.drawFrame = p.body.frame;
     }
-    p.respawn = p.body.phase === "dead" ? Math.max(0, p.body.counter) + 26 : p.body.phase === "respawn" ? Math.max(0, p.body.counter) + 1 : p.body.phase === "dying" ? Math.ceil((5 - p.body.frame) / 0.34) + 127 : 0;
+    p.respawn = p.body.phase === "dead" ? Math.max(0, p.body.counter) + 26 : p.body.phase === "respawn" ? Math.max(0, p.body.counter) + 1 : p.body.phase === "dying" ? Math.ceil((5 - p.body.frame) / 0.34) + 4 * frameRate(s) + 27 : 0;
     if (!normal) {
       p.moving = false;
       continue;
@@ -36213,7 +36352,7 @@ function step5(s, inputs) {
     move(s, p, dx * 5.12, dy * 5.12);
     p.moving = p.x !== oldX || p.y !== oldY;
     const nextPose = WEAPONS3[p.weapon].id + (p.moving ? "walk" : "stand");
-    if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (25 * 30));
+    if (p.hp > 0) p.hp = Math.min(200, p.hp + 200 / (frameRate(s) * 30));
     if (p.selectionPending) {
       p.selectionPending = false;
       if (p.selectionWeapon !== null) {
@@ -36230,9 +36369,11 @@ function step5(s, inputs) {
         }
       }
     }
-    if (weaponEmpty(s, p, p.weapon)) selectWeapon(s, p, 0);
+    refreshCurrentWeapon(s, p);
+    const empty = weaponEmpty(s, p, p.weapon);
+    if (empty) selectWeapon(s, p, 0);
     const gun = weaponStats(s, p.weapon);
-    const firing = p.cooldown === 0 && !cancelled && consumeFireKey(p, gun.auto, gun.onRelease);
+    const firing = !empty && p.cooldown === 0 && !cancelled && consumeFireKey(p, gun.auto, gun.onRelease);
     if (firing) fire2(s, p);
     advancePlayerPose(p, nextPose, firing);
     if (respawning.has(p)) {
@@ -36266,23 +36407,11 @@ function step5(s, inputs) {
   }
   s.barrels = s.barrels.filter((b) => b.hp > 0 || wallBlocks(b, s.tick));
   stepPickups(s, () => random5(s), () => sound2(s, "Object.Pickup.wav"));
-  if (s.mode !== "deathmatch" && s.spawnLeft === 0 && s.devilLeft === 0 && s.zombies.length === 0 && !s.waveReady) s.waveReady = s.tick + 65;
   const decals = new Set(s.effects.filter((e) => ["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind)).slice(-180));
   s.effects = s.effects.filter((e) => !["Effect.BloodSplat", "Effect.BloodPool", "Effect.ScorchMark"].includes(e.kind) || decals.has(e));
   s.sounds = s.sounds.slice(-40);
   stepNavigation(s);
-  if (s.mode !== "deathmatch" && s.spawnLeft > 0 && s.tick >= s.nextSpawn && s.zombies.filter((z) => !z.devil && z.hp > 0).length < Math.min(10 + 5 * (s.wave - 1), 60)) {
-    if (spawnEnemy(s, false)) {
-      s.spawnLeft--;
-      s.nextSpawn = s.tick + Math.max(25 - (s.wave - 1), 1);
-    }
-  }
-  if (s.mode !== "deathmatch" && s.options.devils && s.devilLeft > 0 && s.tick >= s.nextDevil && s.zombies.filter((z) => z.devil && z.hp > 0).length < Math.min(1 + (s.wave - 2) * 0.3, 5)) {
-    if (spawnEnemy(s, true)) {
-      s.devilLeft--;
-      s.nextDevil = s.tick + Math.max(250 - (s.wave - 1), 25);
-    }
-  }
+  stepProgression(s, { spawn: (devil) => spawnEnemy(s, devil), upgrade: () => upgrade(s), wave: () => announceWave(s), hasCreatures: () => s.zombies.some((z) => z.body.phase !== "disposed") });
   stepFeedback(s);
 }
 function nums(v, keys) {
@@ -36291,7 +36420,7 @@ function nums(v, keys) {
 function valid3(value2) {
   if (!value2 || typeof value2 !== "object") return false;
   const s = value2;
-  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && (s.mode === "deathmatch" ? [null, 0, 1, 2, 3, 4] : [null, 0]).includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && MODES3.some((m) => m.id === s.mode) && (s.mode !== "single" || Array.isArray(s.players) && s.players.length <= 1 && s.players.every((p) => p?.seat === 1)) && typeof s.paused === "boolean" && Array.isArray(s.actionAck) && s.actionAck.length === 4 && s.actionAck.every((n) => Number.isSafeInteger(n) && Number(n) >= 0 && Number(n) < 1e9) && !!s.options && Array.isArray(s.options.characters) && s.options.characters.length === 4 && s.options.characters.every((c) => Number.isInteger(c) && Number(c) >= 1 && Number(c) <= 4) && DIFFICULTIES.some((d) => d.id === s.options.difficulty) && SPEEDS.includes(s.options.speed) && DEATH_LIMITS.includes(s.options.deathLimit) && ["devils", "collisions", "damage"].every((k) => typeof s.options[k] === "boolean") && (s.mode !== "deathmatch" || s.options.damage && s.wave === 0 && s.spawnLeft === 0 && s.devilLeft === 0 && s.waveReady === 0) && Array.isArray(s.players) && s.players.every((p) => p && p.character === CHARACTERS[s.options.characters[p.seat - 1] - 1]) && (s.mode !== "deathmatch" || !s.winner || s.players.some((p) => p.seat === s.winner)) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && validCreature(s, p) && nums(p, ["id", "x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && typeof p.selectionPending === "boolean" && (p.selectionWeapon === null || Number.isInteger(p.selectionWeapon) && p.selectionWeapon >= 0 && p.selectionWeapon < 10) && [-1, 1].includes(p.selectionStep) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean")) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z) && validCreature(s, z)) && s.bullets.every((b) => validGrenade(b) && validShot(b) && validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick && (p.permanent === void 0 || typeof p.permanent === "boolean") && (!p.permanent || p.life >= 0 && (p.life > 0 ? p.reappearAt === null : Number.isSafeInteger(p.reappearAt) && p.reappearAt > s.tick))) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.floor === void 0 || e.floor === true && e.kind === "Effect.BloodSplat" && [0, 1, 5].includes(e.bloodCount)) && (e.kind !== "Effect.RocketSmoke" || nums(e, ["z", "vx", "vy"]) && e.z >= 0 && e.total === 7 && e.life === 7 - (s.tick - e.born)) && (e.kind !== "Effect.BulletHit" || Number.isFinite(e.z) && e.z >= 0 && e.total === 14 && e.life === 14 - (s.tick - e.born)) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextSpawn", "nextDevil", "waveReady", "nextId", "score", "combo", "peakCombo", "comboUntil", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
+  return s.gameId === ID && Number.isSafeInteger(s.tick) && s.tick >= 0 && Number.isSafeInteger(s.round) && ["waiting", "playing", "finished"].includes(s.phase) && (s.mode === "deathmatch" ? [null, 0, 1, 2, 3, 4] : [null, 0]).includes(s.winner) && MAPS2.some((m) => m.id === s.mapId) && MODES3.some((m) => m.id === s.mode) && (s.mode !== "single" || Array.isArray(s.players) && s.players.length <= 1 && s.players.every((p) => p?.seat === 1)) && typeof s.paused === "boolean" && Array.isArray(s.actionAck) && s.actionAck.length === 4 && s.actionAck.every((n) => Number.isSafeInteger(n) && Number(n) >= 0 && Number(n) < 1e9) && !!s.options && Array.isArray(s.options.characters) && s.options.characters.length === 4 && s.options.characters.every((c) => Number.isInteger(c) && Number(c) >= 1 && Number(c) <= 4) && DIFFICULTIES.some((d) => d.id === s.options.difficulty) && SPEEDS.includes(s.options.speed) && DEATH_LIMITS.includes(s.options.deathLimit) && ["devils", "collisions", "damage"].every((k) => typeof s.options[k] === "boolean") && (s.mode !== "deathmatch" || s.options.damage && s.spawnLeft === 0 && s.devilLeft === 0) && Array.isArray(s.players) && s.players.every((p) => p && p.character === CHARACTERS[s.options.characters[p.seat - 1] - 1]) && (s.mode !== "deathmatch" || !s.winner || s.players.some((p) => p.seat === s.winner)) && Array.isArray(s.ack) && s.ack.length === 4 && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && Array.isArray(s.players) && s.players.length <= 4 && new Set(s.players.map((p) => p?.seat)).size === s.players.length && s.players.every((p) => [1, 2, 3, 4].includes(p?.seat) && typeof p.alive === "boolean" && typeof p.triggerDown === "boolean" && typeof p.chargeDetonate === "boolean" && CHARACTERS.includes(p.character) && validPlayerPose(p) && validCreature(s, p) && nums(p, ["id", "x", "y", "dir", "hp", "lives", "respawn", "kills", "deaths", "killedBy", "lastAttack", "lastAlt", "cooldown", "invul", "ammo", "fireAt", "hitAt", "deadAt", "triggerAt"]) && typeof p.selectionPending === "boolean" && (p.selectionWeapon === null || Number.isInteger(p.selectionWeapon) && p.selectionWeapon >= 0 && p.selectionWeapon < 10) && [-1, 1].includes(p.selectionStep) && Number.isInteger(p.weapon) && p.weapon >= 0 && p.weapon < 10 && Array.isArray(p.inventory) && p.inventory.length === 10 && p.inventory.every((v) => Number.isSafeInteger(v) && v >= -1) && p.ammo === p.inventory[p.weapon] && Array.isArray(p.unlocked) && p.unlocked.length === 10 && p.unlocked.every((v) => typeof v === "boolean") && validWeaponInventory(s, p)) && ["zombies", "bullets", "barrels", "pickups", "effects", "corpses"].every((k) => Array.isArray(s[k]) && s[k].length < 1500 && s[k].every((e) => nums(e, ["x", "y"]))) && validProgression(s) && validNavigation(s) && validExplosions(s) && s.zombies.every((z) => nums(z, ["id", "hp", "dir", "attack", "owner", "hitAt", "attackAt"]) && typeof z.devil === "boolean" && validEnemyAI(s, z) && validCreature(s, z)) && s.bullets.every((b) => validGrenade(b) && validShot(b) && validFireball(b) && nums(b, ["id", "vx", "vy", "damage", "weapon", "owner", "life"]) && (b.weapon !== 4 && b.weapon !== 7 || nums(b, ["z", "vz"]) && b.z >= 0 && [0, 1, 2].includes(b.bang) && typeof b.cluster === "boolean" && (b.clusterShell === void 0 || typeof b.clusterShell === "boolean")) && (Number.isSafeInteger(b.born) && b.born >= 0 && b.born <= s.tick)) && s.barrels.every((b) => nums(b, ["id", "hp", "owner", "armed", "z"]) && b.z >= 0 && ["barrel", "wall", "mine", "chargepack"].includes(b.kind) && typeof b.exploded === "boolean" && validRegistration(b, s.tick) && validExplosiveObject(b) && validWall(b, s.tick) && (b.damage === void 0 || Number.isFinite(b.damage) && b.damage > 0)) && s.pickups.every((p) => nums(p, ["id", "life"]) && Number.isSafeInteger(p.born) && p.born >= 0 && p.born <= s.tick && (p.permanent === void 0 || typeof p.permanent === "boolean") && (p.permanent !== false || Number.isSafeInteger(p.deleteCounter) && p.deleteCounter >= 0 && typeof p.initialized === "boolean" && Number.isFinite(p.alpha) && p.alpha >= 0 && p.alpha <= 1 && p.life === p.deleteCounter + (p.initialized ? 1 : 2)) && (!p.permanent || p.life >= 0 && (p.life > 0 ? p.reappearAt === null : Number.isSafeInteger(p.reappearAt) && p.reappearAt > s.tick))) && s.effects.every((e) => nums(e, ["life", "total"]) && typeof e.kind === "string" && Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + (e.kind === "Effect.SmokeCloud" ? 1 : 0) && (e.floor === void 0 || e.floor === true && e.kind === "Effect.BloodSplat" && [0, 1, 5].includes(e.bloodCount)) && (e.kind !== "Effect.RocketSmoke" || nums(e, ["z", "vx", "vy"]) && e.z >= 0 && e.total === 7 && e.life === 7 - (s.tick - e.born)) && (e.kind !== "Effect.BulletHit" || Number.isFinite(e.z) && e.z >= 0 && e.total === 14 && e.life === 14 - (s.tick - e.born)) && (e.kind !== "Effect.MuzzleFlash" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && nums(e, ["z", "angle"]) && e.z >= 0 && ["Pistol.MuzzleFlash", "UZI.MuzzleFlash", "Shotgun.MuzzleFlash", "Railgun.MuzzleFlash"].includes(e.spriteKey) && e.total === 2 && e.life === 2 - (s.tick - e.born)) && (e.kind !== "Effect.Explosion" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick && Number.isFinite(e.z) && e.z >= 0 && e.scale === 1) && (e.kind !== "Effect.SmokeCloud" || Number.isSafeInteger(e.born) && e.born >= 0 && e.born <= s.tick + 1 && e.scale === 1 && e.total === boxhead_data_default.objects["Effect.SmokeCloud"].frames + 1 && e.life === e.total - (s.tick - e.born + 1))) && s.corpses.every((e) => nums(e, ["dir", "deadAt"]) && ["zombie", "devil"].includes(e.character)) && Array.isArray(s.sounds) && s.sounds.length <= 40 && s.sounds.every((e) => nums(e, ["id", "tick"]) && Object.prototype.hasOwnProperty.call(boxhead_data_default.audio, e.name)) && nums(s, ["rng", "wave", "spawnLeft", "devilLeft", "nextId", "score", "combo", "peakCombo", "soundId", "messageUntil", "shakeY", "brightness"]) && Math.abs(s.shakeY) <= 32 && s.brightness >= 0 && s.brightness <= 1 && typeof s.message === "string";
 }
 
 // src/expanded/boxhead-view.ts
@@ -36407,7 +36536,12 @@ function render3(canvas, s, seat) {
     person(c, p.seat ? p.character : p.devil ? "devil" : "zombie", p.body.action, p, s.tick, void 0, void 0, Math.floor(p.body.frame));
     c.globalAlpha = 1;
   }
-  for (const p of s.pickups) if (p.life > 0 && (p.life > 50 || s.tick % 6 < 3)) sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
+  for (const p of s.pickups) if (p.life > 0) {
+    c.save();
+    c.globalAlpha = p.alpha ?? 1;
+    sprite2(c, "Object.Pickup", p.x, p.y, s.tick / 3);
+    c.restore();
+  }
   const entities2 = [...s.barrels.filter((b) => b.kind !== "mine" && b.kind !== "chargepack").map((b) => ({ ...b, entity: "object" })), ...s.zombies.filter((z) => z.ai.registered && !z.body.floor).map((z) => ({ ...z, entity: "enemy" })), ...s.players.filter((p) => !p.body.floor && p.body.phase !== "respawn").map((p) => ({ ...p, entity: "human" }))].sort((a, b) => a.y - b.y || a.x - b.x);
   for (const p of entities2) {
     if (p.entity === "object") {
@@ -36473,7 +36607,7 @@ function render3(canvas, s, seat) {
     const x = 20 + (p.seat - 1) * WIDTH4 / 4, gun = WEAPONS3[p.weapon];
     c.fillStyle = ["#9ac8ff", "#f1d585", "#9edc9c", "#e7a5ad"][p.seat - 1];
     c.font = "bold 15px sans-serif";
-    c.fillText(`P${p.seat}  ${p.alive ? Math.max(0, Math.ceil(p.hp)) + " HP" : "\u5012\u5730 \xB7 " + Math.ceil(p.respawn / 25) + "s"}`, x, 52);
+    c.fillText(`P${p.seat}  ${p.alive ? Math.max(0, Math.ceil(p.hp)) + " HP" : "\u5012\u5730 \xB7 " + Math.ceil(p.respawn / frameRate(s)) + "s"}`, x, 52);
     c.fillStyle = "#ddd";
     c.font = "14px sans-serif";
     c.fillText(`${gun.name}  ${p.ammo < 0 ? "\u221E" : p.ammo}  \xB7  ${p.kills} \u51FB\u6740`, x, 73);

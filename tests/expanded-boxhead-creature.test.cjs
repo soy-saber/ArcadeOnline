@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),path=requ
 function load(file){const name=path.resolve(__dirname,file),m=new Module(name,module);m.paths=module.paths;m._compile(require('esbuild').buildSync({entryPoints:[name],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text,name);return m.exports;}
 const a=load('../src/expanded/boxhead.ts').adapter,c=load('../src/expanded/boxhead-creature.ts'),world=load('../src/expanded/boxhead-world.ts'),nav=load('../src/expanded/boxhead-navigation.ts'),protocol=load('../src/authority/protocol.ts');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
-function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=272;p.dir=0;p.invul=0;});return s;}
+function arena(){const s=a.create(1,true,[1,2],17,'original-01');s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];s.players.forEach((p,i)=>{p.x=144+i*400;p.y=272;p.dir=0;p.invul=0;});return s;}
 function ticks(s,n=1,inputs=[]){for(let i=0;i<n;i++)a.step(s,inputs);}
 function enemy(s,hp=100,devil=false){const z=attachEnemy(s,{id:++s.nextId,x:240,y:400,hp,devil,dir:0,owner:0,attack:0,hitAt:-99,attackAt:-99});s.zombies.push(z);return z;}
 function hit(s,p,damage=26,kind='bullet',source={x:p.x-64,y:p.y,z:0},owner=1,range=null){c.queueAffect(s,p,kind,damage,owner,source,range);}
@@ -36,7 +36,7 @@ test('pending gun edges and manual selection survive hit lock; expiry explicitly
 });
 test('lethal hits clear affects and reservations during knockback, then log the kill once at Dying init',()=>{
  const s=arena(),z=enemy(s,20),at=z.ai.reserved;hit(s,z);ticks(s);assert.equal(z.hp,-6);assert.equal(z.body.deadFlag,true);assert.equal(z.body.affectEnabled,false);assert.equal(z.body.collidable,true);assert.equal(z.ai.reserved,null);assert(!s.enemyCells[at]);assert.equal(s.players[0].kills,0);assert.equal(s.score,0);assert.equal(s.zombies.length,1);hit(s,z);assert.equal(z.body.affects.length,0);
- ticks(s,8);assert.equal(z.body.phase,'bullet-hit');ticks(s);assert.equal(z.body.phase,'dying');assert.equal(z.body.frame,0);assert.equal(z.body.collidable,false);assert.equal(s.players[0].kills,1);assert.equal(s.score,100);ticks(s);assert.equal(s.players[0].kills,1);assert(a.valid(s));
+ ticks(s,8);assert.equal(z.body.phase,'bullet-hit');ticks(s);assert.equal(z.body.phase,'dying');assert.equal(z.body.frame,0);assert.equal(z.body.collidable,false);assert.equal(s.players[0].kills,1);assert.equal(s.score,200);ticks(s);assert.equal(s.players[0].kills,1);assert(a.valid(s));
 });
 test('dying advances original five frames at.34, then51 dead callbacks retain the actor until next disposal',()=>{
  const s=arena(),z=enemy(s,0);ticks(s);assert.equal(z.body.phase,'dying');const born=s.tick;for(let n=1;n<=14;n++){ticks(s);close(z.body.frame,.34*n);assert.equal(z.body.floor,false);}ticks(s);assert.equal(s.tick,born+15);assert.equal(z.body.phase,'dead');assert.equal(z.body.counter,50);assert.equal(z.body.floor,true);assert.equal(z.body.frame,0);assert(s.sounds.some(e=>e.name==='Creature.HitFloor.wav'));

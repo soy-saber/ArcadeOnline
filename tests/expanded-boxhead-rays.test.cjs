@@ -4,7 +4,7 @@ function load(file){const name=path.resolve(__dirname,file),source=require('esbu
 const a=load('../src/expanded/boxhead.ts').adapter,rays=load('../src/expanded/boxhead-rays.ts'),shots=load('../src/expanded/boxhead-shots.ts'),world=load('../src/expanded/boxhead-world.ts');
 const walls=load('../src/expanded/boxhead-walls.ts'),reg=load('../src/expanded/boxhead-registration.ts'),protocol=load('../src/authority/protocol.ts'),attach=require('./helpers/boxhead-enemy.cjs');
 const input=(seq,patch={})=>({seq,left:false,right:false,up:false,down:false,attack:0,alt:0,...patch});
-function arena(){const s=a.create(1,true,[1,2],42);s.waveReady=0;s.spawnLeft=1;s.nextSpawn=1e9;s.barrels=[];s.pickups=[];Object.assign(s.players[0],{x:144,y:272,dir:0});Object.assign(s.players[1],{x:624,y:464,invul:0});return s;}
+function arena(){const s=a.create(1,true,[1,2],42);s.progression.level.zombieCountdown=s.progression.level.devilCountdown=1e9;s.barrels=[];s.pickups=[];Object.assign(s.players[0],{x:144,y:272,dir:0});Object.assign(s.players[1],{x:624,y:464,invul:0});return s;}
 function ticks(s,n=1,controls=[]){for(let i=0;i<n;i++)a.step(s,controls);}
 function equip(s,index){const p=s.players[0];p.weapon=index;p.unlocked[index]=true;p.inventory[index]=world.weaponStats(s,index).ammo;p.ammo=p.inventory[index];return p;}
 function target(s,x,y,hp=100){const z=attach(s,{id:++s.nextId,x,y,hp,devil:false,attack:0,dir:Math.PI,owner:0,hitAt:-99,attackAt:-99});s.zombies.push(z);return z;}
