@@ -5,7 +5,7 @@ export interface State {
 }
 export interface Adapter {
   id: string; title: string; seats: number; hz: number; width: number; height: number; controls: string;
-  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[];speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number}): State;
+  create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[];speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number;brawlerStocks?:number;brawlerSeconds?:number;brawlerItems?:number}): State;
   rate?(state:State):number;
   characters?:string[];
   characterIds?:(string|number)[];

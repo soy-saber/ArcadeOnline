@@ -77,7 +77,7 @@ function start(): void {
     el<HTMLButtonElement>("touch-up").setAttribute("aria-label", "跳跃");
   }
   if (adapter) {
-    if(boxhead){el('badminton-actions').hidden=false;el('fullscreen-pause').hidden=false;}
+    if(boxhead||brawler){el('badminton-actions').hidden=false;el('fullscreen-pause').hidden=false;}
     canvas.width = adapter.width; canvas.height = adapter.height;
     el("battle-records").hidden = !recordsEnabled; el("weapon-status").hidden = true;
     el("records-note").textContent = adapter.id === "50737-server" ? "原版持续生存：记录击杀与倒地次数；队伍全灭结束。" : "按造成击杀的玩家计分；自杀只计死亡，换座与续局保留战绩。";
@@ -99,7 +99,7 @@ function start(): void {
   const characterSelect=el<HTMLSelectElement>('game-character'),difficultySelect=el<HTMLSelectElement>('game-difficulty');
   const bombSettings=gameId==='3881-server'||gameId==='9109-server';
   const characterSettings=bombSettings||!!adapter?.characters;
-  el('boxhead-options').hidden=!boxhead;
+  el('boxhead-options').hidden=!boxhead;el('brawler-options').hidden=!brawler;
   el('boxhead-controls').hidden=!boxhead;
   const difficultySettings=bombSettings||!!adapter?.difficulties;
   characterSelect.parentElement!.hidden=!characterSettings;difficultySelect.parentElement!.hidden=!difficultySettings;
@@ -144,7 +144,7 @@ function start(): void {
     seq = Math.max(seq, state.ack[seat - 1]);
     const player = "gameId" in state ? state.players.find((player) => player.seat === seat) : state.players[seat - 1];
     if (!player) return;
-    if ("gameId" in state) { bomb = Math.max(bomb, player.lastAttack || 0); jump = Math.max(jump, player.lastAlt || 0);if(brawler)brawlerJump=Math.max(brawlerJump,player.lastJump||0);if(boxhead)actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
+    if ("gameId" in state) { bomb = Math.max(bomb, player.lastAttack || 0); jump = Math.max(jump, player.lastAlt || 0);if(brawler)brawlerJump=Math.max(brawlerJump,player.lastJump||0);if(boxhead||brawler)actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
     else if (isBomb(state)) bomb = Math.max(bomb, player.lastBomb);
     else { jump = Math.max(jump, player.lastJump); hit = Math.max(hit, player.lastHit);actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
   }
@@ -154,7 +154,7 @@ function start(): void {
   };
   net.onStatus = (message) => { notice(message); if (!net.connected) clearInput(); updateUi(); };
   net.onSnapshot = (state, time, receivedAt) => {
-    if(boxhead&&'gameId'in state&&state.paused)clearInput();
+    if((boxhead||brawler)&&'gameId'in state&&state.paused)clearInput();
     if(boxhead&&adapter?.rate){const rate=adapter.rate(state as ExpandedState);if(hz!==rate){hz=rate;window.clearInterval(timer);timer=window.setInterval(sendInput,1000/hz);}}
     if (round !== state.round) {
       resetRound(state.round);
@@ -201,7 +201,7 @@ function start(): void {
     return { seq: ++seq, dir, bomb, special: 0 };
   }
   function sendInput():void {
-    if(boxhead&&net.authority&&'gameId'in net.authority&&net.authority.paused)return;
+    if((boxhead||brawler)&&net.authority&&'gameId'in net.authority&&net.authority.paused)return;
     if (!inputEnabled || !net.connected || !seat || !(badminton&&net.authority?canControl(net.authority as BadmintonState):net.authority?.phase==='playing')) return;
     const now = performance.now(); held = currentInput(now);
     if (net.control({ t: "authInput", round, input: held, serverTime: net.serverNow(now) })) presentation.input(held, now);
@@ -209,7 +209,7 @@ function start(): void {
   let timer = window.setInterval(sendInput, 1000 / hz);
   function press(code: string, down: boolean): void {
     if (!down) { const was=keys.has(code);keys.delete(code);if(brawler&&was&&directionKeys[code]===1&&!directionState(keys).up)brawlerJump++;return; }
-    if(boxhead&&(net.authority as ExpandedState|null)?.paused)return;
+    if((boxhead||brawler)&&(net.authority as ExpandedState|null)?.paused)return;
     if (!seat || !(badminton&&net.authority?canControl(net.authority as BadmintonState):net.authority?.phase==='playing') || keys.has(code)) return;
     const now = performance.now(),direction=directionFor(code),aliasAt=boxhead&&direction!==undefined?[...keys].find(([held])=>directionFor(held)===direction)?.[1]:heldDirectionAt(keys,code);keys.set(code,aliasAt??now);inputAt=now;
     // Pressing the alternative for an already-held direction is not a second
@@ -222,7 +222,7 @@ function start(): void {
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {
-    if((badminton||boxhead)&&event.code==='KeyP'&&down&&!event.repeat&&!(event.target as HTMLElement)?.matches('input,textarea,select,button')){event.preventDefault();gameCommand('pause');return;}
+    if((badminton||boxhead||brawler)&&event.code==='KeyP'&&down&&!event.repeat&&!(event.target as HTMLElement)?.matches('input,textarea,select,button')){event.preventDefault();gameCommand('pause');return;}
     if(badminton&&event.code==='Space'&&(net.authority as BadmintonState|null)?.robot){
       if(!down){keys.delete('RobotJump');return;}
       if(seat!==1||!canControl(net.authority as BadmintonState)||(event.target as HTMLElement)?.matches('input,textarea,select,button'))return;
@@ -247,13 +247,13 @@ function start(): void {
     const requested = Number(button.dataset.seat); net.control(seat === requested ? { t: "leaveSeat" } : { t: "sit", seat: requested }); button.blur();
   };
   function gameCommand(action:string):void {
-    if((!badminton&&!boxhead)||!seat||!net.authority)return;
+    if((!badminton&&!boxhead&&!brawler)||!seat||!net.authority)return;
     net.control({t:'authGameAction',round:net.authority.round,seq:++actionSequence,action});
     if(action==='next'||action==='retry')play('next');
   }
   const pauseGame=()=>{gameCommand('pause');canvas.focus();};
   const gameMenu=()=>{gameCommand('menu');clearInput();canvas.focus();};
-  if(badminton||boxhead){el('badminton-pause').onclick=pauseGame;el('badminton-menu').onclick=gameMenu;}
+  if(badminton||boxhead||brawler){el('badminton-pause').onclick=pauseGame;el('badminton-menu').onclick=gameMenu;}
   function finishedAction():string|null {
     const s=badminton?net.authority as BadmintonState|null:null;
     return s?.phase==='finished'&&s.options.mode!=='versus'?s.winner===2?'retry':s.level<6?'next':'menu':null;
@@ -289,9 +289,16 @@ function start(): void {
     canvas.focus({ preventScroll: true });
   }
   el<HTMLButtonElement>("start-game").onclick = () => {const action=finishedAction();if(action)gameCommand(action);else toggleReady();};
-  el<HTMLButtonElement>("fullscreen-ready").onclick = () => {if(boxhead&&(net.authority as ExpandedState|null)?.paused){pauseGame();return;}const action=finishedAction();if(action)gameCommand(action);else toggleReady(true);};
+  el<HTMLButtonElement>("fullscreen-ready").onclick = () => {if((boxhead||brawler)&&(net.authority as ExpandedState|null)?.paused){pauseGame();return;}const action=finishedAction();if(action)gameCommand(action);else toggleReady(true);};
   el('fullscreen-pause').onclick=()=>{const s=net.authority as ExpandedState|null;if(s?.paused||s?.phase==='finished')gameMenu();else pauseGame();};
   function optionsChanged(event?:Event):void {
+    if(brawler){
+      if(!net.isController)return;
+      const target=event?.target as HTMLInputElement|HTMLSelectElement|null;if(!target)return;
+      const fields:Record<string,string>={'game-map':'map','game-mode':'gameMode','brawler-stocks':'brawlerStocks','brawler-seconds':'brawlerSeconds','brawler-items':'brawlerItems'},field=fields[target.id];if(!field)return;
+      if(target instanceof HTMLInputElement&&!target.validity.valid){notice('请输入有效的比赛数值。');return;}
+      net.control({t:'authOptions',[field]:target.id==='game-map'||target.id==='game-mode'?target.value:Number(target.value)});target.blur();return;
+    }
     if(boxhead){
       if(!net.isController)return;
       const target=event?.target as HTMLInputElement|HTMLSelectElement|null;
@@ -307,6 +314,8 @@ function start(): void {
   for (const key of ["map", "mode", "loadout", "difficulty"] as const) el<HTMLSelectElement>(`game-${key}`).onchange = optionsChanged;
   for(const control of document.querySelectorAll<HTMLInputElement|HTMLSelectElement>('#boxhead-options input,#boxhead-options select'))control.onchange=optionsChanged;
   el('boxhead-reset-options').onclick=()=>{if(boxhead&&net.isController&&net.authority?.phase!=='playing')net.control({t:'authOptions',map:mapSelect.value,gameMode:modeSelect.value,difficulty:'beginner',speed:1,devils:true,collisions:true,damage:true,deathLimit:10});};
+  for(const control of document.querySelectorAll<HTMLInputElement|HTMLSelectElement>('#brawler-options input,#brawler-options select'))control.onchange=optionsChanged;
+  el('brawler-reset-options').onclick=()=>{if(brawler&&net.isController&&net.authority?.phase!=='playing')net.control({t:'authOptions',gameMode:'stock',brawlerStocks:5,brawlerSeconds:300,brawlerItems:3});};
   characterSelect.onchange=()=>{net.control({t:'authCharacter',character:Number(characterSelect.value)});characterSelect.blur();};
   el("copy-invite").onclick = async () => {
     const invite = new URL(location.href); invite.searchParams.delete("debug");
@@ -439,7 +448,16 @@ function start(): void {
       if(state.paused){fullscreenReady.textContent='继续';fullscreenReady.disabled=!net.connected||!seat;}
       const custom=Object.entries(bindings).map(([role,code])=>`${CONTROL_LABELS[role as Control]} ${keyLabel(code)}`).join('，');if(custom)el('controls-guide').textContent=`WASD／方向键移动，空格射击，数字选枪，P暂停。额外按键优先：${custom}`;
     }
-    if(badminton||boxhead){
+    if(brawler&&state&&'gameId'in state){
+      const locked=!net.isController||state.phase==='playing',settings=state.options;
+      el('brawler-stocks-label').hidden=state.mode!=='stock';el('brawler-seconds-label').hidden=state.mode!=='time';
+      for(const [id,key]of [['stocks','stocks'],['seconds','seconds'],['items','itemFrequency']]as const){const control=el<HTMLInputElement|HTMLSelectElement>('brawler-'+id);if(document.activeElement!==control)control.value=String(settings[key]);control.disabled=locked;}
+      el<HTMLButtonElement>('brawler-reset-options').disabled=locked;
+      el('score-line').textContent=state.mode==='time'?(settings.seconds===0?'不限时':`剩余 ${state.remaining} 秒`):`每人 ${settings.stocks} 条生命`;
+      const fullPause=el<HTMLButtonElement>('fullscreen-pause');fullPause.disabled=!net.connected||!seat||state.phase==='waiting';fullPause.textContent=state.paused||state.phase==='finished'?'返回准备':'暂停';
+      if(state.paused){fullscreenReady.textContent='继续';fullscreenReady.disabled=!net.connected||!seat;}
+    }
+    if(badminton||boxhead||brawler){
       const s=state as BadmintonState|ExpandedState|null,pauseButton=el<HTMLButtonElement>('badminton-pause'),menuButton=el<HTMLButtonElement>('badminton-menu');
       pauseButton.textContent=s?.paused?'继续':'暂停';pauseButton.setAttribute('aria-pressed',String(!!s?.paused));pauseButton.disabled=!net.connected||!seat||s?.phase!=='playing';menuButton.disabled=!net.connected||!seat||!s||s.phase==='waiting';
     }
@@ -458,7 +476,7 @@ function start(): void {
     const nextAt = net.room.auth?.nextRoundAt;
     if (!net.connected) el("round-status").textContent = "连接中";
     else if(!badminton){
-      if(boxhead&&state&&'gameId'in state&&state.paused)el('round-status').textContent='已暂停 · P继续';
+      if((boxhead||brawler)&&state&&'gameId'in state&&state.paused)el('round-status').textContent='已暂停 · P继续';
       else if (state?.phase === "playing") { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = "比赛进行中"+(rotation?` · 本图第 ${Math.min(rotation.every,rotation.completed+1)}/${rotation.every} 局`:''); }
       else if (state?.phase === "finished" && nextAt) { const rotation=net.room.auth?.mapRotation;el("round-status").textContent = `${Math.max(0, Math.ceil((nextAt - net.serverNow()) / 1000))} 秒后${rotation&&rotation.completed>=rotation.every?'换图并':''}开始下一局`; }
       else el("round-status").textContent = "入座并准备后自动开始";

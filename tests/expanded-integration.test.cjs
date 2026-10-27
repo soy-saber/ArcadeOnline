@@ -53,7 +53,7 @@ for (const adapter of ADAPTERS) {
 }
 test("structured item collections change length without being treated as scalar grids", () => {
   const adapter = ADAPTERS.find(a => a.id === "6232-server"), base = adapter.create(1, true, [1, 4], 55), next = structuredClone(base);
-  next.tick++; next.items.push({id:1,name:'Mine',x:100,y:100,vx:0,vy:0,owner:null,state:1,age:0,active:0,influenced:[],variant:2,sx:1,sy:1,rotation:0,dead:false});
+  next.tick++; next.items.push({id:1,name:'Mine',x:100,y:100,vx:0,vy:0,owner:null,state:1,age:0,active:0,artAge:0,influenced:[],variant:2,sx:1,sy:1,rotation:0,dead:false});
   assert(adapter.valid(next)); const update = protocol.createUpdate(base, next, 1000);
   assert.deepEqual(update.patch.items, next.items); assert.deepEqual(protocol.applyUpdate(base, update), next);
 });

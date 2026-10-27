@@ -5,6 +5,7 @@ import { createUpdate, State, Update } from "./protocol";
 import { getAdapter } from "../expanded/registry";
 import { State as ExpandedState, Input as ExpandedInput, EMPTY_INPUT as EXPANDED_EMPTY, validInput as validExpandedInput } from "../expanded/types";
 import {SPEEDS as BOXHEAD_SPEEDS,DEATH_LIMITS} from '../expanded/boxhead-options';
+import {rules as brawlerRules,validRules as validBrawlerRules,type Settings as BrawlerSettings} from '../expanded/brawler-options';
 
 interface Socket { readyState: number; bufferedAmount: number; send(text: string): void; close(code: number, reason: string): void }
 interface Member { id: string; name?: string; seat: number | null; ready: boolean; ws: Socket | null }
@@ -18,7 +19,7 @@ interface RemoteInput { input: bomb.Input | badminton.Input | ExpandedInput; at:
 interface Match {
   state: State; roster: string; clock: number; accumulator: number; nextRoundAt: number;
   completedOnMap: number;
-  lastPublish: number; options: Partial<bomb.GameOptions> & { gameMode?: string;speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number }; inputs: Map<string, RemoteInput>; deliveries: Map<string, Delivery>;
+  lastPublish: number; options: Partial<bomb.GameOptions> & BrawlerSettings & { gameMode?: string;speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number }; inputs: Map<string, RemoteInput>; deliveries: Map<string, Delivery>;
   records: Map<string, RecordRow>; roundMembers: Map<number, string>;
 }
 const isBomb = (room: Room) => room.gameId === "3881-server";
@@ -203,13 +204,22 @@ export class AuthorityEngine {
         boxheadSettings.speed=speed;boxheadSettings.deathLimit=deathLimit;
       }
       if (!adapter.modes && message.gameMode !== undefined) return false;
-      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,...boxheadSettings,difficulty:String(difficulty)});
+      const brawlerSettings:BrawlerSettings={};
+      if(room.gameId==='6232-server'){
+        const previous=brawlerRules(match.options);
+        if(mode!==match.options.gameMode){if(mode==='stock')previous.stocks=5;else previous.seconds=300;}
+        for(const [field,key]of [['brawlerStocks','stocks'],['brawlerSeconds','seconds'],['brawlerItems','itemFrequency']]as const){const value=message[field]===undefined?previous[key]:message[field];if(typeof value!=='number')return false;brawlerSettings[field]=value;}
+        if(!validBrawlerRules(brawlerRules(brawlerSettings)))return false;
+      }
+      const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,...boxheadSettings,...brawlerSettings,difficulty:String(difficulty)});
       if (!adapter.valid(candidate)) return false;
       if(room.gameId==='6232-server'&&(match.state as ExpandedState).mapId!==map)for(const m of room.members.values())m.ready=false;
+      if(room.gameId==='6232-server'){const previous=brawlerRules(match.options),next=brawlerRules(brawlerSettings);if(match.options.gameMode!==mode||previous.stocks!==next.stocks||previous.seconds!==next.seconds||previous.itemFrequency!==next.itemFrequency)for(const m of room.members.values())m.ready=false;}
       match.options.map = map as bomb.GameOptions["map"];
       if (adapter.modes) {if(room.gameId==='50737-server'&&match.options.gameMode!==mode)for(const m of room.members.values())m.ready=false;match.options.gameMode = mode;}
       if(adapter.difficulties)match.options.difficulty=difficulty as bomb.GameOptions['difficulty'];
       Object.assign(match.options,boxheadSettings);
+      Object.assign(match.options,brawlerSettings);
       this.begin(room, false); return true;
     }
     if (!isBomb(room)) return false;
@@ -240,7 +250,7 @@ export class AuthorityEngine {
   gameAction(room:Room,member:Member,message:Record<string,unknown>):boolean {
     if(room.gameId==='46923-server')return this.badmintonAction(room,member,message);
     const match=room.auth;
-    if(room.gameId!=='50737-server'||!match||!member.seat||room.seats[member.seat]!==member.id||message.round!==match.state.round)return false;
+    if(!['50737-server','6232-server'].includes(room.gameId)||!match||!member.seat||room.seats[member.seat]!==member.id||message.round!==match.state.round)return false;
     const state=match.state as ExpandedState,seq=message.seq;
     if(typeof seq!=='number'||!Number.isSafeInteger(seq)||seq<=state.actionAck[member.seat-1]||seq>=1e9)return false;
     if(message.action==='menu'){

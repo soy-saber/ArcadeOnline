@@ -1,0 +1,4 @@
+
+> arcade-online@0.1.0 build:native
+> node scripts/build-native.cjs
+

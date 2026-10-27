@@ -1,0 +1,594 @@
+{
+  "base": "http://127.0.0.1:33043",
+  "at": "2026-10-27T16:51:12.029Z",
+  "normalInputOnly": true,
+  "frequencySelectedViaUi": 5,
+  "rawSha256": "d81461754bb887e6ded163d09fafff823424fc07b62261d71aed1355f47db49a",
+  "rawBytes": 6687025,
+  "collected": {
+    "item": {
+      "name": "Mine",
+      "x": 785.25,
+      "y": 251.05,
+      "sx": 1,
+      "sy": 1,
+      "rotation": 0,
+      "age": 2100,
+      "variant": 2,
+      "id": 0,
+      "owner": 1,
+      "vx": 0,
+      "vy": 0,
+      "state": 3,
+      "active": 0,
+      "artAge": 2100,
+      "influenced": [],
+      "dead": false
+    },
+    "state": {
+      "gameId": "6232-server",
+      "round": 1793119815743,
+      "tick": 2083,
+      "phase": "playing",
+      "winner": null,
+      "ack": [
+        1958,
+        0,
+        0,
+        1962
+      ],
+      "inputs": [
+        {
+          "seq": 1958,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 1,
+          "alt": 0,
+          "shield": false,
+          "cancelledAttack": 0,
+          "cancelledAlt": 0,
+          "jump": 0,
+          "cancelledJump": 0,
+          "upperAttack": 0,
+          "upperAlt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 1962,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0,
+          "shield": false,
+          "cancelledAttack": 0,
+          "cancelledAlt": 0,
+          "jump": 0,
+          "cancelledJump": 0,
+          "upperAttack": 0,
+          "upperAlt": 0
+        }
+      ],
+      "mapId": "Rooftop",
+      "players": [
+        {
+          "seat": 1,
+          "character": 0,
+          "color": "red",
+          "x": 784.65,
+          "y": 254.05,
+          "vx": 0,
+          "vy": 0,
+          "facing": 1,
+          "rotation": 0,
+          "damage": 0,
+          "combo": 2,
+          "paralyzed": 0,
+          "controlLoss": 0,
+          "state": "stop",
+          "hasControl": true,
+          "attack": "",
+          "attackDone": true,
+          "specialUp": true,
+          "invincible": false,
+          "dying": false,
+          "shielded": false,
+          "shield": 100.1,
+          "spawning": false,
+          "spawnProtection": 0,
+          "koTime": 0,
+          "jumps": 0,
+          "bulletShot": false,
+          "electrocuted": false,
+          "grounded": true,
+          "lastSender": null,
+          "throwVictim": null,
+          "animation": {
+            "pose": "still",
+            "frame": 7,
+            "playing": true
+          },
+          "emitted": false,
+          "dodgePresent": false,
+          "alive": true,
+          "stocks": 5,
+          "deaths": 0,
+          "kos": 0,
+          "nativeKos": 0,
+          "suicides": 0,
+          "deathOrder": null,
+          "killedBy": null,
+          "respawn": 0,
+          "hitX": 784.65,
+          "hitY": 254.05,
+          "hitAnimation": {
+            "pose": "still",
+            "frame": 6,
+            "playing": true
+          },
+          "moveQueue": "",
+          "goThrough": false,
+          "lastAttack": 1,
+          "lastAlt": 0,
+          "lastJump": 0,
+          "leftHeld": false,
+          "rightHeld": false,
+          "downHeld": false,
+          "upHeld": false,
+          "shieldHeld": false,
+          "upTicks": 0,
+          "upCombo": false,
+          "spawnType": 1,
+          "spawnFrame": 1,
+          "spawnAge": 52075,
+          "spawnX": 528.65,
+          "spawnY": 152.5,
+          "blinker": 0
+        },
+        {
+          "seat": 4,
+          "character": 0,
+          "color": "orange",
+          "x": 853,
+          "y": 254.05,
+          "vx": 0,
+          "vy": 0,
+          "facing": 1,
+          "rotation": 0,
+          "damage": 0,
+          "combo": 2,
+          "paralyzed": 0,
+          "controlLoss": 0,
+          "state": "stop",
+          "hasControl": true,
+          "attack": "",
+          "attackDone": true,
+          "specialUp": true,
+          "invincible": false,
+          "dying": false,
+          "shielded": false,
+          "shield": 100.1,
+          "spawning": false,
+          "spawnProtection": 0,
+          "koTime": 0,
+          "jumps": 0,
+          "bulletShot": false,
+          "electrocuted": false,
+          "grounded": true,
+          "lastSender": null,
+          "throwVictim": null,
+          "animation": {
+            "pose": "still",
+            "frame": 3,
+            "playing": true
+          },
+          "emitted": false,
+          "dodgePresent": false,
+          "alive": true,
+          "stocks": 5,
+          "deaths": 0,
+          "kos": 0,
+          "nativeKos": 0,
+          "suicides": 0,
+          "deathOrder": null,
+          "killedBy": null,
+          "respawn": 0,
+          "hitX": 853,
+          "hitY": 254.05,
+          "hitAnimation": {
+            "pose": "still",
+            "frame": 6,
+            "playing": true
+          },
+          "moveQueue": "",
+          "goThrough": false,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "lastJump": 0,
+          "leftHeld": false,
+          "rightHeld": false,
+          "downHeld": false,
+          "upHeld": false,
+          "shieldHeld": false,
+          "upTicks": 0,
+          "upCombo": false,
+          "spawnType": 1,
+          "spawnFrame": 1,
+          "spawnAge": 52075,
+          "spawnX": 585.3,
+          "spawnY": 152.5,
+          "blinker": 0
+        }
+      ],
+      "platforms": [
+        {
+          "id": 0,
+          "name": "Fixed1",
+          "x": 214.2996951749846,
+          "y": 254.04995188102754,
+          "w": 747.0717539500308,
+          "h": 538.9325882379451,
+          "floor": 254.05,
+          "moving": false
+        },
+        {
+          "id": 1,
+          "name": "Moving2",
+          "x": 354.0498099874522,
+          "y": 152.64999894233702,
+          "w": 465.6868701250957,
+          "h": 11.845827435325958,
+          "floor": 152.65,
+          "moving": true
+        },
+        {
+          "id": 2,
+          "name": "Moving1",
+          "x": 148.6999700919806,
+          "y": 300.74999908653257,
+          "w": 73.2992221160388,
+          "h": 10.230836762934814,
+          "floor": 300.75,
+          "moving": true
+        },
+        {
+          "id": 3,
+          "name": "Moving3",
+          "x": 953.2499700919806,
+          "y": 300.74999892105103,
+          "w": 73.29922211603878,
+          "h": 12.084230397897898,
+          "floor": 300.75,
+          "moving": true
+        },
+        {
+          "id": 4,
+          "name": "Fixed4",
+          "x": 876.5999805726321,
+          "y": 229.49999780914305,
+          "w": 47.61301413473575,
+          "h": 24.537602221713882,
+          "floor": 229.5,
+          "moving": false
+        },
+        {
+          "id": 5,
+          "name": "Fixed5",
+          "x": 308.69998057263217,
+          "y": 230.04999780914306,
+          "w": 47.613014134735636,
+          "h": 24.537602221713882,
+          "floor": 230.05,
+          "moving": false
+        },
+        {
+          "id": 6,
+          "name": "Moving4",
+          "x": 524.0999851055604,
+          "y": 89.74999936599733,
+          "w": 36.50361521887908,
+          "h": 7.100831228005347,
+          "floor": 89.75,
+          "moving": true
+        }
+      ],
+      "items": [
+        {
+          "name": "Mine",
+          "x": 785.25,
+          "y": 251.05,
+          "sx": 1,
+          "sy": 1,
+          "rotation": 0,
+          "age": 2100,
+          "variant": 2,
+          "id": 0,
+          "owner": 1,
+          "vx": 0,
+          "vy": 0,
+          "state": 3,
+          "active": 0,
+          "artAge": 2100,
+          "influenced": [],
+          "dead": false
+        }
+      ],
+      "shots": [],
+      "explosions": [],
+      "seed": 1616416973,
+      "nextItem": 1,
+      "animationClock": 1,
+      "nextSpawn": 54000,
+      "soundSeq": 0,
+      "sounds": [],
+      "mode": "stock",
+      "paused": false,
+      "actionAck": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "remaining": 300,
+      "numDead": 0,
+      "ranks": [],
+      "options": {
+        "characters": [
+          1,
+          2,
+          3,
+          1
+        ],
+        "stocks": 5,
+        "seconds": 300,
+        "itemFrequency": 5
+      }
+    }
+  },
+  "throwTick": null,
+  "events": [
+    {
+      "tick": 93,
+      "item": null,
+      "player": {
+        "x": 528.65,
+        "y": 254.05,
+        "attack": "",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    },
+    {
+      "tick": 2000,
+      "item": {
+        "name": "Mine",
+        "x": 785.25,
+        "y": 251.05,
+        "sx": 1,
+        "sy": 1,
+        "rotation": 0,
+        "age": 25,
+        "variant": 2,
+        "id": 0,
+        "owner": null,
+        "vx": 0,
+        "vy": 0,
+        "state": 1,
+        "active": 0,
+        "artAge": 25,
+        "influenced": [],
+        "dead": false
+      },
+      "player": {
+        "x": 528.65,
+        "y": 254.05,
+        "attack": "",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    },
+    {
+      "tick": 2067,
+      "item": {
+        "name": "Mine",
+        "x": 785.25,
+        "y": 251.05,
+        "sx": 1,
+        "sy": 1,
+        "rotation": 0,
+        "age": 1700,
+        "variant": 2,
+        "id": 0,
+        "owner": 1,
+        "vx": 0,
+        "vy": 0,
+        "state": 3,
+        "active": 0,
+        "artAge": 1700,
+        "influenced": [],
+        "dead": false
+      },
+      "player": {
+        "x": 784.65,
+        "y": 254.05,
+        "attack": "punchGround",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    },
+    {
+      "tick": 2123,
+      "item": {
+        "name": "Mine",
+        "x": 814.95,
+        "y": 244.25,
+        "sx": 1,
+        "sy": 1,
+        "rotation": 0,
+        "age": 3100,
+        "variant": 8,
+        "id": 0,
+        "owner": 1,
+        "vx": 7.878462024097664,
+        "vy": 0.4108145786645573,
+        "state": 2,
+        "active": 0,
+        "artAge": 75,
+        "influenced": [],
+        "dead": false
+      },
+      "player": {
+        "x": 784.65,
+        "y": 254.05,
+        "attack": "punchGround",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    },
+    {
+      "tick": 2133,
+      "item": {
+        "name": "Mine",
+        "x": 806.85,
+        "y": 254.05,
+        "sx": 1,
+        "sy": 1,
+        "rotation": 0,
+        "age": 3350,
+        "variant": 9,
+        "id": 0,
+        "owner": 1,
+        "vx": -4.709089258513952,
+        "vy": 2.588008074348328,
+        "state": 0,
+        "active": 50,
+        "artAge": 50,
+        "influenced": [
+          4
+        ],
+        "dead": false
+      },
+      "player": {
+        "x": 784.65,
+        "y": 254.05,
+        "attack": "",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    },
+    {
+      "tick": 2173,
+      "item": null,
+      "player": {
+        "x": 784.65,
+        "y": 254.05,
+        "attack": "",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": [
+        {
+          "x": 806.85,
+          "y": 254.05,
+          "size": 3,
+          "owner": 1,
+          "age": 50,
+          "influenced": [
+            1
+          ],
+          "born": 2171,
+          "parts": [
+            {
+              "name": "BoomMatter",
+              "x": 814.85,
+              "y": 263.05,
+              "sx": 0.130718954248366,
+              "sy": 0.13071895424836602,
+              "rotation": 0,
+              "age": 50,
+              "variant": 1
+            },
+            {
+              "name": "BoomMatter",
+              "x": 802.85,
+              "y": 241.05,
+              "sx": 0.130718954248366,
+              "sy": 0.13071895424836602,
+              "rotation": 0,
+              "age": 50,
+              "variant": 1
+            },
+            {
+              "name": "BoomMatter",
+              "x": 800.85,
+              "y": 267.05,
+              "sx": 0.130718954248366,
+              "sy": 0.13071895424836602,
+              "rotation": 0,
+              "age": 50,
+              "variant": 1
+            },
+            {
+              "name": "BoomWave",
+              "x": 806.85,
+              "y": 254.05,
+              "sx": 0.3,
+              "sy": 0.3,
+              "rotation": 0,
+              "age": 50,
+              "variant": 1
+            },
+            {
+              "name": "BoomStar",
+              "x": 806.85,
+              "y": 254.05,
+              "sx": 0.13723068478111705,
+              "sy": 0.16947237600271156,
+              "rotation": 0,
+              "age": 50,
+              "variant": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tick": 2198,
+      "item": null,
+      "player": {
+        "x": 647.8,
+        "y": 243.7,
+        "attack": "",
+        "deaths": 0,
+        "stocks": 5
+      },
+      "explosions": []
+    }
+  ],
+  "errors": []
+}

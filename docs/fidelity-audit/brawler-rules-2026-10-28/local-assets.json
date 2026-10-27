@@ -1,0 +1,12 @@
+{
+  "base": "http://127.0.0.1:33517",
+  "at": "2026-10-27T16:44:27.859Z",
+  "normalInputOnly": true,
+  "networkFault": "Only the selected character PNG request was held and then delivered; no game-state mutation.",
+  "blocked": {
+    "phase": "waiting",
+    "ready": false
+  },
+  "decodedCharacterDrawn": true,
+  "errors": []
+}

@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "c831c396c2e553a37e7801745df9fa4cefe5cb15c31999abdaf96d15ccceb957",
-    "runtime/authority.cjs": "f621aae67c369f8a916b24f00ab8fb5e0a844541ca601d7e54ace9153509d024",
+    "public/authority/game.js": "fba5208d4f9c0d6fab26994947cb8b7dde640a4d693a4f6d677ae21eedc27285",
+    "runtime/authority.cjs": "ec3b26d5acb23fd6785027b230301acd88da518c311a43f6f5495d5574337817",
     "src/badminton/actor-geometry.json": "9e117b3d5a5951d2a2fea53d99895240a38fbb077f38f643c11805c06c9ffca3",
     "src/badminton/ball-art.json": "94fcd961026e50b40c81e6d4bfc5d7589248378f67385e2a3b8bf55e5b3ec576",
     "src/badminton/ball.ts": "f5dc64da191978825f244531c1798211b47fd7d649266b00dd36d0dc1f0af527",
@@ -26,9 +26,9 @@
     "src/authority/bomb-status.ts": "58977f8d5645c1ce0845a7c8aea210e9d9fff7d4d310d12aeb17cc3acf2ddb72",
     "src/authority/bomb-view.ts": "999e3f197ecf5e226378f0d137c3092f5f4ea3dc55e6db59271d3410571b62c2",
     "src/authority/client.ts": "98df9c6d1bcbe38fcf901dd3cd75093c4e80c42095db7ebc444f88382f9d0292",
-    "src/authority/engine.ts": "d12047e6101c2e7923b350ca2797b09fe095ed3eaa8f940fc3e1110a06a743c9",
+    "src/authority/engine.ts": "00b42a31a65cfc04c0dd221068bbdd5015f3076500a47b9b08462f5fddb589a7",
     "src/authority/key-bindings.ts": "306baa52e4bb2ae1aa4a65d1fe8d64ffa134404fd6ff7c1da11abe6499f71242",
-    "src/authority/main.ts": "5b9df670685fe08f5413f1ba49f5cbbd688c32f064ff01fa61475b8d1fb78f75",
+    "src/authority/main.ts": "2dec8e16ae8d9121ccc99133c088155a49e6a4723e194becbc49a40053df3c69",
     "src/authority/maps.ts": "a76f8903f1a71004e81d3ed215d9a48fb190c11c86a7f5f4b3c3b7adae40e4d3",
     "src/authority/nameplates.ts": "34bfa9f8cd9a4cdfe131f85c134973aceb150d71f63ea3395ac0c68131618504",
     "src/authority/native-audio.ts": "095063838c015f8d1e4ad1fef5baf71c59547f23eb219a98251ac154c316ed36",
@@ -91,13 +91,14 @@
     "src/expanded/brawler-combat.ts": "3da400b9c85ad3085c8ac067670bfe468ba55587d25a63ef538734da2cf90fd7",
     "src/expanded/brawler-data.json": "96441dc2f2f12e48f1ce912247ec4990611518f16e79ab2c89460c00cbfeb61f",
     "src/expanded/brawler-effects.ts": "a8c367bd6aacd437030cec10bec7b2f3b0c5d9036e78a4b0f52a477bd3bd14c3",
-    "src/expanded/brawler-movement.ts": "7c2404efc3ee148c4b539a284eb496f95e3d939677b05719c148c11921581a55",
+    "src/expanded/brawler-movement.ts": "86deecac74d32710e664f0e154e685ae7c1aed59b5a7b2fef10f13df9cd6e33a",
     "src/expanded/brawler-native-art.json": "652da74a50cff315efc8561366d0a4a4d4321ab80189d68952d872f73708ce54",
     "src/expanded/brawler-native-audio.json": "d048d0edc42d5fe801bf726368a911042596dbdd1b960c2aa7061cb43b92f8f9",
-    "src/expanded/brawler-native-objects.json": "bcd57648fa5581bc4b04e8e3134f6b95475ea11d3605564a33047e4715f14508",
+    "src/expanded/brawler-native-objects.json": "1570f0ef53acb7cbd6088fe197d3c9b5750b80e9566e930539fe2956da0289df",
     "src/expanded/brawler-native.ts": "d43a7a486b699295c4543b52044d31562026a9e4576a20fd33273fe9145407b6",
+    "src/expanded/brawler-options.ts": "35a64eb5f1cc784332e1c5dd24d2a35fd4ac7e36d70133bce051e7a28bda169b",
     "src/expanded/brawler-world.ts": "ec2043a472db123adf85c1950bdcfa2c32ad325a90338b126c9f30c670d7d607",
-    "src/expanded/brawler.ts": "2421789374556327ec28a22597d4a9b9de2bf2d38f53d101357b546b1a0c72d3",
+    "src/expanded/brawler.ts": "4507a39554f2aed30e36cf35cf7984e7beda9d4a93540949ea49e8355ab1f184",
     "src/expanded/forest-data.json": "7e5391b51681ea3b940eea222626efa67e5a027d4f9059efa5ba2b08b25f7eaa",
     "src/expanded/forest-device-art.ts": "a7f8de6e9b519a4fb4abb5042dadd1a6770a20e97516e66db637f68bc442adaa",
     "src/expanded/forest.ts": "07063767b5b6a964cec56abb0e8900638d92f8b775313bf8f4d37be930d378ea",
@@ -105,6 +106,6 @@
     "src/expanded/gunmayhem.ts": "5bdc84d09c8a6d66664c3a10370d3f80482ec1baf3e3c470dfb16fc0fde6c818",
     "src/expanded/registry.ts": "eee479727a876b758d628b62fe8368e914321ed2c6e13c0e55c080dcc5795a67",
     "src/expanded/tank.ts": "64f815650aedff432c7ce7380d21eb616895ae22cdde04801dadb43ae9c7da60",
-    "src/expanded/types.ts": "d4d6ef85cce8e538f6e8fc48392a1d4470f1892b26fe615d562f1b89281a6927"
+    "src/expanded/types.ts": "eb49ef216cb4281973574e01708ce47e08fe105edb48c428d9d2b369662acf10"
   }
 }

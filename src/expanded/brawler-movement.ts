@@ -3,7 +3,7 @@ import {parameters} from './brawler-combat';
 import {animation,bounds,advanceAnimation,definition,selectAnimation,twip,type Animation} from './brawler-native';
 import {collision,type Platform} from './brawler-world';
 export interface Fighter extends Combatant {
- alive:boolean;stocks:number;deaths:number;kos:number;killedBy:number|null;respawn:number;
+ alive:boolean;stocks:number;deaths:number;kos:number;nativeKos:number;suicides:number;deathOrder:number|null;killedBy:number|null;respawn:number;
  hitX:number;hitY:number;hitAnimation:Animation;moveQueue:string;goThrough:boolean;
  lastAttack:number;lastAlt:number;lastJump:number;leftHeld:boolean;rightHeld:boolean;downHeld:boolean;upHeld:boolean;shieldHeld:boolean;upTicks:number;upCombo:boolean;
  spawnType:number;spawnFrame:number;spawnAge:number;spawnX:number;spawnY:number;blinker:number;

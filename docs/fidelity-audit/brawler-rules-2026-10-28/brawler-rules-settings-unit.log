@@ -1,0 +1,17 @@
+✔ initialized native item roots and bounds match production spawn/airborne/active art, rather than the entry redirect (2.4756ms)
+✔ Garbage explicit types and constructor-dependent type0/type1 reproduce original initialization observations (0.5101ms)
+✔ original Fighter.Die score/life behavior is retained while platform records count only opponent kills (5.4406ms)
+✔ rank order and ties match the isolated original frame101 AVM1 sortOn function (2.3291ms)
+✔ native five-stock default, custom lives, timed respawn, unlimited time and timer settlement are distinct (2.7322ms)
+✔ all six native item frequencies validate; off disables generation and high uses the original interval/probability (118.3738ms)
+✔ controller-only rule edits reject malformed input atomically, clear ready and survive reconnect/reseat/full-delta (8.5706ms)
+✔ pause/continue/menu actions are server-authoritative, replay-protected and freeze time/physics/animations (2.0503ms)
+✔ malformed match clocks, rankings, rule ranges and paused phases fail closed in full/delta recovery (3.3859ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1510.1227

@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-10-27T16:54:33.743199+00:00",
+  "defaultTests": 496,
+  "deployTests": 5,
+  "newNativeRuleGroups": 9,
+  "typecheck": true,
+  "build": true,
+  "verifyNativeBuild": true,
+  "normalUiOnly": true,
+  "logs": [
+    "brawler-rules-all-tests.log",
+    "brawler-rules-deploy-tests.log",
+    "brawler-rules-typecheck.log",
+    "brawler-rules-build.log",
+    "brawler-rules-build-verify.log",
+    "brawler-rules-settings-unit.log",
+    "brawler-settings-local.log",
+    "brawler-rules-local-combat.log",
+    "brawler-rules-local-characters.log",
+    "brawler-rules-local-assets.log",
+    "brawler-rules-local-keyboard.log",
+    "brawler-rules-local-mine.log",
+    "brawler-rules-local-grenade.log"
+  ],
+  "limitations": "No full original-world equivalence; actual public deployment recorded separately."
+}

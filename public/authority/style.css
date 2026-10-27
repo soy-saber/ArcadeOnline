@@ -35,7 +35,7 @@
 .native-note { font-size: 12px; line-height: 1.7; margin: 9px 0; }
 .round-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 .round-options label { font-size: 12px; display: grid; gap: 6px; color: #c1d0c4; }
-.round-options select { width: 100%; min-width: 0; background: #102b27; border: 1px solid #557367; border-radius: 6px; padding: 8px; color: #e9f0e9; }
+.round-options select, .round-options input[type="number"] { width: 100%; min-width: 0; background: #102b27; border: 1px solid #557367; border-radius: 6px; padding: 8px; color: #e9f0e9; }
 #invite-link { width: 100%; background: #102b27; color: #fff; border: 1px solid #557367; padding: 8px; }
 .touch-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 18px; user-select: none; }
 .direction-pad { display: grid; grid-template: repeat(2, 44px) / repeat(3, 48px); gap: 5px; }

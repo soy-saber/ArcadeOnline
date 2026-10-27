@@ -4,10 +4,10 @@ import json,hashlib,struct
 from PIL import Image
 root=Path(__file__).resolve().parents[1];cache=root/'artifacts/brawler-native-reference';out=root/'public/expanded/assets/brawler/native';out.mkdir(exist_ok=True)
 sha=lambda b:hashlib.sha256(b).hexdigest()
-manifest=cache/'object-capture-10fps.json';capture=json.loads(manifest.read_text('utf8'));audit=json.loads((cache/'object-timing-audit.json').read_text('utf8'));spec=json.loads((cache/'object-cases.json').read_text('utf8'))
+manifest=cache/'object-capture-initialized.json';capture=json.loads(manifest.read_text('utf8'));audit=json.loads((cache/'object-timing-audit.json').read_text('utf8'));spec=json.loads((cache/'object-cases.json').read_text('utf8'))
 groups={}
 for info in capture['batches']:
- p=cache/'object-captures-10fps'/info['file'];assert sha(p.read_bytes())==info['sha256'];batch=json.loads(p.read_text('utf8'))
+ p=cache/'object-captures-initialized'/info['file'];assert sha(p.read_bytes())==info['sha256'];batch=json.loads(p.read_text('utf8'))
  for shot in batch['shots']:
   file=p.parent/shot['file'];assert sha(file.read_bytes())==shot['sha256'];image=Image.open(file).convert('RGBA');assert image.size==(batch['width'],batch['height'])
   for i,job in enumerate(batch['jobs']):
@@ -30,5 +30,5 @@ for name,group in sorted(groups.items()):
  filename=name+'-object.png';sheet.save(out/filename);files[filename]={'sha256':sha((out/filename).read_bytes()),'size':list(sheet.size)}
  data['objects'][name]={'sheet':filename,'frames':spec['objects'][name]['frames'],'labels':spec['objects'][name]['labels'],'variants':{key:[{'art':(rects[f['digest']] if f['digest'] else [0,0,0,0])+f['offset'],'native':f['native']} for f in frames] for key,frames in group['variants'].items()}}
 encoded=json.dumps(data,separators=(',',':'))+'\n';(out/'objects.json').write_text(encoded,'utf8');(root/'src/expanded/brawler-native-objects.json').write_text(encoded,'utf8')
-provenance={'sourceSwfSha256':data['sourceSwfSha256'],'captureManifestSha256':sha(manifest.read_bytes()),'input':capture['input'],'ruffle':capture['ruffle'],'chrome':capture['chrome'],'timingAudit':audit,'files':files,'dataSha256':sha(encoded.encode()),'method':'Original raw symbol timelines and frame scripts captured transparently one frame per step. Export cadence10fps avoids render catchup; all captured graphic descendants are audited free of getTimer/setInterval/setTimeout and replay at original30fps. Gameplay physics/init is implemented separately; raw-art fixtures do not constitute whole-game equivalence.'}
+provenance={'sourceSwfSha256':data['sourceSwfSha256'],'captureManifestSha256':sha(manifest.read_bytes()),'input':capture['input'],'ruffle':capture['ruffle'],'chrome':capture['chrome'],'timingAudit':audit,'files':files,'dataSha256':sha(encoded.encode()),'method':'Original symbol timelines and scripts captured transparently one frame per step. Fixed state clips settle their entry scripts first, then use native init/Throw/DoCommon/HitWall or explicitly requested authored frames. Native item timers are cleared for art capture; external indicator UI and collision queries are isolated. Every captured fixed frame is asserted, and the Garbage frame1 random branch is conditioned only for artwork; gameplay random initialization is handled separately. Export cadence10fps avoids render catchup; all captured graphic descendants are audited free of getTimer/setInterval/setTimeout and replay at original30fps. Gameplay physics/init is implemented separately; raw-art fixtures do not constitute whole-game equivalence.'}
 (out/'objects-provenance.json').write_text(json.dumps(provenance,indent=2)+'\n','utf8');print('Packed',len(groups),'native object/effect sheets.')

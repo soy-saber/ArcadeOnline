@@ -22,6 +22,7 @@
     "test:brawler:characters:e2e": "node scripts/build-native.cjs && node tests/brawler-characters-e2e.cjs",
     "test:brawler:combat:e2e": "node scripts/build-native.cjs && node tests/brawler-combat-e2e.cjs",
     "test:brawler:items:e2e": "node scripts/build-native.cjs && node tests/brawler-items-e2e.cjs",
+    "test:brawler:settings:e2e": "node scripts/build-native.cjs && node tests/brawler-settings-e2e.cjs",
     "test:native:e2e": "node tests/native-e2e.cjs",
     "test:deploy": "node --test tests/deploy.test.cjs",
     "test:authority": "node --test tests/authority-protocol.test.cjs tests/authority-engine.test.cjs tests/authority-relay.test.cjs tests/authority-presentation.test.cjs tests/authority-records.test.cjs tests/authority-mechanics.test.cjs tests/original-maps.test.cjs",

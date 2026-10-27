@@ -117,6 +117,35 @@ this.onEnterFrame=function(){
   return true;
  });
  flash.external.ExternalInterface.addCallback("referenceObjectPlay",this,function(){for(var i=0;i<objectCases.length;i++)if(objectCases[i][2])objectContainers[i].actor.play();return true;});
+ flash.external.ExternalInterface.addCallback("referenceObjectInitialize",this,function(){
+  var nativeAttach=_root.attachMovie;
+  // ItemIndicator belongs to the omitted world UI; observe the original item
+  // class without letting that external root attachment replace the ticker.
+  _root.attachMovie=function(name,instance,depth,props){if(name=="ItemIndicator")return {removeMovieClip:function(){},_visible:false};return nativeAttach.call(_root,name,instance,depth,props);};
+  if(_root.captureTerrain==undefined)_root.createEmptyMovieClip("captureTerrain",5);
+  World.WorldMC=_root.captureTerrain;
+  var world={Items:[],Bounds:{containsPoint:function(){return true;}},CollisionDetect:function(){return {Hit:false};},CollisionDetectAttack:function(){return [];}};
+  var sender={_x:0,_y:0,_xscale:100,xInc:0,yInc:0,Weight:0.5,CurrentItem:""};
+  var rows=[];
+  for(var i=0;i<objectCases.length;i++){
+   var c=objectCases[i];var p=objectContainers[i].actor;var before=p._currentframe;
+   if(c[0]=="Mine"||c[0]=="Grenade"){
+    p.init(world);clearInterval(p.Interval);p.Sender=sender;
+    if(c[1]==8&&c[0]=="Mine"||c[1]==10&&c[0]=="Grenade"){p.Throw(8,10);p.DoCommon();}
+    else if(c[1]==9&&c[0]=="Mine"){p.yInc=1;p.HitWall({Bottom:true,Floor:0,MC:{_x:0,_y:0,_name:"captureFloor"}});}
+    else if(c[1]!=2)p.gotoAndStop(c[1]);
+    p._x=0;p._y=0;p._rotation=0;
+   }else if(c[0]=="Garbage"){p.init(world,sender,c[1]);clearInterval(p.Interval);}
+   else p.gotoAndStop(c[1]);
+   rows.push({name:c[0],requested:c[1],entryFrame:before,afterInitFrame:p._currentframe,state:p.State,age:p.Age});
+  }
+  _root.attachMovie=nativeAttach;return rows;
+ });
+ flash.external.ExternalInterface.addCallback("referenceObjectSetFrame",this,function(index,frame){var p=objectContainers[index].actor;p.gotoAndStop(2);p.gotoAndStop(frame);return p._currentframe;});
+ flash.external.ExternalInterface.addCallback("referenceGarbageInit",this,function(index,prior,type){
+  var p=objectContainers[index].actor;p.gotoAndStop(prior);var before=p._currentframe;
+  p.init({},{_xscale:100,Weight:0.5},type);clearInterval(p.Interval);return {before:before,after:p._currentframe};
+ });
  flash.external.ExternalInterface.addCallback("referenceObjectRead",this,function(){
   var rows=[];
   for(var i=0;i<objectContainers.length;i++){
@@ -131,11 +160,27 @@ this.onEnterFrame=function(){
   for(var key in stage)if(key.substr(0,5)=="Spawn")results[key]=[stage[key]._x,stage[key]._y,stage[key]._width,stage[key]._height];
   stage.removeMovieClip();return results;
  });
+ flash.external.ExternalInterface.addCallback("referenceDeathStats",this,function(mode,senderKind,lives){
+  clearPoses();var oldGame=_root.Game;var oldCam=_root.VCam;var oldDeath=_root.PlayerDeath;var oldPlayers=_root.Players;
+  _root.Game={LimitMode:mode,Type:"vsmode"};_root.VCam={FocusObjs:[]};_root.PlayerDeath=function(){};_root.Players=[];_root.NumDead=0;
+  var p=ruleActor("DefaultPlayer",100,100,100);var q=ruleActor("CoffeePlayer",101,200,100);
+  p.WorldObj={OSD:{Die:function(){},UpdateDamage:function(){}}};p.Lives=lives;p.CamIn=0;p.OldDepth=100;p.Spawn=function(){};
+  p.LastSender=senderKind=="self"?p:senderKind=="other"?q:undefined;p.Die("bot");
+  var result={mode:mode,sender:senderKind,livesBefore:lives,lives:p.Lives,deaths:p.Deaths,suicides:p.SDs,victimKOs:p.KOs,otherKOs:q.KOs,dead:p.Dead};
+  _root.Game=oldGame;_root.VCam=oldCam;_root.PlayerDeath=oldDeath;_root.Players=oldPlayers;return result;
+ });
+ flash.external.ExternalInterface.addCallback("referenceStandings",this,function(mode,players,numDead){
+  var Game={Type:"vsmode",LimitMode:mode,Players:players};var WinMC={WinnerText:{text:""}};var NumDead=numDead;
+  STANDINGS_SOURCE
+  return {order:BestPlayers,winnerText:WinMC.WinnerText.text,players:Game.Players};
+ });
  var ticker=_root.createEmptyMovieClip("captureTicker",2);_root.captureFrame=0;
  ticker.onEnterFrame=function(){_root.captureFrame++;flash.external.ExternalInterface.call("nativeFrameReady",_root.captureFrame);};
  trace("DONE|native-setup");
 };
 '''
+standings=(root/'artifacts/brawler-original/scripts/frame_101/DoAction.as').read_text('utf8')
+script=script.replace('STANDINGS_SOURCE',standings)
 scripts=out/'scripts/frame_1';scripts.mkdir(parents=True,exist_ok=True);(scripts/'DoAction.as').write_text(script,'utf8')
 jar=Path(os.environ.get('FFDEC_JAR') or Path(os.environ['LOCALAPPDATA'])/'Temp/opencode/4399/ffdec/ffdec.jar')
 with (out/'compile.log').open('w',encoding='utf8') as log:subprocess.run(['java','-jar',str(jar),'-importScript',str(out/'base.swf'),str(out/'reference.swf'),str(out/'scripts')],cwd=root,stdout=log,stderr=subprocess.STDOUT,check=True)
