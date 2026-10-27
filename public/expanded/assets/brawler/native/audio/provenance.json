@@ -1,0 +1,339 @@
+{
+  "sourceSwfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+  "sounds": {
+    "Rooftop.mp3": {
+      "file": "Rooftop.mp3",
+      "codec": 2,
+      "symbol": 1,
+      "bytes": 311064,
+      "sha256": "ddf361c1fa72b5a22392302be99e6a38a0d57f3a3da5ef261c597f29f0954dd4",
+      "payloadSha256": "ddf361c1fa72b5a22392302be99e6a38a0d57f3a3da5ef261c597f29f0954dd4",
+      "sampleCount": 2294208,
+      "seekSamples": 1669
+    },
+    "Woosh.wav": {
+      "file": "Woosh.mp3",
+      "codec": 2,
+      "symbol": 941,
+      "bytes": 1456,
+      "sha256": "9cbccacb25c6705def79e24bbc0ae066c273a07de3c2ddccc247f9493ea7acbb",
+      "payloadSha256": "9cbccacb25c6705def79e24bbc0ae066c273a07de3c2ddccc247f9493ea7acbb",
+      "sampleCount": 5566,
+      "seekSamples": 1669
+    },
+    "Star.mp3": {
+      "file": "Star.mp3",
+      "codec": 2,
+      "symbol": 942,
+      "bytes": 172200,
+      "sha256": "d522f1f173b654cc26aabbfe487deb44ea56654cbb2bbd9a7886d775c2692f5d",
+      "payloadSha256": "d522f1f173b654cc26aabbfe487deb44ea56654cbb2bbd9a7886d775c2692f5d",
+      "sampleCount": 474624,
+      "seekSamples": 0
+    },
+    "Space.mp3": {
+      "file": "Space.mp3",
+      "codec": 2,
+      "symbol": 943,
+      "bytes": 396552,
+      "sha256": "45ae85dd3ca0c764b98fe9450f221e69868b91857927137e0ba837f65fa53be3",
+      "payloadSha256": "45ae85dd3ca0c764b98fe9450f221e69868b91857927137e0ba837f65fa53be3",
+      "sampleCount": 2193696,
+      "seekSamples": 1661
+    },
+    "MenuMusic.mp3": {
+      "file": "MenuMusic.mp3",
+      "codec": 2,
+      "symbol": 944,
+      "bytes": 374073,
+      "sha256": "34f47ec1c55ec4eb98b0bb3312ab5438d7bcb9121fb37438ee4db71d8920016c",
+      "payloadSha256": "34f47ec1c55ec4eb98b0bb3312ab5438d7bcb9121fb37438ee4db71d8920016c",
+      "sampleCount": 1031040,
+      "seekSamples": 0
+    },
+    "Kamehameha.wav": {
+      "file": "Kamehameha.mp3",
+      "codec": 2,
+      "symbol": 945,
+      "bytes": 2080,
+      "sha256": "6f3f251db7af9c770ba25a39b9b073108c7f64c003dffce811277cf120363bdc",
+      "payloadSha256": "6f3f251db7af9c770ba25a39b9b073108c7f64c003dffce811277cf120363bdc",
+      "sampleCount": 9024,
+      "seekSamples": 1669
+    },
+    "MineActivate.wav": {
+      "file": "MineActivate.mp3",
+      "codec": 2,
+      "symbol": 946,
+      "bytes": 728,
+      "sha256": "9c30944eea9857921a356e8b6dc3883372f6e83409abd5b3ae7ca161f89b968c",
+      "payloadSha256": "9c30944eea9857921a356e8b6dc3883372f6e83409abd5b3ae7ca161f89b968c",
+      "sampleCount": 1464,
+      "seekSamples": 1669
+    },
+    "Mogadishu.mp3": {
+      "file": "Mogadishu.mp3",
+      "codec": 2,
+      "symbol": 947,
+      "bytes": 269802,
+      "sha256": "bf1f5d3cd6e874442cbbdeaf0e9410972d8688632dc7c533ca5fe318653b07d8",
+      "payloadSha256": "bf1f5d3cd6e874442cbbdeaf0e9410972d8688632dc7c533ca5fe318653b07d8",
+      "sampleCount": 1989504,
+      "seekSamples": 1669
+    },
+    "B52.mp3": {
+      "file": "B52.mp3",
+      "codec": 2,
+      "symbol": 948,
+      "bytes": 119990,
+      "sha256": "d1b7edde11cdf66975dd29eada7cf3e967984ab7f9e14635809148f0c2734528",
+      "payloadSha256": "d1b7edde11cdf66975dd29eada7cf3e967984ab7f9e14635809148f0c2734528",
+      "sampleCount": 528768,
+      "seekSamples": 1669
+    },
+    "Headshot.wav": {
+      "file": "Headshot.mp3",
+      "codec": 2,
+      "symbol": 949,
+      "bytes": 1872,
+      "sha256": "9e5de8e92b9e32e6ee172057e57779ae2c162e9bd078e96cffbbce2bf505de7c",
+      "payloadSha256": "9e5de8e92b9e32e6ee172057e57779ae2c162e9bd078e96cffbbce2bf505de7c",
+      "sampleCount": 7828,
+      "seekSamples": 1669
+    },
+    "WaterSplash.wav": {
+      "file": "WaterSplash.mp3",
+      "codec": 2,
+      "symbol": 950,
+      "bytes": 4992,
+      "sha256": "69eb28856146ea88393b665131939cbe7cf73f06e0d63e29aa9cef3db676f807",
+      "payloadSha256": "69eb28856146ea88393b665131939cbe7cf73f06e0d63e29aa9cef3db676f807",
+      "sampleCount": 24768,
+      "seekSamples": 1669
+    },
+    "Thunder.wav": {
+      "file": "Thunder.mp3",
+      "codec": 2,
+      "symbol": 951,
+      "bytes": 4472,
+      "sha256": "3e1a1e85557584184a6a7702d0d6a9eb1d3e06bd637e1899a383ac54e0c71023",
+      "payloadSha256": "3e1a1e85557584184a6a7702d0d6a9eb1d3e06bd637e1899a383ac54e0c71023",
+      "sampleCount": 22112,
+      "seekSamples": 1669
+    },
+    "ThrownReal.wav": {
+      "file": "ThrownReal.mp3",
+      "codec": 2,
+      "symbol": 952,
+      "bytes": 10400,
+      "sha256": "a6286b9a5a8feebd265c4fe20f9c4c3ff04d5cea21bfe9736ac0886266e8a7ec",
+      "payloadSha256": "a6286b9a5a8feebd265c4fe20f9c4c3ff04d5cea21bfe9736ac0886266e8a7ec",
+      "sampleCount": 55125,
+      "seekSamples": 1669
+    },
+    "Slap.wav": {
+      "file": "Slap.wav",
+      "codec": 0,
+      "symbol": 953,
+      "bytes": 3760,
+      "sha256": "19fbdd560a8ec18fa0414184cd31d545101dab7e8289b51cc28c4446ab08c73e",
+      "payloadSha256": "c6cb0b7d766b067380d8f4ec43ad5446194a123c99ebd453ad8f0017d9de0456",
+      "sampleCount": 3716,
+      "seekSamples": 0
+    },
+    "Punch2.wav": {
+      "file": "Punch2.wav",
+      "codec": 0,
+      "symbol": 954,
+      "bytes": 7866,
+      "sha256": "4b41e0930b029693d1014e59880c02791d50f13c4d68fa5ebb083ed158d89f5d",
+      "payloadSha256": "4e4c022fafb40241e81aeada42d4c1c3158add06291107b367e70ba3ccb63ca3",
+      "sampleCount": 7822,
+      "seekSamples": 0
+    },
+    "Punch1.wav": {
+      "file": "Punch1.wav",
+      "codec": 0,
+      "symbol": 955,
+      "bytes": 1351,
+      "sha256": "b497235dcce1713090c2c24f7a41afd4a3b6bca2aa3423902adb15b568a825ed",
+      "payloadSha256": "9d9b9cedcb953abbf15d51ed418f435f8ff94659bcd3b703ebc970769a611364",
+      "sampleCount": 1307,
+      "seekSamples": 0
+    },
+    "PeachRocket.wav": {
+      "file": "PeachRocket.wav",
+      "codec": 1,
+      "symbol": 956,
+      "bytes": 15180,
+      "sha256": "efe75c4b3ba616b95f3a3469146d7a9dc858711ce523baa56a59049d2fe8ff14",
+      "payloadSha256": "d0743dc17fb7b62be8a52606161d89c7a36568847477fa642c4c0c374b327aa2",
+      "sampleCount": 7570,
+      "seekSamples": 0
+    },
+    "PeachGun.wav": {
+      "file": "PeachGun.mp3",
+      "codec": 2,
+      "symbol": 957,
+      "bytes": 2392,
+      "sha256": "b4ec46df982a7ea129c0f17839c915af7424a23743f0225e220e8feedb94d864",
+      "payloadSha256": "b4ec46df982a7ea129c0f17839c915af7424a23743f0225e220e8feedb94d864",
+      "sampleCount": 10704,
+      "seekSamples": 1669
+    },
+    "JetEngine.wav": {
+      "file": "JetEngine.mp3",
+      "codec": 2,
+      "symbol": 958,
+      "bytes": 2496,
+      "sha256": "d1a7a6584ece0450695e34520570c15b793077874e07e6e27b45997cafbb66ab",
+      "payloadSha256": "d1a7a6584ece0450695e34520570c15b793077874e07e6e27b45997cafbb66ab",
+      "sampleCount": 11025,
+      "seekSamples": 1669
+    },
+    "HitGround.wav": {
+      "file": "HitGround.mp3",
+      "codec": 2,
+      "symbol": 959,
+      "bytes": 2288,
+      "sha256": "1dd1c997ab8a1982ce2c98715fcd7eea486ea7ad04e0e614979f7ad23fc95979",
+      "payloadSha256": "1dd1c997ab8a1982ce2c98715fcd7eea486ea7ad04e0e614979f7ad23fc95979",
+      "sampleCount": 10080,
+      "seekSamples": 1669
+    },
+    "Helicopter.wav": {
+      "file": "Helicopter.mp3",
+      "codec": 2,
+      "symbol": 960,
+      "bytes": 5096,
+      "sha256": "5d03cc1812ec029b5ee6352142fac1732b757ce1b7c0c8c8d6df39f4015aca99",
+      "payloadSha256": "5d03cc1812ec029b5ee6352142fac1732b757ce1b7c0c8c8d6df39f4015aca99",
+      "sampleCount": 25464,
+      "seekSamples": 1669
+    },
+    "Fart2.wav": {
+      "file": "Fart2.mp3",
+      "codec": 2,
+      "symbol": 961,
+      "bytes": 3536,
+      "sha256": "d64013f42b342ab4afc0c92221f48c1301b62e42499ab16765cddb27ffa95617",
+      "payloadSha256": "d64013f42b342ab4afc0c92221f48c1301b62e42499ab16765cddb27ffa95617",
+      "sampleCount": 16918,
+      "seekSamples": 1669
+    },
+    "Fart.wav": {
+      "file": "Fart.wav",
+      "codec": 1,
+      "symbol": 962,
+      "bytes": 3916,
+      "sha256": "1f2433854baaf10050850a5ae6d6d923e59283841dd4b68cbec77968731f6f7f",
+      "payloadSha256": "547e372eb716025c4481785e1347a5f4ff32e18a0f73bfc5b9c1e7d18322bcbc",
+      "sampleCount": 1937,
+      "seekSamples": 0
+    },
+    "Electric.wav": {
+      "file": "Electric.mp3",
+      "codec": 2,
+      "symbol": 963,
+      "bytes": 4472,
+      "sha256": "38d4c7e4d8509719757997cace208530e28c823d2dc972aea483d683de9ab6f3",
+      "payloadSha256": "38d4c7e4d8509719757997cace208530e28c823d2dc972aea483d683de9ab6f3",
+      "sampleCount": 22272,
+      "seekSamples": 1669
+    },
+    "Boom2.wav": {
+      "file": "Boom2.mp3",
+      "codec": 2,
+      "symbol": 964,
+      "bytes": 3016,
+      "sha256": "2e3c232d2a403490ffb36da873c830512dff0b97af6242a659b186b85c677a89",
+      "payloadSha256": "2e3c232d2a403490ffb36da873c830512dff0b97af6242a659b186b85c677a89",
+      "sampleCount": 13966,
+      "seekSamples": 1669
+    },
+    "Boom.wav": {
+      "file": "Boom.mp3",
+      "codec": 2,
+      "symbol": 965,
+      "bytes": 3016,
+      "sha256": "28c101dd688629a73ad97eff67cbe25279932521be10b48a84b4c9de278b4bd4",
+      "payloadSha256": "28c101dd688629a73ad97eff67cbe25279932521be10b48a84b4c9de278b4bd4",
+      "sampleCount": 13966,
+      "seekSamples": 1669
+    }
+  },
+  "mapping": {
+    "Boom": [
+      "Boom.mp3",
+      "Boom2.mp3"
+    ],
+    "Electric": [
+      "Electric.mp3"
+    ],
+    "Fart": [
+      "Fart.wav",
+      "Fart2.mp3"
+    ],
+    "Helicopter": [
+      "Helicopter.mp3"
+    ],
+    "HitGround": [
+      "HitGround.mp3",
+      "Headshot.mp3"
+    ],
+    "JetEngine": [
+      "JetEngine.mp3"
+    ],
+    "Gun": [
+      "PeachGun.mp3"
+    ],
+    "Rocket": [
+      "PeachRocket.wav"
+    ],
+    "Punch": [
+      "Punch1.wav",
+      "Punch2.wav",
+      "Slap.wav"
+    ],
+    "Thrown": [
+      "ThrownReal.mp3"
+    ],
+    "Thunder": [
+      "Thunder.mp3"
+    ],
+    "WaterSplash": [
+      "WaterSplash.mp3"
+    ],
+    "Headshot": [
+      "Headshot.mp3"
+    ],
+    "Woosh": [
+      "Woosh.mp3"
+    ],
+    "MineActivate": [
+      "MineActivate.mp3"
+    ],
+    "Kamehameha": [
+      "Kamehameha.mp3"
+    ],
+    "Star": [
+      "Star.mp3"
+    ],
+    "B52": [
+      "B52.mp3"
+    ],
+    "Rooftop": [
+      "Rooftop.mp3"
+    ],
+    "Mogadishu": [
+      "Mogadishu.mp3"
+    ],
+    "MenuMusic": [
+      "MenuMusic.mp3"
+    ],
+    "Space": [
+      "Space.mp3"
+    ]
+  },
+  "method": "Original DefineSound MP3 bitstreams copied without recoding; PCM samples wrapped in a WAV header; SWF ADPCM decoded to PCM WAV by FFDec sound export. Snd.AddSound aliases retain original lists."
+}

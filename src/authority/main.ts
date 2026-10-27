@@ -36,7 +36,8 @@ function start(): void {
   let selectedWeapon: number | undefined;
   let weaponStep = 1;
   let cancelledAttack = 0;
-  let cancelledJump=0,cancelledHit=0;
+  let cancelledJump=0,cancelledHit=0,cancelledAlt=0;
+  let brawlerJump=0,brawlerUpperAttack=0,brawlerUpperAlt=0;
   let pointer:{x:number;y:number}|null=null,actionSequence=0;
   let inputEnabled = true, uiAt = 0, confirmedRound = -1, confirmedTick = -1;
   let inputAt = 0, responseMs = 0, maxFrameMs = 0;
@@ -45,6 +46,7 @@ function start(): void {
   const bombDirections=directionKeys;
   const tank = adapter?.id === "137953-server", bomb2 = adapter?.id === "9109-server", shooters = adapter?.id === "50737-server" || adapter?.id === "97734-server";
   const boxhead = adapter?.id === '50737-server';
+  const brawler = adapter?.id === '6232-server';
   let bindings=readBindings(boxhead?localStorage.getItem('arcade_boxhead_bindings'):null);
   const extra=(code:string)=>boxhead?extraControl(bindings,code):undefined;
   const attackKey=(code:string)=>extra(code)?extra(code)==='attack':actions.includes(code);
@@ -82,8 +84,9 @@ function start(): void {
     el("controls-guide").textContent = adapter.controls;
     el("mode-note").textContent = "至少两人入座，全员准备开局；结束后自动继续下一局。";
     el("attack-button-text").textContent = "攻击 / 操作";
-    el("alt-button").hidden = !(tank || bomb2 || shooters);
-    el("alt-button").textContent = tank ? "副操作" : bomb2 ? "武器" : adapter.id === "50737-server" ? "换武器" : "手雷";
+    el("alt-button").hidden = !(tank || bomb2 || shooters || brawler);
+    el("alt-button").textContent = brawler ? "特技" : tank ? "副操作" : bomb2 ? "武器" : adapter.id === "50737-server" ? "换武器" : "手雷";
+    if(brawler){const button=document.createElement('button');button.id='brawler-shield';button.textContent='防御';button.dataset.key='ShiftLeft';el('alt-button').after(button);}
     if(boxhead)el<HTMLButtonElement>('alt-button').dataset.key='TouchNext';
     for (let number = adapter.seats + 1; number <= 4; number++) el(`seat-${number}`).hidden = true;
     el("round-options").hidden = !adapter.maps?.length;
@@ -127,19 +130,21 @@ function start(): void {
     return number<=(mode?.maxPlayers??adapter?.seats??4);
   }
   function clearInput(): void {
-    if(boxhead&&attackHeld())cancelledAttack=bomb;
-    if(badminton){cancelledJump=jump;cancelledHit=hit;}
+    if((boxhead||brawler)&&attackHeld())cancelledAttack=bomb;
+    if(brawler)cancelledAlt=jump;
+    if(badminton){cancelledJump=jump;cancelledHit=hit;}if(brawler)cancelledJump=brawlerJump;
     keys.clear();held=null;presentation.clearPrediction();
   }
   function resetRound(next: number): void {
-    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; cancelledAttack=0;cancelledJump=0;cancelledHit=0;clearInput();
+    round = next; seq = 0; bomb = 0; jump = 0; hit = 0; lastHitAt = 0; selectedWeapon=undefined; cancelledAttack=0;cancelledJump=0;cancelledHit=0;cancelledAlt=0;clearInput();
+    brawlerJump=0;brawlerUpperAttack=0;brawlerUpperAlt=0;cancelledJump=0;
   }
   function alignCounters(state: State): void {
     if (!seat) return;
     seq = Math.max(seq, state.ack[seat - 1]);
     const player = "gameId" in state ? state.players.find((player) => player.seat === seat) : state.players[seat - 1];
     if (!player) return;
-    if ("gameId" in state) { bomb = Math.max(bomb, player.lastAttack || 0); jump = Math.max(jump, player.lastAlt || 0);if(boxhead)actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
+    if ("gameId" in state) { bomb = Math.max(bomb, player.lastAttack || 0); jump = Math.max(jump, player.lastAlt || 0);if(brawler)brawlerJump=Math.max(brawlerJump,player.lastJump||0);if(boxhead)actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
     else if (isBomb(state)) bomb = Math.max(bomb, player.lastBomb);
     else { jump = Math.max(jump, player.lastJump); hit = Math.max(hit, player.lastHit);actionSequence=Math.max(actionSequence,state.actionAck[seat-1]); }
   }
@@ -184,6 +189,7 @@ function start(): void {
     if(bomb2)for(const [code,at]of keys)if(bombDirections[code]!==undefined&&at>=lastDirectionAt){preferredDirection=bombDirections[code];lastDirectionAt=at;}
     if (adapter && !boxhead && (shooters || tank) && actions.some((code) => keys.has(code)) && now - lastHitAt >= 1000 / hz) { bomb++; lastHitAt = now; }
     if (adapter) return { seq: ++seq, ...directions, attack: bomb, alt: jump,
+      ...(brawler?{shield:keys.has('ShiftLeft')||keys.has('ShiftRight'),cancelledAttack,cancelledAlt,jump:brawlerJump,cancelledJump,upperAttack:brawlerUpperAttack,upperAlt:brawlerUpperAlt}:{}),
       ...(bomb2?{direction:preferredDirection}:{}),
       ...(boxhead ? {trigger:attackHeld(),cancelledAttack,weaponStep,...(selectedWeapon!==undefined?{weapon:selectedWeapon}:{})} : {}) };
     if (badminton) {
@@ -202,7 +208,7 @@ function start(): void {
   }
   let timer = window.setInterval(sendInput, 1000 / hz);
   function press(code: string, down: boolean): void {
-    if (!down) { keys.delete(code); return; }
+    if (!down) { const was=keys.has(code);keys.delete(code);if(brawler&&was&&directionKeys[code]===1&&!directionState(keys).up)brawlerJump++;return; }
     if(boxhead&&(net.authority as ExpandedState|null)?.paused)return;
     if (!seat || !(badminton&&net.authority?canControl(net.authority as BadmintonState):net.authority?.phase==='playing') || keys.has(code)) return;
     const now = performance.now(),direction=directionFor(code),aliasAt=boxhead&&direction!==undefined?[...keys].find(([held])=>directionFor(held)===direction)?.[1]:heldDirectionAt(keys,code);keys.set(code,aliasAt??now);inputAt=now;
@@ -212,6 +218,7 @@ function start(): void {
     const role=extra(code);
     if (attackKey(code)) { if (badminton) hit++; else { bomb++; lastHitAt = now; } }
     if ((badminton || adapter) && (role?role==='previous'||role==='next':jumps.includes(code))) { jump++; selectedWeapon=undefined; weaponStep=role==='previous'||!role&&code==='KeyQ'?-1:1; }
+    if(brawler){const upAt=[...keys].filter(([k])=>directionKeys[k]===1).map(([,at])=>at);if(upAt.length&&now-Math.min(...upAt)<50){if(attackKey(code))brawlerUpperAttack=bomb;if(jumps.includes(code))brawlerUpperAlt=jump;}}
     if (adapter?.id === "50737-server" && /^Digit[0-9]$/.test(code)) { selectedWeapon=(Number(code.slice(-1))+9)%10; jump++; }
   }
   function keyboard(event: KeyboardEvent, down: boolean): void {
@@ -223,7 +230,7 @@ function start(): void {
     }
     if(!down&&keys.has(event.code)){press(event.code,false);return;}
     if ((event.target as HTMLElement)?.matches("input, textarea, select, button")) return;
-    if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code) && !extra(event.code)&&!(adapter?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
+    if (bombDirections[event.code] === undefined && !actions.includes(event.code) && !jumps.includes(event.code) && !extra(event.code)&&!(brawler&&['ShiftLeft','ShiftRight'].includes(event.code))&&!(adapter?.id === "50737-server" && /^Digit[0-9]$/.test(event.code))) return;
     event.preventDefault(); press(event.code, down);
   }
   window.addEventListener("keydown", (event) => keyboard(event, true));
@@ -233,7 +240,7 @@ function start(): void {
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-key]")) {
     button.onpointerdown = (event) => { event.preventDefault(); button.setPointerCapture(event.pointerId); press(button.dataset.key!, true); };
     const release = () => { press(button.dataset.key!, false); button.blur(); };
-    const cancel=()=>{const code=button.dataset.key!;if(boxhead&&keys.has(code)&&attackKey(code))cancelledAttack=bomb;if(badminton&&keys.has(code)){if(jumps.includes(code))cancelledJump=jump;if(actions.includes(code))cancelledHit=hit;}release();};
+    const cancel=()=>{const code=button.dataset.key!;if((boxhead||brawler)&&keys.has(code)&&attackKey(code))cancelledAttack=bomb;if(brawler&&keys.has(code)&&jumps.includes(code))cancelledAlt=jump;if(badminton&&keys.has(code)){if(jumps.includes(code))cancelledJump=jump;if(actions.includes(code))cancelledHit=hit;}release();};
     button.onpointerup = release; button.onpointercancel = cancel; button.onlostpointercapture = cancel;
   }
   for (const button of document.querySelectorAll<HTMLButtonElement>("[data-seat]")) button.onclick = () => {

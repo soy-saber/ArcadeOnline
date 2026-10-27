@@ -1,0 +1,243 @@
+{
+  "sourceSwfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+  "input": {
+    "sourceSwfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+    "preservedTagsSha256": "173b8772dc9453b3605711ea41da359e16aa2350ef300729831a7444b622042f",
+    "rootTagCounts": {
+      "0": 1,
+      "1": 170,
+      "2": 283,
+      "6": 2,
+      "8": 1,
+      "9": 1,
+      "11": 80,
+      "12": 13,
+      "14": 26,
+      "22": 23,
+      "26": 124,
+      "28": 44,
+      "32": 56,
+      "34": 26,
+      "36": 1,
+      "37": 30,
+      "39": 428,
+      "43": 12,
+      "45": 1,
+      "56": 115,
+      "59": 46,
+      "69": 1,
+      "70": 14,
+      "73": 8,
+      "74": 8,
+      "75": 8,
+      "83": 168,
+      "84": 1
+    },
+    "harnessSha256": "d9e29cd02684649c0df8cd59b4a178eb04a59eff6b38837ee9a92a269f103914",
+    "method": "Original SWF class initializers, symbols, nested timelines and graphics retain original bytes; only root entry execution/display replaced with an isolated native MovieClip probe. No full-world or original Adobe Flash equivalence claim."
+  },
+  "ruffle": "0.6.0-nightly.2026.8.6",
+  "chrome": "Chrome/155.0.8059.86",
+  "captureManifestSha256": "1e6faead20da3c46a8161ba3c4a804bfa1a1df1daa6b9954430c82e1f6c034b0",
+  "specSha256": "4b0f69a6a067c2fc0d29c43e68536be848bef95e31088098032819ba9f6583b2",
+  "method": "Unmodified original class/symbol/nested timeline bytes executed in isolated AVM1; natural child playback stepped one animation frame at a time, including original color scripts and measured bounds. Only external root capture/visibility controls replace entry flow. PNG tiles are extracted from transparent native renderer captures and packed with measured origins; no redrawn characters or invented animation frames. Root goto-only frames alias their source destination. This does not execute the complete game world or claim Adobe Flash pixel equivalence.",
+  "cases": 588,
+  "observations": 8068,
+  "geometryEntries": 4553,
+  "sourceGotoAliases": 56,
+  "files": {
+    "AuberginePlayer-blue.png": {
+      "sha256": "2c033405d0c8c7eedd70ae1e740e39ec6436eb24ffad531a5b55cde7df1c7a28",
+      "size": [
+        1024,
+        521
+      ],
+      "bytes": 346061
+    },
+    "AuberginePlayer-green.png": {
+      "sha256": "4c7a99db5bf7c6b29028fc40379c7df79e3d99ff270f53ea1264cf52ccf40229",
+      "size": [
+        1024,
+        557
+      ],
+      "bytes": 256838
+    },
+    "AuberginePlayer-orange.png": {
+      "sha256": "b053a128c8ccf5349a6b4fcc8d7b6005d5c061cc626132646f92d6f5b2982a39",
+      "size": [
+        1024,
+        560
+      ],
+      "bytes": 279305
+    },
+    "AuberginePlayer-red.png": {
+      "sha256": "f4b8e5b9486270d199d74ae69fa82a44f83d4e4c623b0e8252377522417a7d73",
+      "size": [
+        1024,
+        557
+      ],
+      "bytes": 258920
+    },
+    "CoffeePlayer-blue.png": {
+      "sha256": "47505cc5e38a7991eacdd89cfaf17086b7f3468377b6a1f63e1bb536db014376",
+      "size": [
+        1024,
+        679
+      ],
+      "bytes": 252282
+    },
+    "CoffeePlayer-green.png": {
+      "sha256": "8ac108faaa402e7c412f3cb3c3ed315709ed81e3ebe78a7c07e4ecc599944bcc",
+      "size": [
+        1024,
+        654
+      ],
+      "bytes": 198868
+    },
+    "CoffeePlayer-orange.png": {
+      "sha256": "02bdc9a5f5fb87485171c901d5b3dfa90c9c33a72bd5491f51bc8c2e559c7dfb",
+      "size": [
+        1024,
+        700
+      ],
+      "bytes": 287252
+    },
+    "CoffeePlayer-red.png": {
+      "sha256": "4c3cc99524c76f96df1b0ba99fb5ede2191e8c05a54cd1e6bf5641beecd78860",
+      "size": [
+        1024,
+        629
+      ],
+      "bytes": 204327
+    },
+    "DefaultPlayer-blue.png": {
+      "sha256": "10add30944ecb9a92f2bd24dcab5ba45e3e516aa9e1b8ddccc6dc4eec21309b5",
+      "size": [
+        1024,
+        497
+      ],
+      "bytes": 309726
+    },
+    "DefaultPlayer-green.png": {
+      "sha256": "4356b6f98729c8d4c3561c820d37485ac461c9721d35415e2c5f7454bdd09f32",
+      "size": [
+        1024,
+        497
+      ],
+      "bytes": 306217
+    },
+    "DefaultPlayer-orange.png": {
+      "sha256": "70736e53b348f48b7b302ba079009e1b060c0b6d11e8d90582777199607d60cb",
+      "size": [
+        1024,
+        497
+      ],
+      "bytes": 302754
+    },
+    "DefaultPlayer-red.png": {
+      "sha256": "f2c225e4edbaa7c1d7e8e2394e3fcb8618944eb7f153e065292cb27c0a8594ed",
+      "size": [
+        1024,
+        497
+      ],
+      "bytes": 297758
+    },
+    "PeachPlayer-blue.png": {
+      "sha256": "47dd6dfda5bcc4a0d0b6536a011a06c656565430420d2d65cbb6d90308b7d1c2",
+      "size": [
+        1024,
+        1072
+      ],
+      "bytes": 322699
+    },
+    "PeachPlayer-green.png": {
+      "sha256": "c5f7a6c4478b672c0a015f00baff7dfd4923082a1e1a510f4d23a8fe22a275cf",
+      "size": [
+        1024,
+        1091
+      ],
+      "bytes": 237956
+    },
+    "PeachPlayer-orange.png": {
+      "sha256": "7a484838ebef69f4e2f926aea2d78d63dca660cb1a3803875a2240c5ee1e767e",
+      "size": [
+        1024,
+        1130
+      ],
+      "bytes": 260034
+    },
+    "PeachPlayer-red.png": {
+      "sha256": "24acd882c46686484639786d24c16e37fd9e04ad3bb8a2e89f8413ec965c4c92",
+      "size": [
+        1024,
+        1092
+      ],
+      "bytes": 240079
+    },
+    "SBLPlayer-blue.png": {
+      "sha256": "a60e90def4665a7ed857238154d36a2c1d48b3cfba6a9b827ca273853796ded6",
+      "size": [
+        1024,
+        1253
+      ],
+      "bytes": 405319
+    },
+    "SBLPlayer-green.png": {
+      "sha256": "366cb0ea5d6a232429a6d633a3aae9ab41b32e96821ce84c60daca960bf104ed",
+      "size": [
+        1024,
+        1199
+      ],
+      "bytes": 370594
+    },
+    "SBLPlayer-orange.png": {
+      "sha256": "ad91e58e49c9d838cf4d1469a1a997a5f9b87f13036f970cb9b0053ca101518e",
+      "size": [
+        1024,
+        1199
+      ],
+      "bytes": 377495
+    },
+    "SBLPlayer-red.png": {
+      "sha256": "7a02ba59368d15e32125b4067f2b320ce3cf64ee11b667577cf237a039ec2f60",
+      "size": [
+        1024,
+        1202
+      ],
+      "bytes": 378440
+    },
+    "TrashPlayer-blue.png": {
+      "sha256": "7697ccfa67b8b36307eceef5adbafd1d9956cf172fcfd18b3d0f3b2bdbbb6c95",
+      "size": [
+        1024,
+        533
+      ],
+      "bytes": 230377
+    },
+    "TrashPlayer-green.png": {
+      "sha256": "7e4ffd36a9ed6e0c8fe32027f538d967da835ff4f4a73ab9f96540c8392d03a8",
+      "size": [
+        1024,
+        508
+      ],
+      "bytes": 259171
+    },
+    "TrashPlayer-orange.png": {
+      "sha256": "a940bc9d93f2f6bbaf6a07f2966a6f997e853c378d0dedf76c0d91a560a0f9dd",
+      "size": [
+        1024,
+        552
+      ],
+      "bytes": 231673
+    },
+    "TrashPlayer-red.png": {
+      "sha256": "cdfbe8824b831f26cdcfe4f7fca49f419940a7666c0973a8c49ef311a3b21b3e",
+      "size": [
+        1024,
+        459
+      ],
+      "bytes": 200699
+    }
+  },
+  "dataSha256": "652da74a50cff315efc8561366d0a4a4d4321ab80189d68952d872f73708ce54"
+}

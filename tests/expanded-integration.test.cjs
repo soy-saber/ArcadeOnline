@@ -42,6 +42,7 @@ for (const adapter of ADAPTERS) {
       state.devices = []; state.liquids = [];
       for (const player of state.players) { const exit = state.exits.find(exit => exit.element === player.element); player.x = exit.x; player.y = exit.y; player.vx = player.vy = 0; }
     } else if (adapter.id === '50737-server') state.players.forEach(p=>p.hp=-1);
+    else if(adapter.id==='6232-server'){const p=state.players[1];p.stocks=1;p.x=p.hitX=10000;}
     else state.tick = adapter.hz * (adapter.id === "137953-server" ? 180 : adapter.id === "9109-server" ? 180 : adapter.id === "97734-server" ? 480 : 300) - 1;
     for (let i = 0; i < (adapter.id==='50737-server'?100:5) && state.phase === "playing"; i++) engine.pump(room, room.auth.clock + 1000 / adapter.hz + 1);
     assert.equal(state.phase, "finished"); const settled = engine.info(room).records;
@@ -52,7 +53,7 @@ for (const adapter of ADAPTERS) {
 }
 test("structured item collections change length without being treated as scalar grids", () => {
   const adapter = ADAPTERS.find(a => a.id === "6232-server"), base = adapter.create(1, true, [1, 4], 55), next = structuredClone(base);
-  next.tick++; next.items.push({ id: 1, type: "mine", x: 100, y: 100, vx: 0, vy: 0, owner: 1, armed: false, timer: 20 });
+  next.tick++; next.items.push({id:1,name:'Mine',x:100,y:100,vx:0,vy:0,owner:null,state:1,age:0,active:0,influenced:[],variant:2,sx:1,sy:1,rotation:0,dead:false});
   assert(adapter.valid(next)); const update = protocol.createUpdate(base, next, 1000);
   assert.deepEqual(update.patch.items, next.items); assert.deepEqual(protocol.applyUpdate(base, update), next);
 });
@@ -67,11 +68,11 @@ test("remote adapter interpolation changes only pose, handles sparse seats and r
 });
 test("room records count each stock loss and enemy kill across respawns, rematches and seat changes", () => {
   const adapter = ADAPTERS.find(a => a.id === "6232-server"), { engine, room } = setup(adapter), state = room.auth.state, victim = state.players.find(p => p.seat === 4);
-  victim.killedBy = 1; victim.x = 10000;
+  victim.lastSender = 1; victim.x = victim.hitX = 10000;
   engine.pump(room, room.auth.clock + 40);
   let rows = engine.info(room).records; assert.equal(rows.find(r => r.id === "a").kills, 1); assert.equal(rows.find(r => r.id === "b").deaths, 1);
   engine.pump(room, room.auth.clock + 40); assert.equal(engine.info(room).records.find(r => r.id === "b").deaths, 1);
-  victim.respawn = 0; victim.stocks = 1; victim.x = 10000;
+  victim.respawn = 0; victim.state='stop';victim.lastSender=1; victim.stocks = 1; victim.x = victim.hitX = 10000;
   engine.pump(room, room.auth.clock + 40); assert.equal(state.phase, "finished");
   rows = engine.info(room).records; assert.equal(rows.find(r => r.id === "a").kills, 2); assert.equal(rows.find(r => r.id === "a").wins, 1); assert.equal(rows.find(r => r.id === "b").rounds, 1);
   engine.pump(room, room.auth.nextRoundAt + 1); assert.equal(room.auth.state.phase, "playing"); assert.equal(engine.info(room).records.find(r => r.id === "a").kills, 2);

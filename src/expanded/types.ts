@@ -1,4 +1,4 @@
-export interface Input { seq: number; left: boolean; right: boolean; up: boolean; down: boolean; attack: number; alt: number; direction?:number; weapon?: number; weaponStep?: number; trigger?: boolean; cancelledAttack?: number }
+export interface Input { seq: number; left: boolean; right: boolean; up: boolean; down: boolean; attack: number; alt: number; direction?:number; weapon?: number; weaponStep?: number; trigger?: boolean; cancelledAttack?: number; shield?:boolean; cancelledAlt?:number; jump?:number; cancelledJump?:number; upperAttack?:number; upperAlt?:number }
 export interface State {
   round: number; tick: number; phase: "waiting" | "playing" | "finished";
   winner: number | null; ack: number[]; players: any[]; [key: string]: any;
@@ -32,5 +32,8 @@ export function validInput(value: unknown): value is Input {
     (input.weapon === undefined || Number.isInteger(input.weapon) && input.weapon >= 0 && input.weapon < 10) &&
     (input.weaponStep === undefined || input.weaponStep === -1 || input.weaponStep === 1) &&
     (input.trigger === undefined || typeof input.trigger === 'boolean') &&
+    (input.shield === undefined || typeof input.shield === 'boolean') &&
+    [input.jump,input.cancelledJump,input.upperAttack,input.upperAlt].every(n=>n===undefined||Number.isSafeInteger(n)&&n>=0&&n<1e9) &&
+    (input.cancelledAlt === undefined || Number.isSafeInteger(input.cancelledAlt)&&input.cancelledAlt>=0&&input.cancelledAlt<1e9) &&
     (input.cancelledAttack === undefined || Number.isSafeInteger(input.cancelledAttack)&&input.cancelledAttack>=0&&input.cancelledAttack<1e9);
 }

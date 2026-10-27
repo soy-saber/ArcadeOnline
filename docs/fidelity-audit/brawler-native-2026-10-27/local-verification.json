@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-27T15:02:52.766465+00:00",
+  "defaultTests": 486,
+  "deploymentTests": 5,
+  "nativeRuleObservations": 3275,
+  "nativeBodyJobs": 588,
+  "nativeVisibleBodyFrames": 8068,
+  "sourceGotoAliases": 56,
+  "nativeObjectJobs": 42,
+  "originalAudioStreams": 26,
+  "typecheck": "pass",
+  "buildSource": "pass",
+  "normalBrowserInputOnly": true,
+  "wholeEightGameGoal": "active",
+  "realItemType": "Grenade"
+}

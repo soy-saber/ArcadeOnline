@@ -46,16 +46,21 @@ out = root / 'public/expanded/assets/brawler'
 out.mkdir(parents=True, exist_ok=True)
 stages=[];rasters=[]
 for cid,bgid,name,label,kill in [(726,732,'Rooftop','屋顶',[-50,-200,1150,500]),(832,838,'Mogadishu','城市',[-1000,-200,1700,500]),(873,875,'B52','轰炸机',[-50,-300,1150,400]),(886,901,'Space','太空',[-900,-500,800,700])]:
-    platforms=[];spawns=[]
+    platforms=[];spawns=[];item_spawns=[];helpers=[]
     for p in first_frame(cid):
         pname=p.get('name','')
         if not p.get('characterId'):continue
         b=bounds(int(p.get('characterId')))
         m=matrix(p)
-        if pname.startswith('SpawnH'):spawns.append({'x':m[4],'y':m[5]})
+        if pname.startswith('SpawnP'):spawns.append({'name':pname,'x':m[4],'y':m[5]})
+        if pname.startswith('SpawnH') and b:
+            item_spawns.append({'name':pname,'x':m[4],'y':m[5],'w':abs((b[2]-b[0])*m[0]),'h':abs((b[3]-b[1])*m[3])})
+        if b and pname.startswith(('Boom','Killer')):
+            points=[apply(m,x,y) for x,y in [(b[0],b[1]),(b[2],b[1]),(b[0],b[3]),(b[2],b[3])]]
+            helpers.append({'name':pname,'x':min(x[0] for x in points),'y':min(x[1] for x in points),'w':max(x[0] for x in points)-min(x[0] for x in points),'h':max(x[1] for x in points)-min(x[1] for x in points),'floor':m[5],'type':'boom' if pname.startswith('Boom') else 'killer'})
         if not b or not (pname.startswith('Fixed') or pname.startswith('Moving')):continue
         points=[apply(m,x,y) for x,y in [(b[0],b[1]),(b[2],b[1]),(b[0],b[3]),(b[2],b[3])]]
-        platforms.append({'id':len(platforms),'name':pname,'x':min(x[0] for x in points),'y':min(x[1] for x in points),'w':max(x[0] for x in points)-min(x[0] for x in points),'h':max(x[1] for x in points)-min(x[1] for x in points),'moving':pname.startswith('Moving')})
+        platforms.append({'id':len(platforms),'name':pname,'x':min(x[0] for x in points),'y':min(x[1] for x in points),'w':max(x[0] for x in points)-min(x[0] for x in points),'h':max(x[1] for x in points)-min(x[1] for x in points),'floor':m[5],'moving':pname.startswith('Moving')})
     for artid,artname in [(cid,name),(bgid,name+'_Background')]:
         if stages_only and artid==bgid:
             assert (out/(artname+'.png')).is_file(),'Use --all to import missing background/fighter assets.'
@@ -70,7 +75,9 @@ for cid,bgid,name,label,kill in [(726,732,'Rooftop','屋顶',[-50,-200,1150,500]
             raster_bounds=[*origin,origin[0]+size[0],origin[1]+size[1]]
             rasters.append({'id':name,'sourceFirstFrameBounds':source_bounds,'exportSize':list(image.size),'crop':list(crop),'rasterBounds':raster_bounds})
             image.crop(crop).save(out/(artname+'.png'))
-    stages.append({'id':name,'label':label,'platforms':platforms,'spawns':spawns,'bounds':kill,'artBounds':raster_bounds,'backgroundBounds':bounds(bgid,visible=True)})
+    spawns.sort(key=lambda p:p['name'])
+    assert len(spawns)==4 and len(item_spawns)==4
+    stages.append({'id':name,'label':label,'platforms':platforms,'spawns':spawns,'itemSpawns':item_spawns,'helpers':helpers,'bounds':kill,'artBounds':raster_bounds,'backgroundBounds':bounds(bgid,visible=True)})
 fighters=[]
 for cid,name in [(685,'DefaultPlayer'),(302,'CoffeePlayer'),(115,'AuberginePlayer'),(208,'SBLPlayer'),(409,'TrashPlayer'),(544,'PeachPlayer')]:
     frames=[]

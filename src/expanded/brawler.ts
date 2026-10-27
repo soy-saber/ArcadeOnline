@@ -1,92 +1,165 @@
-import type { Adapter, Input, State } from './types';
-import { EMPTY_INPUT, validInput } from './types';
+import type {Adapter,Input,State} from './types';
+import {EMPTY_INPUT,validInput} from './types';
 import data from './brawler-data.json';
-type Fighter = {seat:number;x:number;y:number;vx:number;vy:number;alive:boolean;damage:number;stocks:number;facing:number;grounded:boolean;jumps:number;stun:number;invincible:number;cooldown:number;attackFrame:number;shield:number;guarding:boolean;lastAttack:number;lastAlt:number;upHeld:boolean;killedBy:number|null;kos:number;deaths:number;respawn:number;combo:number;character:number;};
-type Platform = {id:number;name:string;x:number;y:number;w:number;h:number;moving:boolean};
-type Item = {id:number;type:'grenade'|'mine';x:number;y:number;vx:number;vy:number;timer:number;owner:number|null;armed:boolean};
-interface BrawlerState extends State {gameId:string;mapId:string;players:Fighter[];platforms:Platform[];items:Item[];seed:number;nextItem:number;flashes:{x:number;y:number;life:number}[];options:{characters:number[]};}
-const HZ=30;
-const stages=data.stages;
-const stats=[{weight:.5,speed:.5,power:.5},{weight:.4,speed:.7,power:.4},{weight:.5,speed:.6,power:.4},{weight:.5,speed:.5,power:.5},{weight:.6,speed:.4,power:.5},{weight:.4,speed:.5,power:.6}];
-const clamp=(n:number,a:number,b:number)=>Math.max(a,Math.min(b,n));
+import * as native from './brawler-native';
+import * as combat from './brawler-combat';
+import {move,jump,animate,advance,movement,type Fighter} from './brawler-movement';
+import {overlap,collision,platformBounds,type Platform} from './brawler-world';
+import * as fx from './brawler-effects';
+import * as audio from './brawler-audio';
+type Shot=fx.Sprite&{id:number;owner:number;vx:number;vy:number;life:number;dead:boolean;born:number;visualUntil:number};
+type Item=fx.Sprite&{id:number;owner:number|null;vx:number;vy:number;state:number;active:number;influenced:number[];dead:boolean};
+type Explosion={x:number;y:number;size:number;owner:number|null;age:number;influenced:number[];born:number;parts:fx.Sprite[]};
+interface BrawlerState extends State {gameId:string;mapId:string;players:Fighter[];platforms:Platform[];items:Item[];shots:Shot[];explosions:Explosion[];seed:number;nextItem:number;animationClock:number;nextSpawn:number;soundSeq:number;sounds:audio.SoundEvent[];options:{characters:number[]}}
+const HZ=40,stages=data.stages;
 const stageOf=(s:BrawlerState)=>stages.find(m=>m.id===s.mapId)!;
 const random=(s:BrawlerState)=>{s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;return s.seed/4294967296;};
 function create(round:number,playing:boolean,seats:number[],seed:number,mapId?:string,mode?:string,settings?:{characters?:number[]}):BrawlerState {
-  const stage=stages.find(m=>m.id===mapId)||stages[0];
-  const characters=settings?.characters?[...settings.characters]:[1,2,3,4];
-  const players=[...new Set(seats)].filter(s=>Number.isInteger(s)&&s>=1&&s<=4).sort((a,b)=>a-b).map((seat,i)=>{const pt=stage.spawns[i%stage.spawns.length];return {seat,x:pt.x+14,y:pt.y-2,vx:0,vy:0,alive:true,damage:0,stocks:3,facing:i%2?-1:1,grounded:false,jumps:0,stun:0,invincible:60,cooldown:0,attackFrame:0,shield:100,guarding:false,lastAttack:0,lastAlt:0,upHeld:false,killedBy:null,kos:0,deaths:0,respawn:0,combo:2,character:characters[seat-1]-1};});
-  return {gameId:'6232-server',round,tick:0,phase:playing&&players.length>=2?'playing':'waiting',winner:null,ack:[0,0,0,0],inputs:Array.from({length:4},()=>({...EMPTY_INPUT})),mapId:stage.id,players,platforms:stage.platforms.map(p=>({...p})),items:[],seed:seed>>>0,nextItem:0,flashes:[],options:{characters}};
+ const stage=stages.find(m=>m.id===mapId)||stages[0],characters=settings?.characters?[...settings.characters]:[1,2,3,4];
+ const players=[...new Set(seats)].filter(n=>Number.isInteger(n)&&n>=1&&n<=4).sort((a,b)=>a-b).map((seat,i):Fighter=>{
+  const pt=stage.spawns[i];return {...combat.fighter(seat,characters[seat-1]-1),x:pt.x,y:pt.y,alive:true,stocks:3,deaths:0,kos:0,killedBy:null,respawn:0,hitX:pt.x,hitY:pt.y,hitAnimation:native.animation(),moveQueue:'',goThrough:false,lastAttack:0,lastAlt:0,lastJump:0,leftHeld:false,rightHeld:false,downHeld:false,upHeld:false,shieldHeld:false,upTicks:0,upCombo:false,spawnType:1,spawnFrame:1,spawnAge:0,spawnX:pt.x,spawnY:pt.y,blinker:0};
+ });
+ return {gameId:'6232-server',round,tick:0,phase:playing&&players.length>=2?'playing':'waiting',winner:null,ack:[0,0,0,0],inputs:Array.from({length:4},()=>({...EMPTY_INPUT})),mapId:stage.id,players,platforms:stage.platforms.map(q=>({...q})),items:[],shots:[],explosions:[],seed:seed>>>0,nextItem:0,animationClock:0,nextSpawn:10000/3,soundSeq:0,sounds:[],options:{characters}};
 }
-function hit(s:BrawlerState,p:Fighter,owner:number|null,amount:number,power:number,angle:number) {
-  if(!p.alive||p.invincible||p.respawn)return;
-  if(p.guarding&&p.shield>0){p.shield=Math.max(0,p.shield-amount*2);p.stun=p.shield===0?45:3;return;}
-  const sender=s.players.find(x=>x.seat===owner);p.damage+=Math.floor(amount*p.combo/2);p.combo=clamp(p.combo+1,2,6);p.killedBy=owner;
-  const launch=power+power*(sender?stats[sender.character].weight:1)-power*stats[p.character].weight+p.damage/100*Math.log(power)*power+p.combo/4;
-  p.vx=Math.cos(angle)*launch;p.vy=-Math.sin(angle)*launch;p.stun=clamp(Math.ceil(launch*launch/8),6,70);p.grounded=false;p.jumps=Math.max(1,p.jumps);p.attackFrame=0;p.invincible=6;
-  if(sender)s.flashes.push({x:p.x,y:p.y-13,life:7});
+function sprite(name:string,x:number,y:number,sx=1,sy=sx):fx.Sprite{return {name,x,y,sx,sy,rotation:0,age:0,variant:1};}
+function explosion(s:BrawlerState,x:number,y:number,size:number,owner:number|null):void {
+ const parts:fx.Sprite[]=[];const scaled=(name:string,x:number,y:number,w:number,h=w)=>{const b=fx.initialSize(name);parts.push(sprite(name,x,y,w/b[0],h/b[1]));};
+ for(let n=0;n<size;n++)scaled('BoomMatter',x+Math.floor(random(s)*size*10)-size*5,y+Math.floor(random(s)*size*10)-size*5,size);
+ scaled('BoomWave',x,y,size*2);scaled('BoomStar',x,y,size*50);
+ s.explosions.push({x,y,size,owner,age:0,influenced:[],born:s.tick,parts});
 }
-function melee(s:BrawlerState,p:Fighter,i:Input) {
-  const special=i.down,upper=i.up,air=!p.grounded;p.cooldown=special?25:upper?21:13;p.attackFrame=p.cooldown;
-  const range=special?64:upper?36:42,damage=special?10:upper||air?10:5,power=special?5:upper||air?6:3;
-  for(const other of s.players){if(other.seat===p.seat||!other.alive)continue;const dx=other.x-p.x,dy=other.y-p.y;const inFront=dx*p.facing>=-10;if(Math.abs(dx)<=range&&Math.abs(dy)<(upper?75:32)&&(inFront||special))hit(s,other,p.seat,damage,power,upper?Math.PI/2:Math.PI/4+(p.facing<0?Math.PI/2:0));}
+function hooks(s:BrawlerState):combat.Hooks {return {
+ lookup:seat=>s.players.find(p=>p.seat===seat&&p.alive),random:()=>random(s),interrupted:p=>{if(p.throwVictim!==null||s.players.some(q=>q.throwVictim===p.seat)){releaseGrab(s,p as Fighter);p.hasControl=true;}},sound:(action,name)=>{const list=audio.sounds[name];if(!list)return;s.sounds.push({id:++s.soundSeq,tick:s.tick,action,name,variant:action==='play'?Math.floor(random(s)*list.length):0});},
+ launch(p,launch){const v=launch.properties,name=launch.name,sign=p.facing,speed=name==='EnergyBall'?5:name==='Poop'||name==='Pencil'?7:name==='Garbage'?8:name==='Bullet'?20:0;
+  s.shots.push({...sprite(name,native.twip(v._x),native.twip(v._y),v._xscale/100,v._yscale/100),id:s.nextItem++,owner:p.seat,vx:v.xInc??speed*sign,vy:v.yInc??(name==='Garbage'?-2:0),life:name==='Garbage'?500:name==='EnergyBall'?2000:name==='Pencil'?2500:3000,rotation:v._rotation??0,variant:name==='Garbage'?Math.max(1,Math.min(6,launch.extra??1)):1,dead:false,born:s.tick,visualUntil:0});
+ }
+};}
+function releaseGrab(s:BrawlerState,p:Fighter):void {
+ // Online death/disconnect must not leave another human without controls.
+ for(const q of s.players)if(q.throwVictim===p.seat||p.throwVictim===q.seat){q.hasControl=true;q.throwVictim=null;if(q.attack==='specialBackThrow'){q.attack='';q.attackDone=true;}}
+ p.throwVictim=null;
 }
-function explode(s:BrawlerState,item:Item) {
-  s.flashes.push({x:item.x,y:item.y-12,life:14});
-  for(const p of s.players)if(Math.hypot(p.x-item.x,p.y-13-item.y)<90)hit(s,p,item.owner,20,8,(p.x<item.x?3:1)*Math.PI/4);
+function loseStock(s:BrawlerState,p:Fighter):void {
+ const sender=s.players.find(q=>q.seat===p.lastSender);if(sender&&sender!==p)sender.kos++;releaseGrab(s,p);
+ p.stocks--;p.deaths++;p.alive=p.stocks>0;p.damage=0;p.x=Math.floor(random(s)*400)+100;p.y=0;p.vx=p.vy=p.controlLoss=p.paralyzed=0;p.state='stop';p.hasControl=p.alive;p.dying=false;p.facing=1;p.jumps=0;p.attack='';p.attackDone=true;p.rotation=0;p.hitX=p.x;p.hitY=p.y;p.moveQueue='';p.goThrough=false;p.animation=native.animation();p.hitAnimation=native.animation();
+ if(p.alive){p.spawnType=Math.floor(random(s)*2)+1;p.spawnFrame=1;p.spawnAge=0;p.spawnX=p.x;p.spawnY=p.y;p.state='spawn';p.hasControl=false;p.grounded=true;p.spawnProtection=3000;p.invincible=true;p.spawning=true;p.respawn=Math.ceil((10*p.spawnType-1)*4/3);}
 }
-function loseStock(s:BrawlerState,p:Fighter) {
-  p.stocks--;p.deaths++;p.alive=p.stocks>0;p.respawn=p.alive?55:0;const killer=s.players.find(x=>x.seat===p.killedBy);if(killer&&killer!==p)killer.kos++;
-  p.damage=0;p.vx=0;p.vy=0;p.stun=0;p.jumps=0;p.attackFrame=0;p.guarding=false;
+function spawn(p:Fighter):void {
+ if(p.spawnProtection>0)p.spawnProtection-=25;
+ if(p.state==='spawn'){
+  const film=fx.frame({...sprite('Spawn'+p.spawnType,p.spawnX,p.spawnY),age:(p.spawnFrame-1)*1000/30});p.x=native.twip(p.spawnX+film.native.position[0]);p.y=native.twip(p.spawnY+film.native.position[1]);
+  if(p.spawnProtection<=0)move(p,'stop');native.selectAnimation(p,'still');p.respawn=Math.max(0,Math.ceil((10*p.spawnType-p.spawnFrame)*4/3));
+  if(p.spawnFrame>=10*p.spawnType)p.hasControl=true;
+ }
+ if(p.state!=='spawn'&&p.spawning){p.respawn=0;if(p.spawnProtection<=0){p.spawning=false;p.invincible=false;}}
 }
-function move(p:Fighter,platforms:Platform[],down:boolean) {
-  const oldY=p.y;p.x+=p.vx;p.y+=p.vy;p.grounded=false;
-  for(const q of [...platforms].sort((a,b)=>a.y-b.y)){
-    if(p.x+11<=q.x||p.x-11>=q.x+q.w)continue;
-    if(p.vy>=0&&oldY<=q.y+3&&p.y>=q.y&&!(down&&q.moving)){p.y=q.y;p.vy=0;p.grounded=true;p.jumps=0;p.combo=2;break;}
-    if(!q.moving&&q.h>30&&p.y>q.y+5&&p.y-26<q.y+q.h){if(p.vx>0&&p.x-11<q.x){p.x=q.x-11;p.vx=0;}else if(p.vx<0&&p.x+11>q.x+q.w){p.x=q.x+q.w+11;p.vx=0;}}
+function useItem(s:BrawlerState,p:Fighter):void {
+ if(!p.attack.startsWith('punch'))return;const it=s.items.find(q=>q.state===3&&q.owner===p.seat);if(!it)return;
+ const g=native.geometry(p),hand=g.marks.hand;if(!hand)return;
+ const tx=Number(g.transform[0]),ty=Number(g.transform[1]);it.x=native.twip(Number(hand[0])*p.facing+tx*p.facing+p.x+tx);it.y=native.twip(Number(hand[1])+p.y+ty);
+ const upper=p.attack==='punchUp',power=upper?15:8;let angle=(upper?90:10)*p.facing;if(angle<0)angle=180+angle;angle*=Math.PI/180;if(upper)it.x=p.x;
+ it.vx=Math.cos(angle)*power+p.vx;it.vy=-Math.sin(angle)*power+p.vy;it.state=2;it.variant=it.name==='Mine'?8:10;
+}
+function controls(s:BrawlerState,p:Fighter,i:Input):void {
+ const punch=i.attack>p.lastAttack&&(i.cancelledAttack??-1)<i.attack,special=i.alt>p.lastAlt&&(i.cancelledAlt??-1)<i.alt;
+ p.lastAttack=Math.max(p.lastAttack,i.attack);p.lastAlt=Math.max(p.lastAlt,i.alt);
+ const released=i.jump===undefined&&i.up===false&&p.upHeld,edgeJump=(i.jump??0)>p.lastJump&&(i.cancelledJump??-1)<(i.jump??0);p.lastJump=Math.max(p.lastJump,i.jump??0);
+ if(!p.alive)return;
+ if(i.shield&&!p.shieldHeld&&p.vx===0)p.shielded=true;if(!i.shield&&p.shieldHeld)p.shielded=false;p.shieldHeld=!!i.shield;
+ if(i.left&&!p.leftHeld)move(p,'left');if(i.right&&!p.rightHeld)move(p,'right');
+ if(!i.left&&p.leftHeld&&!i.right||!i.right&&p.rightHeld&&!i.left)move(p,'stop');
+ if(i.down)move(p,'down');else if(p.downHeld)move(p,'stop');
+ if(i.up){if(!p.upHeld){p.upTicks=0;p.upCombo=true;}p.upTicks++;if(p.upTicks>2){p.upCombo=false;jump(p);}}
+ else if(p.upHeld){p.upTicks=0;}
+ if(punch||special){const type=special?'special':'punch';let started=false;if(p.upCombo||(special?i.upperAlt===i.alt:i.upperAttack===i.attack)){started=combat.attack(p,type,'up');p.upCombo=false;}if(!started)started=combat.attack(p,type,'none');if(started)useItem(s,p);}
+ if(released||edgeJump)jump(p);if(!i.up)p.upCombo=false;
+ p.leftHeld=i.left;p.rightHeld=i.right;p.downHeld=i.down;p.upHeld=i.up;
+}
+function shots(s:BrawlerState,h:combat.Hooks):void {
+ const stage=stageOf(s);
+ for(const q of s.shots){
+  if(q.dead||q.born===s.tick)continue;
+  q.x=native.twip(q.x+q.vx);if(q.name==='EnergyBall')q.y=native.twip(q.y+Math.sin(q.x*Math.PI/180*10)*2);
+  if(q.name==='Pencil')q.rotation+=15;
+  if(q.name==='Garbage'||q.name==='Rocket'){q.vy+=.5;q.y=native.twip(q.y+q.vy);q.rotation=q.name==='Garbage'?q.rotation+20:Math.atan2(q.vy,q.vx)*180/Math.PI+90;}
+  q.age+=25;const b=fx.bounds(q),wall=s.platforms.some(p=>!p.moving&&overlap(b,platformBounds(p))),out=q.x<stage.bounds[0]||q.x>stage.bounds[2]||q.y<stage.bounds[1]||q.y>stage.bounds[3];
+  if(q.age>q.life||wall||out){if(q.name==='EnergyBall'&&q.age<=q.life){q.vx*=-1;q.x=native.twip(q.x+(q.vx>0?15:-15));}else if(q.name!=='Rocket'||q.age>q.life)q.dead=true;}
+  for(const p of s.players){if(!p.alive||p.seat===q.owner||p.invincible||p.state==='ko'||!overlap(b,native.bounds(p)))continue;const owner=h.lookup(q.owner),direction=q.vx<=0?-1:1;
+   if(q.name==='Rocket')explosion(s,q.x,q.y,5,q.owner);
+   else {const amount=q.name==='EnergyBall'?7:q.name==='Poop'?15:q.name==='Pencil'?20:q.name==='Garbage'?6:10;combat.damage(p,amount,owner,h);if(q.name==='EnergyBall'){p.electrocuted=true;p.paralyzed=100;}combat.throwFighter(p,q.name==='EnergyBall'?2.5:q.name==='Pencil'?3.5:3,(q.name==='Pencil'?50:45)*direction,owner,h);}
+   q.dead=true;
   }
+  if(q.dead)q.visualUntil=s.tick+2;
+ }
+ // Retain two logic ticks of a spent projectile for 20Hz network presentation.
+ s.shots=s.shots.filter(q=>!q.dead||q.visualUntil>=s.tick);
 }
-function step(state:State,inputs:Input[]) {
-  const s=state as BrawlerState;if(s.phase!=='playing')return;s.tick++;const stage=stageOf(s);
-  s.flashes=s.flashes.filter(f=>--f.life>0);
-  for(const p of s.players){
-    const i=inputs[p.seat-1]||EMPTY_INPUT;s.inputs[p.seat-1]={...i};s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],i.seq);const attack=i.attack>p.lastAttack,jump=i.alt>p.lastAlt||i.up&&!p.upHeld;p.lastAttack=Math.max(p.lastAttack,i.attack);p.lastAlt=Math.max(p.lastAlt,i.alt);p.upHeld=i.up;
-    if(!p.alive)continue;
-    if(p.respawn){if(--p.respawn===0){const pt=stage.spawns[(p.seat+s.tick)%stage.spawns.length];p.x=pt.x+14;p.y=pt.y-3;p.invincible=65;p.shield=100;p.killedBy=null;}continue;}
-    if(p.invincible>0)p.invincible--;if(p.cooldown>0)p.cooldown--;if(p.attackFrame>0)p.attackFrame--;if(p.stun>0)p.stun--;
-    p.guarding=i.down&&p.grounded&&!p.stun&&!attack;p.shield=clamp(p.shield+(p.guarding?-.28:.35),0,100);
-    if(!p.stun&&!p.guarding){const dir=Number(i.right)-Number(i.left);if(dir){p.facing=dir;p.vx=8*stats[p.character].speed*dir;}else p.vx*=p.grounded?.4:.96;if(i.down&&!p.grounded)p.vy=8;
-      if(jump&&!p.cooldown&&(p.jumps===0||p.jumps===1&&p.vy>=-3)){p.vy=-9;p.jumps++;p.grounded=false;}
-      if(attack&&!p.cooldown){const pickup=s.items.find(it=>!it.armed&&Math.hypot(it.x-p.x,it.y-p.y)<30);if(pickup){pickup.owner=p.seat;pickup.armed=true;pickup.vx=7*p.facing;pickup.vy=-5;pickup.timer=pickup.type==='grenade'?60:15;p.cooldown=15;}else melee(s,p,i);}
-    }
-    p.vy=Math.min(p.stun?18:6,p.vy+.5);move(p,s.platforms,i.down);
-    if(p.x<stage.bounds[0]||p.x>stage.bounds[2]||p.y<stage.bounds[1]||p.y>stage.bounds[3])loseStock(s,p);
+function items(s:BrawlerState,h:combat.Hooks):void {
+ const stage=stageOf(s);
+ if(s.tick*25>=s.nextSpawn){s.nextSpawn+=10000/3;const kind=Math.floor(random(s)*18);if(kind<2){const r=stage.itemSpawns[Math.floor(random(s)*4)];s.items.push({...sprite(kind===0?'Mine':'Grenade',native.twip(r.x+Math.floor(random(s)*r.w)),native.twip(r.y-2)),id:s.nextItem++,owner:null,vx:0,vy:0,state:1,active:0,influenced:[],variant:2,dead:false});}}
+ for(const q of s.items){q.age+=25;
+  if(q.state===1&&q.age>10000){q.dead=true;continue;}
+  if(q.state===2){q.x=native.twip(q.x+q.vx);q.vy=q.vy>6?6:q.vy+.6;q.y=native.twip(q.y+q.vy);const b=fx.bounds(q),c=b?collision(b,s.platforms,true,true):null;
+   if(c?.hit){if(q.name==='Grenade'){explosion(s,q.x,q.y,4,q.owner);q.dead=true;}
+    else if(c.platform){if(c.rightBC&&!c.bottom&&!c.leftBC){q.x=c.platform.x;q.rotation=-90;}else if(c.leftBC&&!c.bottom&&!c.rightBC){q.x=c.platform.x+c.platform.w;q.rotation=90;}else if(c.bottom&&q.vy>0){q.y=c.floor;q.rotation=0;}else continue;q.state=0;q.variant=9;}}
+   for(const p of s.players){if(!p.alive||p.seat===q.owner||q.influenced.includes(p.seat)||!overlap(fx.bounds(q),native.bounds(p)))continue;
+    if(q.name==='Grenade'){explosion(s,q.x,q.y,4,q.owner);q.dead=true;}
+    else {const owner=q.owner===null?undefined:h.lookup(q.owner);combat.throwFighter(p,2,45,owner,h);combat.damage(p,20,owner,h);const a=(q.vx<=0?5:175)*Math.PI/180,power=Math.abs(q.vx)*.6;q.x=native.twip(q.x-q.vx);q.vx=Math.cos(a)*power+(owner?.vx??0);q.vy=-Math.sin(a)*power+(owner?.vy??0);q.influenced.push(p.seat);}
+   }
+   if(q.name==='Grenade')q.rotation+=10;
+   if(q.x<stage.bounds[0]||q.x>stage.bounds[2]||q.y<stage.bounds[1]||q.y>stage.bounds[3])q.dead=true;
+  }else if(q.state===0){q.active+=25;if(q.active>=1000&&s.players.some(p=>p.alive&&overlap(fx.bounds(q),native.bounds(p)))){explosion(s,q.x,q.y,3,q.owner);q.dead=true;}}
+ }
+ s.items=s.items.filter(q=>!q.dead);
+}
+function step(state:State,inputs:Input[]):void {
+ const s=state as BrawlerState;if(s.phase!=='playing')return;s.tick++;s.sounds=s.sounds.filter(e=>s.tick-e.tick<=16);const h=hooks(s),stage=stageOf(s);s.animationClock+=3;
+ if(s.animationClock>=4){s.animationClock-=4;for(const p of s.players)advance(p);}
+ for(const p of s.players){const i=inputs[p.seat-1]||EMPTY_INPUT;s.inputs[p.seat-1]={...i};s.ack[p.seat-1]=Math.max(s.ack[p.seat-1],i.seq);controls(s,p,i);if(!p.alive)continue;
+  p.spawnAge+=25;const active=movement(p,s.platforms,h);if(!active)continue;
+  if(p.x<stage.bounds[0]||p.x>stage.bounds[2]||p.y<stage.bounds[1]||p.y>stage.bounds[3])loseStock(s,p);
+  if(!p.alive)continue;
+  if(p.attack||p.state==='thrown'){
+   if(p.attack.startsWith('special'))combat.secondary(p,h);
+   for(const other of s.players)if(other!==p&&other.alive&&overlap(native.bounds(p),native.bounds(other)))combat.contact(p,other,h);
+   if(['punchGround','punchUp'].includes(p.attack)&&!s.items.some(q=>q.owner===p.seat&&q.state===3))for(const item of s.items)if(item.state===1&&overlap(native.bounds(p),fx.bounds(item))){item.state=3;item.owner=p.seat;break;}
   }
-  if(s.tick%210===0&&s.items.length<6){const q=s.platforms[Math.floor(random(s)*s.platforms.length)];s.items.push({id:s.nextItem++,type:random(s)<.5?'grenade':'mine',x:q.x+q.w*(.15+.7*random(s)),y:q.y-80,vx:0,vy:0,timer:600,owner:null,armed:false});}
-  const dead=new Set<number>();
-  for(const it of s.items){const old=it.y;it.vy=Math.min(10,it.vy+.5);it.x+=it.vx;it.y+=it.vy;for(const q of s.platforms)if(it.x>=q.x&&it.x<q.x+q.w&&old<=q.y&&it.y>=q.y){it.y=q.y;it.vy=it.type==='grenade'&&it.armed?-Math.abs(it.vy)*.4:0;it.vx*=.7;break;}
-    if(it.type==='mine'&&it.armed&&it.timer<1&&s.players.some(p=>p.alive&&p.seat!==it.owner&&!p.respawn&&Math.hypot(p.x-it.x,p.y-it.y)<32)){explode(s,it);dead.add(it.id);}else if(--it.timer<=0){if(it.armed&&it.type==='grenade')explode(s,it);if(it.type==='grenade'||!it.armed)dead.add(it.id);}if(it.y>stage.bounds[3]+100)dead.add(it.id);
-  }
-  s.items=s.items.filter(it=>!dead.has(it.id));
-  const alive=s.players.filter(p=>p.alive);if(alive.length<=1){s.phase='finished';s.winner=alive[0]?.seat??null;}else if(s.tick>=HZ*300){const ranked=[...alive].sort((a,b)=>b.stocks-a.stocks||a.damage-b.damage);s.phase='finished';s.winner=ranked[0].stocks===ranked[1].stocks&&ranked[0].damage===ranked[1].damage?null:ranked[0].seat;}
+  animate(p);spawn(p);p.hitX=p.x;p.hitY=p.y;
+ }
+ shots(s,h);items(s,h);
+ for(const e of s.explosions){if(e.born===s.tick)continue;e.age+=25;for(const part of e.parts)part.age=e.age;
+  if(e.age*30/1000<fx.frames('BoomMatter')-1)for(const p of s.players)if(p.alive&&!e.influenced.includes(p.seat)&&(p.x-e.x)**2+(p.y-e.y)**2<=(e.size*10)**2+400){const owner=e.owner===null?undefined:h.lookup(e.owner);combat.damage(p,e.size*5,owner,h,true);combat.throwFighter(p,e.size*2,45*(p.x<=e.x?-1:1),owner,h,true);e.influenced.push(p.seat);}
+ }
+ s.explosions=s.explosions.filter(e=>e.age*30/1000<fx.frames('BoomWave')-1);
+ const alive=s.players.filter(p=>p.alive);if(alive.length<=1){s.phase='finished';s.winner=alive[0]?.seat??null;}
 }
 function valid(value:unknown):value is BrawlerState {
-  if(!value||typeof value!=='object')return false;const s=value as BrawlerState;if(s.gameId!=='6232-server'||!stages.some(m=>m.id===s.mapId)||!['waiting','playing','finished'].includes(s.phase)||!Number.isSafeInteger(s.round)||!Number.isSafeInteger(s.tick)||s.tick<0||!Array.isArray(s.players)||s.players.length>4||!Array.isArray(s.ack)||s.ack.length!==4||!Array.isArray(s.platforms)||s.platforms.length>30||!Array.isArray(s.items)||s.items.length>8||!Array.isArray(s.flashes)||s.flashes.length>50)return false;
-  return !!s.options&&Array.isArray(s.options.characters)&&s.options.characters.length===4&&s.options.characters.every(n=>Number.isInteger(n)&&n>=1&&n<=data.fighters.length)&&Array.isArray(s.inputs)&&s.inputs.length===4&&s.inputs.every(validInput)&&s.players.every(p=>p&&Number.isInteger(p.seat)&&p.seat>=1&&p.seat<=4&&Number.isInteger(p.character)&&p.character===s.options.characters[p.seat-1]-1&&typeof p.alive==='boolean'&&[p.x,p.y,p.vx,p.vy,p.damage,p.lastAttack,p.lastAlt,p.shield].every(Number.isFinite)&&Number.isInteger(p.stocks)&&p.stocks>=0&&p.stocks<=3&&Number.isSafeInteger(p.deaths)&&p.deaths>=0)&&new Set(s.players.map(p=>p.seat)).size===s.players.length&&s.platforms.every(p=>p&&[p.x,p.y,p.w,p.h].every(Number.isFinite))&&s.items.every(i=>i&&[i.x,i.y,i.vx,i.vy,i.timer].every(Number.isFinite)&&['mine','grenade'].includes(i.type))&&s.flashes.every(f=>f&&[f.x,f.y,f.life].every(Number.isFinite))&&s.ack.every(n=>Number.isSafeInteger(n)&&n>=0);
+ if(!value||typeof value!=='object')return false;const s=value as BrawlerState;
+ if(s.gameId!=='6232-server'||!stages.some(m=>m.id===s.mapId)||!['waiting','playing','finished'].includes(s.phase)||!Number.isSafeInteger(s.soundSeq)||s.soundSeq<0||!Array.isArray(s.sounds)||s.sounds.length>512||!s.sounds.every(e=>e&&Number.isSafeInteger(e.id)&&Number.isSafeInteger(e.tick)&&['play','stop'].includes(e.action)&&Object.prototype.hasOwnProperty.call(audio.sounds,e.name)&&Number.isInteger(e.variant)&&e.variant>=0&&e.variant<audio.sounds[e.name].length)||![s.round,s.tick,s.nextItem,s.animationClock].every(n=>Number.isSafeInteger(n)&&n>=0)||!Array.isArray(s.players)||s.players.length>4||!Array.isArray(s.ack)||s.ack.length!==4||!Array.isArray(s.platforms)||s.platforms.length>30||!Array.isArray(s.items)||s.items.length>512||!Array.isArray(s.shots)||s.shots.length>512||!Array.isArray(s.explosions)||s.explosions.length>128)return false;
+ const numeric=(o:object,keys:string[])=>keys.every(k=>Number.isFinite((o as Record<string,unknown>)[k]));
+ return !!s.options&&Array.isArray(s.options.characters)&&s.options.characters.length===4&&s.options.characters.every(n=>Number.isInteger(n)&&n>=1&&n<=data.fighters.length)&&Array.isArray(s.inputs)&&s.inputs.length===4&&s.inputs.every(validInput)&&s.players.every(p=>p&&Number.isInteger(p.seat)&&p.seat>=1&&p.seat<=4&&p.character===s.options.characters[p.seat-1]-1&&native.COLORS.includes(p.color)&&typeof p.alive==='boolean'&&numeric(p,['x','y','vx','vy','damage','lastAttack','lastAlt','lastJump','shield','paralyzed','controlLoss','hitX','hitY','spawnProtection'])&&Number.isInteger(p.stocks)&&p.stocks>=0&&p.stocks<=3&&Number.isSafeInteger(p.deaths)&&p.deaths>=0&&native.validAnimation(p.character,p.animation)&&native.validAnimation(p.character,p.hitAnimation)&&['stop','goright','goleft','crouch','thrown','ko','spawn','electrocuted'].includes(p.state)&&['alive','hasControl','invincible','dying','shielded','spawning','grounded','attackDone','specialUp','emitted'].every(k=>typeof (p as unknown as Record<string,unknown>)[k]==='boolean'))&&new Set(s.players.map(p=>p.seat)).size===s.players.length&&s.platforms.every(p=>p&&numeric(p,['x','y','w','h','floor']))&&s.items.every(q=>fx.valid(q)&&['Mine','Grenade'].includes(q.name)&&[0,1,2,3].includes(q.state)&&numeric(q,['vx','vy','active'])&&Array.isArray(q.influenced))&&s.shots.every(q=>fx.valid(q)&&['EnergyBall','Poop','Pencil','Garbage','Bullet','Rocket'].includes(q.name)&&numeric(q,['vx','vy','life']))&&s.explosions.every(e=>e&&numeric(e,['x','y','size','age'])&&Array.isArray(e.parts)&&e.parts.length<=20&&e.parts.every(fx.valid)&&Array.isArray(e.influenced))&&s.ack.every(n=>Number.isSafeInteger(n)&&n>=0);
 }
 const images:Record<string,HTMLImageElement>={};
-function img(name:string):HTMLImageElement {if(!images[name]){images[name]=new Image();images[name].src='/expanded/assets/brawler/'+name+'.png';}return images[name];}
-function render(canvas:HTMLCanvasElement,state:State|null,seat:number|null) {
-  const ctx=canvas.getContext('2d');if(!ctx)return;const s=(state||create(0,false,[1,2,3,4],1)) as BrawlerState,stage=stageOf(s);const bounds=stage.bounds,worldW=bounds[2]-bounds[0],worldH=bounds[3]-bounds[1];const scale=Math.min(canvas.width/worldW,(canvas.height-75)/worldH);
-  ctx.fillStyle=stage.id==='Space'?'#09051c':'#142030';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate((canvas.width-worldW*scale)/2-bounds[0]*scale,45-bounds[1]*scale);ctx.scale(scale,scale);
-  const background=img(stage.id+'_Background'),bb=stage.backgroundBounds;if(background.complete&&background.naturalWidth&&bb)ctx.drawImage(background,bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1]);
-  const art=img(stage.id),ab=stage.artBounds;if(art.complete&&art.naturalWidth&&ab)ctx.drawImage(art,ab[0],ab[1],ab[2]-ab[0],ab[3]-ab[1]);
-  for(const it of s.items){ctx.fillStyle=it.type==='grenade'?'#77994c':'#986c53';ctx.beginPath();ctx.arc(it.x,it.y-5,6,0,Math.PI*2);ctx.fill();if(it.armed){ctx.fillStyle='#f47b45';ctx.fillRect(it.x-2,it.y-13,4,4);}}
-  const colors=['#76e6ff','#ff7b8c','#a6f27b','#dac0ff'];
-  for(const p of s.players){if(!p.alive||p.respawn)continue;ctx.save();ctx.translate(p.x,p.y);ctx.scale(p.facing,1);ctx.globalAlpha=p.invincible&&Math.floor(s.tick/3)%2?.4:1;const fi=p.grounded?(Math.abs(p.vx)>.2?2:1):p.jumps>1?4:3;const sprite=img(data.fighters[p.character].id+'-'+fi);if(sprite.complete&&sprite.naturalWidth)ctx.drawImage(sprite,-14,-29,28,30);else{ctx.fillStyle=colors[p.seat-1];ctx.fillRect(-10,-26,20,26);}if(p.guarding){ctx.strokeStyle=colors[p.seat-1];ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,-14,20*p.shield/100+7,0,Math.PI*2);ctx.stroke();}if(p.attackFrame>0){ctx.strokeStyle='#ffe495';ctx.lineWidth=3;ctx.beginPath();ctx.arc(10,-16,25,-1,1);ctx.stroke();}ctx.restore();ctx.fillStyle=colors[p.seat-1];ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.seat===seat?'你':`P${p.seat}`,p.x,p.y-36);}
-  for(const f of s.flashes){ctx.fillStyle='rgba(255,198,78,.65)';ctx.beginPath();ctx.arc(f.x,f.y,(15-f.life)*4+8,0,Math.PI*2);ctx.fill();}ctx.restore();
-  ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(0,0,canvas.width,44);ctx.font='bold 16px sans-serif';ctx.textAlign='left';ctx.fillStyle='#ecdfb9';ctx.fillText(`疯狂小斗士 · ${stage.label}   击飞出界 / 3 条生命`,18,28);
-  const width=canvas.width/4;for(const p of s.players){ctx.fillStyle=colors[p.seat-1];ctx.font='bold 17px sans-serif';ctx.fillText(`P${p.seat}  ${p.damage}%  ${'●'.repeat(p.stocks)}  KO:${p.kos}`,(p.seat-1)*width+12,canvas.height-15);}
-  if(s.phase==='finished'){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(150,canvas.height/2-50,canvas.width-300,100);ctx.fillStyle='#ffe2a1';ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.fillText(s.winner===null?'平局':`P${s.winner} 获胜！`,canvas.width/2,canvas.height/2+10);}
+function image(path:string):HTMLImageElement {if(!images[path]){images[path]=new Image();images[path].src=path;}return images[path];}
+function render(canvas:HTMLCanvasElement,state:State|null,seat:number|null):void {
+ fx.preload();
+ const ctx=canvas.getContext('2d');if(!ctx)return;const s=(state||create(0,false,[1,2,3,4],1)) as BrawlerState,stage=stageOf(s),b=stage.bounds,w=b[2]-b[0],h=b[3]-b[1],scale=Math.min(canvas.width/w,(canvas.height-75)/h);
+ ctx.fillStyle=stage.id==='Space'?'#09051c':'#142030';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate((canvas.width-w*scale)/2-b[0]*scale,45-b[1]*scale);ctx.scale(scale,scale);
+ for(const [name,rect]of [[stage.id+'_Background',stage.backgroundBounds],[stage.id,stage.artBounds]] as [string,number[]][]){const im=image('/expanded/assets/brawler/'+name+'.png');if(im.complete&&im.naturalWidth)ctx.drawImage(im,rect[0],rect[1],rect[2]-rect[0],rect[3]-rect[1]);}
+ for(const it of s.items)if(it.state!==3&&!(it.state===1&&it.age>7000&&it.age%2===0))fx.draw(ctx,it);
+ for(const q of s.shots)fx.draw(ctx,q);
+ const colors=['#76e6ff','#ff7b8c','#a6f27b','#dac0ff'];
+ for(const p of s.players){if(!p.alive)continue;
+  if(p.state==='spawn'&&p.spawnFrame<10*p.spawnType){fx.draw(ctx,{...sprite('Spawn'+p.spawnType,p.x,p.y),age:Math.max(0,(p.spawnFrame-1)*1000/30)});continue;}
+  const art=native.nativeFrame(p),im=image(native.imagePath(p.character,p.color));ctx.save();ctx.translate(p.x,p.y);ctx.scale(p.facing,1);ctx.rotate(p.rotation*Math.PI/180);ctx.globalAlpha=p.spawning&&Math.cos(p.blinker)<0?.55:1;
+  if(im.complete&&im.naturalWidth&&art[2]&&art[3])ctx.drawImage(im,art[0],art[1],art[2],art[3],art[4],art[5],art[2],art[3]);ctx.restore();
+  const held=s.items.find(it=>it.owner===p.seat&&it.state===3);if(held)fx.draw(ctx,{...held,x:p.x+10*p.facing,y:p.y-10,age:0,variant:2});
+  if(p.shielded&&p.vx===0)fx.draw(ctx,{...sprite('Shield',p.x,p.y-14,p.shield/100),variant:p.seat});
+  ctx.fillStyle=colors[p.seat-1];ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.seat===seat?'你':`P${p.seat}`,p.x,p.y-40);
+ }
+ for(const e of s.explosions)for(const part of e.parts)fx.draw(ctx,part);ctx.restore();
+ ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(0,0,canvas.width,44);ctx.font='bold 16px sans-serif';ctx.textAlign='left';ctx.fillStyle='#ecdfb9';ctx.fillText(`疯狂小人战斗 · ${stage.label}   击飞出界 / 3 条生命`,18,28);
+ for(const p of s.players){ctx.fillStyle=colors[p.seat-1];ctx.font='bold 17px sans-serif';ctx.fillText(`P${p.seat}  ${p.damage}%  ${'●'.repeat(p.stocks)}  KO:${p.kos}`,(p.seat-1)*canvas.width/4+12,canvas.height-15);}
+ if(s.phase==='finished'){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(150,canvas.height/2-50,canvas.width-300,100);ctx.fillStyle='#ffe2a1';ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.fillText(s.winner===null?'平局':`P${s.winner} 获胜！`,canvas.width/2,canvas.height/2+10);}
 }
-export const adapter:Adapter={id:'6232-server',title:'疯狂小人战斗',seats:4,hz:HZ,width:1000,height:650,controls:'A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，W/↑+攻击 上击，S/↓+攻击 特技，S/↓ 防御/穿过薄平台。',characters:['圆球','咖啡杯','茄子','草莓','垃圾桶','桃子'],characterIds:data.fighters.map((_,i)=>i),duplicateCharacters:true,maps:stages.map(m=>({id:m.id,label:m.label})),create,step,valid,render,consumeInput(state,seat,input){const p=(state as BrawlerState).players.find(x=>x.seat===seat);if(p){p.lastAttack=Math.max(p.lastAttack,input.attack);p.lastAlt=Math.max(p.lastAlt,input.alt);p.upHeld=input.up;}}};
+export const adapter:Adapter={id:'6232-server',title:'疯狂小人战斗',seats:4,hz:HZ,width:1000,height:650,controls:'A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，再次攻击投掷；K/X 特技，快速 W/↑+J/K 上击/上特技，Shift 防御，S/↓ 蹲下/穿过薄平台。',characters:['圆球','咖啡杯','茄子','草莓','垃圾桶','桃子'],characterIds:data.fighters.map((_,i)=>i),duplicateCharacters:true,maps:stages.map(m=>({id:m.id,label:m.label})),create,step,valid,render,setSound:audio.setSound,setVolume:audio.setVolume,confirm(state){audio.confirm(state as BrawlerState);},consumeInput(state,seat,i){const p=(state as BrawlerState).players.find(q=>q.seat===seat);if(p){p.lastAttack=Math.max(p.lastAttack,i.attack);p.lastAlt=Math.max(p.lastAlt,i.alt);p.lastJump=Math.max(p.lastJump,i.jump??0);p.upHeld=false;p.upCombo=false;p.upTicks=0;p.leftHeld=i.left;p.rightHeld=i.right;p.downHeld=i.down;p.shieldHeld=false;p.shielded=false;}}};

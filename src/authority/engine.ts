@@ -166,7 +166,7 @@ export class AuthorityEngine {
     if (!Number.isFinite(timestamp) || timestamp > now + 250 || now - timestamp > 250) {
       // Expired button presses must not reappear in the next full input packet.
       expireAction(room, member.seat, incoming);
-      const neutral = adapter ? { ...incoming, left: false, right: false, up: false, down: false } : isBomb(room) ? { ...incoming, dir: -1 as const } : { ...incoming, left: false, right: false, jumpHeld:false,hitHeld:false };
+      const neutral = adapter ? { ...incoming, left: false, right: false, up: false, down: false,...(room.gameId==='6232-server'?{shield:false}:{}) } : isBomb(room) ? { ...incoming, dir: -1 as const } : { ...incoming, left: false, right: false, jumpHeld:false,hitHeld:false };
       match.inputs.set(member.id, { input: neutral, at: now - 251, receivedAt: now });
       return;
     }
@@ -281,11 +281,11 @@ export class AuthorityEngine {
           // The badminton core retains held input when a lower sequence is
           // supplied. Neutralize using the current sequence after reconnect.
           const current = match.state.inputs?.[seat - 1] || empty;
-          return adapter ? { ...current, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false, jumpHeld:false,hitHeld:false };
+          return adapter ? { ...current, left: false, right: false, up: false, down: false, trigger: false,...(room.gameId==='6232-server'?{shield:false}:{}) } : isBomb(room) ? { ...current, dir: -1 } : { ...current, left: false, right: false, jumpHeld:false,hitHeld:false };
         }
         if (now - remote.at <= 250) return remote.input;
         expireAction(room, seat, remote.input);
-        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false, jumpHeld:false,hitHeld:false };
+        return adapter ? { ...remote.input, left: false, right: false, up: false, down: false, trigger: false,...(room.gameId==='6232-server'?{shield:false}:{}) } : isBomb(room) ? { ...remote.input, dir: -1 } : { ...remote.input, left: false, right: false, jumpHeld:false,hitHeld:false };
       });
       if (adapter) {
         const game = match.state as ExpandedState;
