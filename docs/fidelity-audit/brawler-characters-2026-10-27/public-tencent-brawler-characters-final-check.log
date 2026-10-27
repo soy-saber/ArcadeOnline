@@ -1,0 +1,14 @@
+Authenticated to 43.142.142.215 as root
+server.js: OK
+public/authority/game.js: OK
+runtime/authority.cjs: OK
+public/authority-room.html: OK
+public/authority/style.css: OK
+public/games.json: OK
+active
+active
+active
+enabled
+enabled
+enabled
+{"status":"ok","rooms":0}2026-10-27T12:02:20+00:00

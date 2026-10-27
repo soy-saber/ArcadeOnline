@@ -1,0 +1,639 @@
+{
+  "evidence": "Normal UI/input and read-only observations; long arrays compacted.",
+  "originalResultSha256": "ae189766029fb114c2f37e642c8ef464cf55bd8d33f5f67482c958369a080041",
+  "result": {
+    "at": "2026-10-27T12:05:45.314Z",
+    "base": "https://43.142.142.215",
+    "normalInputOnly": true,
+    "choices": [
+      {
+        "choice": 1,
+        "id": "DefaultPlayer",
+        "drawn": [
+          "DefaultPlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      },
+      {
+        "choice": 2,
+        "id": "CoffeePlayer",
+        "drawn": [
+          "CoffeePlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      },
+      {
+        "choice": 3,
+        "id": "AuberginePlayer",
+        "drawn": [
+          "AuberginePlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      },
+      {
+        "choice": 4,
+        "id": "SBLPlayer",
+        "drawn": [
+          "SBLPlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      },
+      {
+        "choice": 5,
+        "id": "TrashPlayer",
+        "drawn": [
+          "TrashPlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      },
+      {
+        "choice": 6,
+        "id": "PeachPlayer",
+        "drawn": [
+          "PeachPlayer-3.png",
+          "SBLPlayer-3.png"
+        ]
+      }
+    ],
+    "maps": [
+      "Rooftop",
+      "Mogadishu",
+      "B52",
+      "Space"
+    ],
+    "waiting": {
+      "gameId": "6232-server",
+      "round": 1793102752627,
+      "tick": 0,
+      "phase": "waiting",
+      "winner": null,
+      "ack": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "inputs": [
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        }
+      ],
+      "mapId": "Rooftop",
+      "players": [
+        {
+          "seat": 1,
+          "x": 372.25,
+          "y": 251.05,
+          "vx": 0,
+          "vy": 0,
+          "alive": true,
+          "damage": 0,
+          "stocks": 3,
+          "facing": 1,
+          "grounded": false,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 60,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 0,
+          "respawn": 0,
+          "combo": 2,
+          "character": 0
+        },
+        {
+          "seat": 4,
+          "x": 229.2,
+          "y": 251.05,
+          "vx": 0,
+          "vy": 0,
+          "alive": true,
+          "damage": 0,
+          "stocks": 3,
+          "facing": -1,
+          "grounded": false,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 60,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 0,
+          "respawn": 0,
+          "combo": 2,
+          "character": 4
+        }
+      ],
+      "platforms": [
+        {
+          "id": 0,
+          "name": "Fixed1",
+          "x": 214.2996951749846,
+          "y": 254.04995188102754,
+          "w": 747.0717539500308,
+          "h": 538.9325882379451,
+          "moving": false
+        },
+        {
+          "id": 1,
+          "name": "Moving2",
+          "x": 354.0498099874522,
+          "y": 152.64999894233702,
+          "w": 465.6868701250957,
+          "h": 11.845827435325958,
+          "moving": true
+        },
+        {
+          "id": 2,
+          "name": "Moving1",
+          "x": 148.6999700919806,
+          "y": 300.74999908653257,
+          "w": 73.2992221160388,
+          "h": 10.230836762934814,
+          "moving": true
+        },
+        {
+          "id": 3,
+          "name": "Moving3",
+          "x": 953.2499700919806,
+          "y": 300.74999892105103,
+          "w": 73.29922211603878,
+          "h": 12.084230397897898,
+          "moving": true
+        },
+        {
+          "id": 4,
+          "name": "Fixed4",
+          "x": 876.5999805726321,
+          "y": 229.49999780914305,
+          "w": 47.61301413473575,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 5,
+          "name": "Fixed5",
+          "x": 308.69998057263217,
+          "y": 230.04999780914306,
+          "w": 47.613014134735636,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 6,
+          "name": "Moving4",
+          "x": 524.0999851055604,
+          "y": 89.74999936599733,
+          "w": 36.50361521887908,
+          "h": 7.100831228005347,
+          "moving": true
+        }
+      ],
+      "items": [],
+      "seed": 1285989673,
+      "nextItem": 0,
+      "flashes": [],
+      "options": {
+        "characters": [
+          1,
+          5,
+          3,
+          5
+        ]
+      }
+    },
+    "afterRespawn": {
+      "gameId": "6232-server",
+      "round": 1793102753649,
+      "tick": 262,
+      "phase": "playing",
+      "winner": null,
+      "ack": [
+        259,
+        0,
+        0,
+        261
+      ],
+      "inputs": [
+        {
+          "seq": 259,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 1,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 261,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        }
+      ],
+      "mapId": "Rooftop",
+      "players": [
+        {
+          "seat": 1,
+          "x": 937.85,
+          "y": 250.55,
+          "vx": 0,
+          "vy": 0.5,
+          "alive": true,
+          "damage": 0,
+          "stocks": 2,
+          "facing": 1,
+          "grounded": false,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 64,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 1,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 1,
+          "respawn": 0,
+          "combo": 2,
+          "character": 0
+        },
+        {
+          "seat": 4,
+          "x": 229.2,
+          "y": 254.04995188102754,
+          "vx": 0,
+          "vy": 0,
+          "alive": true,
+          "damage": 0,
+          "stocks": 3,
+          "facing": -1,
+          "grounded": true,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 0,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 0,
+          "respawn": 0,
+          "combo": 2,
+          "character": 4
+        }
+      ],
+      "platforms": [
+        {
+          "id": 0,
+          "name": "Fixed1",
+          "x": 214.2996951749846,
+          "y": 254.04995188102754,
+          "w": 747.0717539500308,
+          "h": 538.9325882379451,
+          "moving": false
+        },
+        {
+          "id": 1,
+          "name": "Moving2",
+          "x": 354.0498099874522,
+          "y": 152.64999894233702,
+          "w": 465.6868701250957,
+          "h": 11.845827435325958,
+          "moving": true
+        },
+        {
+          "id": 2,
+          "name": "Moving1",
+          "x": 148.6999700919806,
+          "y": 300.74999908653257,
+          "w": 73.2992221160388,
+          "h": 10.230836762934814,
+          "moving": true
+        },
+        {
+          "id": 3,
+          "name": "Moving3",
+          "x": 953.2499700919806,
+          "y": 300.74999892105103,
+          "w": 73.29922211603878,
+          "h": 12.084230397897898,
+          "moving": true
+        },
+        {
+          "id": 4,
+          "name": "Fixed4",
+          "x": 876.5999805726321,
+          "y": 229.49999780914305,
+          "w": 47.61301413473575,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 5,
+          "name": "Fixed5",
+          "x": 308.69998057263217,
+          "y": 230.04999780914306,
+          "w": 47.613014134735636,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 6,
+          "name": "Moving4",
+          "x": 524.0999851055604,
+          "y": 89.74999936599733,
+          "w": 36.50361521887908,
+          "h": 7.100831228005347,
+          "moving": true
+        }
+      ],
+      "items": [
+        {
+          "id": 0,
+          "type": "mine",
+          "x": 176.78563316822016,
+          "y": 300.74999908653257,
+          "vx": 0,
+          "vy": 0,
+          "timer": 547,
+          "owner": null,
+          "armed": false
+        }
+      ],
+      "seed": 1430620135,
+      "nextItem": 1,
+      "flashes": [],
+      "options": {
+        "characters": [
+          1,
+          5,
+          3,
+          5
+        ]
+      }
+    },
+    "death": {
+      "gameId": "6232-server",
+      "round": 1793102753649,
+      "tick": 207,
+      "phase": "playing",
+      "winner": null,
+      "ack": [
+        203,
+        0,
+        0,
+        205
+      ],
+      "inputs": [
+        {
+          "seq": 203,
+          "left": false,
+          "up": false,
+          "right": true,
+          "down": false,
+          "attack": 1,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 205,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        }
+      ],
+      "mapId": "Rooftop",
+      "players": [
+        {
+          "seat": 1,
+          "x": 1150.8483999999999,
+          "y": 441.74999892105103,
+          "vx": 0,
+          "vy": 0,
+          "alive": true,
+          "damage": 0,
+          "stocks": 2,
+          "facing": 1,
+          "grounded": false,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 0,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 1,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 1,
+          "respawn": 54,
+          "combo": 2,
+          "character": 0
+        },
+        {
+          "seat": 4,
+          "x": 229.2,
+          "y": 254.04995188102754,
+          "vx": 0,
+          "vy": 0,
+          "alive": true,
+          "damage": 0,
+          "stocks": 3,
+          "facing": -1,
+          "grounded": true,
+          "jumps": 0,
+          "stun": 0,
+          "invincible": 0,
+          "cooldown": 0,
+          "attackFrame": 0,
+          "shield": 100,
+          "guarding": false,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "upHeld": false,
+          "killedBy": null,
+          "kos": 0,
+          "deaths": 0,
+          "respawn": 0,
+          "combo": 2,
+          "character": 4
+        }
+      ],
+      "platforms": [
+        {
+          "id": 0,
+          "name": "Fixed1",
+          "x": 214.2996951749846,
+          "y": 254.04995188102754,
+          "w": 747.0717539500308,
+          "h": 538.9325882379451,
+          "moving": false
+        },
+        {
+          "id": 1,
+          "name": "Moving2",
+          "x": 354.0498099874522,
+          "y": 152.64999894233702,
+          "w": 465.6868701250957,
+          "h": 11.845827435325958,
+          "moving": true
+        },
+        {
+          "id": 2,
+          "name": "Moving1",
+          "x": 148.6999700919806,
+          "y": 300.74999908653257,
+          "w": 73.2992221160388,
+          "h": 10.230836762934814,
+          "moving": true
+        },
+        {
+          "id": 3,
+          "name": "Moving3",
+          "x": 953.2499700919806,
+          "y": 300.74999892105103,
+          "w": 73.29922211603878,
+          "h": 12.084230397897898,
+          "moving": true
+        },
+        {
+          "id": 4,
+          "name": "Fixed4",
+          "x": 876.5999805726321,
+          "y": 229.49999780914305,
+          "w": 47.61301413473575,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 5,
+          "name": "Fixed5",
+          "x": 308.69998057263217,
+          "y": 230.04999780914306,
+          "w": 47.613014134735636,
+          "h": 24.537602221713882,
+          "moving": false
+        },
+        {
+          "id": 6,
+          "name": "Moving4",
+          "x": 524.0999851055604,
+          "y": 89.74999936599733,
+          "w": 36.50361521887908,
+          "h": 7.100831228005347,
+          "moving": true
+        }
+      ],
+      "items": [],
+      "seed": 4246612870,
+      "nextItem": 0,
+      "flashes": [],
+      "options": {
+        "characters": [
+          1,
+          5,
+          3,
+          5
+        ]
+      }
+    },
+    "errors": []
+  }
+}

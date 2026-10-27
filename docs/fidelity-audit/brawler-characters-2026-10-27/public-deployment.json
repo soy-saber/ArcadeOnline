@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "996d24629bced026e2f1cd42dc897ae91d5e23c1",
+  "archiveSha256": "15088387f296b0034bff5420ef511dca77aaece4e0bde726d8a222e8ad4585b4",
+  "bytes": 127689507,
+  "files": 5551,
+  "remoteUpload": "/root/arcade-deploy-20261027-brawler-characters-15088387",
+  "previous": "/opt/arcade-online/releases/20261027113643-990972",
+  "hashes": {
+    "server.js": "262d0f56df29aa5bd22bff1cdc3e4df7fa5fd8f31eefb942386204b732380eba",
+    "public/authority/game.js": "d0b9ea82c4c5d584b8a87886198025d038bcc252c6c585467416bc59a1c0f4a9",
+    "runtime/authority.cjs": "644d9f1112f3c1209ea4da30c6d3047de934deae184513adf933213de150e244",
+    "public/authority-room.html": "6bca432dc9a549f25addf9ebd12a9b56d15a0a58d3c940f34bdaf3b4d813cd0d",
+    "public/authority/style.css": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a",
+    "public/games.json": "37e8b4f9f1d4f30a8c5de635c34027eb7a08fa73df46008c70f7b74d3dc7c98e"
+  },
+  "current": "/opt/arcade-online/releases/20261027120120-996901",
+  "deployedAt": "2026-10-27T12:01:20Z",
+  "origin": "https://43.142.142.215/",
+  "verifiedAt": "2026-10-27T12:08:56.327317+00:00",
+  "publicFiles": 357,
+  "defaultTests": 476,
+  "deploymentTests": 5,
+  "normalInputOnly": true,
+  "scope": "All six brawler character choices, numeric-zero identity, shared character-select capacity and validation; full eight-game restoration remains active."
+}
