@@ -20,6 +20,9 @@ test('server input expiry releases guard and consumes Up without manufacturing a
  engine.pump(room,now+400);assert.equal(s.players[0].shielded,false);assert.equal(s.players[0].jumps,0);assert.equal(s.inputs[0].shield,false);
  const fresh=a.create(1,true,[1,4],42);a.step(fresh,[input({up:true,jump:0})]);a.step(fresh,[input({jump:0,cancelledJump:0})]);assert.equal(fresh.players[0].jumps,0,'blur neutral packet must not emulate a physical Up release');
 });
+test('changing a native fighter or arena invalidates the corresponding ready confirmations',()=>{
+ const {AuthorityEngine}=load('../src/authority/engine.ts'),engine=new AuthorityEngine(()=>{}),p={id:'a',seat:1,ready:false,ws:null},q={id:'b',seat:4,ready:false,ws:null},room={gameId:a.id,seats:{1:'a',2:null,3:null,4:'b'},members:new Map([['a',p],['b',q]])};engine.onRoom(room);p.ready=true;assert(engine.character(room,p,3));assert.equal(p.ready,false);p.ready=true;assert(engine.options(room,p,{map:'Space'}));assert.equal(p.ready,false);assert.equal(q.ready,false);
+});
 test('checked original body/object/audio media match their native capture manifests and SWF identity',()=>{
  const root=path.resolve(__dirname,'..'),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),source=sha(path.join(root,'games/6232/game.swf')),folder=path.join(root,'public/expanded/assets/brawler/native');
  for(const file of ['provenance.json','objects-provenance.json']){const p=JSON.parse(fs.readFileSync(path.join(folder,file)));assert.equal(p.sourceSwfSha256,source);for(const [name,record]of Object.entries(p.files))assert.equal(sha(path.join(folder,name)),record.sha256,name);}

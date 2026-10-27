@@ -276,6 +276,7 @@ function start(): void {
   }
   function toggleReady(autoSit = false): void {
     if (!net.connected) return;
+    if(adapter?.assetsReady&&(!net.authority||!adapter.assetsReady(net.authority as ExpandedState))&&!net.room.members.find(m=>m.id===net.id)?.ready)return;
     if (seat) {
       const mine = net.room.members.find((member) => member.id === net.id);
       net.control({ t: "ready", ready: !mine?.ready });
@@ -368,7 +369,8 @@ function start(): void {
         const s=net.authority as BadmintonState|null;row.querySelector<HTMLElement>('.who')!.textContent=`电脑 · 第 ${s?.level??1} 级`;button.textContent='电脑';button.disabled=true;
       }
     }
-    const ready = el<HTMLButtonElement>("start-game"); ready.disabled = !net.connected || !seat;
+    const loadingAssets=!!adapter?.assetsReady&&(!state||!adapter.assetsReady(state as ExpandedState))&&!mine?.ready;
+    const ready = el<HTMLButtonElement>("start-game"); ready.disabled = !net.connected || !seat || loadingAssets;
     if (recordsEnabled) {
       const body = el("records-body"); body.replaceChildren();
       const records = net.room.auth?.records || [];
@@ -385,11 +387,11 @@ function start(): void {
         body.append(row);
       }
     }
-    ready.textContent = mine?.ready ? "取消准备" : "准备";
+    ready.textContent = loadingAssets ? "素材加载中…" : mine?.ready ? "取消准备" : "准备";
     ready.setAttribute("aria-pressed", String(!!mine?.ready));
     const fullscreenReady = el<HTMLButtonElement>("fullscreen-ready");
     const hasOpenSeat = Object.entries(net.room.seats).some(([number,id]) => !id&&availableSeat(Number(number)));
-    fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
+    fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat || loadingAssets;
     fullscreenReady.textContent = seat ? ready.textContent : hasOpenSeat ? "入座并准备" : "席位已满";
     fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
     if(badminton){

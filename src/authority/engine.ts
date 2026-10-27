@@ -205,6 +205,7 @@ export class AuthorityEngine {
       if (!adapter.modes && message.gameMode !== undefined) return false;
       const candidate = adapter.create(match.state.round, false, activeSeats(room), 123, map, mode,{...match.options,...boxheadSettings,difficulty:String(difficulty)});
       if (!adapter.valid(candidate)) return false;
+      if(room.gameId==='6232-server'&&(match.state as ExpandedState).mapId!==map)for(const m of room.members.values())m.ready=false;
       match.options.map = map as bomb.GameOptions["map"];
       if (adapter.modes) {if(room.gameId==='50737-server'&&match.options.gameMode!==mode)for(const m of room.members.values())m.ready=false;match.options.gameMode = mode;}
       if(adapter.difficulties)match.options.difficulty=difficulty as bomb.GameOptions['difficulty'];
@@ -230,6 +231,7 @@ export class AuthorityEngine {
     const ids=adapter?.characterIds,selected=ids?ids[character-1]:character;
     if(!adapter?.duplicateCharacters&&match.state.players.some(p=>p.seat!==member.seat&&room.seats[p.seat]&&p.character===selected))return false;
     const characters=match.options.characters?[...match.options.characters]:[1,2,3,4];for(const p of match.state.players)if(room.seats[p.seat])characters[p.seat-1]=ids?ids.indexOf(p.character)+1:p.character;
+    if(room.gameId==='6232-server'&&characters[member.seat-1]!==character)member.ready=false;
     characters[member.seat-1]=character;match.options.characters=characters;
     this.begin(room,false);return true;
   }

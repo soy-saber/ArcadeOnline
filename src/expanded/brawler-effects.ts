@@ -16,9 +16,15 @@ export function bounds(p:Sprite):number[]|null {
  return [Math.min(...points.map(v=>v[0])),Math.min(...points.map(v=>v[1])),Math.max(...points.map(v=>v[0])),Math.max(...points.map(v=>v[1]))];
 }
 const images:Record<string,HTMLImageElement>={};
-export function preload():void {for(const d of Object.values(objects)){const path='/expanded/assets/brawler/native/'+d.sheet;if(!images[path]){images[path]=new Image();images[path].src=path;}}}
+const decoded=new WeakSet<HTMLImageElement>(),decoding=new WeakSet<HTMLImageElement>();
+export function imageReady(im:HTMLImageElement):boolean {
+ if(decoded.has(im))return true;
+ if(im.complete&&im.naturalWidth&&!decoding.has(im)){decoding.add(im);void im.decode().then(()=>decoded.add(im)).catch(()=>decoding.delete(im));}
+ return false;
+}
+export function preload():boolean {let ready=true;for(const d of Object.values(objects)){const path='/expanded/assets/brawler/native/'+d.sheet;if(!images[path]){images[path]=new Image();images[path].fetchPriority='low';images[path].src=path;}if(!imageReady(images[path]))ready=false;}return ready;}
 export function draw(ctx:CanvasRenderingContext2D,p:Sprite):void {
  const f=frame(p),a=f.art;if(!f.native.alive||!a[2]||!a[3])return;const path='/expanded/assets/brawler/native/'+objects[p.name].sheet;
- if(!images[path]){images[path]=new Image();images[path].src=path;}const image=images[path];if(!image.complete||!image.naturalWidth)return;
+ if(!images[path]){images[path]=new Image();images[path].src=path;}const image=images[path];if(!imageReady(image))return;
  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.scale(p.sx,p.sy);ctx.drawImage(image,a[0],a[1],a[2],a[3],a[4],a[5],a[2],a[3]);ctx.restore();
 }

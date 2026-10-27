@@ -140,19 +140,25 @@ function valid(value:unknown):value is BrawlerState {
  return !!s.options&&Array.isArray(s.options.characters)&&s.options.characters.length===4&&s.options.characters.every(n=>Number.isInteger(n)&&n>=1&&n<=data.fighters.length)&&Array.isArray(s.inputs)&&s.inputs.length===4&&s.inputs.every(validInput)&&s.players.every(p=>p&&Number.isInteger(p.seat)&&p.seat>=1&&p.seat<=4&&p.character===s.options.characters[p.seat-1]-1&&native.COLORS.includes(p.color)&&typeof p.alive==='boolean'&&numeric(p,['x','y','vx','vy','damage','lastAttack','lastAlt','lastJump','shield','paralyzed','controlLoss','hitX','hitY','spawnProtection'])&&Number.isInteger(p.stocks)&&p.stocks>=0&&p.stocks<=3&&Number.isSafeInteger(p.deaths)&&p.deaths>=0&&native.validAnimation(p.character,p.animation)&&native.validAnimation(p.character,p.hitAnimation)&&['stop','goright','goleft','crouch','thrown','ko','spawn','electrocuted'].includes(p.state)&&['alive','hasControl','invincible','dying','shielded','spawning','grounded','attackDone','specialUp','emitted'].every(k=>typeof (p as unknown as Record<string,unknown>)[k]==='boolean'))&&new Set(s.players.map(p=>p.seat)).size===s.players.length&&s.platforms.every(p=>p&&numeric(p,['x','y','w','h','floor']))&&s.items.every(q=>fx.valid(q)&&['Mine','Grenade'].includes(q.name)&&[0,1,2,3].includes(q.state)&&numeric(q,['vx','vy','active'])&&Array.isArray(q.influenced))&&s.shots.every(q=>fx.valid(q)&&['EnergyBall','Poop','Pencil','Garbage','Bullet','Rocket'].includes(q.name)&&numeric(q,['vx','vy','life']))&&s.explosions.every(e=>e&&numeric(e,['x','y','size','age'])&&Array.isArray(e.parts)&&e.parts.length<=20&&e.parts.every(fx.valid)&&Array.isArray(e.influenced))&&s.ack.every(n=>Number.isSafeInteger(n)&&n>=0);
 }
 const images:Record<string,HTMLImageElement>={};
-function image(path:string):HTMLImageElement {if(!images[path]){images[path]=new Image();images[path].src=path;}return images[path];}
+function image(path:string):HTMLImageElement {if(!images[path]){images[path]=new Image();images[path].fetchPriority='high';images[path].src=path;}return images[path];}
+function assetsReady(state:State):boolean {
+ const s=state as BrawlerState;let ready=true;
+ for(let seat=1;seat<=4;seat++){const im=image(native.imagePath(s.options.characters[seat-1]-1,native.COLORS[seat-1]));if(!fx.imageReady(im))ready=false;}
+ for(const name of [s.mapId,s.mapId+'_Background']){const im=image('/expanded/assets/brawler/'+name+'.png');if(!fx.imageReady(im))ready=false;}
+ return fx.preload()&&ready;
+}
 function render(canvas:HTMLCanvasElement,state:State|null,seat:number|null):void {
- fx.preload();
  const ctx=canvas.getContext('2d');if(!ctx)return;const s=(state||create(0,false,[1,2,3,4],1)) as BrawlerState,stage=stageOf(s),b=stage.bounds,w=b[2]-b[0],h=b[3]-b[1],scale=Math.min(canvas.width/w,(canvas.height-75)/h);
+ const loaded=assetsReady(s);
  ctx.fillStyle=stage.id==='Space'?'#09051c':'#142030';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate((canvas.width-w*scale)/2-b[0]*scale,45-b[1]*scale);ctx.scale(scale,scale);
- for(const [name,rect]of [[stage.id+'_Background',stage.backgroundBounds],[stage.id,stage.artBounds]] as [string,number[]][]){const im=image('/expanded/assets/brawler/'+name+'.png');if(im.complete&&im.naturalWidth)ctx.drawImage(im,rect[0],rect[1],rect[2]-rect[0],rect[3]-rect[1]);}
+ for(const [name,rect]of [[stage.id+'_Background',stage.backgroundBounds],[stage.id,stage.artBounds]] as [string,number[]][]){const im=image('/expanded/assets/brawler/'+name+'.png');if(fx.imageReady(im))ctx.drawImage(im,rect[0],rect[1],rect[2]-rect[0],rect[3]-rect[1]);}
  for(const it of s.items)if(it.state!==3&&!(it.state===1&&it.age>7000&&it.age%2===0))fx.draw(ctx,it);
  for(const q of s.shots)fx.draw(ctx,q);
  const colors=['#76e6ff','#ff7b8c','#a6f27b','#dac0ff'];
  for(const p of s.players){if(!p.alive)continue;
   if(p.state==='spawn'&&p.spawnFrame<10*p.spawnType){fx.draw(ctx,{...sprite('Spawn'+p.spawnType,p.x,p.y),age:Math.max(0,(p.spawnFrame-1)*1000/30)});continue;}
   const art=native.nativeFrame(p),im=image(native.imagePath(p.character,p.color));ctx.save();ctx.translate(p.x,p.y);ctx.scale(p.facing,1);ctx.rotate(p.rotation*Math.PI/180);ctx.globalAlpha=p.spawning&&Math.cos(p.blinker)<0?.55:1;
-  if(im.complete&&im.naturalWidth&&art[2]&&art[3])ctx.drawImage(im,art[0],art[1],art[2],art[3],art[4],art[5],art[2],art[3]);ctx.restore();
+  if(fx.imageReady(im)&&art[2]&&art[3])ctx.drawImage(im,art[0],art[1],art[2],art[3],art[4],art[5],art[2],art[3]);ctx.restore();
   const held=s.items.find(it=>it.owner===p.seat&&it.state===3);if(held)fx.draw(ctx,{...held,x:p.x+10*p.facing,y:p.y-10,age:0,variant:2});
   if(p.shielded&&p.vx===0)fx.draw(ctx,{...sprite('Shield',p.x,p.y-14,p.shield/100),variant:p.seat});
   ctx.fillStyle=colors[p.seat-1];ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.seat===seat?'你':`P${p.seat}`,p.x,p.y-40);
@@ -160,6 +166,7 @@ function render(canvas:HTMLCanvasElement,state:State|null,seat:number|null):void
  for(const e of s.explosions)for(const part of e.parts)fx.draw(ctx,part);ctx.restore();
  ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(0,0,canvas.width,44);ctx.font='bold 16px sans-serif';ctx.textAlign='left';ctx.fillStyle='#ecdfb9';ctx.fillText(`疯狂小人战斗 · ${stage.label}   击飞出界 / 3 条生命`,18,28);
  for(const p of s.players){ctx.fillStyle=colors[p.seat-1];ctx.font='bold 17px sans-serif';ctx.fillText(`P${p.seat}  ${p.damage}%  ${'●'.repeat(p.stocks)}  KO:${p.kos}`,(p.seat-1)*canvas.width/4+12,canvas.height-15);}
+ if(!loaded){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(200,canvas.height/2-25,canvas.width-400,50);ctx.fillStyle='#ffe2a1';ctx.font='20px sans-serif';ctx.textAlign='center';ctx.fillText('正在加载人物与场景素材…',canvas.width/2,canvas.height/2+7);}
  if(s.phase==='finished'){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(150,canvas.height/2-50,canvas.width-300,100);ctx.fillStyle='#ffe2a1';ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.fillText(s.winner===null?'平局':`P${s.winner} 获胜！`,canvas.width/2,canvas.height/2+10);}
 }
-export const adapter:Adapter={id:'6232-server',title:'疯狂小人战斗',seats:4,hz:HZ,width:1000,height:650,controls:'A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，再次攻击投掷；K/X 特技，快速 W/↑+J/K 上击/上特技，Shift 防御，S/↓ 蹲下/穿过薄平台。',characters:['圆球','咖啡杯','茄子','草莓','垃圾桶','桃子'],characterIds:data.fighters.map((_,i)=>i),duplicateCharacters:true,maps:stages.map(m=>({id:m.id,label:m.label})),create,step,valid,render,setSound:audio.setSound,setVolume:audio.setVolume,confirm(state){audio.confirm(state as BrawlerState);},consumeInput(state,seat,i){const p=(state as BrawlerState).players.find(q=>q.seat===seat);if(p){p.lastAttack=Math.max(p.lastAttack,i.attack);p.lastAlt=Math.max(p.lastAlt,i.alt);p.lastJump=Math.max(p.lastJump,i.jump??0);p.upHeld=false;p.upCombo=false;p.upTicks=0;p.leftHeld=i.left;p.rightHeld=i.right;p.downHeld=i.down;p.shieldHeld=false;p.shielded=false;}}};
+export const adapter:Adapter={id:'6232-server',title:'疯狂小人战斗',seats:4,hz:HZ,width:1000,height:650,controls:'A/D 或 ←/→ 移动，W/↑ 二段跳，J/空格 攻击/拾取，再次攻击投掷；K/X 特技，快速 W/↑+J/K 上击/上特技，Shift 防御，S/↓ 蹲下/穿过薄平台。',characters:['圆球','咖啡杯','茄子','草莓','垃圾桶','桃子'],characterIds:data.fighters.map((_,i)=>i),duplicateCharacters:true,maps:stages.map(m=>({id:m.id,label:m.label})),create,step,valid,render,assetsReady,setSound:audio.setSound,setVolume:audio.setVolume,confirm(state){audio.confirm(state as BrawlerState);},consumeInput(state,seat,i){const p=(state as BrawlerState).players.find(q=>q.seat===seat);if(p){p.lastAttack=Math.max(p.lastAttack,i.attack);p.lastAlt=Math.max(p.lastAlt,i.alt);p.lastJump=Math.max(p.lastJump,i.jump??0);p.upHeld=false;p.upCombo=false;p.upTicks=0;p.leftHeld=i.left;p.rightHeld=i.right;p.downHeld=i.down;p.shieldHeld=false;p.shielded=false;}}};

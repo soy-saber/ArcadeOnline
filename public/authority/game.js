@@ -39970,14 +39970,28 @@
     return [Math.min(...points.map((v) => v[0])), Math.min(...points.map((v) => v[1])), Math.max(...points.map((v) => v[0])), Math.max(...points.map((v) => v[1]))];
   }
   var images4 = {};
+  var decoded = /* @__PURE__ */ new WeakSet();
+  var decoding = /* @__PURE__ */ new WeakSet();
+  function imageReady(im) {
+    if (decoded.has(im)) return true;
+    if (im.complete && im.naturalWidth && !decoding.has(im)) {
+      decoding.add(im);
+      void im.decode().then(() => decoded.add(im)).catch(() => decoding.delete(im));
+    }
+    return false;
+  }
   function preload() {
+    let ready2 = true;
     for (const d of Object.values(objects)) {
       const path = "/expanded/assets/brawler/native/" + d.sheet;
       if (!images4[path]) {
         images4[path] = new Image();
+        images4[path].fetchPriority = "low";
         images4[path].src = path;
       }
+      if (!imageReady(images4[path])) ready2 = false;
     }
+    return ready2;
   }
   function draw3(ctx, p) {
     const f2 = frame(p), a = f2.art;
@@ -39988,7 +40002,7 @@
       images4[path].src = path;
     }
     const image3 = images4[path];
-    if (!image3.complete || !image3.naturalWidth) return;
+    if (!imageReady(image3)) return;
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.rotate(p.rotation * Math.PI / 180);
@@ -40429,15 +40443,29 @@
   function image2(path) {
     if (!images5[path]) {
       images5[path] = new Image();
+      images5[path].fetchPriority = "high";
       images5[path].src = path;
     }
     return images5[path];
   }
+  function assetsReady(state) {
+    const s = state;
+    let ready2 = true;
+    for (let seat = 1; seat <= 4; seat++) {
+      const im = image2(imagePath(s.options.characters[seat - 1] - 1, COLORS2[seat - 1]));
+      if (!imageReady(im)) ready2 = false;
+    }
+    for (const name of [s.mapId, s.mapId + "_Background"]) {
+      const im = image2("/expanded/assets/brawler/" + name + ".png");
+      if (!imageReady(im)) ready2 = false;
+    }
+    return preload() && ready2;
+  }
   function render4(canvas, state, seat) {
-    preload();
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const s = state || create4(0, false, [1, 2, 3, 4], 1), stage = stageOf(s), b = stage.bounds, w = b[2] - b[0], h = b[3] - b[1], scale = Math.min(canvas.width / w, (canvas.height - 75) / h);
+    const loaded = assetsReady(s);
     ctx.fillStyle = stage.id === "Space" ? "#09051c" : "#142030";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -40445,7 +40473,7 @@
     ctx.scale(scale, scale);
     for (const [name, rect] of [[stage.id + "_Background", stage.backgroundBounds], [stage.id, stage.artBounds]]) {
       const im = image2("/expanded/assets/brawler/" + name + ".png");
-      if (im.complete && im.naturalWidth) ctx.drawImage(im, rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1]);
+      if (imageReady(im)) ctx.drawImage(im, rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1]);
     }
     for (const it of s.items) if (it.state !== 3 && !(it.state === 1 && it.age > 7e3 && it.age % 2 === 0)) draw3(ctx, it);
     for (const q of s.shots) draw3(ctx, q);
@@ -40462,7 +40490,7 @@
       ctx.scale(p.facing, 1);
       ctx.rotate(p.rotation * Math.PI / 180);
       ctx.globalAlpha = p.spawning && Math.cos(p.blinker) < 0 ? 0.55 : 1;
-      if (im.complete && im.naturalWidth && art3[2] && art3[3]) ctx.drawImage(im, art3[0], art3[1], art3[2], art3[3], art3[4], art3[5], art3[2], art3[3]);
+      if (imageReady(im) && art3[2] && art3[3]) ctx.drawImage(im, art3[0], art3[1], art3[2], art3[3], art3[4], art3[5], art3[2], art3[3]);
       ctx.restore();
       const held = s.items.find((it) => it.owner === p.seat && it.state === 3);
       if (held) draw3(ctx, { ...held, x: p.x + 10 * p.facing, y: p.y - 10, age: 0, variant: 2 });
@@ -40485,6 +40513,14 @@
       ctx.font = "bold 17px sans-serif";
       ctx.fillText(`P${p.seat}  ${p.damage}%  ${"\u25CF".repeat(p.stocks)}  KO:${p.kos}`, (p.seat - 1) * canvas.width / 4 + 12, canvas.height - 15);
     }
+    if (!loaded) {
+      ctx.fillStyle = "rgba(0,0,0,.7)";
+      ctx.fillRect(200, canvas.height / 2 - 25, canvas.width - 400, 50);
+      ctx.fillStyle = "#ffe2a1";
+      ctx.font = "20px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("\u6B63\u5728\u52A0\u8F7D\u4EBA\u7269\u4E0E\u573A\u666F\u7D20\u6750\u2026", canvas.width / 2, canvas.height / 2 + 7);
+    }
     if (s.phase === "finished") {
       ctx.fillStyle = "rgba(0,0,0,.7)";
       ctx.fillRect(150, canvas.height / 2 - 50, canvas.width - 300, 100);
@@ -40494,7 +40530,7 @@
       ctx.fillText(s.winner === null ? "\u5E73\u5C40" : `P${s.winner} \u83B7\u80DC\uFF01`, canvas.width / 2, canvas.height / 2 + 10);
     }
   }
-  var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0C\u518D\u6B21\u653B\u51FB\u6295\u63B7\uFF1BK/X \u7279\u6280\uFF0C\u5FEB\u901F W/\u2191+J/K \u4E0A\u51FB/\u4E0A\u7279\u6280\uFF0CShift \u9632\u5FA1\uFF0CS/\u2193 \u8E72\u4E0B/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", characters: ["\u5706\u7403", "\u5496\u5561\u676F", "\u8304\u5B50", "\u8349\u8393", "\u5783\u573E\u6876", "\u6843\u5B50"], characterIds: brawler_data_default.fighters.map((_, i) => i), duplicateCharacters: true, maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create4, step: step4, valid: valid5, render: render4, setSound: setSound2, setVolume: setVolume2, confirm(state) {
+  var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0C\u518D\u6B21\u653B\u51FB\u6295\u63B7\uFF1BK/X \u7279\u6280\uFF0C\u5FEB\u901F W/\u2191+J/K \u4E0A\u51FB/\u4E0A\u7279\u6280\uFF0CShift \u9632\u5FA1\uFF0CS/\u2193 \u8E72\u4E0B/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", characters: ["\u5706\u7403", "\u5496\u5561\u676F", "\u8304\u5B50", "\u8349\u8393", "\u5783\u573E\u6876", "\u6843\u5B50"], characterIds: brawler_data_default.fighters.map((_, i) => i), duplicateCharacters: true, maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create4, step: step4, valid: valid5, render: render4, assetsReady, setSound: setSound2, setVolume: setVolume2, confirm(state) {
     confirm2(state);
   }, consumeInput(state, seat, i) {
     const p = state.players.find((q) => q.seat === seat);
@@ -42696,6 +42732,7 @@
     }
     function toggleReady(autoSit = false) {
       if (!net.connected) return;
+      if (adapter7?.assetsReady && (!net.authority || !adapter7.assetsReady(net.authority)) && !net.room.members.find((m) => m.id === net.id)?.ready) return;
       if (seat) {
         const mine = net.room.members.find((member) => member.id === net.id);
         net.control({ t: "ready", ready: !mine?.ready });
@@ -42857,8 +42894,9 @@
           button.disabled = true;
         }
       }
+      const loadingAssets = !!adapter7?.assetsReady && (!state || !adapter7.assetsReady(state)) && !mine?.ready;
       const ready2 = el("start-game");
-      ready2.disabled = !net.connected || !seat;
+      ready2.disabled = !net.connected || !seat || loadingAssets;
       if (recordsEnabled) {
         const body2 = el("records-body");
         body2.replaceChildren();
@@ -42882,11 +42920,11 @@
           body2.append(row);
         }
       }
-      ready2.textContent = mine?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
+      ready2.textContent = loadingAssets ? "\u7D20\u6750\u52A0\u8F7D\u4E2D\u2026" : mine?.ready ? "\u53D6\u6D88\u51C6\u5907" : "\u51C6\u5907";
       ready2.setAttribute("aria-pressed", String(!!mine?.ready));
       const fullscreenReady = el("fullscreen-ready");
       const hasOpenSeat = Object.entries(net.room.seats).some(([number, id]) => !id && availableSeat(Number(number)));
-      fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat;
+      fullscreenReady.disabled = !net.connected || !seat && !hasOpenSeat || loadingAssets;
       fullscreenReady.textContent = seat ? ready2.textContent : hasOpenSeat ? "\u5165\u5EA7\u5E76\u51C6\u5907" : "\u5E2D\u4F4D\u5DF2\u6EE1";
       fullscreenReady.setAttribute("aria-pressed", String(!!mine?.ready));
       if (badminton) {

@@ -14,6 +14,7 @@ export interface Adapter {
   step(state: State, inputs: Input[]): void;
   valid(state: unknown): state is State;
   render(canvas: HTMLCanvasElement, state: State | null, seat: number | null): void;
+  assetsReady?(state:State):boolean;
   confirm?(state: State): void;
   setSound?(enabled: boolean): void;
   setVolume?(volume: number): void;

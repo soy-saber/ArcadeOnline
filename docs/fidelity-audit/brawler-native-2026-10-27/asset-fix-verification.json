@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-27T15:25:12.980467+00:00",
+  "defaultTests": 487,
+  "deploymentTests": 5,
+  "typecheck": "pass",
+  "firstPublicAttemptSource": "98741e05e4683e3d5b503269a0a0d82043ef7f7b",
+  "firstPublicHashes": 429,
+  "firstPublicGameplay": "Not accepted: initial image loading overlapped gameplay; original character/projectile draw assertion failed and a later short-projectile observation timed out. No page exception was recorded.",
+  "fix": "Prioritize selected character images, wait for actual PNG decode before enabling ordinary/fullscreen ready, display a loading caption, reset ready when changing fighter/map.",
+  "networkFaultTest": "Hold only the selected PNG response; ready remains disabled and server remains waiting. Deliver the PNG, decode, then ordinary readiness starts the match with the original character drawn. No gameplay-state fixture."
+}
