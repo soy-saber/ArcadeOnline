@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "23b183a907fe67f2167a2648b8675d6858c2a3c2",
+  "attempt": "Initial public natural-upgrade run",
+  "base": "https://43.142.142.215",
+  "observed": "Three natural kills; peak multiplier 12, then natural survival ended before the target of 15.",
+  "failure": "AssertionError: natural survival ended",
+  "diagnosticLimit": "PowerShell ErrorActionPreference=Stop interrupted the native command on its stderr error. No fresh failure world snapshot was captured; old diagnostic files were not used as evidence.",
+  "response": "Run remaining suites with normal native-command error handling, retain the same game settings and multiplier target, add movement hysteresis and check the escape path at eight-pixel intervals to give input/snapshot round trips more clearance.",
+  "productionChanges": "None in response to this driver failure. Only the normal-input test controller changed."
+}

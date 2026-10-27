@@ -1,0 +1,817 @@
+{
+  "evidence": "Normal UI/input; long world arrays compacted to counts and hashes. Full capture identified by SHA256.",
+  "originalResultSha256": "ee933035aa7eb20068d5c8f5fb05cd35372cdc6f6198c3a2c4c3b05a234cb450",
+  "result": {
+    "at": "2026-10-27T11:42:19.814Z",
+    "base": "https://43.142.142.215",
+    "normalInputOnly": true,
+    "seconds": 126.07,
+    "map": "original-04",
+    "goals": [
+      {
+        "x": 80,
+        "y": 48
+      },
+      {
+        "x": 240,
+        "y": 48
+      }
+    ],
+    "finish": {
+      "gameId": "50737-server",
+      "round": 1793101213227,
+      "tick": 6168,
+      "phase": "finished",
+      "winner": 1,
+      "ack": [
+        3596,
+        3659,
+        0,
+        0
+      ],
+      "inputs": [
+        {
+          "seq": 3596,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 1,
+          "alt": 0,
+          "trigger": true,
+          "cancelledAttack": 0,
+          "weaponStep": 1
+        },
+        {
+          "seq": 3659,
+          "left": false,
+          "up": false,
+          "right": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0,
+          "trigger": false,
+          "cancelledAttack": 0,
+          "weaponStep": 1
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        },
+        {
+          "seq": 0,
+          "left": false,
+          "right": false,
+          "up": false,
+          "down": false,
+          "attack": 0,
+          "alt": 0
+        }
+      ],
+      "rng": 2989934223,
+      "mapId": "original-04",
+      "players": [
+        {
+          "id": 31,
+          "seat": 1,
+          "x": 108.15999999999974,
+          "y": 51.83999999999971,
+          "dir": 0,
+          "body": {
+            "phase": "control",
+            "counter": 0,
+            "action": "stand",
+            "frame": 0,
+            "alpha": 1,
+            "vx": 0,
+            "vy": 0,
+            "returnAngle": 0,
+            "radius": 14.4,
+            "mass": 2,
+            "collidable": true,
+            "affectEnabled": true,
+            "deadFlag": false,
+            "floor": false,
+            "loggedKill": false,
+            "disposeAt": null,
+            "affects": [],
+            "damageSample": 0,
+            "deathSample": 0
+          },
+          "character": "swat",
+          "hp": 200,
+          "alive": true,
+          "lives": 1,
+          "respawn": 0,
+          "kills": 5,
+          "deaths": 0,
+          "killedBy": 0,
+          "weapon": 0,
+          "unlocked": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "inventory": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            20,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaponCaps": [
+            -1,
+            100,
+            20,
+            10,
+            20,
+            20,
+            10,
+            20,
+            10,
+            15
+          ],
+          "weaponRevisions": [
+            8,
+            0,
+            0,
+            0,
+            0,
+            53,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ammo": -1,
+          "cooldown": 7,
+          "chargeDetonate": false,
+          "invul": 0,
+          "lastAttack": 1,
+          "lastAlt": 0,
+          "selectionPending": false,
+          "selectionWeapon": null,
+          "selectionStep": 1,
+          "moving": false,
+          "fireAt": 6167,
+          "hitAt": -99,
+          "deadAt": 0,
+          "triggerDown": true,
+          "triggerAt": 615,
+          "poseName": "pistolstand",
+          "poseAction": "handgun-stand",
+          "poseFrame": 0.04000000000009862,
+          "drawAction": "handgun-stand",
+          "drawFrame": 0.04000000000009862,
+          "fireKeyDown": true,
+          "firePressed": true,
+          "fireReleased": false,
+          "fireTap": false
+        },
+        {
+          "id": 32,
+          "seat": 2,
+          "x": 344.0604419464686,
+          "y": 67.45847241835703,
+          "dir": 3.162235174546402,
+          "body": {
+            "phase": "dead",
+            "counter": 48,
+            "action": "dead",
+            "frame": 0,
+            "alpha": 0.98,
+            "vx": 0.13734969280242523,
+            "vy": 0.0028356466927718315,
+            "returnAngle": 3.162235174546402,
+            "radius": 14.4,
+            "mass": 2,
+            "collidable": false,
+            "affectEnabled": false,
+            "deadFlag": true,
+            "floor": true,
+            "loggedKill": true,
+            "disposeAt": null,
+            "affects": [],
+            "damageSample": 0,
+            "deathSample": 0
+          },
+          "character": "bond",
+          "hp": -42.399999999999125,
+          "alive": false,
+          "lives": 1,
+          "respawn": 74,
+          "kills": 0,
+          "deaths": 5,
+          "killedBy": 1,
+          "weapon": 0,
+          "unlocked": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "inventory": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "weaponCaps": [
+            -1,
+            100,
+            20,
+            10,
+            20,
+            5,
+            10,
+            20,
+            10,
+            15
+          ],
+          "weaponRevisions": [
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ammo": -1,
+          "cooldown": 0,
+          "chargeDetonate": false,
+          "invul": 0,
+          "lastAttack": 0,
+          "lastAlt": 0,
+          "selectionPending": false,
+          "selectionWeapon": null,
+          "selectionStep": 1,
+          "moving": false,
+          "fireAt": -99,
+          "hitAt": 5992,
+          "deadAt": 6001,
+          "triggerDown": false,
+          "triggerAt": 0,
+          "poseName": "",
+          "poseAction": "dead",
+          "poseFrame": 0,
+          "drawAction": "dead",
+          "drawFrame": 0,
+          "fireKeyDown": false,
+          "firePressed": false,
+          "fireReleased": false,
+          "fireTap": false
+        }
+      ],
+      "zombies": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "bullets": {
+        "count": 1,
+        "sha256": "adf591654cb1361df2c4d2f578c5926e6d7964f8e591640f058159f87abc5925"
+      },
+      "barrels": {
+        "count": 26,
+        "sha256": "4b0f7fe674d6d2ed68166e3674a2921114b570132585f675f8901178b37cd6a7"
+      },
+      "pickups": {
+        "count": 5,
+        "sha256": "718b2800d778edb7685c987d67f3b84844f26a5e51a97af07a62fe04b416a80b"
+      },
+      "effects": {
+        "count": 66,
+        "sha256": "f427fa212c4931e88d40e193c41dfd6bed9037b31d0c3eac5f1beeb7d596fcaf"
+      },
+      "explosions": [],
+      "corpses": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "sounds": [
+        {
+          "id": 726,
+          "tick": 6159,
+          "name": "Weapon.Pistol.Fire.wav"
+        },
+        {
+          "id": 727,
+          "tick": 6167,
+          "name": "Weapon.Pistol.Fire.wav"
+        },
+        {
+          "id": 728,
+          "tick": 6168,
+          "name": "World.End.wav"
+        }
+      ],
+      "soundId": 728,
+      "shakeY": 0,
+      "brightness": 0,
+      "wave": 1,
+      "spawnLeft": 0,
+      "devilLeft": 0,
+      "nextId": 1715,
+      "score": 0,
+      "combo": 200,
+      "peakCombo": 200,
+      "message": "",
+      "messageUntil": 0,
+      "mode": "deathmatch",
+      "paused": false,
+      "actionAck": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "options": {
+        "characters": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "difficulty": "beginner",
+        "speed": 2,
+        "devils": true,
+        "collisions": false,
+        "damage": true,
+        "deathLimit": 5
+      },
+      "enemyCells": {
+        "count": 625,
+        "sha256": "59ecf6374a397c2a2336fe3b783fd6b3aedc0d100b377c1d10eb1227e0305d16"
+      },
+      "navigation": {
+        "count": 8,
+        "sha256": "e0898a5226b868f64e5f988ff208f7471343477727ab0cd98cfec2a086e56fe4"
+      },
+      "progression": {
+        "tick": 0,
+        "multiple": 0,
+        "multipleTicks": 100000,
+        "multipleTotal": 100000,
+        "multiplierTicks": 3.00147,
+        "multiplierTotal": 3.00147,
+        "level": {
+          "zombieRate": 50,
+          "zombieLimit": 10,
+          "zombieRemaining": 10,
+          "zombieAlive": 0,
+          "zombieCountdown": 50,
+          "devilRate": 500,
+          "devilLimit": 0,
+          "devilRemaining": 0,
+          "devilAlive": 0,
+          "devilCountdown": 500
+        }
+      }
+    },
+    "watch": {
+      "phases": [
+        {
+          "tick": 0,
+          "deaths": 0,
+          "phase": "control",
+          "hp": 200
+        },
+        {
+          "tick": 618,
+          "deaths": 0,
+          "phase": "bullet-hit",
+          "hp": 148
+        },
+        {
+          "tick": 649,
+          "deaths": 1,
+          "phase": "dying",
+          "hp": -8
+        },
+        {
+          "tick": 664,
+          "deaths": 1,
+          "phase": "dead",
+          "hp": -8
+        },
+        {
+          "tick": 866,
+          "deaths": 1,
+          "phase": "respawn",
+          "hp": -8
+        },
+        {
+          "tick": 891,
+          "deaths": 1,
+          "phase": "control",
+          "hp": 200
+        },
+        {
+          "tick": 2314,
+          "deaths": 1,
+          "phase": "bullet-hit",
+          "hp": 148
+        },
+        {
+          "tick": 2347,
+          "deaths": 2,
+          "phase": "dying",
+          "hp": -8
+        },
+        {
+          "tick": 2360,
+          "deaths": 2,
+          "phase": "dead",
+          "hp": -8
+        },
+        {
+          "tick": 2562,
+          "deaths": 2,
+          "phase": "respawn",
+          "hp": -8
+        },
+        {
+          "tick": 2590,
+          "deaths": 2,
+          "phase": "control",
+          "hp": 200
+        },
+        {
+          "tick": 3338,
+          "deaths": 2,
+          "phase": "bullet-hit",
+          "hp": 148
+        },
+        {
+          "tick": 3369,
+          "deaths": 3,
+          "phase": "dying",
+          "hp": -8
+        },
+        {
+          "tick": 3384,
+          "deaths": 3,
+          "phase": "dead",
+          "hp": -8
+        },
+        {
+          "tick": 3589,
+          "deaths": 3,
+          "phase": "respawn",
+          "hp": -8
+        },
+        {
+          "tick": 3614,
+          "deaths": 3,
+          "phase": "control",
+          "hp": 200
+        },
+        {
+          "tick": 5312,
+          "deaths": 3,
+          "phase": "bullet-hit",
+          "hp": 148
+        },
+        {
+          "tick": 5347,
+          "deaths": 4,
+          "phase": "dying",
+          "hp": -8
+        },
+        {
+          "tick": 5362,
+          "deaths": 4,
+          "phase": "dead",
+          "hp": -8
+        },
+        {
+          "tick": 5564,
+          "deaths": 4,
+          "phase": "respawn",
+          "hp": -8
+        },
+        {
+          "tick": 5587,
+          "deaths": 4,
+          "phase": "control",
+          "hp": 200
+        },
+        {
+          "tick": 5828,
+          "deaths": 4,
+          "phase": "bullet-hit",
+          "hp": 148
+        },
+        {
+          "tick": 5841,
+          "deaths": 4,
+          "phase": "sleep",
+          "hp": 96
+        },
+        {
+          "tick": 5844,
+          "deaths": 4,
+          "phase": "control",
+          "hp": 96.13333333333334
+        },
+        {
+          "tick": 5977,
+          "deaths": 4,
+          "phase": "bullet-hit",
+          "hp": 61.600000000000875
+        },
+        {
+          "tick": 6003,
+          "deaths": 5,
+          "phase": "dying",
+          "hp": -42.399999999999125
+        },
+        {
+          "tick": 6018,
+          "deaths": 5,
+          "phase": "dead",
+          "hp": -42.399999999999125
+        }
+      ],
+      "deaths": [],
+      "pickupHidden": [
+        27
+      ],
+      "pickupReturned": [
+        27
+      ],
+      "deathDrops": [
+        {
+          "id": 83,
+          "born": 649,
+          "x": 368,
+          "y": 48,
+          "life": 502,
+          "deleteCounter": 500,
+          "initialized": false,
+          "alpha": 1
+        },
+        {
+          "id": 564,
+          "born": 2345,
+          "x": 368,
+          "y": 80,
+          "life": 500,
+          "deleteCounter": 499,
+          "initialized": true,
+          "alpha": 1
+        },
+        {
+          "id": 875,
+          "born": 3369,
+          "x": 336,
+          "y": 48,
+          "life": 502,
+          "deleteCounter": 500,
+          "initialized": false,
+          "alpha": 1
+        },
+        {
+          "id": 1426,
+          "born": 5345,
+          "x": 336,
+          "y": 48,
+          "life": 500,
+          "deleteCounter": 499,
+          "initialized": true,
+          "alpha": 1
+        },
+        {
+          "id": 1657,
+          "born": 6001,
+          "x": 336,
+          "y": 80,
+          "life": 500,
+          "deleteCounter": 499,
+          "initialized": true,
+          "alpha": 1
+        }
+      ],
+      "request": {
+        "tick": 649,
+        "full": 9,
+        "deaths": 1
+      },
+      "recovery": {
+        "tick": 653,
+        "deaths": 1,
+        "mode": "deathmatch",
+        "options": {
+          "characters": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "difficulty": "beginner",
+          "speed": 2,
+          "devils": true,
+          "collisions": false,
+          "damage": true,
+          "deathLimit": 5
+        },
+        "progression": {
+          "tick": 0,
+          "multiple": 0,
+          "multipleTicks": 100000,
+          "multipleTotal": 100000,
+          "multiplierTicks": 3.00147,
+          "multiplierTotal": 3.00147,
+          "level": {
+            "zombieRate": 50,
+            "zombieLimit": 10,
+            "zombieRemaining": 10,
+            "zombieAlive": 0,
+            "zombieCountdown": 50,
+            "devilRate": 500,
+            "devilLimit": 0,
+            "devilRemaining": 0,
+            "devilAlive": 0,
+            "devilCountdown": 500
+          }
+        },
+        "weapons": [
+          {
+            "seat": 1,
+            "caps": [
+              -1,
+              100,
+              20,
+              10,
+              20,
+              20,
+              10,
+              20,
+              10,
+              15
+            ],
+            "revisions": [
+              8,
+              0,
+              0,
+              0,
+              0,
+              53,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "seat": 2,
+            "caps": [
+              -1,
+              100,
+              20,
+              10,
+              20,
+              5,
+              10,
+              20,
+              10,
+              15
+            ],
+            "revisions": [
+              8,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "last": "5:dead"
+    },
+    "records": [
+      {
+        "id": "54b76242-cba1-44eb-8073-36f22ec1b5ed",
+        "name": "Duel 0",
+        "kills": 5,
+        "deaths": 0,
+        "wins": 1,
+        "rounds": 1
+      },
+      {
+        "id": "a10857ac-2a76-421f-8b50-ef35deb28fb2",
+        "name": "Duel 1",
+        "kills": 0,
+        "deaths": 5,
+        "wins": 0,
+        "rounds": 1
+      }
+    ],
+    "bots": [
+      {
+        "pickupId": 27,
+        "history": [
+          {
+            "tick": 207,
+            "staged": true,
+            "position": [
+              77.43999999999971,
+              46.719999999999715
+            ]
+          }
+        ]
+      },
+      {
+        "pickupId": null,
+        "history": [
+          {
+            "tick": 585,
+            "staged": true,
+            "position": [
+              242.56000000000006,
+              51.83999999999971
+            ]
+          },
+          {
+            "tick": 891,
+            "deaths": 1,
+            "position": [
+              624,
+              624
+            ]
+          },
+          {
+            "tick": 2587,
+            "deaths": 2,
+            "position": [
+              624,
+              624
+            ]
+          },
+          {
+            "tick": 3614,
+            "deaths": 3,
+            "position": [
+              624,
+              624
+            ]
+          },
+          {
+            "tick": 5310,
+            "staged": true,
+            "position": [
+              239.99999999999966,
+              45.439999999999515
+            ]
+          },
+          {
+            "tick": 5587,
+            "deaths": 4,
+            "position": [
+              624,
+              624
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": []
+  }
+}

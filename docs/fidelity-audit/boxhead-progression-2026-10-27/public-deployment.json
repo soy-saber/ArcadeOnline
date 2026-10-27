@@ -1,0 +1,26 @@
+{
+  "sourceCommit": "23b183a907fe67f2167a2648b8675d6858c2a3c2",
+  "archiveSha256": "821ee9bea4e01c212c5dfee703f521a5bcbe474b0cf3086068f440cc8a12c470",
+  "bytes": 126404106,
+  "files": 5517,
+  "remoteUpload": "/root/arcade-deploy-20261027-progression-821ee9be",
+  "previous": "/opt/arcade-online/releases/20261026183329-760017",
+  "hashes": {
+    "server.js": "262d0f56df29aa5bd22bff1cdc3e4df7fa5fd8f31eefb942386204b732380eba",
+    "public/authority/game.js": "e3fa3740ba68853fc7ca6e2e871d7a614cd9d0f0839bf72292b4a42bf7506343",
+    "runtime/authority.cjs": "26d33cbd017bbfe55fcff8a78c39fb8cfe148d33034124717ec90c03332c4ce6",
+    "public/authority-room.html": "eb649ebcc865b8b79f8a29cc4f813d4b6f66d631aabdba052a7f3b2d0c4df7a0",
+    "public/authority/style.css": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a",
+    "public/games.json": "37e8b4f9f1d4f30a8c5de635c34027eb7a08fa73df46008c70f7b74d3dc7c98e"
+  },
+  "current": "/opt/arcade-online/releases/20261027113643-990972",
+  "deployedAt": "2026-10-27T11:36:43Z",
+  "origin": "https://43.142.142.215/",
+  "verifiedAt": "2026-10-27T11:46:23.852906+00:00",
+  "publicFiles": 357,
+  "defaultTests": 473,
+  "legacyBadmintonTests": 8,
+  "deploymentTests": 5,
+  "normalInputOnly": true,
+  "scope": "Boxhead native progression, kill-chain/multiplier, drops, lazy weapon upgrades and FPS timers; all eight-game restoration remains active."
+}

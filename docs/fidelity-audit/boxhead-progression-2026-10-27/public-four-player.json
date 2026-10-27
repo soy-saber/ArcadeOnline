@@ -1,0 +1,23 @@
+{
+  "evidence": "Normal UI/input; long world arrays compacted to counts and hashes. Full capture identified by SHA256.",
+  "originalResultSha256": "ccb7288bd46a4bc6a95b530984bab4292a0fe9c0540a8261cdbda6458ad2455f",
+  "result": {
+    "results": [
+      {
+        "game": "50737-server",
+        "seats": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "names": 4,
+        "maps": 18,
+        "full": 16,
+        "delta": 31,
+        "bytes": 1162456
+      }
+    ],
+    "errors": []
+  }
+}

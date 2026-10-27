@@ -23,11 +23,16 @@ async function start(players,observer){for(const p of players)await p.click('#st
    const s=window.__authorityTest?.authority,p=s?.players[0];if(!p||s.phase!=='playing'||s.paused){keys([]);return;}if(s.peakCombo>=w.goal){w.done=true;keys([]);return;}
    const live=s.zombies.filter(z=>z.ai.collidable&&z.body.affectEnabled&&!z.body.deadFlag).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y));
    if(!p.alive||p.body.phase!=='control'||!live.length){keys([]);return;}const z=live[0],distance=Math.hypot(z.x-p.x,z.y-p.y);
-   if(p.fireAt!==w.lastFire){w.history.push({tick:s.tick,kills:p.kills,peak:s.peakCombo,hp:p.hp});w.lastFire=p.fireAt;}
+   if(p.fireAt!==w.lastFire){w.history.push({tick:s.tick,kills:p.kills,peak:s.peakCombo,hp:p.hp,x:p.x,y:p.y,weapon:p.weapon,ammo:p.ammo,nearest:distance});w.lastFire=p.fireAt;}
+
+   // Keep enough distance for the outbound input and authoritative snapshot
+   // round trip. Hysteresis avoids alternating fire/escape on each packet.
+   if(distance<96)w.fleeing=true;
+   if(distance>160)w.fleeing=false;
+   if(w.fleeing){let best=-Infinity,chosen=null;for(let d=0;d<8;d++){const ux=Math.cos(d*Math.PI/4),uy=Math.sin(d*Math.PI/4);let safe=true;for(let n=8;n<=64;n+=8){const x=p.x+ux*n,y=p.y+uy*n;if(x<48||y<80||x>map.width-48||y>map.height-48||map.collision[Math.floor(y/32)]?.[Math.floor(x/32)]!=='0'){safe=false;break;}}if(!safe)continue;const x=p.x+ux*64,y=p.y+uy*64,score=Math.min(...live.map(z=>Math.hypot(z.x-x,z.y-y)));if(score>best){best=score;chosen=d;}}if(chosen!==null){keys(dirs[chosen]);return;}}
 
    let target=null;for(let d=0;d<8;d++){const angle=d*Math.PI/4,ux=Math.cos(angle),uy=Math.sin(angle),o=offset(p,d);for(const q of live){const dx=q.x-p.x-o[0],dy=q.y-p.y-o[1],along=dx*ux+dy*uy,perp=Math.abs(dx*uy-dy*ux);if(along<8||along>230||perp>10)continue;const score=along*.2+q.hp*.05+perp;if(!target||score<target.score)target={d,score};}}
    if(target){const angle=target.d*Math.PI/4;if(Math.abs(Math.atan2(Math.sin(p.dir-angle),Math.cos(p.dir-angle)))>.01){keys(dirs[target.d]);return;}if(p.poseAction.endsWith('walk')){keys([]);return;}keys(['Space']);return;}
-   if(distance<72){let best=-Infinity,chosen=0;for(let d=0;d<8;d++){const x=p.x+Math.cos(d*Math.PI/4)*64,y=p.y+Math.sin(d*Math.PI/4)*64;if(x<48||y<96||x>map.width-48||y>map.height-48||map.collision[Math.floor(y/32)]?.[Math.floor(x/32)]!=='0')continue;const score=Math.min(...live.map(z=>Math.hypot(z.x-x,z.y-y)));if(score>best){best=score;chosen=d;}}keys(dirs[chosen]);return;}
    const aim=(Math.round(Math.atan2(z.y-p.y,z.x-p.x)/(Math.PI/4))+8)%8,angle=aim*Math.PI/4,o=offset(p,aim),error=(z.x-p.x-o[0])*Math.sin(angle)-(z.y-p.y-o[1])*Math.cos(angle),nx=Math.sin(angle)*Math.sign(error),ny=-Math.cos(angle)*Math.sign(error);
    const align=(Math.round(Math.atan2(ny,nx)/(Math.PI/4))+8)%8;keys(dirs[align]);
   },16);
