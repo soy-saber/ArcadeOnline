@@ -1,0 +1,12 @@
+{
+  "base": "https://43.142.142.215",
+  "at": "2026-10-27T15:32:06.997Z",
+  "normalInputOnly": true,
+  "networkFault": "Only the selected character PNG request was held and then delivered; no game-state mutation.",
+  "blocked": {
+    "phase": "waiting",
+    "ready": false
+  },
+  "decodedCharacterDrawn": true,
+  "errors": []
+}

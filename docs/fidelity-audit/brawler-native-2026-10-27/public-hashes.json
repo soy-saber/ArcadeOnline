@@ -1,0 +1,2154 @@
+{
+  "origin": "https://43.142.142.215",
+  "at": "2026-10-27T15:30:48.375Z",
+  "sourceCommit": "682c399584add24ebf3642e82d84f460337b77e2",
+  "archiveSha256": "ab6dd46d8682309904100f5b9fab2fae62ffdac8e74e049023b20f000d40da0a",
+  "transport": "IPv4 HTTPS HTTP/1.1 identity; two connections; 60-second inactivity timeout; at most two attempts per file",
+  "files": [
+    {
+      "file": "expanded/assets/brawler/AuberginePlayer-1.png",
+      "bytes": 1466,
+      "sha256": "6ba58b4aa988651ef47a451b1032b9345935325f2028ef9de219b78b53ea4c67"
+    },
+    {
+      "file": "expanded/assets/brawler/AuberginePlayer-2.png",
+      "bytes": 1459,
+      "sha256": "a8e51f48d06a194963612417b894a1ce6734f4577ebaadd2488e5e9e48991d8f"
+    },
+    {
+      "file": "expanded/assets/brawler/AuberginePlayer-3.png",
+      "bytes": 1407,
+      "sha256": "cb0c0c6fa683413376e5b7336c3f46cad8f41381c936aa296ce9d449cf9cf50f"
+    },
+    {
+      "file": "expanded/assets/brawler/AuberginePlayer-4.png",
+      "bytes": 1407,
+      "sha256": "cb0c0c6fa683413376e5b7336c3f46cad8f41381c936aa296ce9d449cf9cf50f"
+    },
+    {
+      "file": "expanded/assets/brawler/B52.png",
+      "bytes": 131964,
+      "sha256": "0e79093c12e7745001834017b02dcd15d14d4da941aca69a7da575ee7b7b5e23"
+    },
+    {
+      "file": "expanded/assets/brawler/B52_Background.png",
+      "bytes": 3256,
+      "sha256": "d57fb1e3e2d4375376fd8d62cb7ce5dc2cbbeaa02ad2227ab425873b527d8d39"
+    },
+    {
+      "file": "expanded/assets/brawler/CoffeePlayer-1.png",
+      "bytes": 1470,
+      "sha256": "970dc69273f651420d341067423f3c023a492b854eaead8b4ddd5c9215906595"
+    },
+    {
+      "file": "expanded/assets/brawler/CoffeePlayer-2.png",
+      "bytes": 1479,
+      "sha256": "7b534ceef1d0ebbeda6ef83dc57b25aeac536020fb244d0471f92f5bd392f96b"
+    },
+    {
+      "file": "expanded/assets/brawler/CoffeePlayer-3.png",
+      "bytes": 1413,
+      "sha256": "9053a6793d53d30f1eb8f7b79e1dbe89168f8e12fcf38d763782449106288fa6"
+    },
+    {
+      "file": "expanded/assets/brawler/CoffeePlayer-4.png",
+      "bytes": 1413,
+      "sha256": "9053a6793d53d30f1eb8f7b79e1dbe89168f8e12fcf38d763782449106288fa6"
+    },
+    {
+      "file": "expanded/assets/brawler/DefaultPlayer-1.png",
+      "bytes": 1560,
+      "sha256": "1eec0d8577282293ee03cee01b0bab1ef3cb9e760d6540ad09855c30fab0822f"
+    },
+    {
+      "file": "expanded/assets/brawler/DefaultPlayer-2.png",
+      "bytes": 1550,
+      "sha256": "e54c6fdbd0187affa8ee9d5f63968bbe2a851ef8a6cd4f550743600c53125f44"
+    },
+    {
+      "file": "expanded/assets/brawler/DefaultPlayer-3.png",
+      "bytes": 1511,
+      "sha256": "cb8f6627c7ca36d22e4830daccf366962c58b7c2eec8af0469e0e75612c8f4c2"
+    },
+    {
+      "file": "expanded/assets/brawler/DefaultPlayer-4.png",
+      "bytes": 1511,
+      "sha256": "cb8f6627c7ca36d22e4830daccf366962c58b7c2eec8af0469e0e75612c8f4c2"
+    },
+    {
+      "file": "expanded/assets/brawler/Mogadishu.png",
+      "bytes": 116093,
+      "sha256": "6c03e5ae3abe2ddbdfd11a03952f24b308cb2e1992dad569e968efcdfc28df59"
+    },
+    {
+      "file": "expanded/assets/brawler/Mogadishu_Background.png",
+      "bytes": 34429,
+      "sha256": "541466b66d3430abb03bd5dba15cf2ff34b56bd0f5f8ce487aeed872b7cde5a4"
+    },
+    {
+      "file": "expanded/assets/brawler/PeachPlayer-1.png",
+      "bytes": 1753,
+      "sha256": "9ba32679f43cc51c8f1bb9e8d60955f03aaeb9e15f468d27ca5673adef85f2c8"
+    },
+    {
+      "file": "expanded/assets/brawler/PeachPlayer-2.png",
+      "bytes": 1736,
+      "sha256": "e621db4db322504bfff260b77aa7ad8f9a94918f9d6165fc0b9279bf0b0dc423"
+    },
+    {
+      "file": "expanded/assets/brawler/PeachPlayer-3.png",
+      "bytes": 1740,
+      "sha256": "5a4b913a8f47709248ef32566ac37ddd9ff1aed84a4657c86376d674d398ccfb"
+    },
+    {
+      "file": "expanded/assets/brawler/PeachPlayer-4.png",
+      "bytes": 1740,
+      "sha256": "5a4b913a8f47709248ef32566ac37ddd9ff1aed84a4657c86376d674d398ccfb"
+    },
+    {
+      "file": "expanded/assets/brawler/Rooftop.png",
+      "bytes": 60935,
+      "sha256": "ce5827cf0ec36f7af51e3e42cafb2a64b14013a1531c1292ff1834c1dfb948ac"
+    },
+    {
+      "file": "expanded/assets/brawler/Rooftop_Background.png",
+      "bytes": 13540,
+      "sha256": "bae9a09d5a1e1c19e07e6abe19312df1a3e95c49b4ef8ebc922fd78739f4da0a"
+    },
+    {
+      "file": "expanded/assets/brawler/SBLPlayer-1.png",
+      "bytes": 1683,
+      "sha256": "3e9c7dcb66021b88a4bfe2ee2f9457428b0a659650b9ff2ee697f41d2acf79a8"
+    },
+    {
+      "file": "expanded/assets/brawler/SBLPlayer-2.png",
+      "bytes": 1690,
+      "sha256": "b181d32a3a8a5038d065b1170e09e67dcacece47e5872b1c35b47e6cd0a3253d"
+    },
+    {
+      "file": "expanded/assets/brawler/SBLPlayer-3.png",
+      "bytes": 1633,
+      "sha256": "251975bf70700bb24cd43345959b7793a2373d35f335718bca8882b7da6a7858"
+    },
+    {
+      "file": "expanded/assets/brawler/SBLPlayer-4.png",
+      "bytes": 1633,
+      "sha256": "251975bf70700bb24cd43345959b7793a2373d35f335718bca8882b7da6a7858"
+    },
+    {
+      "file": "expanded/assets/brawler/Space.png",
+      "bytes": 106622,
+      "sha256": "df6a60c8c2b2d87c310a71228fc051ab5504c04976c2463fa9b2a47fe5c70fdf"
+    },
+    {
+      "file": "expanded/assets/brawler/Space_Background.png",
+      "bytes": 57413,
+      "sha256": "cb7142aa2f82cf0a4e156bb58390c22690f4f60997c7d71e01a9f9f630f37706"
+    },
+    {
+      "file": "expanded/assets/brawler/TrashPlayer-1.png",
+      "bytes": 1821,
+      "sha256": "61c3bdfc10c7d9d57dd81c5ac2808aabe5bd1477b363c90da2c24d76c1ce9730"
+    },
+    {
+      "file": "expanded/assets/brawler/TrashPlayer-2.png",
+      "bytes": 1831,
+      "sha256": "9046a5471ba69acdf5124f1a21809dc2ba6c830870eca45aecbdff965ee67a47"
+    },
+    {
+      "file": "expanded/assets/brawler/TrashPlayer-3.png",
+      "bytes": 1729,
+      "sha256": "5a4a8f54be8f45ab6b876c4695f50d1243310d4f98c9b9333ea630f552cebfeb"
+    },
+    {
+      "file": "expanded/assets/brawler/TrashPlayer-4.png",
+      "bytes": 1729,
+      "sha256": "5a4a8f54be8f45ab6b876c4695f50d1243310d4f98c9b9333ea630f552cebfeb"
+    },
+    {
+      "file": "expanded/assets/brawler/data.json",
+      "bytes": 9268,
+      "sha256": "96441dc2f2f12e48f1ce912247ec4990611518f16e79ab2c89460c00cbfeb61f"
+    },
+    {
+      "file": "expanded/assets/brawler/native/AuberginePlayer-blue.png",
+      "bytes": 346061,
+      "sha256": "2c033405d0c8c7eedd70ae1e740e39ec6436eb24ffad531a5b55cde7df1c7a28"
+    },
+    {
+      "file": "expanded/assets/brawler/native/AuberginePlayer-green.png",
+      "bytes": 256838,
+      "sha256": "4c7a99db5bf7c6b29028fc40379c7df79e3d99ff270f53ea1264cf52ccf40229"
+    },
+    {
+      "file": "expanded/assets/brawler/native/AuberginePlayer-orange.png",
+      "bytes": 279305,
+      "sha256": "b053a128c8ccf5349a6b4fcc8d7b6005d5c061cc626132646f92d6f5b2982a39"
+    },
+    {
+      "file": "expanded/assets/brawler/native/AuberginePlayer-red.png",
+      "bytes": 258920,
+      "sha256": "f4b8e5b9486270d199d74ae69fa82a44f83d4e4c623b0e8252377522417a7d73"
+    },
+    {
+      "file": "expanded/assets/brawler/native/BoomMatter-object.png",
+      "bytes": 22396,
+      "sha256": "ad41c00fe631fa265b002eaf0f3102e8b0ca4b83d8d272ebd51e781caccdef9d"
+    },
+    {
+      "file": "expanded/assets/brawler/native/BoomStar-object.png",
+      "bytes": 98399,
+      "sha256": "c4930856c66afbb8d205c69ec31136a4ff40da2ab54ebeea9c0651af157b417c"
+    },
+    {
+      "file": "expanded/assets/brawler/native/BoomWave-object.png",
+      "bytes": 30657,
+      "sha256": "3708976120c6acad05d4f7b5c905013a686d51b44f23afe73bc6825b5c2e7fd4"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Bullet-object.png",
+      "bytes": 4449,
+      "sha256": "06905ab03a3abf71bbfb86528991d0dc6416eb3395cd2e05c1d68e6a9470b04a"
+    },
+    {
+      "file": "expanded/assets/brawler/native/CoffeePlayer-blue.png",
+      "bytes": 252282,
+      "sha256": "47505cc5e38a7991eacdd89cfaf17086b7f3468377b6a1f63e1bb536db014376"
+    },
+    {
+      "file": "expanded/assets/brawler/native/CoffeePlayer-green.png",
+      "bytes": 198868,
+      "sha256": "8ac108faaa402e7c412f3cb3c3ed315709ed81e3ebe78a7c07e4ecc599944bcc"
+    },
+    {
+      "file": "expanded/assets/brawler/native/CoffeePlayer-orange.png",
+      "bytes": 287252,
+      "sha256": "02bdc9a5f5fb87485171c901d5b3dfa90c9c33a72bd5491f51bc8c2e559c7dfb"
+    },
+    {
+      "file": "expanded/assets/brawler/native/CoffeePlayer-red.png",
+      "bytes": 204327,
+      "sha256": "4c3cc99524c76f96df1b0ba99fb5ede2191e8c05a54cd1e6bf5641beecd78860"
+    },
+    {
+      "file": "expanded/assets/brawler/native/DefaultPlayer-blue.png",
+      "bytes": 309726,
+      "sha256": "10add30944ecb9a92f2bd24dcab5ba45e3e516aa9e1b8ddccc6dc4eec21309b5"
+    },
+    {
+      "file": "expanded/assets/brawler/native/DefaultPlayer-green.png",
+      "bytes": 306217,
+      "sha256": "4356b6f98729c8d4c3561c820d37485ac461c9721d35415e2c5f7454bdd09f32"
+    },
+    {
+      "file": "expanded/assets/brawler/native/DefaultPlayer-orange.png",
+      "bytes": 302754,
+      "sha256": "70736e53b348f48b7b302ba079009e1b060c0b6d11e8d90582777199607d60cb"
+    },
+    {
+      "file": "expanded/assets/brawler/native/DefaultPlayer-red.png",
+      "bytes": 297758,
+      "sha256": "f2c225e4edbaa7c1d7e8e2394e3fcb8618944eb7f153e065292cb27c0a8594ed"
+    },
+    {
+      "file": "expanded/assets/brawler/native/EnergyBall-object.png",
+      "bytes": 11605,
+      "sha256": "754e2b4c3c102e064ead0b8f3b35f391c4b8c3d7c93a898f36962f85a7147082"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Garbage-object.png",
+      "bytes": 588,
+      "sha256": "b2bcef35ec71d6508de2f1f9a40bb14ffb92040eb0b48239cbff22039759b584"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Grenade-object.png",
+      "bytes": 404,
+      "sha256": "019d9f7628d24d52c4852d284d9478b4582f6c3634efb187784869d5412c2611"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Mine-object.png",
+      "bytes": 868,
+      "sha256": "0f973e288a89a42369ea266e6c43e89332d04329adb3f98f0ebe0c043e9d50d0"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PeachPlayer-blue.png",
+      "bytes": 322699,
+      "sha256": "47dd6dfda5bcc4a0d0b6536a011a06c656565430420d2d65cbb6d90308b7d1c2"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PeachPlayer-green.png",
+      "bytes": 237956,
+      "sha256": "c5f7a6c4478b672c0a015f00baff7dfd4923082a1e1a510f4d23a8fe22a275cf"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PeachPlayer-orange.png",
+      "bytes": 260034,
+      "sha256": "7a484838ebef69f4e2f926aea2d78d63dca660cb1a3803875a2240c5ee1e767e"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PeachPlayer-red.png",
+      "bytes": 240079,
+      "sha256": "24acd882c46686484639786d24c16e37fd9e04ad3bb8a2e89f8413ec965c4c92"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Pencil-object.png",
+      "bytes": 352,
+      "sha256": "e0bbb43232f011acffda6bf97af1ab54588cb26c7d2f7cc621539f60075af9a0"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PlayerDeath-object.png",
+      "bytes": 230428,
+      "sha256": "b34863262682c4a8ae96dc836942dda3c4519ca559eaac7ce647b377c6ad34ea"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Poop-object.png",
+      "bytes": 3957,
+      "sha256": "ee4f1873b0d4963d7d3c7b4d0dec96c9130c1aac9fe78da95c768c41631424cd"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Puff-object.png",
+      "bytes": 2746,
+      "sha256": "1c0cd7ac1dbe31574d120e98786d1e5998ee4ae3083ac418a86edd7f70d86a59"
+    },
+    {
+      "file": "expanded/assets/brawler/native/PunchDamage-object.png",
+      "bytes": 3668,
+      "sha256": "6e4bc1165c4c98cd634045d2b847dbeaa4c41349eb3a6b2a8e48b27c229b8784"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Rocket-object.png",
+      "bytes": 907,
+      "sha256": "1e61b1f46306fbb10a671abcf7ece9b1eff345eebdf8f3cc2aadc98f0a532c80"
+    },
+    {
+      "file": "expanded/assets/brawler/native/SBLPlayer-blue.png",
+      "bytes": 405319,
+      "sha256": "a60e90def4665a7ed857238154d36a2c1d48b3cfba6a9b827ca273853796ded6"
+    },
+    {
+      "file": "expanded/assets/brawler/native/SBLPlayer-green.png",
+      "bytes": 370594,
+      "sha256": "366cb0ea5d6a232429a6d633a3aae9ab41b32e96821ce84c60daca960bf104ed"
+    },
+    {
+      "file": "expanded/assets/brawler/native/SBLPlayer-orange.png",
+      "bytes": 377495,
+      "sha256": "ad91e58e49c9d838cf4d1469a1a997a5f9b87f13036f970cb9b0053ca101518e"
+    },
+    {
+      "file": "expanded/assets/brawler/native/SBLPlayer-red.png",
+      "bytes": 378440,
+      "sha256": "7a02ba59368d15e32125b4067f2b320ce3cf64ee11b667577cf237a039ec2f60"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Shield-object.png",
+      "bytes": 11825,
+      "sha256": "576da3cdf576dff64eb62a86c5eafe99ae7046fd3a4dcffc4f5a4e44ae7155c3"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Spawn1-object.png",
+      "bytes": 35436,
+      "sha256": "c0ab18c6ce9ebd7d7983d1f00b7f29663bad4a58973c1f9645362e66ecc286c9"
+    },
+    {
+      "file": "expanded/assets/brawler/native/Spawn2-object.png",
+      "bytes": 36178,
+      "sha256": "5ea837aeec56bc409b0713d74a6193b868910520772e42524ec298b2a9a8cd1b"
+    },
+    {
+      "file": "expanded/assets/brawler/native/TrashPlayer-blue.png",
+      "bytes": 230377,
+      "sha256": "7697ccfa67b8b36307eceef5adbafd1d9956cf172fcfd18b3d0f3b2bdbbb6c95"
+    },
+    {
+      "file": "expanded/assets/brawler/native/TrashPlayer-green.png",
+      "bytes": 259171,
+      "sha256": "7e4ffd36a9ed6e0c8fe32027f538d967da835ff4f4a73ab9f96540c8392d03a8"
+    },
+    {
+      "file": "expanded/assets/brawler/native/TrashPlayer-orange.png",
+      "bytes": 231673,
+      "sha256": "a940bc9d93f2f6bbaf6a07f2966a6f997e853c378d0dedf76c0d91a560a0f9dd"
+    },
+    {
+      "file": "expanded/assets/brawler/native/TrashPlayer-red.png",
+      "bytes": 200699,
+      "sha256": "cdfbe8824b831f26cdcfe4f7fca49f419940a7666c0973a8c49ef311a3b21b3e"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/B52.mp3",
+      "bytes": 119990,
+      "sha256": "d1b7edde11cdf66975dd29eada7cf3e967984ab7f9e14635809148f0c2734528"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Boom.mp3",
+      "bytes": 3016,
+      "sha256": "28c101dd688629a73ad97eff67cbe25279932521be10b48a84b4c9de278b4bd4"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Boom2.mp3",
+      "bytes": 3016,
+      "sha256": "2e3c232d2a403490ffb36da873c830512dff0b97af6242a659b186b85c677a89"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Electric.mp3",
+      "bytes": 4472,
+      "sha256": "38d4c7e4d8509719757997cace208530e28c823d2dc972aea483d683de9ab6f3"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Fart.wav",
+      "bytes": 3916,
+      "sha256": "1f2433854baaf10050850a5ae6d6d923e59283841dd4b68cbec77968731f6f7f"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Fart2.mp3",
+      "bytes": 3536,
+      "sha256": "d64013f42b342ab4afc0c92221f48c1301b62e42499ab16765cddb27ffa95617"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Headshot.mp3",
+      "bytes": 1872,
+      "sha256": "9e5de8e92b9e32e6ee172057e57779ae2c162e9bd078e96cffbbce2bf505de7c"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Helicopter.mp3",
+      "bytes": 5096,
+      "sha256": "5d03cc1812ec029b5ee6352142fac1732b757ce1b7c0c8c8d6df39f4015aca99"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/HitGround.mp3",
+      "bytes": 2288,
+      "sha256": "1dd1c997ab8a1982ce2c98715fcd7eea486ea7ad04e0e614979f7ad23fc95979"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/JetEngine.mp3",
+      "bytes": 2496,
+      "sha256": "d1a7a6584ece0450695e34520570c15b793077874e07e6e27b45997cafbb66ab"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Kamehameha.mp3",
+      "bytes": 2080,
+      "sha256": "6f3f251db7af9c770ba25a39b9b073108c7f64c003dffce811277cf120363bdc"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/MenuMusic.mp3",
+      "bytes": 374073,
+      "sha256": "34f47ec1c55ec4eb98b0bb3312ab5438d7bcb9121fb37438ee4db71d8920016c"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/MineActivate.mp3",
+      "bytes": 728,
+      "sha256": "9c30944eea9857921a356e8b6dc3883372f6e83409abd5b3ae7ca161f89b968c"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Mogadishu.mp3",
+      "bytes": 269802,
+      "sha256": "bf1f5d3cd6e874442cbbdeaf0e9410972d8688632dc7c533ca5fe318653b07d8"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/PeachGun.mp3",
+      "bytes": 2392,
+      "sha256": "b4ec46df982a7ea129c0f17839c915af7424a23743f0225e220e8feedb94d864"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/PeachRocket.wav",
+      "bytes": 15180,
+      "sha256": "efe75c4b3ba616b95f3a3469146d7a9dc858711ce523baa56a59049d2fe8ff14"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Punch1.wav",
+      "bytes": 1351,
+      "sha256": "b497235dcce1713090c2c24f7a41afd4a3b6bca2aa3423902adb15b568a825ed"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Punch2.wav",
+      "bytes": 7866,
+      "sha256": "4b41e0930b029693d1014e59880c02791d50f13c4d68fa5ebb083ed158d89f5d"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Rooftop.mp3",
+      "bytes": 311064,
+      "sha256": "ddf361c1fa72b5a22392302be99e6a38a0d57f3a3da5ef261c597f29f0954dd4"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Slap.wav",
+      "bytes": 3760,
+      "sha256": "19fbdd560a8ec18fa0414184cd31d545101dab7e8289b51cc28c4446ab08c73e"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Space.mp3",
+      "bytes": 396552,
+      "sha256": "45ae85dd3ca0c764b98fe9450f221e69868b91857927137e0ba837f65fa53be3"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Star.mp3",
+      "bytes": 172200,
+      "sha256": "d522f1f173b654cc26aabbfe487deb44ea56654cbb2bbd9a7886d775c2692f5d"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/ThrownReal.mp3",
+      "bytes": 10400,
+      "sha256": "a6286b9a5a8feebd265c4fe20f9c4c3ff04d5cea21bfe9736ac0886266e8a7ec"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Thunder.mp3",
+      "bytes": 4472,
+      "sha256": "3e1a1e85557584184a6a7702d0d6a9eb1d3e06bd637e1899a383ac54e0c71023"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/WaterSplash.mp3",
+      "bytes": 4992,
+      "sha256": "69eb28856146ea88393b665131939cbe7cf73f06e0d63e29aa9cef3db676f807"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/Woosh.mp3",
+      "bytes": 1456,
+      "sha256": "9cbccacb25c6705def79e24bbc0ae066c273a07de3c2ddccc247f9493ea7acbb"
+    },
+    {
+      "file": "expanded/assets/brawler/native/audio/provenance.json",
+      "bytes": 10420,
+      "sha256": "336c7123180ddca0f2e48f786833d6f9066ea52f5c107f72671ec83bd58edfc7"
+    },
+    {
+      "file": "expanded/assets/brawler/native/data.json",
+      "bytes": 967870,
+      "sha256": "652da74a50cff315efc8561366d0a4a4d4321ab80189d68952d872f73708ce54"
+    },
+    {
+      "file": "expanded/assets/brawler/native/objects-provenance.json",
+      "bytes": 7385,
+      "sha256": "e85d9286013261f0f1d6508eeb78f94c40d29c138740bae8f6bac0406162fbca"
+    },
+    {
+      "file": "expanded/assets/brawler/native/objects.json",
+      "bytes": 623098,
+      "sha256": "bcd57648fa5581bc4b04e8e3134f6b95475ea11d3605564a33047e4715f14508"
+    },
+    {
+      "file": "expanded/assets/brawler/native/provenance.json",
+      "bytes": 6819,
+      "sha256": "a06339a273c8ec89504c939010f91bc2d852a60a721737a01936550d067873df"
+    },
+    {
+      "file": "expanded/assets/brawler/visibility.json",
+      "bytes": 12999,
+      "sha256": "67a0a77b0d753e6896a104526cfd478d3b096f8558d502416b1453c233bce809"
+    },
+    {
+      "file": "expanded/assets/forest/CharAssets.png",
+      "bytes": 732103,
+      "sha256": "a5fe34eaacc4a336bc86da2683732f53a65bbe96007777bd64c99da31550acb4"
+    },
+    {
+      "file": "expanded/assets/forest/GroundAssets.png",
+      "bytes": 94956,
+      "sha256": "8996149477df6683cfb04a1c8ecc8b1f82997ea3c2d305e0ca678944b890ca6c"
+    },
+    {
+      "file": "expanded/assets/forest/MechAssets.png",
+      "bytes": 483809,
+      "sha256": "010c59750d767b761f753bd057982f457396f4a5ba7f51fd9bbd7205e2ea3970"
+    },
+    {
+      "file": "expanded/assets/forest/TempleAssets.png",
+      "bytes": 287591,
+      "sha256": "f60cf6b475d1ace4ad7146f62041dc285bffadd707dadcbc910c476e01b4db2b"
+    },
+    {
+      "file": "expanded/assets/forest/TempleHallForest.jpg",
+      "bytes": 426676,
+      "sha256": "8d06fef4f4a23a68380cb6c51606ecd1b03033140b7654783a372bd334ae1634"
+    },
+    {
+      "file": "expanded/assets/forest/data.json",
+      "bytes": 374230,
+      "sha256": "7e5391b51681ea3b940eea222626efa67e5a027d4f9059efa5ba2b08b25f7eaa"
+    },
+    {
+      "file": "games.json",
+      "bytes": 18190,
+      "sha256": "37e8b4f9f1d4f30a8c5de635c34027eb7a08fa73df46008c70f7b74d3dc7c98e"
+    },
+    {
+      "file": "authority/style.css",
+      "bytes": 8282,
+      "sha256": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a"
+    },
+    {
+      "file": "authority/game.js",
+      "bytes": 3732605,
+      "sha256": "c831c396c2e553a37e7801745df9fa4cefe5cb15c31999abdaf96d15ccceb957"
+    },
+    {
+      "file": "authority/assets/badminton/robot-trail.png",
+      "bytes": 1385,
+      "sha256": "921966116757b1fe2b8e1135eff35f3f969bf344060495e5879e1572c045d3fa"
+    },
+    {
+      "file": "authority/assets/badminton/p1-racket-swing.png",
+      "bytes": 58700,
+      "sha256": "53a58520e56c35f5a645df63a57bb211f514c4a33436379a1c77b114c5d2524b"
+    },
+    {
+      "file": "authority/assets/badminton/p1-racket-serve.png",
+      "bytes": 31472,
+      "sha256": "72b133db766cc64225e6269c941c5bcb65aa65495322fb3635931715e1d3fed9"
+    },
+    {
+      "file": "authority/assets/badminton/p2-racket-swing.png",
+      "bytes": 28970,
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a"
+    },
+    {
+      "file": "authority/assets/badminton/p2-racket-serve.png",
+      "bytes": 31075,
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-1-body-normal.png",
+      "bytes": 3900,
+      "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-1-body-walkforward.png",
+      "bytes": 9079,
+      "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-1-body-walkbackward.png",
+      "bytes": 9113,
+      "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-1-body-walkdown.png",
+      "bytes": 9452,
+      "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-1-body-walkup.png",
+      "bytes": 1145,
+      "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-2-body-normal.png",
+      "bytes": 4455,
+      "sha256": "b5cf73f1c5870c4ac998b0fffb25758ef1eb299f90cb968305fe49a35d26df61"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-2-body-walkforward.png",
+      "bytes": 9605,
+      "sha256": "7b07206a7d140b0a077253f5355a9c264d03fc3050bf87ef8187fd0682b0f88d"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-2-body-walkbackward.png",
+      "bytes": 9872,
+      "sha256": "b42680bfabf90298b7f6f21759a7627eff3d7f62e81e6ccff1b46c7229116206"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-2-body-walkdown.png",
+      "bytes": 10170,
+      "sha256": "2c2a96621309ca191b7cf29e1795a71b959ad7ac0d903f12bf57519f817282cd"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-2-body-walkup.png",
+      "bytes": 8796,
+      "sha256": "c2b397c8bd1aea7b122834b68c89ff22dc67842376b9e984b6c8882a57bfa3c3"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-body-normal.png",
+      "bytes": 4109,
+      "sha256": "dc07d4e4f9191773868af1aedcd1c180e012b441fa045bf6cc84453771d68a6d"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-body-walkforward.png",
+      "bytes": 8233,
+      "sha256": "45d12eecf069ff3cbdab274d09507fa2b7208d986973251bcfe6cbcdbc9a7d6f"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-body-walkbackward.png",
+      "bytes": 8293,
+      "sha256": "ad6dd8a81b31f2e1387cd31e2f433689d69c8ab73b3127e71a03485dbe5aab5a"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-body-walkdown.png",
+      "bytes": 8506,
+      "sha256": "1f058b66d6943967195da45ded5966770bb01d366ac9be44e26d1bed4b757093"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-body-walkup.png",
+      "bytes": 7582,
+      "sha256": "d4a1a1b167853bbc15e673a881930c652ddaf9d23b2ed6d053d64f73d38b7557"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-racket-swing.png",
+      "bytes": 28970,
+      "sha256": "d1f7209ec5d827119a3df21b1fff401f24c75c40d3c319850960256e61772a4a"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-3-racket-serve.png",
+      "bytes": 31075,
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-body-normal.png",
+      "bytes": 6245,
+      "sha256": "263b992cf929f304003273ab5b554a47cbfa50375261b11ff658c2471b0ef1e6"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-body-walkforward.png",
+      "bytes": 11308,
+      "sha256": "0015b2d7e9dfc337a84ee0610320ca714549e70e72254cfa9635732e1a08a62f"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-body-walkbackward.png",
+      "bytes": 11689,
+      "sha256": "cb3df7b849f6319ca429b4b3bbf2a628f07757b8d87f157f49b9a3cfa18188db"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-body-walkdown.png",
+      "bytes": 12386,
+      "sha256": "51c89afa45166bd17e7ccab0cf7878bbc42a40d578690333d4bce6258681ce86"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-body-walkup.png",
+      "bytes": 11232,
+      "sha256": "b9e59ad9facc25741d1a181d774b083a70e6729a7a035222272ff1ff60ff398a"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-racket-swing.png",
+      "bytes": 28774,
+      "sha256": "62262568560c34666e46f1f846c80d9670bdecbf37629cd84d9eb62a515c7a2c"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-4-racket-serve.png",
+      "bytes": 31075,
+      "sha256": "bdd53ca3c53a4aaeacc91707d0b6d047819ce9ca7522871eaa44fe2916bc75fd"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-5-body-normal.png",
+      "bytes": 5164,
+      "sha256": "09edfba6e6cdf7771b155cbc349cb69231d4557cb926e6f38ef2fcf633438a1e"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-5-body-walkforward.png",
+      "bytes": 10085,
+      "sha256": "0f522f80e88d724167bb5f394d565db164f3d59608ac7228f412b43142881c07"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-5-body-walkbackward.png",
+      "bytes": 10488,
+      "sha256": "20f52643ed4aa1c7802d126150d5015f3e4a79eacfd962cb370112190dee59db"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-5-body-walkdown.png",
+      "bytes": 10827,
+      "sha256": "93f108e35a06df0675dd6e8f2711f7fa8f94eae5f2429f56e3afe0ddde2fbe34"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-5-body-walkup.png",
+      "bytes": 9600,
+      "sha256": "ca34016ccf8cc9422370ebb64ba63778adc0f210814b233255ae11f75c7dbe80"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-6-body-normal.png",
+      "bytes": 3736,
+      "sha256": "3d689f57859c741acd3187ce2ad8b22a2c1d29e3a200ad3c19f050dfcfe9a036"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-6-body-walkforward.png",
+      "bytes": 6339,
+      "sha256": "8fd9e54cb01ce98e24cb873b0920a395013782cef2391d8735260008162fa254"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-6-body-walkbackward.png",
+      "bytes": 6343,
+      "sha256": "83e76dcb8673dd4897e1fdb3a065f8074e87bcb8881de1808288feb032b4c3ab"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-6-body-walkdown.png",
+      "bytes": 7176,
+      "sha256": "cb4ffcb78f8a4b0755bf8780d1f11933c1e3372ff700fb2a91c0726453b7e3b9"
+    },
+    {
+      "file": "authority/assets/badminton/cpu-6-body-walkup.png",
+      "bytes": 5490,
+      "sha256": "0e23e69162aa69b8db0608ab37b9b1af3c662cee04e3f9991f4a364f622485db"
+    },
+    {
+      "file": "authority/assets/badminton/robot-body-normal.png",
+      "bytes": 2206,
+      "sha256": "7dd68b76b7885c92f555d444896fb5a7702ce7208b9f80e4e6896bfcb1955de5"
+    },
+    {
+      "file": "authority/assets/badminton/robot-racket-swing.png",
+      "bytes": 22889,
+      "sha256": "2e0195623303edadd40455759647cc93617c81bc99906a25ecf7fbbfaa0c9ed9"
+    },
+    {
+      "file": "authority/assets/badminton/robot-racket-serve.png",
+      "bytes": 28682,
+      "sha256": "95485d88f1f6ebaacc5b1ed423909fb205bb4f15a164bda2d3c6b1d6e3c0f304"
+    },
+    {
+      "file": "authority/assets/badminton-sigh.mp3",
+      "bytes": 6968,
+      "sha256": "fbc9b0f6e7ae2449e32f1f96375be85b9b09244f47c2d73c1a04072063bf111f"
+    },
+    {
+      "file": "authority/assets/badminton-next.mp3",
+      "bytes": 2288,
+      "sha256": "21b5d4757cb21f3cb46c1dc40870a08df829d62dcbff79dc5e2e37a33186604a"
+    },
+    {
+      "file": "authority/assets/bomb1-rocket.mp3",
+      "bytes": 2496,
+      "sha256": "5bdfb1337688c2b48b2baac5f1299f88b1ca78c1bae1449c3d9e059fbe1292ab"
+    },
+    {
+      "file": "authority/assets/bomb1-grenade.mp3",
+      "bytes": 1664,
+      "sha256": "91cb39b280ec6c0178e9472348743b01dcfe21637dc2411acc3afdafce0913e7"
+    },
+    {
+      "file": "authority/assets/bomb1-mine.mp3",
+      "bytes": 7436,
+      "sha256": "98a72a089bf2441ee68f78c6842187ff31c0f9d6b1670eb903c0237ed85d8029"
+    },
+    {
+      "file": "authority/assets/bomb1-push.mp3",
+      "bytes": 1352,
+      "sha256": "7d9c05039c5998aa9ca5e3affe4f34c334947b5c23d2862aef477d401eebd687"
+    },
+    {
+      "file": "authority/assets/bomb1-complete.mp3",
+      "bytes": 47357,
+      "sha256": "774fae60c641cba14763fae5660f28239e9a8bc22529dd69df185d12aa24622b"
+    },
+    {
+      "file": "authority/assets/bomb1-failed.mp3",
+      "bytes": 49447,
+      "sha256": "2ec05450e783a4e4077606135ea33ab5b963f94d4a384f8183908422ee2dada1"
+    },
+    {
+      "file": "authority/assets/bomb1-menu.mp3",
+      "bytes": 248187,
+      "sha256": "7905a0b9a81896ff970a6413469dbf943b5a39b92cf3e73c377dac5c7f643f22"
+    },
+    {
+      "file": "authority/assets/bomb1-music1.mp3",
+      "bytes": 356647,
+      "sha256": "2710cd9b2600b1eccbbdc04b0626bea616367df937b3ee0559dbc9d26f8c8f6d"
+    },
+    {
+      "file": "authority/assets/bomb1-music2.mp3",
+      "bytes": 355811,
+      "sha256": "519120ca56b19dacdde22653f6eb36a3ffe86d5fdac7d396f1370a7af1242785"
+    },
+    {
+      "file": "authority/assets/bomb1-music3.mp3",
+      "bytes": 385486,
+      "sha256": "29343030fc049493e0ddd372ac751555adfa69121ee626b8922fab905678e88c"
+    },
+    {
+      "file": "authority/assets/bomb1-music4.mp3",
+      "bytes": 368141,
+      "sha256": "88180a304789403610279fc977005a66cecd39cbd4f0452191303bf70187ba4c"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-1.png",
+      "bytes": 2283,
+      "sha256": "f547fa5fc1d25ac1ace0eff721b395d32c5837b97b8518a9f365a054bd460f05"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-2.png",
+      "bytes": 1949,
+      "sha256": "ea8d6e627c6d8f09b3f2dde93cb97c9f8f1afee23452dedb265f37baa678554e"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-3.png",
+      "bytes": 2307,
+      "sha256": "34441cff7b8507bd79fd6d4ba1adfde6caddcdf415f2ac178765c3320fc77903"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-4.png",
+      "bytes": 2085,
+      "sha256": "7f0e83a440142fd16d659c9b98d771b1d1a3dd63f56101fd86b5ceccd1dbf2c5"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-5.png",
+      "bytes": 1744,
+      "sha256": "76c7fe52ac1b6357a52d3ded7285d7333df9c7bdb2a362c8210722ce783fe319"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-6.png",
+      "bytes": 1430,
+      "sha256": "7d8b46c820e3efcebb9d66fdb2c92d8636d9af1ab7ae0134ce336fc5a163cdd8"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-7.png",
+      "bytes": 1786,
+      "sha256": "10a32024a940a22578c601d20432654163713d1c65e3b7ba0213545d68237a32"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-8.png",
+      "bytes": 1516,
+      "sha256": "0f048239d73770a87c52041f79640d7f7fe05fd64350715e9af60a5d78acc476"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-9.png",
+      "bytes": 1995,
+      "sha256": "2e2934000042ff96118ca830130edde4a4fadcccedcf9cad3f3d85b00b52b7da"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-10.png",
+      "bytes": 1772,
+      "sha256": "7de7e324239e3aaffc8eff7022bae9596f6bffe5a1694d0732999da65b1c7183"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-11.png",
+      "bytes": 2025,
+      "sha256": "e656afb1a3cf36e0ebbe13130d4fcadf79aec8cb04bd34a440b0db26c97e2e2e"
+    },
+    {
+      "file": "authority/assets/bomb1-blast-12.png",
+      "bytes": 1816,
+      "sha256": "cb43ed9ed1285f953fc2489c00888175246957fe51d2efd2185ba13a443acd21"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/-1.wav",
+      "bytes": 44,
+      "sha256": "ae8cd4d87061de84b556826a36ea6e209689ff2bb3632b9ac121aa34a5338a6c"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/1_loadingBomb.mp3",
+      "bytes": 6003,
+      "sha256": "8c011cb71d33cf71acfe8e08f262ad34056ac0c8a4a8930cd6ebfae46b431aa7"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4087_useThrower.mp3",
+      "bytes": 10701,
+      "sha256": "80055c0ae19539d4789be951fbcbafa709ceaa0054e574a2464c6d5d8a03e305"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4088_useSinker.mp3",
+      "bytes": 12528,
+      "sha256": "ed6201eca3f919b3f67afeb859ca2e9082710f3d3274684cb64c15be3b09db11"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4089_useShotgun.mp3",
+      "bytes": 7569,
+      "sha256": "4978f4d090e92a02e498ca47f355907403cd4a5e5c3cbba19100ffc870acaff6"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4090_useNombril.mp3",
+      "bytes": 7830,
+      "sha256": "86fc6d538577c29dfb1718100f360f8f79a9e389bdaf516c22f1c740fe9fcac0"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4091_useLauncher.mp3",
+      "bytes": 12267,
+      "sha256": "a2c43214467644bdcd89a8e34e6e226d0be392bdf7682d4ec1856b2e9ed63a3d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4092_useLaserShoot.mp3",
+      "bytes": 14355,
+      "sha256": "9f070a2b515b3fec2f1cd147f75aa8781a8e8c0b0cd3995e4e0f2f46f379b87d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4093_useLaserReady.mp3",
+      "bytes": 15660,
+      "sha256": "311e70ce3f4a558f778384774d660225a9f5dd4f14af0a32ff36b0d59bd20a00"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4094_selectTouch.mp3",
+      "bytes": 5220,
+      "sha256": "ce03a37cbb78ae7556b35ab660fdc0ce9083a2d9bc71133ef96de411db72ae4f"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4095_selectPress.mp3",
+      "bytes": 7830,
+      "sha256": "aea450a4cc8e4239923577fd5ec11ae0065b93bb34a3b831182a89a750afa6c0"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4096_menuTouch.mp3",
+      "bytes": 1827,
+      "sha256": "2f4beb37fb3be44df0328c43d750432a40b01244bb8abf4c9827baca992243fd"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4097_menuPress.mp3",
+      "bytes": 6525,
+      "sha256": "f990a27e34f2d4f2be9c31c6d41ff9d8c0a3885856570831190cf4a46b390549"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4098_levelFailed.mp3",
+      "bytes": 52200,
+      "sha256": "9ddff9688e839f78ca1897a065f4458637e94ed4e15b4afbbbbc9e2e599a0baf"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4099_levelComplete.mp3",
+      "bytes": 36018,
+      "sha256": "1c6a6965422df6fa795d2f33c4c4cc6405ff1bb836ad525dc9a02e084ad963a6"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4100_InvincibilitySound.mp3",
+      "bytes": 19314,
+      "sha256": "bfc84d2ad012a3d853c502adbf0fa7166879ff8e54467c0b94443940f776ce67"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4101_getFrog.mp3",
+      "bytes": 5220,
+      "sha256": "377d73bf1bacfb79db45ed229034deaebf8698794e6cbd6ea99a32a28820197e"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4102_getCar.mp3",
+      "bytes": 5742,
+      "sha256": "7c58d6af36319741ddea174c5415c3d4398edec491595a38ed138394b43e4d27"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4103_getBulldozer.mp3",
+      "bytes": 17487,
+      "sha256": "ee962cd2131e62234958200c987f39b08ec04d5a3eaa808a7d9a78144be1c87e"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4104_eatProp.mp3",
+      "bytes": 1950,
+      "sha256": "700d2b4e25265b6360755f72c4789d7541ab6ca69a3d801940939c7c6e317f12"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4105_dead.mp3",
+      "bytes": 7569,
+      "sha256": "ecb80d006d58e094a6e9ea5eec80565cfe777efa897fe717224369e02521a352"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4106_bulldozerProp.mp3",
+      "bytes": 14355,
+      "sha256": "9b696ea6c781f73595ac934f881a48e0ef77a3128518b96fdee52566a8c9d10f"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4107_bomb.mp3",
+      "bytes": 14094,
+      "sha256": "b12fa3f4b6cb10ec673cf32c51507dc9c32afb697ae7af04dbc2184881777807"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4108_addTeleBomb.mp3",
+      "bytes": 1300,
+      "sha256": "1e82b25651ae10e1c271585ba3281165f8c337c749cd111272d895e2b325d92d"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4109_addMineBomb.mp3",
+      "bytes": 6003,
+      "sha256": "f125fa5e1b289ef94f530518c5464633572dddb5be4900e9f16ab46af2d16c3b"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4110_addBomb.mp3",
+      "bytes": 2610,
+      "sha256": "fdcfa687319b2e579a914c27192971b67966dea0581a3b29674526cc4629ec21"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4111_gameMusic_4.mp3",
+      "bytes": 639711,
+      "sha256": "03b7e690f85f44617f33c044ee0b2372125eb0e8914641b2c54a68e4a6db2420"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4112_gameMusic_3.mp3",
+      "bytes": 576027,
+      "sha256": "e24717278ab2c556e4fc8d4392282ad5a75c73d81b3e883e7173335067bc4bb2"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4113_gameMusic_2.mp3",
+      "bytes": 619353,
+      "sha256": "42b2f5f7c1081d1b777120cc71e3025ce83f28f3dc6354e544a4465faa9e41df"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4114_gameMusic_1.mp3",
+      "bytes": 576027,
+      "sha256": "ae9b3e21a4331299370add8868bbe6dafe2e3672e5f08dc02cb8ae65c4cb5bdb"
+    },
+    {
+      "file": "expanded/assets/bomb2/original/sounds/4115_uiMusic.mp3",
+      "bytes": 324945,
+      "sha256": "9d73d0d65c7fdc3127d5401872539c80da8103c9fd597c5a6c1b5738818d7531"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-normal.png",
+      "bytes": 16322,
+      "sha256": "359d580be71e7cf6e2fcecb899b3fa64f04af0be4a04d5fee4458f9fdfbd0d3b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-remote.png",
+      "bytes": 23738,
+      "sha256": "225e15e513e764627684c4d75d18f5db180ebe75aa59b06372baf180c4b6de7a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-bomb-mine.png",
+      "bytes": 2899,
+      "sha256": "5a18250532a30c7a053dbdac233011a042027079fe3126afeaa1d673390f943b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-flame-center.png",
+      "bytes": 20764,
+      "sha256": "3d9c5b1e98722bdfad747b09eaf386763c6eeeb771b71512ee2c1c7557d18b1b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-flame-middle.png",
+      "bytes": 1403,
+      "sha256": "f8f51df6ada1e8fb8b03dc0180ebc48d8f0698ea55cebd50975c6dd994c81107"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-flame-end.png",
+      "bytes": 4879,
+      "sha256": "3f2e31339643e216795393a2a2b524b176bbedf10e461060aba20e1379c1f862"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-flame-mine-center.png",
+      "bytes": 48204,
+      "sha256": "e90d7d8ce1cf1f390509b55092d186d89c7f4b61186e3fcabf76539b1ca7cfe2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-0-left.png",
+      "bytes": 29222,
+      "sha256": "6d070c3a2b102d414f7d6513be90bb0120cae7ebb6893c6b27cabca1bd973a05"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-0-up.png",
+      "bytes": 28704,
+      "sha256": "7c0ab8083c92d0a8fe77cc9523a9e974e78235ffd596d005d98a7d6f43672556"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-0-right.png",
+      "bytes": 27447,
+      "sha256": "3530c556d131f45e58add43f28e76f35224092a4ba9e7df6f80f99a1bb3b73c7"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-0-down.png",
+      "bytes": 39257,
+      "sha256": "e95c912346e6d43c53cfd194bff93882c3eb1edf79f848cd77492e82d767d26b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-1-left.png",
+      "bytes": 31970,
+      "sha256": "ef099de4c45a30ff5b3be21678f49e6d6d8152c074e8a59d13d8ffffd16f76fe"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-1-up.png",
+      "bytes": 28915,
+      "sha256": "34aa037314511bd23d952ac044a2d6047c2ff0caa62588f698d8aa7410cb696e"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-1-right.png",
+      "bytes": 34012,
+      "sha256": "180e86b02610ada8895301a713737fa1beb58bce198950dd0f3eca89d973b114"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-1-down.png",
+      "bytes": 41295,
+      "sha256": "12d5842012cd88475605194089ace026814b76427aa938e6de88a894a889c917"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-2-left.png",
+      "bytes": 34539,
+      "sha256": "7be562e6b1f3daf0c22b8a2822f2daa99299b6d114c9436dd7743a7f48711e91"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-2-up.png",
+      "bytes": 34314,
+      "sha256": "c533c940a96f431a7605947972747d03a00e4425574b001b0677dcdd79bf6fda"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-2-right.png",
+      "bytes": 34470,
+      "sha256": "7d97f1511a61cf95481cb231110b9e404e4c6c049941de4941f5735843de3f83"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-2-down.png",
+      "bytes": 41654,
+      "sha256": "b18d07e951488d0d74eb964cd66671fa8ea2bd4ac691601a50abc3c45b0dc35a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-3-left.png",
+      "bytes": 31400,
+      "sha256": "d4ed0c6503170844d939472170d263d7bcc48e0dc0fa2351c321b953ccbf5f04"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-3-up.png",
+      "bytes": 34922,
+      "sha256": "8ef03a2c34e54d9a5659118a953466d5b326e577e2e323b0f84889b74847c7e5"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-3-right.png",
+      "bytes": 31752,
+      "sha256": "b8adf284ed77d1505fe86ec0308d9efc7c78629a021355b1e404c32f3af41826"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-jump-3-down.png",
+      "bytes": 47768,
+      "sha256": "fd4b14584197a3fd1718e0eb5605463e114e0a443589bdc7d28ecdcdcab529bb"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-sand-light-1.png",
+      "bytes": 4965,
+      "sha256": "ab35435538736ed30a7177985304623908b52dda862e16a5d4858c6a521103d5"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-sand-light-2.png",
+      "bytes": 4720,
+      "sha256": "cb4dd3e3e7ef0d84a3228da7557d3398743993d64eebc61c0000b5740c672895"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-sand-base-1.png",
+      "bytes": 102378,
+      "sha256": "ec61aff658154b840ba545945a4c4f8655a213d9b55f88b965703c3486b9dc2b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-sand-base-2.png",
+      "bytes": 108174,
+      "sha256": "7403ebe446efc33d0fbbfb998f9b39dbdcc598d40a5f5b6a1dd07e827e9fd70f"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-car-left.png",
+      "bytes": 41388,
+      "sha256": "5803e81c66594537c4eedf4058ade860ff63af7e89d8dd109c0cf04eb7a9dca3"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-car-up.png",
+      "bytes": 32020,
+      "sha256": "2fcf12571aa261f68766f99944e7f239f23dafc82966e3d5a09c2f46887703e9"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-car-right.png",
+      "bytes": 40074,
+      "sha256": "c4e361bc27d7b81b0104d4338f2113e657379e07070aba57b93e8e6b3d44288c"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-car-down.png",
+      "bytes": 41093,
+      "sha256": "3454a96ac7c93e407e502113b5f7d8026002934274c4cd1d7a685c08d0f272ee"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-bulldozer-left.png",
+      "bytes": 56917,
+      "sha256": "d5a6479f9340a33d1547e81eb45523b426bf0991b3317b6c3751e1edcdae93c7"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-bulldozer-up.png",
+      "bytes": 35481,
+      "sha256": "fcee6fdc72abba1a083d2df166a61f2c4eb7d6c3da7c5150746ffac3fa035ce2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-bulldozer-right.png",
+      "bytes": 57422,
+      "sha256": "f65dc4cca822fc9f08ffa9c0356f410efec6b137780cf515d314e9b5f2ee353c"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-bulldozer-down.png",
+      "bytes": 45405,
+      "sha256": "5649c83402e46d9fadeb4dcc5ed86511d68200ab19d283806e2e96f9fd271f8f"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-frog-left.png",
+      "bytes": 130525,
+      "sha256": "21a75e8baaa9b19c29a7fbe0edd1e87309042b75a005c92b667c81d48f483a24"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-frog-up.png",
+      "bytes": 90940,
+      "sha256": "10a2016e538d8a36af9b4f2a0c0187ec4d9a3e418bd4d44e75700d240bc6cde9"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-frog-right.png",
+      "bytes": 136942,
+      "sha256": "0775390a117a85b4ff46b26c6fa52b4dc8595678df5336c06f442516dd18a953"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-0-frog-down.png",
+      "bytes": 115328,
+      "sha256": "aac9ee591b13045df35b20747de15e663f890818d24caa8fb663af871a601105"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-car-left.png",
+      "bytes": 48797,
+      "sha256": "aade513619c48551dfeff1b538b5d9878797583d78418dec0a6d7c6ad6e7c0da"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-car-up.png",
+      "bytes": 34672,
+      "sha256": "88b74e7c693d6c2bd8ae5d95d7bb57940ea9ea26fad0db2cb9c752f02d56112a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-car-right.png",
+      "bytes": 51212,
+      "sha256": "e10c42a9c8e2cdfb1f395aa9d88a622e6a61c47e85f420a1957bae6e78348d40"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-car-down.png",
+      "bytes": 43118,
+      "sha256": "9f219012f4e2dbd43a7903d5a62a0c550cbd8b0bfdf21800c1bf2fbfb3e21e92"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-bulldozer-left.png",
+      "bytes": 61926,
+      "sha256": "6c01437260bf77fa855f6a87689b7389e8f59d9c37354837163c88563fee5f33"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-bulldozer-up.png",
+      "bytes": 37877,
+      "sha256": "7efef2d343ec62a9cbcdf2c76c71f71fdb17d46473e1d162fe56b045ea6eab0d"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-bulldozer-right.png",
+      "bytes": 64317,
+      "sha256": "c3a5c2de0dde8e971c806c0c0149791324ec099e63bae5508c41c66b88cc69b8"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-bulldozer-down.png",
+      "bytes": 47913,
+      "sha256": "32fda20255602fb23637ca2fd2c8f6e755c000308c5a8185dbeaa2ae1c6f7a82"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-frog-left.png",
+      "bytes": 160403,
+      "sha256": "2233daf2d4138a39583bba0fcb490e9f30f053f5fdeb69ad9a3194d4563aa127"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-frog-up.png",
+      "bytes": 79447,
+      "sha256": "f0c63b639b1f448c457100cd17f79a380dd44b4c89cf46a6fd6f688b599fec18"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-frog-right.png",
+      "bytes": 128845,
+      "sha256": "9d778cb67effce1550edb751096d61255e7968a067081f4c663c8b72408acde4"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-1-frog-down.png",
+      "bytes": 94794,
+      "sha256": "54f0e1a81d180c038f44fbf090adc2150701fb9862aeb2acab31de3b66a31c6b"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-car-left.png",
+      "bytes": 55820,
+      "sha256": "d919831654437110ef0b19994a8d792d957f837171e280610bfa11996f6de89a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-car-up.png",
+      "bytes": 37767,
+      "sha256": "4d93880afb10a3944cfc9705d5e49e07a266258a502bd845c3f53650ce0fe41d"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-car-right.png",
+      "bytes": 50937,
+      "sha256": "f057869f3eabed4ad3b10400b4c2914917b9be3f052cb3b6580a65b4b7031639"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-car-down.png",
+      "bytes": 47721,
+      "sha256": "857feb4c6b71010f12ba0e52ba2959f578b229fbdf4297bdef534f99982e5ad4"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-bulldozer-left.png",
+      "bytes": 63759,
+      "sha256": "661508c20c633a54cd0763503224b7c00d06d27d68ab719a7bfcbcc7b0ad1cb2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-bulldozer-up.png",
+      "bytes": 37901,
+      "sha256": "804968ed3442111d13247a5542b7f5d7a15d65127b081fffa45e3bea30fbdc8c"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-bulldozer-right.png",
+      "bytes": 61000,
+      "sha256": "5f336fd46835f10081890c3fae44bd14fb589f8030fefe19199f669878c586a2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-bulldozer-down.png",
+      "bytes": 47094,
+      "sha256": "a202184b8e73d40a209b99f9e55ef2dda63e90b87b9077445c0c9f79f46b3acc"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-frog-left.png",
+      "bytes": 139585,
+      "sha256": "4c104016261ccfb72c2e75f78ae81e6c778c8da5ce7cc60e9c007f06c9be790a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-frog-up.png",
+      "bytes": 87621,
+      "sha256": "cf677bce945d73498fd549bd955e22b896e732c4f1684d2d6961871a46e410a2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-frog-right.png",
+      "bytes": 115834,
+      "sha256": "ba0d9c15bdaf30de5ef1fc495c99bc5960062c2239c4d362c6e588eca20ee1e2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-2-frog-down.png",
+      "bytes": 83917,
+      "sha256": "56026b3f8d23158d801c52cb96d1dda8f5aeec6f86dfbcd0b0777227c0bad07c"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-car-left.png",
+      "bytes": 52710,
+      "sha256": "a8b2549e4db8c65ff18b21a18105c1932d4bd02d02bad790afb6b6d05beb849e"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-car-up.png",
+      "bytes": 38032,
+      "sha256": "d44018db365cf744b01d43373ec4a5bedc35ae1e7abcccf4e9b99e41dc0d921f"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-car-right.png",
+      "bytes": 50406,
+      "sha256": "6cfbdc8b4c987d5d1a08f99a4a9dc0de56f6e5287890bae37594f9740462d06a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-car-down.png",
+      "bytes": 47232,
+      "sha256": "43a210a0eca28c7ae3c813a7c805a75c2d67153d6ea06abe4ea3f81671ed3977"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-bulldozer-left.png",
+      "bytes": 61775,
+      "sha256": "ebecaf03dbd5bdd72cda5e17140b2c670349f30761310d4e23d010e0c00369b9"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-bulldozer-up.png",
+      "bytes": 42460,
+      "sha256": "5090210ac68181ef8c0723590be12c03c506574c7743e4c44e98beac3491d2f9"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-bulldozer-right.png",
+      "bytes": 61910,
+      "sha256": "11619dfb1a836e77ec5fe9a19b2ecfa15d1997fc44644538a9939e2bab78e6b1"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-bulldozer-down.png",
+      "bytes": 51769,
+      "sha256": "dad24f61326eca4b6848d6a03f981c13fe43434eaae0da66ca58a27bd3b0d7cb"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-frog-left.png",
+      "bytes": 134567,
+      "sha256": "9622f103a6cf4ae62316ed6d73152def30df72e6936545f7a6a9d6ac01a3a228"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-frog-up.png",
+      "bytes": 91841,
+      "sha256": "d15e6efc5856d842ae7a343117e1843f291d94592ce82f9a1ce5808baf9c07c0"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-frog-right.png",
+      "bytes": 139910,
+      "sha256": "2d904dfacc3a9e10363b90f3e247ad8ad252861f59cf2cce0afe0d57a28a5050"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-vehicle-3-frog-down.png",
+      "bytes": 88436,
+      "sha256": "b088511b58dd08f77172a2b4df8d56d6d74b0316b7d26788305b83ca18b8ec09"
+    },
+    {
+      "file": "expanded/assets/bomb2/brick-burst.png",
+      "bytes": 5201,
+      "sha256": "a9018a59415102703496ac85a2e15bd605e6bb184107c0b9f72025e8a6e15cf3"
+    },
+    {
+      "file": "authority/assets/bomb1-restoration.json",
+      "bytes": 4812,
+      "sha256": "041defb50dc77074c514a02bf6e98ab739baf3920ed0548ee9c988e503cba621"
+    },
+    {
+      "file": "expanded/assets/bomb2/manifest.json",
+      "bytes": 903082,
+      "sha256": "000f439abb725bf6e4fcbf04fa004df1f5e0b75a1b38f6f0d2c00d3752a8fc56"
+    },
+    {
+      "file": "authority-room.html",
+      "bytes": 8833,
+      "sha256": "6bca432dc9a549f25addf9ebd12a9b56d15a0a58d3c940f34bdaf3b4d813cd0d"
+    },
+    {
+      "file": "authority/assets/badminton/court.png",
+      "bytes": 434502,
+      "sha256": "173097347ef4cb430a99471f6a0b332868d0221740debdf77b2aaea367b95952"
+    },
+    {
+      "file": "authority/assets/badminton/net.png",
+      "bytes": 10008,
+      "sha256": "89cd33ad99a18bbb7da550a80b9bee86c843b590c1962f37765a138e32baad09"
+    },
+    {
+      "file": "authority/assets/badminton/bird-glow.png",
+      "bytes": 1004,
+      "sha256": "13277ed8d69da54c381a5b42821be2433a27bfce2b2eb76d63ed85f70e38a6ee"
+    },
+    {
+      "file": "authority/assets/badminton/bird-shadow.png",
+      "bytes": 456,
+      "sha256": "df89759ccfce4e1f568b48b647a38fbc550a93a83138e257c40fe05961cb5416"
+    },
+    {
+      "file": "authority/assets/badminton/trail.png",
+      "bytes": 169,
+      "sha256": "c4582daed7b2da895a48fa052421b2126bcfb8f6a8dd0409775a87d20b381f65"
+    },
+    {
+      "file": "authority/assets/badminton/p1-body-normal.png",
+      "bytes": 4156,
+      "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50"
+    },
+    {
+      "file": "authority/assets/badminton/p1-body-walkbackward.png",
+      "bytes": 9276,
+      "sha256": "c18b3788ea7c20a6558eb40127178717d6023e1b11c911475057ab18eca1f15d"
+    },
+    {
+      "file": "authority/assets/badminton/p1-body-walkforward.png",
+      "bytes": 8436,
+      "sha256": "8e3b2b24371d98dc2b3cb0634503b75be6d6b9c9aec7b1b885fd2451be8a10bb"
+    },
+    {
+      "file": "authority/assets/badminton/p1-body-walkup.png",
+      "bytes": 11562,
+      "sha256": "dcc22d8d0e0634fb08bacab71e1fe4f575f56099c7f4607872e7d3f55fa0b2b9"
+    },
+    {
+      "file": "authority/assets/badminton/p1-body-walkdown.png",
+      "bytes": 4156,
+      "sha256": "2e7bee1f2663e244a87be2d11ed58e32460ec1725ddd926de34a5a7fbb699d50"
+    },
+    {
+      "file": "authority/assets/badminton/p2-body-normal.png",
+      "bytes": 3900,
+      "sha256": "dd1c7cfb479eea2d681bef456fe493c092f460307431154f72ec771406c299ff"
+    },
+    {
+      "file": "authority/assets/badminton/p2-body-walkforward.png",
+      "bytes": 9079,
+      "sha256": "d17ad522aeda988b12cd9de57add1a197ac24d86561b2114e3b99658d2827580"
+    },
+    {
+      "file": "authority/assets/badminton/p2-body-walkbackward.png",
+      "bytes": 9113,
+      "sha256": "ee46f35d3751f10183531d652e14c1c8151ee2862d4244e9d264cefb2b25bf49"
+    },
+    {
+      "file": "authority/assets/badminton/p2-body-walkdown.png",
+      "bytes": 9452,
+      "sha256": "28393e2934e9d5052d50b0c9148234bdcd6b2cdd0038535fa1ced686b2df5cf8"
+    },
+    {
+      "file": "authority/assets/badminton/p2-body-walkup.png",
+      "bytes": 1145,
+      "sha256": "a1cf92afaa629cadf6e0a622b32546be5c2ac8a92448327e58c2357ddacd32d7"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-01.png",
+      "bytes": 1245,
+      "sha256": "34dd9afbed0f68aee9e57287acd780256419e327de387fc117aeff515e5dc55e"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-02.png",
+      "bytes": 1245,
+      "sha256": "34dd9afbed0f68aee9e57287acd780256419e327de387fc117aeff515e5dc55e"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-03.png",
+      "bytes": 1265,
+      "sha256": "452e6fb661064d487ccc06c269c1664d92121f68681b71eae819b87249d1775e"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-04.png",
+      "bytes": 1263,
+      "sha256": "3f56224b7bf8983375eb224219bba6597f808a4c89764ce1664638ae6cb4f936"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-05.png",
+      "bytes": 1269,
+      "sha256": "74d46370442f06b9ca4ffe15727079a4953b8efd8e27c12d65b81f452351ead7"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-06.png",
+      "bytes": 1233,
+      "sha256": "d9c1176215c402d92d5eb57844f961144005a1c2cc26e5eb4599bed182634364"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-07.png",
+      "bytes": 1180,
+      "sha256": "3b773ca38775b5b5787cc090d0f9824395a0459111844a1ee8c5e788d8c3886e"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-08.png",
+      "bytes": 1021,
+      "sha256": "842a84f80edd73edc33165f849e29a2bb0813a04d852a80d125cb95685e1ac68"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-09.png",
+      "bytes": 967,
+      "sha256": "7415587a31f772cc99ce24404587a960a7e3a6aa9f417b9540cbab3964d4c2e1"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-10.png",
+      "bytes": 1096,
+      "sha256": "8aed41773914c42c1276cdfc6d12e99195d84891b70b97f62d2e0d27ab333a66"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-11.png",
+      "bytes": 1230,
+      "sha256": "deb42a20ef944e0b55eba368127c29df376d1df9e80da5fa8c44b913141e554c"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-12.png",
+      "bytes": 1258,
+      "sha256": "085f083bdc86ab63beb3d5a9c9a5427cddeca847eb80c146862d76bedda93fcd"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-13.png",
+      "bytes": 1112,
+      "sha256": "f56599d15485d94b533ed49cbaa452943eb6a362e6c261f57b5352d74095cf83"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-14.png",
+      "bytes": 1243,
+      "sha256": "a324b98bff2e6653e7eef24c20830f940c446ae39fd5cd36a6523762381833b1"
+    },
+    {
+      "file": "authority/assets/badminton/p1-swing-15.png",
+      "bytes": 1245,
+      "sha256": "34dd9afbed0f68aee9e57287acd780256419e327de387fc117aeff515e5dc55e"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-01.png",
+      "bytes": 1269,
+      "sha256": "0e1d06c7ffef5fd91558294c789a4e2f9c296667dc1b5fb10194b7fc247e97a1"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-02.png",
+      "bytes": 1025,
+      "sha256": "e81ea24119f2082762b438594e281262b3710d3d023a382a24d414d4240cfaee"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-03.png",
+      "bytes": 1180,
+      "sha256": "ea4f4298b3478e703d4579e699e2da898729c8f912d328ebf8a9f9b9114fcb6b"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-04.png",
+      "bytes": 1333,
+      "sha256": "bc11f1ddc588821962c3a8e5cdb47ce73b426eeefeb3c1d8b8f1cf25da95ad3a"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-05.png",
+      "bytes": 1231,
+      "sha256": "61806fb2339144a02fad702d325040daa643b23c8887dfb9eb841cc75e00e7b6"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-06.png",
+      "bytes": 1310,
+      "sha256": "24f6f8ab33c069efed6ab1e4eb6cf688149bc9a2291e03f8f6a03c9e8f84c384"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-07.png",
+      "bytes": 1169,
+      "sha256": "3ed18c1e97aa68dedaa0c51c44203f2449246d361fdda876f2e31e2254cf9161"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-08.png",
+      "bytes": 1063,
+      "sha256": "642b9bae33532903f5c7c600935c6ca7ea5701a7541ebbd74a1103a4689c32e1"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-09.png",
+      "bytes": 1197,
+      "sha256": "9f986fb91f23572d3d67d23d140ca1379d0b326440e0e05035a01286a4cd8cf3"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-10.png",
+      "bytes": 1315,
+      "sha256": "10ca368793559366b227bcc6d82d8acb32205918c3d27bd78f287e5a76845a2b"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-11.png",
+      "bytes": 1271,
+      "sha256": "f7eeb5a241bcef8f9b41276ef88f3305f3911dd302d70178f0eeadfd53870f15"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-12.png",
+      "bytes": 1274,
+      "sha256": "715edabb1c8c8ce10225168d6251d1ad45129e94b8420a112caed669455d5eeb"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-13.png",
+      "bytes": 977,
+      "sha256": "57a2a65e6cef692a714e4807a3e03bae1583115a90b742271f52c39c99d0a78d"
+    },
+    {
+      "file": "authority/assets/badminton/p1-underhand-14.png",
+      "bytes": 1238,
+      "sha256": "b6bbc829576b957bb7a723ce4804eda4ec491c4427021f8be2da22780dda3e6d"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-01.png",
+      "bytes": 1186,
+      "sha256": "f4ef3690dd395fa83647d62d7f7d54ad6337de1e7e0c4e3f30b62ebece5881f2"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-02.png",
+      "bytes": 1186,
+      "sha256": "f4ef3690dd395fa83647d62d7f7d54ad6337de1e7e0c4e3f30b62ebece5881f2"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-03.png",
+      "bytes": 1236,
+      "sha256": "f282ce1544f3f309de2b5dfa5693b25ad66122bc97f991a09b755d38b7d2912f"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-04.png",
+      "bytes": 1202,
+      "sha256": "548a1b708948adfdb3001cf5543842ab51443b6d9d578905ec2b74805e7ad0b1"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-05.png",
+      "bytes": 1267,
+      "sha256": "8054425db491d324deebab3490ad85bd90e81eac1ba208f17ffab98492b6bc6d"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-06.png",
+      "bytes": 1206,
+      "sha256": "e354d4fe0bbe09f0d4885d1b43855e2cfaed8ae45a04bba936af87d3882a784e"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-07.png",
+      "bytes": 1140,
+      "sha256": "4963382df2c180d7e17640e9243e426e913a88f2615698952875bed9b1fb5b5d"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-08.png",
+      "bytes": 979,
+      "sha256": "207a21dfe00d7230f913292987b865d44de952c152fdade77564628d46ba6ef5"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-09.png",
+      "bytes": 940,
+      "sha256": "09231ef83a80c093426cb230b3ae58b8b290cfa34da2a0c034742630f3ccc8fa"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-10.png",
+      "bytes": 1053,
+      "sha256": "8fd4276f22bb6c1e06f4c516eac81335c1be0a39255397035bbd0a033ab6cc64"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-11.png",
+      "bytes": 1162,
+      "sha256": "390a5fe199e674bd44af125a0fd130741a6f2b61a1422c0b9fabb66d14925f6f"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-12.png",
+      "bytes": 1229,
+      "sha256": "de99a4e586de0e0cce26c5ee1574c105d5e5814cf568fca7d90fa50998f0c1af"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-13.png",
+      "bytes": 1242,
+      "sha256": "667e2d8f8ea3ee0b960cde115a3703c11f5ea35b2ddbca7fe22bb4302159e6ee"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-14.png",
+      "bytes": 1046,
+      "sha256": "333e3e2ec29770e4f843c7a7d4b77e85fac6b504675d55b727952ef59ea1073b"
+    },
+    {
+      "file": "authority/assets/badminton/p2-swing-15.png",
+      "bytes": 1186,
+      "sha256": "f4ef3690dd395fa83647d62d7f7d54ad6337de1e7e0c4e3f30b62ebece5881f2"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-01.png",
+      "bytes": 2675,
+      "sha256": "50510a7b252c9e53e3986646687f9562b94e0eca7318d38e6f09e11980ae141a"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-02.png",
+      "bytes": 2717,
+      "sha256": "bf174e0b07405863da3d8192b0d56736a4ce8189f549851a8dc9663c568b7359"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-03.png",
+      "bytes": 2732,
+      "sha256": "c1558c575fc644fea94171f5c1742d9e652880ce984c427cfcb3c01fe7af937c"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-04.png",
+      "bytes": 1337,
+      "sha256": "469f89e7ac1dc56ee7c32bba8227b41486be7d64c5eb5d62d94b31ddcd07c06a"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-05.png",
+      "bytes": 1429,
+      "sha256": "d567d63b09b3dcbed9d45e5086e3bb7ca5ff7a0df5ad137ba055dd2713d9f4e1"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-06.png",
+      "bytes": 1285,
+      "sha256": "08a6c983810c2eb16852ec98406cdd274190ea936c08136c1a61209ea67e9c15"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-07.png",
+      "bytes": 1295,
+      "sha256": "6f312a340d2058811db1e2ab1ace6a45999feaeb6894c5afcac5f71e93686e7f"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-08.png",
+      "bytes": 1087,
+      "sha256": "a4541414be5de82dc61f223b365508d34b65944d82ae3c384fa0f5ee31debcdd"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-09.png",
+      "bytes": 1225,
+      "sha256": "23c860fbde67375a4f1943a7f6fb4dfb49defd197f7425aa5e764445e01a12fe"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-10.png",
+      "bytes": 1329,
+      "sha256": "63f5310db6efde2663baa2d6f1efc61b8cb85434b926878ba802fac54969adca"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-11.png",
+      "bytes": 1338,
+      "sha256": "032879170705efc7ebe1bc4e8b0b668fa32029274434b56a55c97500d57c869b"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-12.png",
+      "bytes": 1320,
+      "sha256": "2d230fe723eebd24bbba2c25e5651b6dd41f5be5c43cdf3d8d650c15ef1ff7b8"
+    },
+    {
+      "file": "authority/assets/badminton/p1-serve-13.png",
+      "bytes": 1319,
+      "sha256": "e8d01e03ccf742487389968fa6450067df30a30141680a0d4eccac8165424a51"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-01.png",
+      "bytes": 2675,
+      "sha256": "50510a7b252c9e53e3986646687f9562b94e0eca7318d38e6f09e11980ae141a"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-02.png",
+      "bytes": 2717,
+      "sha256": "bf174e0b07405863da3d8192b0d56736a4ce8189f549851a8dc9663c568b7359"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-03.png",
+      "bytes": 2732,
+      "sha256": "c1558c575fc644fea94171f5c1742d9e652880ce984c427cfcb3c01fe7af937c"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-04.png",
+      "bytes": 1337,
+      "sha256": "469f89e7ac1dc56ee7c32bba8227b41486be7d64c5eb5d62d94b31ddcd07c06a"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-05.png",
+      "bytes": 1429,
+      "sha256": "d567d63b09b3dcbed9d45e5086e3bb7ca5ff7a0df5ad137ba055dd2713d9f4e1"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-06.png",
+      "bytes": 1285,
+      "sha256": "08a6c983810c2eb16852ec98406cdd274190ea936c08136c1a61209ea67e9c15"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-07.png",
+      "bytes": 1295,
+      "sha256": "6f312a340d2058811db1e2ab1ace6a45999feaeb6894c5afcac5f71e93686e7f"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-08.png",
+      "bytes": 1087,
+      "sha256": "a4541414be5de82dc61f223b365508d34b65944d82ae3c384fa0f5ee31debcdd"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-09.png",
+      "bytes": 1225,
+      "sha256": "23c860fbde67375a4f1943a7f6fb4dfb49defd197f7425aa5e764445e01a12fe"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-10.png",
+      "bytes": 1329,
+      "sha256": "63f5310db6efde2663baa2d6f1efc61b8cb85434b926878ba802fac54969adca"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-11.png",
+      "bytes": 1338,
+      "sha256": "032879170705efc7ebe1bc4e8b0b668fa32029274434b56a55c97500d57c869b"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-12.png",
+      "bytes": 1320,
+      "sha256": "2d230fe723eebd24bbba2c25e5651b6dd41f5be5c43cdf3d8d650c15ef1ff7b8"
+    },
+    {
+      "file": "authority/assets/badminton/p2-serve-13.png",
+      "bytes": 1319,
+      "sha256": "e8d01e03ccf742487389968fa6450067df30a30141680a0d4eccac8165424a51"
+    },
+    {
+      "file": "expanded/assets/boxhead/shot-rocket.png",
+      "bytes": 4115,
+      "sha256": "83d445931a77448f2e52d2bf20cce42fa5c38fa8cfd62f779a5386eb5613aad8"
+    },
+    {
+      "file": "expanded/assets/boxhead/effect-bullethit.png",
+      "bytes": 5137,
+      "sha256": "79dbaca1754b673a1fd2c87dc406368168fa59a6a9ca93c3bc9d7536a233cec8"
+    },
+    {
+      "file": "expanded/assets/boxhead/effect-rocketsmoke.png",
+      "bytes": 20078,
+      "sha256": "f693ad35dd36a54bad1c939900430ac7785ccdbf6c9141aa395ca24ad296810d"
+    },
+    {
+      "file": "expanded/assets/boxhead/provenance.json",
+      "bytes": 1522,
+      "sha256": "006d01b358ca8f0a6daa2daa6dbcfc4c5753afad5495ccc798c714c9eb857d76"
+    },
+    {
+      "file": "expanded/assets/boxhead/effect-fireball.png",
+      "bytes": 12877,
+      "sha256": "de481292c939d48c8c3015fbbcdf71fe12e33fedcfab8477d582edc6e5d05a1b"
+    },
+    {
+      "file": "expanded/assets/boxhead/swat-hitfront.png",
+      "bytes": 36729,
+      "sha256": "c85f4133ac5c34fb2553488e5133f677e147422bac57ad7e183b554a628b55ce"
+    },
+    {
+      "file": "expanded/assets/boxhead/swat-hitrear.png",
+      "bytes": 32744,
+      "sha256": "c981b808d80a5083853fd239cc00f99318f271eda14c02a4dd878790782b1bd6"
+    },
+    {
+      "file": "expanded/assets/boxhead/swat-dying.png",
+      "bytes": 47796,
+      "sha256": "b5f47c459879dc113d695bfb5b54aa81bb22c3b62c583c7dfb96f6e7d1eabeff"
+    },
+    {
+      "file": "expanded/assets/boxhead/swat-dead.png",
+      "bytes": 9191,
+      "sha256": "8ee2b962e8e5fd3f538c0b88179ef864ff60a8d24b8a0611f895bb2a5fa1d477"
+    },
+    {
+      "file": "expanded/assets/boxhead/bond-hitfront.png",
+      "bytes": 38795,
+      "sha256": "b0b91e3b6c4867b461093639dccba15f04286e0e59a20e3057356d6d90f522c3"
+    },
+    {
+      "file": "expanded/assets/boxhead/bond-hitrear.png",
+      "bytes": 31969,
+      "sha256": "057460b9d69bc5966be5ce4ec3903d455b8eceb390700d41c48520218e144d07"
+    },
+    {
+      "file": "expanded/assets/boxhead/bond-dying.png",
+      "bytes": 58579,
+      "sha256": "e04cb30762eefcca7ecb101fa77ad8872268f7d8c59e395162b4fb7ca990cad5"
+    },
+    {
+      "file": "expanded/assets/boxhead/bond-dead.png",
+      "bytes": 11386,
+      "sha256": "08111d546f20c6e07cb5f1516e81aca86d7a6ca056a038d6e0032133d8656081"
+    },
+    {
+      "file": "expanded/assets/boxhead/gijoe-hitfront.png",
+      "bytes": 72670,
+      "sha256": "4f76dc32d5fcb8680698292bbdad63338a7586b979dd3214e125ea1307ab8ff0"
+    },
+    {
+      "file": "expanded/assets/boxhead/gijoe-hitrear.png",
+      "bytes": 66523,
+      "sha256": "94be68cbb4e86009804eb9e8dc1431d2dab35989ffba828685a04e6913548d27"
+    },
+    {
+      "file": "expanded/assets/boxhead/gijoe-dying.png",
+      "bytes": 99498,
+      "sha256": "9e4a21a5905dd44e65375b72974d05a402da2fdc17f31037dd90470293711990"
+    },
+    {
+      "file": "expanded/assets/boxhead/gijoe-dead.png",
+      "bytes": 19365,
+      "sha256": "82f386f7a023f43403bb19c987c82082af2f038e747ab0d813e4788e24ea4894"
+    },
+    {
+      "file": "expanded/assets/boxhead/bambo-hitfront.png",
+      "bytes": 42915,
+      "sha256": "e220c0e5978f459531dabc9cad5f5a5ff5b05901ea7aebe6bc7b947f1633583f"
+    },
+    {
+      "file": "expanded/assets/boxhead/bambo-hitrear.png",
+      "bytes": 38592,
+      "sha256": "c7fe084a59a0d73954643fb38a61a0582c9f6baff766916a81b2d0afe8c6c0c4"
+    },
+    {
+      "file": "expanded/assets/boxhead/bambo-dying.png",
+      "bytes": 59867,
+      "sha256": "2f13b6213ab6d884478229a17484fbb68e1dc8547701707e67f6b6dcc9111bd6"
+    },
+    {
+      "file": "expanded/assets/boxhead/bambo-dead.png",
+      "bytes": 11364,
+      "sha256": "fc6086391ce4ff596effcdc4b974ffd9aaa5697780c673d657c451b9a589a0d1"
+    },
+    {
+      "file": "expanded/assets/boxhead/zombie-hitfront.png",
+      "bytes": 42699,
+      "sha256": "7aa4730f9108d984a00366494d15875bd814cbf248ffc4cc1cecea5e9cb876f9"
+    },
+    {
+      "file": "expanded/assets/boxhead/zombie-hitrear.png",
+      "bytes": 37692,
+      "sha256": "f415e690427621dcb998cbf9b86f87ebf4aef194ea1f9063269285ac3c3b2e76"
+    },
+    {
+      "file": "expanded/assets/boxhead/zombie-dying.png",
+      "bytes": 58685,
+      "sha256": "0dbbba4979f2bcf606f6d75b617d7d41c4f0be3c6a7d8171dbe955c4db8c6040"
+    },
+    {
+      "file": "expanded/assets/boxhead/zombie-dead.png",
+      "bytes": 11451,
+      "sha256": "f3964a17880b42b1e7544a7900525211fbeedd8e883214646582d6538350e0ec"
+    },
+    {
+      "file": "expanded/assets/boxhead/devil-hitfront.png",
+      "bytes": 39229,
+      "sha256": "7c0b6b3ae250f64e3e7c3bda5b5fd01a9ab1010163a4741e5cd6caec99213832"
+    },
+    {
+      "file": "expanded/assets/boxhead/devil-hitrear.png",
+      "bytes": 34746,
+      "sha256": "4c83718fd1f231c76650b7c4bdae2f32a906960e1c44713d7401ce0c714e972f"
+    },
+    {
+      "file": "expanded/assets/boxhead/devil-dying.png",
+      "bytes": 52510,
+      "sha256": "a6093d88fae929a3c6746f7f5ee4d4a41bb44cfd3c8a7fe8c662a5e017dae852"
+    },
+    {
+      "file": "expanded/assets/boxhead/devil-dead.png",
+      "bytes": 10348,
+      "sha256": "fd44c2685fc01d5224c64f518a4395cb983aa1d373288d7b23e77dacd1c69688"
+    },
+    {
+      "file": "expanded/assets/boxhead/object-wall.png",
+      "bytes": 10729,
+      "sha256": "cdead4424cafeacef978a34d082d9e3427bed3d0f1693f76fa0f68ac010bc509"
+    },
+    {
+      "file": "expanded/assets/boxhead/effect-smokecloud.png",
+      "bytes": 96174,
+      "sha256": "a4cf134d8b46a177cfa7da87e7e7ff34c14ac9c39dada645edbe493813721c96"
+    },
+    {
+      "file": "expanded/assets/boxhead/shot-clustershell.png",
+      "bytes": 137,
+      "sha256": "62f0500243b510ae7979189ee16e35da161d9b4388a98683bfa3ba0102b699cd"
+    },
+    {
+      "file": "expanded/assets/boxhead/shot-grenade.png",
+      "bytes": 146,
+      "sha256": "d28b2714db5c34e73239c7c023dbc36190b9931e5be72b581065894d6fd5f83c"
+    },
+    {
+      "file": "expanded/assets/boxhead/effect-explosion.png",
+      "bytes": 125094,
+      "sha256": "beffb44913509620fb75172f69f300bdaac64e3cc192551715cbd2276959eece"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-0-left.png",
+      "bytes": 28039,
+      "sha256": "41f9c1411be71ed6b9b6a1e49a788dfbb94b50430d27cb1d02f3db59f1bb00bd"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-0-up.png",
+      "bytes": 26697,
+      "sha256": "429dca165b118ee7cfe235a88b1950b1094b9b2b9ff284a895fbb826745b4877"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-0-right.png",
+      "bytes": 28889,
+      "sha256": "9f3afabdda3961d351d01fe307efd0397c33b7324d7d98ada8195cffceb2d055"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-0-down.png",
+      "bytes": 39699,
+      "sha256": "cd30f6d80f8ea28f54aeba8ec89d9833cc1ad9a2bcc406ef9fe144cfbf408c95"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-1-left.png",
+      "bytes": 34820,
+      "sha256": "3a978c5f06528443f52d4969f1cec3769037739e2adb0d449b32f538fa787a3a"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-1-up.png",
+      "bytes": 32597,
+      "sha256": "852e40ea18935695921979230b4c47de58005dc18298231edd8c635777c5a435"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-1-right.png",
+      "bytes": 35988,
+      "sha256": "0871da095c82313db3f4b6c85383a644c71ce8a8d554d0f652c4628034415ccd"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-1-down.png",
+      "bytes": 41457,
+      "sha256": "aaa368336e66b6ce589d5b6992f8d4696bef35c67902f3914b3023ecc9d23bf5"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-2-left.png",
+      "bytes": 30561,
+      "sha256": "afb5e639129f8e8f3cd48b8e9d6d3a92f5f5713015bd2d61a5c61fbdb6e5c7a2"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-2-up.png",
+      "bytes": 34790,
+      "sha256": "dfe57011cde42519534a52aff8fa480cc507475eba1431b5c9a4d8c4bd269018"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-2-right.png",
+      "bytes": 28388,
+      "sha256": "1ffd396fd64d0d29366b5696123d734c6ac644fd167aebf52dd397cdfef4ed9d"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-2-down.png",
+      "bytes": 45588,
+      "sha256": "5de0842bbfdc1228a44f1a7b04d2efdb084653483bdfd35caacf6e60544f9619"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-3-left.png",
+      "bytes": 26085,
+      "sha256": "0066aa08badbcee835d59251f5a36318814605ff043adece07ce79d18fa187fb"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-3-up.png",
+      "bytes": 30555,
+      "sha256": "a27d846a3906ddf751b4ec76dcde87091494fe9c97eb8449d0f500708da3c991"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-3-right.png",
+      "bytes": 25079,
+      "sha256": "329a2972fad247ff5dc14e47d8f8be87a60cf96b2410eca9e33d9f8121f6fa23"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-hero-3-down.png",
+      "bytes": 41466,
+      "sha256": "00b58b2274695875e99458b801a88b008b4720201be4cc783e9486daa3fb5076"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-shield.png",
+      "bytes": 710,
+      "sha256": "a099c2e573a15aa7dee206983fa712bb382a62858f010dace09b208dece4e851"
+    },
+    {
+      "file": "expanded/assets/bomb2/native-invincibility-intro.png",
+      "bytes": 25313,
+      "sha256": "fbbb2e4971bd1d48431ba916f0a96028391d9df3845fa56f32739eecbac58bf5"
+    }
+  ]
+}

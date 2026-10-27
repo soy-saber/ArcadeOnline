@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "682c399584add24ebf3642e82d84f460337b77e2",
+  "archiveSha256": "ab6dd46d8682309904100f5b9fab2fae62ffdac8e74e049023b20f000d40da0a",
+  "bytes": 141164511,
+  "files": 5666,
+  "current": "/opt/arcade-online/releases/20261027152839-1044489",
+  "previous": "/opt/arcade-online/releases/20261027150724-1039271",
+  "remoteUpload": "/root/arcade-deploy-20261027-brawler-assets-ab6dd46d",
+  "deployedAt": "2026-10-27T15:28:39Z",
+  "hashes": {
+    "server.js": "262d0f56df29aa5bd22bff1cdc3e4df7fa5fd8f31eefb942386204b732380eba",
+    "public/authority/game.js": "c831c396c2e553a37e7801745df9fa4cefe5cb15c31999abdaf96d15ccceb957",
+    "runtime/authority.cjs": "f621aae67c369f8a916b24f00ab8fb5e0a844541ca601d7e54ace9153509d024",
+    "public/authority-room.html": "6bca432dc9a549f25addf9ebd12a9b56d15a0a58d3c940f34bdaf3b4d813cd0d",
+    "public/authority/style.css": "94748c1b10d1cc8b7ef623aa3d08af655931d3d386e770620ba4b68d48083d1a",
+    "public/games.json": "37e8b4f9f1d4f30a8c5de635c34027eb7a08fa73df46008c70f7b74d3dc7c98e"
+  },
+  "verifiedAt": "2026-10-27T15:47:17.969483+00:00",
+  "defaultTests": 487,
+  "deploymentTests": 5,
+  "publicFileHashes": 429,
+  "originalRuleCases": 3275,
+  "normalInputOnly": true,
+  "publicChromeTests": [
+    "PNG delivery/decode readiness gate",
+    "six fighters, specials/up-specials/guard/original graphics/audio",
+    "six choices/four arenas/reseat/reload/ringout/respawn/full recovery",
+    "eight games WASD/arrow aliases",
+    "natural Mine pickup/throw/arm/trigger/explosion"
+  ],
+  "localRealItem": "Grenade",
+  "publicRealItem": "Mine",
+  "wholeEightGameGoal": "active",
+  "supersededInitialSource": "98741e05e4683e3d5b503269a0a0d82043ef7f7b"
+}

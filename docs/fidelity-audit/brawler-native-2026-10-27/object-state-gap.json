@@ -1,0 +1,45 @@
+{
+  "sourceSwfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+  "scope": "Raw symbol capture root frames, not the initialized full game world.",
+  "observed": {
+    "Mine": {
+      "1": 8,
+      "2": 8,
+      "3": 8,
+      "4": 8,
+      "5": 8,
+      "6": 8,
+      "7": 8,
+      "8": 8,
+      "9": 8
+    },
+    "Grenade": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10,
+      "5": 10,
+      "6": 10,
+      "7": 10,
+      "8": 10,
+      "9": 10,
+      "10": 10
+    },
+    "Garbage": {
+      "1": 5,
+      "2": 6,
+      "3": 3,
+      "4": 3,
+      "5": 3,
+      "6": 6
+    },
+    "Shield": {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "4": 4
+    }
+  },
+  "knownGap": "Original entry frame scripts override Mine/Grenade state and Garbage type requests during raw attachment. Original pixels are retained, but spawn/active/type artwork and its bounding boxes need recapture after native initialization/entry scheduling. Functional pickup/throw/arm/explosion browser checks do not prove these state images equivalent.",
+  "nextStep": "Add native initialized item/projectile state fixtures, reassert the intended state after initial entry scripts where the original init does so, verify observed root frame/type, repack and rerun normal item/combat/public validation."
+}
