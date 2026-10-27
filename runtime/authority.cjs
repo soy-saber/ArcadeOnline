@@ -37116,13 +37116,14 @@ var random6 = (s) => {
   s.seed = Math.imul(s.seed, 1664525) + 1013904223 >>> 0;
   return s.seed / 4294967296;
 };
-function create4(round, playing2, seats, seed, mapId) {
+function create4(round, playing2, seats, seed, mapId, mode, settings) {
   const stage = stages.find((m) => m.id === mapId) || stages[0];
-  const players = seats.filter((s) => s >= 1 && s <= 4).map((seat, i) => {
+  const characters = settings?.characters ? [...settings.characters] : [1, 2, 3, 4];
+  const players = [...new Set(seats)].filter((s) => Number.isInteger(s) && s >= 1 && s <= 4).sort((a, b) => a - b).map((seat, i) => {
     const pt = stage.spawns[i % stage.spawns.length];
-    return { seat, x: pt.x + 14, y: pt.y - 2, vx: 0, vy: 0, alive: true, damage: 0, stocks: 3, facing: i % 2 ? -1 : 1, grounded: false, jumps: 0, stun: 0, invincible: 60, cooldown: 0, attackFrame: 0, shield: 100, guarding: false, lastAttack: 0, lastAlt: 0, upHeld: false, killedBy: null, kos: 0, deaths: 0, respawn: 0, combo: 2, character: (seat - 1) % brawler_data_default.fighters.length };
+    return { seat, x: pt.x + 14, y: pt.y - 2, vx: 0, vy: 0, alive: true, damage: 0, stocks: 3, facing: i % 2 ? -1 : 1, grounded: false, jumps: 0, stun: 0, invincible: 60, cooldown: 0, attackFrame: 0, shield: 100, guarding: false, lastAttack: 0, lastAlt: 0, upHeld: false, killedBy: null, kos: 0, deaths: 0, respawn: 0, combo: 2, character: characters[seat - 1] - 1 };
   });
-  return { gameId: "6232-server", round, tick: 0, phase: playing2 && players.length >= 2 ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), mapId: stage.id, players, platforms: stage.platforms.map((p) => ({ ...p })), items: [], seed: seed >>> 0, nextItem: 0, flashes: [] };
+  return { gameId: "6232-server", round, tick: 0, phase: playing2 && players.length >= 2 ? "playing" : "waiting", winner: null, ack: [0, 0, 0, 0], inputs: Array.from({ length: 4 }, () => ({ ...EMPTY_INPUT3 })), mapId: stage.id, players, platforms: stage.platforms.map((p) => ({ ...p })), items: [], seed: seed >>> 0, nextItem: 0, flashes: [], options: { characters } };
 }
 function hit3(s, p, owner, amount, power, angle) {
   if (!p.alive || p.invincible || p.respawn) return;
@@ -37302,7 +37303,7 @@ function valid4(value2) {
   if (!value2 || typeof value2 !== "object") return false;
   const s = value2;
   if (s.gameId !== "6232-server" || !stages.some((m) => m.id === s.mapId) || !["waiting", "playing", "finished"].includes(s.phase) || !Number.isSafeInteger(s.round) || !Number.isSafeInteger(s.tick) || s.tick < 0 || !Array.isArray(s.players) || s.players.length > 4 || !Array.isArray(s.ack) || s.ack.length !== 4 || !Array.isArray(s.platforms) || s.platforms.length > 30 || !Array.isArray(s.items) || s.items.length > 8 || !Array.isArray(s.flashes) || s.flashes.length > 50) return false;
-  return Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && s.players.every((p) => p && Number.isInteger(p.seat) && p.seat >= 1 && p.seat <= 4 && typeof p.alive === "boolean" && [p.x, p.y, p.vx, p.vy, p.damage, p.lastAttack, p.lastAlt, p.shield].every(Number.isFinite) && Number.isInteger(p.stocks) && p.stocks >= 0 && p.stocks <= 3 && Number.isSafeInteger(p.deaths) && p.deaths >= 0) && new Set(s.players.map((p) => p.seat)).size === s.players.length && s.platforms.every((p) => p && [p.x, p.y, p.w, p.h].every(Number.isFinite)) && s.items.every((i) => i && [i.x, i.y, i.vx, i.vy, i.timer].every(Number.isFinite) && ["mine", "grenade"].includes(i.type)) && s.flashes.every((f3) => f3 && [f3.x, f3.y, f3.life].every(Number.isFinite)) && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0);
+  return !!s.options && Array.isArray(s.options.characters) && s.options.characters.length === 4 && s.options.characters.every((n) => Number.isInteger(n) && n >= 1 && n <= brawler_data_default.fighters.length) && Array.isArray(s.inputs) && s.inputs.length === 4 && s.inputs.every(validInput3) && s.players.every((p) => p && Number.isInteger(p.seat) && p.seat >= 1 && p.seat <= 4 && Number.isInteger(p.character) && p.character === s.options.characters[p.seat - 1] - 1 && typeof p.alive === "boolean" && [p.x, p.y, p.vx, p.vy, p.damage, p.lastAttack, p.lastAlt, p.shield].every(Number.isFinite) && Number.isInteger(p.stocks) && p.stocks >= 0 && p.stocks <= 3 && Number.isSafeInteger(p.deaths) && p.deaths >= 0) && new Set(s.players.map((p) => p.seat)).size === s.players.length && s.platforms.every((p) => p && [p.x, p.y, p.w, p.h].every(Number.isFinite)) && s.items.every((i) => i && [i.x, i.y, i.vx, i.vy, i.timer].every(Number.isFinite) && ["mine", "grenade"].includes(i.type)) && s.flashes.every((f3) => f3 && [f3.x, f3.y, f3.life].every(Number.isFinite)) && s.ack.every((n) => Number.isSafeInteger(n) && n >= 0);
 }
 var images4 = {};
 function img(name) {
@@ -37399,7 +37400,7 @@ function render4(canvas, state, seat) {
     ctx.fillText(s.winner === null ? "\u5E73\u5C40" : `P${s.winner} \u83B7\u80DC\uFF01`, canvas.width / 2, canvas.height / 2 + 10);
   }
 }
-var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0CW/\u2191+\u653B\u51FB \u4E0A\u51FB\uFF0CS/\u2193+\u653B\u51FB \u7279\u6280\uFF0CS/\u2193 \u9632\u5FA1/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create4, step: step6, valid: valid4, render: render4, consumeInput(state, seat, input) {
+var adapter5 = { id: "6232-server", title: "\u75AF\u72C2\u5C0F\u4EBA\u6218\u6597", seats: 4, hz: HZ5, width: 1e3, height: 650, controls: "A/D \u6216 \u2190/\u2192 \u79FB\u52A8\uFF0CW/\u2191 \u4E8C\u6BB5\u8DF3\uFF0CJ/\u7A7A\u683C \u653B\u51FB/\u62FE\u53D6\uFF0CW/\u2191+\u653B\u51FB \u4E0A\u51FB\uFF0CS/\u2193+\u653B\u51FB \u7279\u6280\uFF0CS/\u2193 \u9632\u5FA1/\u7A7F\u8FC7\u8584\u5E73\u53F0\u3002", characters: ["\u5706\u7403", "\u5496\u5561\u676F", "\u8304\u5B50", "\u8349\u8393", "\u5783\u573E\u6876", "\u6843\u5B50"], characterIds: brawler_data_default.fighters.map((_, i) => i), duplicateCharacters: true, maps: stages.map((m) => ({ id: m.id, label: m.label })), create: create4, step: step6, valid: valid4, render: render4, consumeInput(state, seat, input) {
   const p = state.players.find((x) => x.seat === seat);
   if (p) {
     p.lastAttack = Math.max(p.lastAttack, input.attack);
@@ -38257,7 +38258,7 @@ var AuthorityEngine = class {
   }
   character(room2, member, value2) {
     const match = room2.auth, adapter7 = getAdapter(room2.gameId);
-    if (!match || member.seat == null || room2.seats[member.seat] !== member.id || match.state.phase === "playing" || !isBomb(room2) && !adapter7?.characters || !Number.isInteger(value2) || Number(value2) < 1 || Number(value2) > 4) return false;
+    if (!match || member.seat == null || room2.seats[member.seat] !== member.id || match.state.phase === "playing" || !isBomb(room2) && !adapter7?.characters || !Number.isInteger(value2) || Number(value2) < 1 || Number(value2) > (adapter7?.characters?.length ?? 4)) return false;
     const character = Number(value2);
     const ids = adapter7?.characterIds, selected = ids ? ids[character - 1] : character;
     if (!adapter7?.duplicateCharacters && match.state.players.some((p) => p.seat !== member.seat && room2.seats[p.seat] && p.character === selected)) return false;

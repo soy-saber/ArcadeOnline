@@ -225,7 +225,7 @@ export class AuthorityEngine {
 
   character(room:Room,member:Member,value:unknown):boolean {
     const match=room.auth,adapter=getAdapter(room.gameId);
-    if(!match||member.seat==null||room.seats[member.seat]!==member.id||match.state.phase==='playing'||(!isBomb(room)&&!adapter?.characters)||!Number.isInteger(value)||Number(value)<1||Number(value)>4)return false;
+    if(!match||member.seat==null||room.seats[member.seat]!==member.id||match.state.phase==='playing'||(!isBomb(room)&&!adapter?.characters)||!Number.isInteger(value)||Number(value)<1||Number(value)>(adapter?.characters?.length??4))return false;
     const character=Number(value);
     const ids=adapter?.characterIds,selected=ids?ids[character-1]:character;
     if(!adapter?.duplicateCharacters&&match.state.players.some(p=>p.seat!==member.seat&&room.seats[p.seat]&&p.character===selected))return false;

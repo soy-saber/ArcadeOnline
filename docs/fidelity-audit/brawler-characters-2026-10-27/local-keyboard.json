@@ -1,0 +1,301 @@
+{
+  "evidence": "Normal UI/input and read-only observations; long arrays compacted.",
+  "originalResultSha256": "59cb9d4af0fd4e24e0866ce6c3e6d144b4146749ce3622bc0439cd4f984f1d63",
+  "result": {
+    "at": "2026-10-27T11:58:15.371Z",
+    "base": "http://127.0.0.1:45406",
+    "games": [
+      {
+        "game": "3881-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 67,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "46923-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true,
+            "singleLogicalAction": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true,
+            "singleLogicalAction": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 52,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "137953-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 43,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "50737-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 46,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "6232-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 57,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "9109-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 76,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "97734-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 59,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      },
+      {
+        "game": "fbw_forest-server",
+        "checks": [
+          {
+            "wasd": "KeyW",
+            "arrow": "ArrowUp",
+            "direction": "up",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyA",
+            "arrow": "ArrowLeft",
+            "direction": "left",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyS",
+            "arrow": "ArrowDown",
+            "direction": "down",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          },
+          {
+            "wasd": "KeyD",
+            "arrow": "ArrowRight",
+            "direction": "right",
+            "independentAlternatives": true,
+            "mixedHoldAndRelease": true
+          }
+        ],
+        "serverAcknowledgedSequence": 99,
+        "formFocusRelease": true,
+        "typingDoesNotMoveGame": true
+      }
+    ],
+    "errors": []
+  }
+}

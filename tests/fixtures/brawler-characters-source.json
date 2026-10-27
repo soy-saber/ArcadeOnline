@@ -1,0 +1,72 @@
+{
+  "kind": "Static AS2 extraction, not original runtime behavior. Duplicate fighter choice is permitted by SelectFighter; SetColor differentiates equal fighters by color.",
+  "swfSha256": "c23074f428e1a3bdb4a6c44779627d87b7b3ff0ad00518ceaab94dd3943b8f77",
+  "selectionSources": {
+    "artifacts/all-games-audit/6232/scripts/frame_42/DoAction.as": "34abd85324bb6353c4475a1a39a1bfee86c1a95224f966b88fc17da549a57639",
+    "artifacts/all-games-audit/6232/scripts/frame_46/DoAction.as": "9ec4bb909c09dc60d0fe56b6baed597beece261fb0b0e32d2041c0b1eb16f258"
+  },
+  "sourceMenuOrder": [
+    "SBLPlayer",
+    "PeachPlayer",
+    "TrashPlayer",
+    "CoffeePlayer",
+    "DefaultPlayer",
+    "AuberginePlayer"
+  ],
+  "fighters": [
+    {
+      "id": "DefaultPlayer",
+      "characterName": "BallLock",
+      "weight": 0.5,
+      "speed": 0.5,
+      "power": 0.5,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/DefaultPlayer.as",
+      "sha256": "7bf4ba8dbec50f443bea9e645dba10a40911d175f7cb86df58b624e85a0bccee"
+    },
+    {
+      "id": "CoffeePlayer",
+      "characterName": "CoffeeLock",
+      "weight": 0.4,
+      "speed": 0.7,
+      "power": 0.4,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/CoffeePlayer.as",
+      "sha256": "b76fc4ac16d7a52436f3de3eb9ea28cfc61280912fff3bc310f8a922a3f560e6"
+    },
+    {
+      "id": "AuberginePlayer",
+      "characterName": "AubergineLock",
+      "weight": 0.5,
+      "speed": 0.6,
+      "power": 0.4,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/AuberginePlayer.as",
+      "sha256": "cfb874bcf504b3812de76c2896b53052826e40cb6a13249426cfe2f90d8c2c1b"
+    },
+    {
+      "id": "SBLPlayer",
+      "characterName": "StrawberryLock",
+      "weight": 0.5,
+      "speed": 0.5,
+      "power": 0.5,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/SBLPlayer.as",
+      "sha256": "007f0e2266bbdbf7cab2c3bc8ef72083225b9ffa1af9103685f9808ca795f356"
+    },
+    {
+      "id": "TrashPlayer",
+      "characterName": "TrashLock",
+      "weight": 0.6,
+      "speed": 0.4,
+      "power": 0.5,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/TrashPlayer.as",
+      "sha256": "7eec4d0cd239c3752e575ee2e69f647ed315baf9a36e6ec7c5ec8fad6353738a"
+    },
+    {
+      "id": "PeachPlayer",
+      "characterName": "PeachLock",
+      "weight": 0.4,
+      "speed": 0.5,
+      "power": 0.6,
+      "file": "artifacts/all-games-audit/6232/scripts/__Packages/PeachPlayer.as",
+      "sha256": "817528738685f5daed75983c3979574e4ac73d64fc3fac72ac291f416b8afb52"
+    }
+  ]
+}

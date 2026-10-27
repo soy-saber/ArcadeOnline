@@ -8,7 +8,7 @@ export interface Adapter {
   create(round: number, playing: boolean, seats: number[], seed: number, mapId?: string, mode?: string, settings?:{difficulty?:string;characters?:number[];speed?:number;devils?:boolean;collisions?:boolean;damage?:boolean;deathLimit?:number}): State;
   rate?(state:State):number;
   characters?:string[];
-  characterIds?:string[];
+  characterIds?:(string|number)[];
   duplicateCharacters?:boolean;
   difficulties?:{id:string;label:string}[];
   step(state: State, inputs: Input[]): void;

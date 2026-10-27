@@ -100,7 +100,7 @@ function start(): void {
   el('boxhead-controls').hidden=!boxhead;
   const difficultySettings=bombSettings||!!adapter?.difficulties;
   characterSelect.parentElement!.hidden=!characterSettings;difficultySelect.parentElement!.hidden=!difficultySettings;
-  if(adapter?.characters)for(const [index,label]of adapter.characters.entries())characterSelect.options[index].textContent=label;
+  if(adapter?.characters){characterSelect.replaceChildren();for(const [index,label]of adapter.characters.entries()){const option=document.createElement('option');option.value=String(index+1);option.textContent=label;characterSelect.append(option);}}
   if(adapter?.difficulties){difficultySelect.replaceChildren();for(const d of adapter.difficulties){const option=document.createElement('option');option.value=d.id;option.textContent=d.label;difficultySelect.append(option);}}
   if (adapter?.modes) {
     modeSelect.parentElement!.hidden = false;
@@ -437,7 +437,7 @@ function start(): void {
     if(characterSettings){
       const people=(state?.players||[]) as {seat?:number;character?:number|string}[];
       const me=people.find(p=>p.seat===seat);
-      if(me?.character)characterSelect.value=String(adapter?.characterIds?adapter.characterIds.indexOf(String(me.character))+1:me.character);
+      if(me?.character!==undefined)characterSelect.value=String(adapter?.characterIds?adapter.characterIds.indexOf(me.character)+1:me.character);
       characterSelect.disabled=!seat||state?.phase==='playing';
       for(const option of characterSelect.options)option.disabled=!adapter?.duplicateCharacters&&people.some(p=>p.seat!==seat&&net.room.members.some(m=>m.seat===p.seat)&&p.character===(adapter?.characterIds?adapter.characterIds[Number(option.value)-1]:Number(option.value)));
       difficultySelect.value=(net.room.auth?.options as {difficulty?:string})?.difficulty||adapter?.difficulties?.[0]?.id||'normal';

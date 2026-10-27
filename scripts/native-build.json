@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hashes": {
-    "public/authority/game.js": "e3fa3740ba68853fc7ca6e2e871d7a614cd9d0f0839bf72292b4a42bf7506343",
-    "runtime/authority.cjs": "26d33cbd017bbfe55fcff8a78c39fb8cfe148d33034124717ec90c03332c4ce6",
+    "public/authority/game.js": "d0b9ea82c4c5d584b8a87886198025d038bcc252c6c585467416bc59a1c0f4a9",
+    "runtime/authority.cjs": "644d9f1112f3c1209ea4da30c6d3047de934deae184513adf933213de150e244",
     "src/badminton/actor-geometry.json": "9e117b3d5a5951d2a2fea53d99895240a38fbb077f38f643c11805c06c9ffca3",
     "src/badminton/ball-art.json": "94fcd961026e50b40c81e6d4bfc5d7589248378f67385e2a3b8bf55e5b3ec576",
     "src/badminton/ball.ts": "f5dc64da191978825f244531c1798211b47fd7d649266b00dd36d0dc1f0af527",
@@ -26,9 +26,9 @@
     "src/authority/bomb-status.ts": "58977f8d5645c1ce0845a7c8aea210e9d9fff7d4d310d12aeb17cc3acf2ddb72",
     "src/authority/bomb-view.ts": "999e3f197ecf5e226378f0d137c3092f5f4ea3dc55e6db59271d3410571b62c2",
     "src/authority/client.ts": "98df9c6d1bcbe38fcf901dd3cd75093c4e80c42095db7ebc444f88382f9d0292",
-    "src/authority/engine.ts": "ebed5ab3f1b83357e1974c450d7aa3fb8a398d43ba1def049bd6576db062048a",
+    "src/authority/engine.ts": "e296860b6f739937d026df9b16aa71da4aca08fb2a6cb4a553ed95b8c0d0eb79",
     "src/authority/key-bindings.ts": "306baa52e4bb2ae1aa4a65d1fe8d64ffa134404fd6ff7c1da11abe6499f71242",
-    "src/authority/main.ts": "a75caf5c0c7673f72b7f3cf32a53362b37adf9629d20ca993385bf70a03fe07e",
+    "src/authority/main.ts": "a7f4940e4f2a309575393630f1cd084b6739ce89ac930d8506dec059b6ca530e",
     "src/authority/maps.ts": "a76f8903f1a71004e81d3ed215d9a48fb190c11c86a7f5f4b3c3b7adae40e4d3",
     "src/authority/nameplates.ts": "34bfa9f8cd9a4cdfe131f85c134973aceb150d71f63ea3395ac0c68131618504",
     "src/authority/native-audio.ts": "095063838c015f8d1e4ad1fef5baf71c59547f23eb219a98251ac154c316ed36",
@@ -88,7 +88,7 @@
     "src/expanded/boxhead-world.ts": "ed1bf66de5dfd6f34c3afaf5ea41c7a77ba2b3b597f51350f97dfeb5003e2195",
     "src/expanded/boxhead.ts": "b6854ddddca4cb9cacb2e9d29d1cc96ad5f078cfe4547a71e1b4fcdf14cbdc75",
     "src/expanded/brawler-data.json": "5ee41c07a5c89dd41073f78fdc4ab3e593362e0c67e92953b36a354cfc8b20dc",
-    "src/expanded/brawler.ts": "f1e6b9af74ee6f19e8357ec0060664b55e6e259e61b43fa18ceb2d2192efdd5e",
+    "src/expanded/brawler.ts": "d0b33b27f0a53bef0f91d2d3853a0f173ad52f6e3344e96c9df80706cb867094",
     "src/expanded/forest-data.json": "7e5391b51681ea3b940eea222626efa67e5a027d4f9059efa5ba2b08b25f7eaa",
     "src/expanded/forest-device-art.ts": "a7f8de6e9b519a4fb4abb5042dadd1a6770a20e97516e66db637f68bc442adaa",
     "src/expanded/forest.ts": "07063767b5b6a964cec56abb0e8900638d92f8b775313bf8f4d37be930d378ea",
@@ -96,6 +96,6 @@
     "src/expanded/gunmayhem.ts": "5bdc84d09c8a6d66664c3a10370d3f80482ec1baf3e3c470dfb16fc0fde6c818",
     "src/expanded/registry.ts": "eee479727a876b758d628b62fe8368e914321ed2c6e13c0e55c080dcc5795a67",
     "src/expanded/tank.ts": "64f815650aedff432c7ce7380d21eb616895ae22cdde04801dadb43ae9c7da60",
-    "src/expanded/types.ts": "42a274affb0057c361d3edcdca2433bf0f19ce30bcafdb3871d2838e58f68ff1"
+    "src/expanded/types.ts": "927e0142e54d86f9f459efdf97093e5ddc7eba7dea3eeb4f1c39953b67db3a22"
   }
 }
